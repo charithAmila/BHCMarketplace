@@ -1,4 +1,9 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/css/app.css": "/css/app.css",
+    "/css/main.css": "/css/main.css",
+    "/css/global.css": "/css/global.css",
+    "/css/dropdown.css": "/css/dropdown.css",
+    "/css/responsiveness.css": "/css/responsiveness.css",
+    "/css/navbar.css": "/css/navbar.css"
 }

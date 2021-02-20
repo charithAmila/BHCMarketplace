@@ -8,13 +8,16 @@ use Auth;
 
 class WalletController extends Controller
 {
-    public function index()
-    {
-        /* $users = User::all();
-        foreach ($users as $user) {
-            $asset_url = 'storage/user/photo/' . $user->display_photo;
+    public function index(){
+    	return view('wallet.index');
+    }
+
+    public function fetch(){
+        $users = User::all();
+        foreach ($users as $key => $user) {
+            $asset_url = 'storage/user/photo/'.$user->display_photo;
             if ($user->display_photo == 'default.png') {
-                $asset_url = 'user/photo/' . $user->display_photo;
+                $asset_url = 'user/photo/'.$user->display_photo;
             }
             $name = $user->name != null ? $user->name : $user->wallet;
             $links[] = [
@@ -23,15 +26,15 @@ class WalletController extends Controller
                 'customLink' => $user->signedLoginUrl($user->id),
             ];
         }
-        $this->data['links'] = json_decode(json_encode($links));*/
+        $links = json_decode(json_encode($links));
 
-        return view('wallet.index');
+        return $links;
     }
 
-    public function customLogin($id)
-    {
-        $user = User::find($id);
-        Auth::login($user);
-        return redirect()->route('marketplace');
+    public function customLogin($id){
+    	$user = User::find($id);
+    	Auth::login($user);
+    	return redirect()->route('marketplace');
     }
+
 }

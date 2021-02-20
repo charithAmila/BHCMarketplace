@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +14,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>
 
 
@@ -27,163 +26,171 @@
 
     {{-- Styles --}}
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/navbar.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/global.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/responsiveness.css') }}" rel="stylesheet">
+
+    {{-- Scripts Vue and axios --}}
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
 
 </head>
-
 <body>
-    <div id="app">
-        @include('includes.header')
-        @yield('extra_css')
-        <div id="main-app">
-            @yield('content')
-        </div>
-
+    @include('includes.header')
+    @yield('extra_css')
+    <div id="main-app">
+        @yield('content')
     </div>
     @yield('extra_scripts')
     <script>
-    $(document).ready(function() {
+        $(document).ready(function(){
 
-        $(document).ready(function() {
-            $('.filter').click(function() {
-                $('.filter').removeClass('active');
-                $(this).addClass('active');
+            $(document).ready(function(){
+                $('.filter').click(function(){
+                    $('.filter').removeClass('active');
+                    $(this).addClass('active');
+                });
             });
-        });
+            
+            $('.search-mobile').click(function(){
+                $('#main-app').hide();
+                $('.default-nav').hide();
+                $('.onclick-search').fadeIn();
+            });
+            $('.back-btn').click(function(){
+                $('.onclick-search').hide();
+                $('#main-app').fadeIn();
+                $('.default-nav').fadeIn();
+            });
 
-        $('.search-mobile').click(function() {
-            $('#main-app').hide();
-            $('.default-nav').hide();
-            $('.onclick-search').fadeIn();
-        });
-        $('.back-btn').click(function() {
-            $('.onclick-search').hide();
-            $('#main-app').fadeIn();
-            $('.default-nav').fadeIn();
-        });
+            $('.hamburger-menu').click(function(){
+                $('#main-app').hide();
+                $('.default-nav').hide();
+                $('.onclick-menu').fadeIn();
+            });
 
-        $('.hamburger-menu').click(function() {
-            $('#main-app').hide();
-            $('.default-nav').hide();
-            $('.onclick-menu').fadeIn();
-        });
-
-        $('.menu-close').click(function() {
-            $('.onclick-menu').hide();
-            $('#main-app').fadeIn();
-            $('.default-nav').fadeIn();
-        });
-
-
-        // Close when clicking outside
+            $('.menu-close').click(function(){
+                $('.onclick-menu').hide();
+                $('#main-app').fadeIn();
+                $('.default-nav').fadeIn();
+            });
 
 
-
-        $('.notif-mobile').click(function() {
-            $('.notification').toggleClass('d-none');
-        });
-
-        $('.notif-btn').click(function() {
-            toggleNotification();
-        });
+            // Close when clicking outside
+            
 
 
-        $(document).on('click', function(event) {
-            if ($(event.target).closest('.notif-btn').length === 0 && $(event.target).closest(
-                    '.notification').length === 0 && $('.notification').hasClass('d-md-block')) {
+            $('.notif-mobile').click(function(){
+                $('.notification').toggleClass('d-none');
+            });
+
+            $('.notif-btn').click(function(){
                 toggleNotification();
-            }
-            event.stopPropagation();
-        });
+            });
+
+
+            $(document).on('click', function(event) {
+              if ($(event.target).closest('.notif-btn').length === 0 && $(event.target).closest('.notification').length === 0 && $('.notification').hasClass('d-md-block')) {
+                 toggleNotification();
+              }
+              event.stopPropagation();
+            });
 
 
 
-        $('.profile-btn').hover(function() {
-            identifyState();
-        });
+            $('.profile-btn').hover(function(){
+                identifyState();
+            });
 
-        $('.profile-menu').mouseleave(function() {
-            $('.profile-btn').removeClass('hovered');
-            identifyState();
-        });
-
-
-
-        // PREFERENCES MODAL
-        $('.preferencesBtn').click(function() {
-            $('#preferencesModal').addClass('d-block');
-            $(".preferences-content").removeClass("fade-out-bottom").addClass("fade-in-bottom");
-        });
-
-        $('#edit-profile-btn').click(function() {
-            $('#preferencesModal').addClass('d-block');
-            $(".preferences-content").removeClass("fade-out-bottom").addClass("fade-in-bottom");
-        });
-
-        $('.close-custom-modal').click(function() {
-            $(".preferences-content").removeClass("fade-in-bottom").addClass("fade-out-bottom");
-            setTimeout(function() {
-                $('#preferencesModal').removeClass('d-block');
-            }, 400);
-        });
-        // ######################
+            $('.profile-menu').mouseleave(function(){
+                $('.profile-btn').removeClass('hovered');
+                identifyState();
+            });
 
 
 
+            // PREFERENCES MODAL
+            $('.preferencesBtn').click(function(){
+                $('#preferencesModal').addClass('d-block');
+                $(".preferences-content").removeClass("fade-out-bottom").addClass("fade-in-bottom");
+            });
 
+            $('#edit-profile-btn').click(function(){
+                $('#preferencesModal').addClass('d-block');
+                $(".preferences-content").removeClass("fade-out-bottom").addClass("fade-in-bottom");
+            });
 
-    });
-
-    function identifyState() {
-        var container = $('.profile-menu');
-        if (!$(".profile-menu").hasClass('fade-in-top')) {
-            container.toggleClass('d-md-block');
-            container.addClass("fade-in-top").removeClass("fade-out-top");
-            $(".profile-btn").addClass("hovered");
-        } else {
-            if (!$('.profile-btn').hasClass('hovered')) {
-                container.removeClass("fade-in-top").addClass("fade-out-top");
-                $(".profile-btn").removeClass("hovered");
+            $('.close-custom-modal').click(function(){
+                 $(".preferences-content").removeClass("fade-in-bottom").addClass("fade-out-bottom");
                 setTimeout(function() {
-                    container.toggleClass('d-md-block');
-                }, 200);
+                    $('#preferencesModal').removeClass('d-block');
+                }, 400);
+            });
+            // ######################
+
+
+
+            
+
+        });
+        
+        function identifyState(){
+            var container = $('.profile-menu');
+            if (!$(".profile-menu").hasClass('fade-in-top')) {
+                container.toggleClass('d-md-block');
+                container.addClass("fade-in-top").removeClass("fade-out-top");
+                $(".profile-btn").addClass("hovered");
             }
+            else
+            {
+                if (!$('.profile-btn').hasClass('hovered')) {
+                    container.removeClass("fade-in-top").addClass("fade-out-top");
+                    $(".profile-btn").removeClass("hovered");
+                    setTimeout(function() {
+                      container.toggleClass('d-md-block');
+                    }, 200);
+                }
 
+            }
         }
-    }
 
-    function toggleNotification() {
-        var container = $(".notification");
-        if (!container.hasClass('fade-in-top')) {
-            $('.notification').toggleClass('d-md-block');
-            container.addClass("fade-in-top").removeClass("fade-out-top");
-        } else {
-            container.addClass("fade-out-top").removeClass("fade-in-top");
-            setTimeout(function() {
+        function toggleNotification(){
+            var container = $(".notification"); 
+            if (!container.hasClass('fade-in-top')) {
                 $('.notification').toggleClass('d-md-block');
-            }, 400);
+                container.addClass("fade-in-top").removeClass("fade-out-top");
+            }
+            else 
+            {
+                container.addClass("fade-out-top").removeClass("fade-in-top");
+                setTimeout(function() {
+                  $('.notification').toggleClass('d-md-block');
+                }, 400);
+            }
         }
-    }
+
     </script>
 
     <script>
-    $(document).ready(function() {
+      $(document).ready(function(){
 
         $(document).on("change", "#user-photo", function() {
-            var accepted = ['gif', 'png', 'jpg'];
-            var ext = $("#user-photo").val().split('.').pop().toLowerCase();
-            if ($.inArray(ext, accepted) !== -1) {
-                readUploadedPhoto(this, $('.user-logo'));
-            }
+          var accepted = ['gif', 'png', 'jpg'];
+          var ext = $("#user-photo").val().split('.').pop().toLowerCase();
+          if ($.inArray(ext, accepted) !== -1) {
+            readUploadedPhoto(this, $('.user-logo'));
+          }
         });
 
-        $('#preferences-submit').click(function() {
+        $('#preferences-submit').click(function(){
             var count_errors = 0;
-            $('.preferences-check').each(function() {
-                if ($(this).val() == '') {
+            $('.preferences-check').each(function(){
+                if($(this).val() == ''){
                     count_errors += 1;
                     $(this).addClass('emptyVal');
-                    $(this).siblings('.preferences-error').text(
-                        'This field is not allowed to be empty');
+                    $(this).siblings('.preferences-error').text('This field is not allowed to be empty');
                 }
             });
 
@@ -199,7 +206,7 @@
             $(this).siblings('.preferences-error').text('');
         });
 
-        $('#update-preferences').on('submit', function(event) {
+        $('#update-preferences').on('submit', function(event){
             event.preventDefault();
             $.ajaxSetup({
                 headers: {
@@ -220,77 +227,74 @@
 
 
             $.ajax({
-                url: "/users/update",
-                type: "POST",
-                data: formdata,
-                processData: false,
-                contentType: false,
-                success: function(response) {
+              url: "/users/update",
+              type: "POST",
+              data: formdata,
+              processData: false,
+              contentType: false,
+              success: function(response){
 
 
-                    $(".preferences-content").removeClass("fade-in-bottom").addClass(
-                        "fade-out-bottom");
-                    setTimeout(function() {
-                        $('#preferencesModal').removeClass('d-block');
-                    }, 400);
+                $(".preferences-content").removeClass("fade-in-bottom").addClass("fade-out-bottom");
+                setTimeout(function() {
+                    $('#preferencesModal').removeClass('d-block');
+                }, 400);
 
-                    $('.toast-message').text(response.message);
-                    $('#update-preferences').trigger("reset");
-                    setTimeout(function() {
-                        launch_toast();
-                    }, 500);
+                $('.toast-message').text(response.message);
+                $('#update-preferences').trigger("reset");
+                setTimeout(function() {
+                    launch_toast();
+                }, 500);
 
-                    var source = "{!! asset('images/avatar2.png') !!}"
-                    $('#user-photo').val(null);
-                    $('.user-logo').attr('src', source);
+                var source = "{!! asset('images/avatar2.png') !!}"
+                $('#user-photo').val(null);
+                $('.user-logo').attr('src', source);
+                
 
+                var updated_dp = "{!! asset('storage/user/photo') !!}/"+response.photo;
+                $('#current-display-photo').attr('src', updated_dp);
+                $('.navbar-img-profile').attr('src', updated_dp);
+                $('#profile-name').text(response.name);
+                $('#profile-bio').text(response.description);
 
-                    var updated_dp = "{!! asset('storage/user/photo') !!}/" + response
-                        .photo;
-                    $('#current-display-photo').attr('src', updated_dp);
-                    $('.navbar-img-profile').attr('src', updated_dp);
-                    $('#profile-name').text(response.name);
-                    $('#profile-bio').text(response.description);
-
-                },
-                error: function(xhr) {
-                    if (xhr.status == 422) {
-                        var errors = JSON.parse(xhr.responseText);
-                        $.each(errors.errors, function(key, value) {
-                            var html = '';
-                            $.each(value, function(key2, value2) {
-                                html += value2 + '</br>';
-                            });
-                            $('#' + key + '-preferences').html(html);
+              },
+              error: function (xhr) {
+                if (xhr.status == 422) {
+                    var errors = JSON.parse(xhr.responseText);
+                    $.each(errors.errors, function(key,value){
+                        var html = '';
+                        $.each(value, function(key2, value2){
+                            html += value2 + '</br>';
                         });
-                    }
-                },
+                        $('#'+key+'-preferences').html(html);
+                    });
+                }
+              },
             });
         });
 
-    });
+      });
 
 
-    function readUploadedPhoto(input, container) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                container.attr('src', e.target.result);
+        function readUploadedPhoto(input, container) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    container.attr('src', e.target.result);
+                }
             }
+            reader.readAsDataURL(input.files[0]);
         }
-        reader.readAsDataURL(input.files[0]);
-    }
 
-    function launch_toast() {
-        var x = document.getElementById("toast")
-        x.className = "show";
-        setTimeout(function() {
-            x.className = x.className.replace("show", "");
-        }, 5000);
-    }
+        function launch_toast() {
+            var x = document.getElementById("toast")
+            x.className = "show";
+            setTimeout(function(){ 
+                x.className = x.className.replace("show", "");
+            }, 5000);
+        }
     </script>
 
 
 </body>
-
 </html>

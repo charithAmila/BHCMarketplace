@@ -1,0 +1,181 @@
+// Variables
+@import 'variables';
+@import 'animation';
+
+.main-content{
+	.main-row{
+		min-height: calc(100vh - 71px);
+		margin: 0!important;
+		width: 100%;
+		height: calc(100% - 71px);
+		background-image: url("/images/main-bg.png");
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+
+		.top-sellers{
+			position: fixed;
+			top: 71px;
+			left: 0;
+			height: calc(100% - 71px);
+			background: linear-gradient(rgba(241,241,241,.5), rgba(241,241,241,.5));
+			padding: 0 5px;
+			overflow-y: auto;
+
+			.seller-content{
+				padding-top: 10px;
+			}
+
+			.dd{
+				color: #F88130;
+			}
+		}
+
+		.item-content{
+			margin-left: 16.6666666667%;
+			background: linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.7));
+
+			.item-filter{
+				display: flex;
+				justify-content: space-between;
+
+				.filter-btn{
+					border-width:0px;
+					border:none;
+					background: #c7c7c7;
+					color: black;
+					margin-left: 15px;
+					border-radius: 15px;
+					padding: 5px 30px;
+					font-weight: bold;
+					&:focus{
+						outline: none;
+					}
+				}
+
+				.active{
+					background: #FFCAB3;
+					color: #F88130;
+				}
+
+				.sorter{
+					padding-right: 20px;
+					font-weight: bold;
+					color: black;
+					text-decoration: none;
+					&:focus{
+						color: #F88130
+					}
+				}
+			}
+
+
+			.items{
+				padding: 10px 40px 0 10px;
+				font-size: 12px;
+
+				.col-md-3{
+					padding: 5px 45px 15px 45px;
+				}
+				
+
+				.specialContainer{
+				    border: 1px solid #696868;
+				    padding: 5px;
+
+				    .content{
+				    	border: 1px solid #696868;
+				    	padding: 5px 10px;
+
+				    	
+					}
+				}
+			}
+		}
+	}
+
+	.content-top{
+		background: black;
+  		color: white;
+	}
+}
+
+.filterList{
+	.topUserList{
+		padding-top: 10px;
+		border-bottom: 1px solid $darkGray;
+		margin-bottom: 10px;
+		.col-3{
+			.filterImg{
+				width: 50px;
+				height: 50px;
+				object-fit: cover;
+				border-radius: 50%;
+			}
+		}
+
+		.col-9{
+			margin-left: 0 !important;
+
+			h6{
+				font-size: 18px;
+				font-weight: 600;
+			}
+			label{
+				font-weight: 600;
+				font-color: $lightGray;
+				font-size: 15px;
+			}
+		}
+	}
+	.placeholder-div {
+		border-bottom: 1px solid $darkGray;
+		margin-bottom: 10px;
+
+		.userCircle {
+
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			@extend .animated-background;
+		}
+		.userName, .userPrice{
+			height: 20px;
+			border-radius: 30px;
+			margin-bottom: 10px;
+			@extend .animated-background;
+		}
+		.userName{
+			width: 100%;
+		}
+		.userPrice{
+			width: 50%;
+		}
+
+	}
+}
+
+.filterListMobile{
+	.filterImg{
+		width: 80px;
+		height: 80px;
+		object-fit: cover;
+		border-radius: 50%;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

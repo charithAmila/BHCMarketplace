@@ -28,10 +28,89 @@ class Collectible extends Model
     ];
 
 
-    public function getAvailable($copies){
-    	$available = $copies.' of '.$copies;
-    	return $available;
+    
 
+    public function fetchAllCollectibles($category=null, $sortBy=null, $order=null){
+
+        if ($sortBy) {
+            $records = Record::join('collectibles', 'records.nft_id', '=', 'collectibles.id')
+                    ->orderBy('collectibles.'.$sortBy, $order)->get('records.*');
+        }else {
+            $records = Record::where('copies_left', '>', 0)->get();
+        }
+
+        $data = $this->setNftData($records, $category, $sortBy, $order);
+
+        return $data;
+        
+    }
+
+    public function profileNft($user_id, $isp = 0, $created = 0, $category = null, $sortBy = null, $order = null, $operand= '>'){
+
+        // $records = Record::where('copies_left', '>', 0)->where('owner_id', $user_id)->get();
+
+        $records = Record::join('collectibles', 'records.nft_id', '=', 'collectibles.id');
+        if ($created) {
+            $records = $records->join('transactions', 'transactions.record_id', '=', 'records.id');
+            $operand = '=';
+        }
+        $records = $records->where('records.copies_left', $operand, 0);
+        $records = $records->where('records.owner_id', $user_id);
+
+        if ($isp == 1) {
+            $records = $records->where('records.selling', $isp);
+        }
+                    
+        $records = $records->get('records.*');
+
+
+        $data = $this->setNftData($records, $category, $sortBy, $order, $isp);
+
+        return $data;
+    }
+
+    public function setNftData($records, $category, $sortBy, $order){
+        $data = [];
+        foreach ($records as $key => $record) {
+            $collectible = Collectible::where('id',$record->nft_id);
+            if ($category) {
+                if ($category != 'all') {
+                    $collectible = $collectible->where('category_id', intval($category));
+                }
+            }
+            $collectible = $collectible->first();
+
+            if (!empty($collectible)) {
+                $ext = pathinfo($collectible->nft, PATHINFO_EXTENSION);
+                $type = $this->checkFileType($ext);
+                $price = $collectible->price != null ? $collectible->price : 'Not for sale';
+                $currency = $price == 'Not for sale' ? '' : $collectible->currency;
+                $new_price = $price .' '. $currency;
+                $copies = $record->copies_left. ' of '.$record->copies;
+
+                $legend = Legend::find($collectible->legend_id);
+
+                $user = User::find($record->owner_id);
+
+                $data[] = [
+                    'id' => $collectible->id,
+                    'record_id' => $record->id,
+                    'user_slug' => $user->short_url != null ? $user->short_url : $user->wallet,
+                    'owner_id' => $record->owner_id,
+                    'legend' => $legend->legend,
+                    'icon' => $legend->icon,
+                    'nft' => $collectible->nft,
+                    'price' => $new_price,
+                    'name' => $collectible->name,
+                    'slug' => $collectible->slug,
+                    'type' => $type,
+                    'copies' => $copies,
+                    'isp' => $collectible->isp,
+                    'is_selling' => $record->selling,
+                ];
+            }
+        }
+        return $data;
     }
 
     public function getCollectibles($items, $isp = 0){
@@ -55,6 +134,7 @@ class Collectible extends Model
                 $legend = Legend::find($collectible->legend_id);
 
                 $data[] = [
+                    'id' => $collectible->id,
                     'legend' => $legend->legend,
                     'icon' => $legend->icon,
                     'nft' => $collectible->nft,
@@ -92,6 +172,7 @@ class Collectible extends Model
             $legend = Legend::find($collectible->legend_id);
 
             $data[] = [
+                'id' => $collectible->id,
                 'legend' => $legend->legend,
                 'icon' => $legend->icon,
                 'nft' => $collectible->nft,
@@ -200,6 +281,88 @@ class Collectible extends Model
             'owners' => $owners,
 
         ];
+        return $data;
+    }
+
+    public function fetchThisCollectible($user_slug, $slug, $collectible){
+
+        $user = User::where('short_url', $user_slug)->orWhere('wallet', $user_slug)->first();
+        $record = Record::where('nft_id', $collectible->id)->where('owner_id', $user->id)->first();
+
+        $legend = Legend::find($collectible->legend_id);
+        $category = Category::find($collectible->category_id);
+        $ext = pathinfo($collectible->nft, PATHINFO_EXTENSION);
+        $type = $this->checkFileType($ext);
+
+
+        $transaction = Transaction::where('type', 'sell')->where('nft_id', $collectible->id)->first();
+        $creator = User::find($transaction->user_id);
+        $creator = $this->getUserInfoShowPage($creator);
+
+        $currentOwner = $this->getUserInfoShowPage($user);
+
+        $allOwners = Record::where('nft_id', $collectible->id)->get();
+        $owners = [];
+        foreach ($allOwners as $owner) {
+            $user = User::find($owner->owner_id);
+            $owners[] = $this->getUserInfoShowPage($user);
+        }
+
+        $collection = $this->getCollection($collectible->collection_id);
+
+
+        $data = [
+            'id' => $collectible->id,
+            'link_user_slug' => $user_slug,
+            'link_nft_slug' => $slug,
+            'record_id' => $record->id,
+            'nft_slug' => $collectible->slug,
+            'nft' => $collectible->nft,
+            'type' => $type,
+            'legend' => $legend->legend,
+            'icon' => $legend->icon,
+            'name' => $collectible->name,
+            'price' => $this->getProductPrice($collectible->isp, $collectible->price, $collectible->currency),
+            'raw_price' => $collectible->price,
+            'description' => $collectible->description,
+            'creator' => $creator,
+            'current_owner' => $currentOwner,
+            'collection' => $collection['collection_name'],
+            'collection_image' => $collection['collection_image'],
+            'available' => $this->getAvailable($record->copies, $record->copies_left),
+            'quantity' => $record->copies_left,
+            'isp' => $collectible->isp,
+            'owners' => $owners,
+
+        ];
+
+        return $data;
+
+
+    }
+
+    public function getAvailable($copies, $copies_left){
+        $available = $copies_left.' of '.$copies;
+        return $available;
+    }
+
+
+    public function getUserInfoShowPage($user){
+
+        $asset_url = 'storage/user/photo/'.$user->display_photo;
+        if ($user->display_photo == 'default.png') {
+            $asset_url = 'user/photo/'.$user->display_photo;
+        }
+
+        $user_name = $user->name != null ? $user->name : $user->wallet;
+
+        $data = [
+            'user_id' => $user->id,
+            'asset_url' => $asset_url,
+            'user_name' => $user_name,
+            'user_profile' => $user->short_url != null ? $user->short_url : $user->wallet,
+        ];
+
         return $data;
     }
 

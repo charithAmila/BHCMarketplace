@@ -11,7 +11,7 @@ class Transaction extends Model
 
     public function getPastTransactions($nft_id){
     	$userModel = new User;
-    	$transactions = Transaction::where('nft_id', $nft_id)->get();
+    	$transactions = Transaction::where('nft_id', $nft_id)->latest()->get();
     	$data = [];
     	foreach ($transactions as $item) {
     		$user = User::find($item->user_id);
