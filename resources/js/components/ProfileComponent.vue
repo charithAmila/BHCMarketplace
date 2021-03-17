@@ -48,6 +48,7 @@
 					:base_url="base_url"
 					:collectibles="collectibles"
 					:page="'profile'"
+					:filter="filter"
 				></collectible-component>
 
 				<following-modal-component
@@ -107,7 +108,6 @@ export default {
 	methods: {
 		getCollectible(){
             axios.get('/profile/nft/fetch/'+this.user_slug+'/'+this.filter).then((res) =>{
-            	console.log(res.data.collectibles)
                 this.collectibles = res.data.collectibles
             }).catch((error) =>{
                 console.log(error)

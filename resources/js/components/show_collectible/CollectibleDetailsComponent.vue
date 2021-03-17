@@ -46,13 +46,15 @@
 					<div class="row dtab">
 						<div class="col-3 col-md-2">
 							<div class="inlineDiv">
-								<img class="br-50" :src="asset_url+collection_image" width="50">
+								<a :href="asset_url+'collection/'+collection_url">
+									<img class="br-50" :src="asset_url+collection_image" width="50">
+								</a>
 								<i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
 							</div>
 						</div>
 						<div class="col-9 col-md-10">
 							<label class="position">Collection</label>
-							<label class="positionHolder">{{ collection }}</label>
+							<label class="positionHolder"><a :href="asset_url+'collection/'+collection_url">{{ collection }}</a></label>
 						</div>
 					</div>
 
@@ -89,7 +91,14 @@
 							</div>
 						</div>
 						<div class="col-9 col-md-10">
-							<label class="position">{{ transac.action }} <span class="positionHolder">{{ transac.price }}</span> {{ transac.sub_context }}{{ transac.time_ago}} by <a :href="user_profile+'/'+transac.user_profile"><span class="positionHolder">{{ transac.user_name }}</span></a></label>
+							<label v-if="transac.action == 'Bought'" class="position">{{ transac.action }} {{ transac.quantity }} edition for <span class="positionHolder">{{ transac.price }}</span> {{ transac.sub_context }}{{ transac.time_ago}} by <a :href="user_profile+'/'+transac.user_profile"><span class="positionHolder">{{ transac.user_name }}</span></a>
+							</label>
+
+							<label v-if="transac.action == 'Offered'" class="position">{{ transac.action }} <span class="positionHolder">{{ transac.price }}</span> for {{ transac.quantity }} edition {{ transac.sub_context }}{{ transac.time_ago}} by <a :href="user_profile+'/'+transac.user_profile"><span class="positionHolder">{{ transac.user_name }}</span></a>
+							</label>
+
+							<label v-if="transac.action == 'Put on sale for'" class="position">{{ transac.action }} <span class="positionHolder">{{ transac.price }}</span> {{ transac.time_ago}} by <a :href="user_profile+'/'+transac.user_profile"><span class="positionHolder">{{ transac.user_name }}</span></a>
+							</label>
 						</div>
 					</div>
 				</div>
@@ -102,7 +111,7 @@
 <script>
 	
 export default {
-	props: ['creator','current_owner','owners','transactions','user_profile','asset_url','collection', 'collection_image'],
+	props: ['creator','current_owner','owners','transactions','user_profile','asset_url','collection', 'collection_image', 'collection_url'],
 	data () {
 		return {
 

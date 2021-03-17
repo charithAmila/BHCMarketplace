@@ -199,8 +199,3 @@
   <div id="desc" class="toast-message">A notification message..</div>
 </div>
 
-
-
-
-
-

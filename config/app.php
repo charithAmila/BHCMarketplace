@@ -172,7 +172,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
@@ -230,5 +230,11 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
 
     ],
+
+
+    //Custom env Variables
+    'pinata_key'=>env('PINATA_KEY'),
+    'pinata_secret'=>env('PINATA_SECRET'),
+    'pinata_jwt'=>env('PINATA_JWT'),
 
 ];

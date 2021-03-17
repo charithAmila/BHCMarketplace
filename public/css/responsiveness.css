@@ -99,6 +99,9 @@
 
   .filterListMobile .filterItemMobile {
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
   }
 
   .filterListMobile .filterItemMobile img {
@@ -362,8 +365,10 @@
   .show-collectible .first-mobile .mobile-imgHead {
     display: block;
     position: absolute;
-    top: 10%;
-    right: 10%;
+    top: 15%;
+    z-index: 1;
+    width: 100%;
+    left: 0;
   }
 
   .show-collectible .first-mobile .mobile-imgHead .mobile-show-link {
@@ -445,7 +450,7 @@
   }
 
   .show-collectible .second-mobile .show-footer-btn {
-    padding: 20px 0;
+    padding: 20px 0 0 0;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -472,14 +477,16 @@
 
   .create-tab .create-content .main-create .col-md-6 {
     padding-top: 15px;
+    margin: -3px 60px;
   }
 
   .create-tab .create-content .main-create .col-md-6 .col-content {
     padding: 40px 25px 10px 25px;
+    padding: 20px 0;
   }
 
   .create-tab .create-content .main-create .col-md-6 #box img {
-    width: 60%;
+    width: 80%;
   }
 
   .create-tab .create-content .desc {
@@ -566,6 +573,10 @@
     border: 1px solid #888;
     width: 100%;
     border-radius: 15px 15px 0 0;
+  }
+
+  .custom-modal .modal-content.login-content {
+    left: 0 !important;
   }
 
   .custom-modal .modal-body {
@@ -731,6 +742,55 @@
     height: 100px;
     padding-bottom: 10px;
   }
+
+  .show-collectible .custom-lg-4 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    max-height: 60%;
+  }
+
+  .show-collectible .custom-lg-8 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .showContent .inner-img .collectible-container .showImg {
+    min-height: 10vh;
+  }
+
+  .nft-fullscreen .nft-item {
+    height: 40vh;
+  }
+
+  .row-0 .nav-tabs {
+    border: none;
+    padding-left: 0 !important;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background: #ECECEC;
+    z-index: 99999;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: auto;
+  }
+
+  .title-container .margin-0 {
+    background: #ECECEC;
+  }
+
+  .search-page {
+    padding: 0 !important;
+  }
+
+  .search-page .col-md-3 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .search-page .main-dashboard .outside-nft {
+    height: 400px;
+  }
 }
 
 @media only screen and (min-width: 900px) and (max-width: 1400px) {
@@ -792,15 +852,6 @@
   .row-0 .withBgGray .title-container .margin-0 {
     padding-left: 30px;
     margin: 0 !important;
-  }
-
-  .row-0 .withBgGray .title-container .col-title {
-    flex: 0 0 75% !important;
-    max-width: 75% !important;
-  }
-
-  .row-0 .withBgGray .title-container .col-option {
-    flex: 0 0 25% !important;
-    max-width: 25% !important;
+    background: #ECECEC;
   }
 }

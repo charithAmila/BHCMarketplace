@@ -18,6 +18,61 @@
   animation: fade-out-bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
+.notif-fade {
+  -webkit-animation: notif-in-top 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation: notif-in-top 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  -webkit-animation: notif-out-top 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: notif-out-top 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@-webkit-keyframes notif-in-top {
+  0% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes notif-in-top {
+  0% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes notif-out-top {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out-top {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+}
+
 .scale-in {
   -webkit-animation: custom-scale-in 0.2s;
           animation: custom-scale-in 0.2s;
@@ -315,6 +370,30 @@
 
 .main-content .main-row .top-sellers .seller-content {
   padding-top: 10px;
+  display: flex;
+}
+
+.main-content .main-row .top-sellers .seller-content select {
+  margin-top: -10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: none;
+  background: none;
+  font-weight: 600;
+  color: #F88130;
+}
+
+.main-content .main-row .top-sellers .seller-content select:focus {
+  outline: none;
+}
+
+.main-content .main-row .top-sellers .seller-content select option {
+  color: black;
+  font-size: 20px;
+}
+
+.main-content .main-row .top-sellers .seller-content select option:checked {
+  color: #F88130;
 }
 
 .main-content .main-row .top-sellers .dd {
@@ -388,28 +467,36 @@
 
 .filterList .topUserList {
   padding-top: 10px;
-  border-bottom: 1px solid #b1b1b1;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
-.filterList .topUserList .col-3 .filterImg {
+.filterList .topUserList .numbering {
+  font-size: 13px;
+  color: #545454;
+  margin-right: 15px;
+}
+
+.filterList .topUserList .filterImg {
   width: 50px;
   height: 50px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 50%;
+  margin-right: 30px;
 }
 
-.filterList .topUserList .col-9 {
+.filterList .topUserList .user-info {
   margin-left: 0 !important;
 }
 
-.filterList .topUserList .col-9 h6 {
+.filterList .topUserList .user-info h6 {
   font-size: 18px;
   font-weight: 600;
 }
 
-.filterList .topUserList .col-9 label {
+.filterList .topUserList .user-info label {
   font-weight: 600;
   font-color: #ececec;
   font-size: 15px;

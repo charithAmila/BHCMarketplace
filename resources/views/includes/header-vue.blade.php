@@ -1,0 +1,18 @@
+<header-component
+    :marketplace_route="{{ json_encode(route('marketplace')) }}"
+    :asset_url="{{ json_encode(asset('/')) }}"
+    :request_segment="{{ json_encode(Request::segment(1)) }}"
+    :auth_check="{{ json_encode(Auth::check()) }}"
+    :profile_route="{{ json_encode(URL::to('/profile/')) }}"
+    :current_user="{{ json_encode(Auth::user()) }}"
+    :user_link="{{ json_encode(Auth::check() ? Auth::user()->short_url != null ? Auth::user()->short_url : Auth::user()->wallet : 'null') }}"
+    :faq_route="{{ json_encode(route('faq')) }}"
+    :about_route="{{ json_encode(route('about')) }}"
+    :create_collectible_route="{{ json_encode(route('create.collectible.choices')) }}"
+    :connect_route="{{ json_encode(route('connect.wallet')) }}"
+    :disconnect_route="{{ json_encode(route('disconnect')) }}"
+    :str_random="{{ json_encode(\Str::random(40)) }}"
+    :csrf_token="{{ json_encode(csrf_token()) }}"
+    :base_url="{{ json_encode(URL::to('/')) }}"
+    :search_url="{{ json_encode(route('search')) }}"
+></header-component>

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Auth;
+
+use App\Models\Collection;
+use App\Models\Collectible;
 
 class CollectionController extends Controller
 {
@@ -58,13 +61,22 @@ class CollectionController extends Controller
         $collection->display_name = $request->input('display_name');
         $collection->symbol = $request->input('symbol');
         $collection->description = $request->input('description');
-        $collection->short_url = $request->input('short_url');
+        if ($request->filled('short_url')) {
+            $collection->short_url = $request->input('short_url');
+        }else{
+            $slug = Str::of($request->input('display_name'))->slug('-');
+            $collection->short_url = $slug;
+        }
 
         $collection->save();
 
+        $collect = new Collection;
+        $userCollections = $collect->getCollections();
+        $userCollections = json_decode(json_encode($userCollections));
+
         return response()->json([
             'message'   => 'Collection created successfully!',
-            'collection' => $collection,
+            'collections' => $userCollections,
         ]);
     }
 
@@ -74,9 +86,32 @@ class CollectionController extends Controller
      * @param  \App\Models\Collection  $collection
      * @return \Illuminate\Http\Response
      */
-    public function show(Collection $collection)
+    public function show($slug)
     {
-        //
+        $nft = new Collectible;
+        $collection = Collection::where('short_url', $slug)->first();
+        $data = $nft->getCollectionNft($collection->id, 1);
+        $collectibles = json_decode(json_encode($data));
+
+        return view('collection.index', [
+            'collection' => $collection,
+            'collectibles' => $collectibles,
+        ]);
+    }
+
+    public function filterCollection($slug, $filter){
+        $nft = new Collectible;
+        $collection = Collection::where('short_url', $slug)->first();
+        $isp = 0;
+        if ($filter == 'on-sale') {
+            $isp = 1;
+        }
+        $data = $nft->getCollectionNft($collection->id, $isp);
+        $collectibles = json_decode(json_encode($data));
+
+        return response()->json([
+            'collectibles' => $collectibles
+        ]);
     }
 
     /**

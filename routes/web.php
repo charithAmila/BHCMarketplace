@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\PlaceBid;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\CollectibleController;
@@ -8,6 +9,9 @@ use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,16 +27,18 @@ use App\Http\Controllers\TransactionController;
 Route::get('/', [IndexController::class, 'home'])->name('homepage');
 Route::get('/nft', [IndexController::class, 'index'])->name('marketplace');
 Route::get('/nft/fetchCollectibles', [IndexController::class, 'fetchCollectibles']);
+Route::get('/nft/filter/{category}/{sortBy}/{order}', [IndexController::class, 'filterCategory']);
+Route::get('/nft/user/filter/{type}/{day}', [IndexController::class, 'filterUser']);
 Route::get('/nft/{user_slug}/{slug}', [IndexController::class, 'show'])->name('show.collectible');
 Route::get('/update/show-page/{user_slug}/{slug}', [IndexController::class, 'fetchShowNft']);
 
 
 
 Route::get('/nft/fetch/{slug}', [IndexController::class, 'fetch']);
-Route::get('/nft/filter/{category}', [IndexController::class, 'filterCategory']);
-Route::get('/nft/user/filter', [IndexController::class, 'filterUser']);
 Route::get('/bhc', [IndexController::class, 'about'])->name('about');
 Route::get('/faq', [IndexController::class, 'faq'])->name('faq');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/create', [CollectibleController::class, 'index'])->name('create.collectible.choices');
 Route::get('/create/{type}', [CollectibleController::class, 'create']);
@@ -47,7 +53,8 @@ Route::middleware('signed')->prefix('/connect/{user_id}')->group(function () {
     Route::get('/', [WalletController::class, 'customLogin'])->name('custom.login');
 });
 Route::get('/profile/{slug}', [UserController::class, 'index'])->name('user.profile');
-Route::get('/profile/nft/fetch/{user_slug}/{filter?}', [UserController::class, 'getUserNft']);
+Route::get('/user/data', [UserController::class, 'getAuthenticated']);
+Route::get('/profile/nft/fetch/{user_slug}/{filter}', [UserController::class, 'getUserNft']);
 Route::get('users/create', [UserController::class, 'create'])->name('create.user');
 Route::get('/user/fetch', [UserController::class, 'fetch']);
 Route::get('/users/{filter}/{slug}', [UserController::class, 'filter']);
@@ -57,9 +64,11 @@ Route::get('/user-follow/{short_url}/{filter}', [UserController::class, 'getFoll
 
 
 
+Route::get('/collection/{collection_slug}', [CollectionController::class, 'show']);
+Route::get('/collection/{collection_slug}/{filter}', [CollectionController::class, 'filterCollection']);
 Route::post('/collection', [CollectionController::class, 'store'])->name('create.collection');
 
-Route::post('/wishlist/{slug}', [LikeController::class, 'wishlist']);
+Route::post('/wishlist', [LikeController::class, 'wishlist']);
 
 
 
@@ -72,5 +81,11 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::post('/create/transaction', [App\Http\Controllers\TransactionController::class, 'store']);
-Route::get('/update/nft/status/{slug}/{user_id}', [App\Http\Controllers\TransactionController::class, 'updateRecord']);
+Route::post('/create/transaction', [TransactionController::class, 'store']);
+Route::get('/update/nft/status/{slug}/{user_id}', [TransactionController::class, 'updateRecord']);
+Route::get('/bid-list/{record_id}', [TransactionController::class, 'bidList']);
+Route::post('/accept/bid', [TransactionController::class, 'acceptBid']);
+
+Route::post('/report', [ReportController::class, 'report']);
+
+Route::get('/notifications', [NotificationController::class, 'userNotifications']);

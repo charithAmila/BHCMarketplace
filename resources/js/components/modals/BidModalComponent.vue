@@ -59,7 +59,7 @@ import $ from 'jquery'
 
 export default {
 
-	props: [ 'singleNft'],
+	props: [ 'singleNft', 'page'],
 	data () {
 		return{
 			bid_input: 0,
@@ -103,7 +103,11 @@ export default {
 				this.service_fee = 0
 				this.total_payment = 0
 				this.payment = 0
-				this.bid_input = ''
+				this.bid_input = 0
+
+				if (this.page == 'showcollectible') {
+					this.$parent.updateData()
+				}
 			})
 			.catch((error) => {
                 alert("error")

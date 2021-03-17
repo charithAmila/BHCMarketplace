@@ -105,8 +105,11 @@ export default {
 				this.bid_input = ''
 				this.quantity = 1
 
-				if (this.page == 'marketplace') {
+				if (this.page == 'marketplace' || this.page == 'profile') {
 					this.$parent.$parent.getCollectible()
+				}
+				if (this.page == 'marketplace') {
+					this.$parent.$parent.$parent.updateTopUser()
 				}
 				if (this.page == 'showcollectible') {
 					this.$parent.updateData()

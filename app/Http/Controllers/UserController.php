@@ -17,38 +17,41 @@ use App\Models\Record;
 class UserController extends Controller
 {
     public function index($slug){
-    	$user = User::where('short_url', $slug)->orWhere('wallet', $slug)->first();
+    	//$user = User::where('short_url', $slug)->orWhere('wallet', $slug)->first();
+        // dd($user);
 
-        $thisUser = new User;
+        /*$thisUser = new User;
         $this->data['user'] = json_decode(json_encode($thisUser->getUserInfo($user)));
+
         $this->data['following'] = $thisUser->followingUser($user->id);
-    	$this->data['length'] = strlen($this->data['user']->name);
-
-        $items = Ownership::where('creator_id', $user->id)->orWhere('owner_id', $user->id)->get();
-        $isp = 1;
-
-        $nft = new Collectible;
-        $data = $nft->profileNft($user->id, $isp);
-        $this->data['collectibles'] = json_decode(json_encode($data));
-
-
-        // $this->data['collectibles'] = $nft->getCollectibles($items, $isp);
-        // $this->data['collectibles'] = json_decode(json_encode($this->data['collectibles']));
+    	$this->data['length'] = strlen($this->data['user']->name);*/
+        $this->data['address']=$slug;
     	return view('user.index', $this->data);
+    }
+
+    public function getAuthenticated(){
+        $user = User::find(Auth::user()->id);
+        return response()->json([
+            'user' => $user
+        ]);
     }
 
     public function getUserNft($user_slug, $filter){
         $user = User::where('short_url', $user_slug)->orWhere('wallet', $user_slug)->first();
         $isp = 0;
         $created = 0;
+        $liked = 0;
         if ($filter == 'on-sale') {
             $isp = 1;
         }
         if ($filter == 'created') {
             $created = 1;
         }
+        if ($filter == 'liked'){
+            $liked = 1;
+        }
         $nft = new Collectible;
-        $data = $nft->profileNft($user->id, $isp, $created);
+        $data = $nft->filterQuery($user->id, $isp, $created, $liked);
         $collectibles = json_decode(json_encode($data));
         return response()->json([
             'collectibles' => $collectibles,
@@ -228,6 +231,5 @@ class UserController extends Controller
             'user_follow' => $data,
         ]);
     }
-
 
 }

@@ -1,5 +1,6 @@
 <template>
 	<div>
+		
 		<div class="item-filter">
 			<div>
 				<button data-filter-id="all" class="filter-btn active" @click="filterNft('all')">All</button>
@@ -72,7 +73,6 @@
 			</div>
 		</div>
 
-
 		<div class="items">
 			<div id="preloader" class="row d-none">
 				<div v-for="index in 24" :key="index" class="col-md-3 col-lg-3 custom-column-xl main-dashboard">
@@ -110,6 +110,7 @@
 				:current_user="current_user"
 				:base_url="base_url"
 				:collectibles="collectibles"
+				:page="'marketplace'"
 			></collectible-component>
 				
 		</div>
@@ -138,8 +139,9 @@ export default{
 			collectibles: [],
 			category: 'all',
 			sortBy: 'updated_at',
-			order: 'asc',
-			div_id: 'nft-container'
+			order: 'desc',
+			div_id: 'nft-container',
+			notifications: [],
 		}
 	},
 	methods: {
@@ -150,8 +152,8 @@ export default{
                 console.log(error)
             })
 	    },
-	    filterNft(category){
-	    	this.category = category
+	    filterNft(clickedCategory){
+	    	this.category = clickedCategory
 	    	this.fetchFilterNft()
 	    },
 	    sortNft(column, columnOrder){
@@ -160,17 +162,14 @@ export default{
 	    	this.fetchFilterNft()
 	    },
 	    fetchFilterNft(){
-	    	axios.get("/nft/filter/"+this.category, {
-	    		sortBy : this.sortBy,
-          		order : this.order,
-			}).then((res) => {
+	    	axios.get("/nft/filter/"+this.category+'/'+this.sortBy+'/'+this.order)
+	    	.then((res) => {
 				this.collectibles = res.data.collectibles
-				
 			})
 			.catch((error) => {
                 console.log(error)
             })
-	    }
+	    },
 	},
 	mounted() {
 		this.getCollectible()

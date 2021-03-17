@@ -1,20 +1,24 @@
 <template>
 	<div>
 		<div class="row row-0 show-collectible">
-			<div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 custom-lg-4 withBgGray second-mobile">
+			<div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 custom-lg-4 withBgGray second-mobile">
 				<div class="title-container">
-					<div class="row margin-0">
-						<div class="col-8 col-md-8 col-lg-8 col-xl-8 collectibleTitle col-title">
-							<h3 class="inlineDiv inline-title">{{ collectible.name }}</h3>
+					<div class="d-flex margin-0 space-between">
+						<div class="collectibleTitle col-title">
+							<h3 class="inlineDiv inline-title">{{ set_collectible.name }}</h3>
 						</div>
-						<div class="col-4 col-md-4 col-lg-4 col-xl-4 collectibleTitle col-option">
+						<div class="collectibleTitle col-option">
 							<h3 class="inlineDiv inline-btn">
 								<a v-if="current_user != current_owner.user_id" id="options-btn" class="show-drop" href="javascript:void(0)"> <i class="fas fa-ellipsis-h titleIcon"></i></a>
 								<a id="share-btn" class="show-drop" href="javascript:void(0)"> <i class="fa fa-share-square-o titleIcon"></i></a>
 							</h3>
 
 							<div class="show-opt-menu d-none">
-								<a :v-if="collectible.isp == 1" class="buy-now" href="javascript:void(0)" @click="fetchSingleNft('checkout')">Buy now</a>
+								<a :class="set_collectible.is_selling == 1 ? '' : 'd-none'"
+									class="buy-now"
+									href="javascript:void(0)"
+									@click="fetchSingleNft('checkout')"
+								>Buy now</a>
 								<a class="place-bid" href="javascript:void(0)"@click="fetchSingleNft('bid')">Place a bid</a>
 								<a class="report" href="javascript:void(0)"@click="fetchSingleNft('report')">Report</a>
 							</div>
@@ -23,31 +27,32 @@
 								<label class="share-title">Share link to this page</label>
 								<div class="row">
 									<div class="col-4 col-md-4">
-										<a href="javascript:void(0)">
+										<a href="javascript:void(0)" data-sharer="twitter" :data-title="'Look what I found! '+collectible.name+' collectible'" :data-url="asset_url+'nft/'+current_owner.user_profile+'/'+collectible.nft_slug">
 											<i class="fa fa-twitter s-btn"></i>
 											<label>Twitter</label>
 										</a>
 									</div>
 									<div class="col-4 col-md-4">
-										<a href="javascript:void(0)">
+										<a href="javascript:void(0)" data-sharer="facebook" :data-title="'Look what I found! '+collectible.name+' collectible'" :data-url="asset_url+'nft/'+current_owner.user_profile+'/'+collectible.nft_slug">
 											<i class="fa fa-facebook s-btn"></i>
 											<label class="fb-label">Facebook</label>
 										</a>
 									</div>
 									<div class="col-4 col-md-4">
-										<a href="javascript:void(0)">
+										<a href="javascript:void(0)" data-sharer="telegram" :data-title="'Look what I found! '+collectible.name+' collectible'" :data-url="asset_url+'nft/'+current_owner.user_profile+'/'+collectible.nft_slug">
 											<i class="fab fa-telegram-plane s-btn"></i>
 											<label>Telegram</label>
 										</a>
 									</div>
 									<div class="col-4 col-md-4">
-										<a href="javascript:void(0)">
+										<a href="javascript:void(0)" data-sharer="email" :data-title="'Look what I found! '+collectible.name+' collectible'" :data-url="asset_url+'nft/'+current_owner.user_profile+'/'+collectible.nft_slug" data-subject="Hey! Check out that URL">
 											<i class="fa fa-envelope s-btn"></i>
 											<label>Email</label>
 										</a>
 									</div>
 									<div class="col-4 col-md-4">
-										<a href="javascript:void(0)">
+										<input class="linkToCopy" :value="asset_url+'nft/'+current_owner.user_profile+'/'+collectible.nft_slug" />
+										<a href="javascript:void(0)" @click="copyUrl">
 											<i class="fa fa-copy s-btn"></i>
 											<label class="c-link">Copy link</label>
 										</a>
@@ -60,46 +65,47 @@
 					</div>
 				</div>
 				<div class="priceTag">
-					<label class="showCurrency">{{ collectible.price }}</label>
+					<label class="showCurrency">{{ set_collectible.price }}</label>
 					<!-- <label class="showCurrencyPlain">$135.20</label> -->
 				</div>
 				<h5 class="itemType">
 					<div class="legend">
-						<div :class="collectible.legend">
-							<i :class="collectible.icon"></i> {{ capitalizeFirstLetter(collectible.legend) }}
+						<div :class="set_collectible.legend">
+							<i :class="set_collectible.icon"></i> {{ capitalizeFirstLetter(set_collectible.legend) }}
 						</div>
 					</div>
 				</h5>
-				<p class="itemDesc">{{ collectible.description }}</p>
+				<p class="itemDesc">{{ set_collectible.description }}</p>
 
 				<collectible-details-component
 					:creator="creator"
 					:current_owner="current_owner"
 					:owners="owners"
-					:transactions="transactions"
+					:transactions="set_transactions"
 					:user_profile="user_profile"
 					:asset_url="asset_url"
-					:collection="collectible.collection"
-					:collection_image="collectible.collection_image"
+					:collection="set_collectible.collection"
+					:collection_image="set_collectible.collection_image"
+					:collection_url="set_collectible.collection_url"
 				></collectible-details-component>
 
 
 				<div class="row m-20 text-center end-content">
 					<div class="col-4 col-md-4">
 						<label class="position">Available</label>
-						<label class="positionHolder">{{ collectible.available }}</label>
+						<label class="positionHolder">{{ set_collectible.available }}</label>
 					</div>
-					<div v-if="current_user != current_owner.user_id" class="col-4 col-md-4">
+					<div v-if="current_user != current_owner.user_id && collectible.is_selling" class="col-4 col-md-4">
 						<label class="position">Quantity</label>
 						<span class="quantity-btn positionHolder">1 <i class="fa fa-angle-down"></i></span>
 
 						<div class="quantity-drop d-none">
-							<div v-for="index in collectible.quantity" :key="index" class="drop-group">
+							<div v-for="index in set_collectible.copies_left" :key="index" class="drop-group">
 								<a href="javascript:void(0)" :id="index" class="quantity-item">{{ index }}</a>
 							</div>
 						</div>
 					</div>
-					<div v-if="current_user != current_owner.user_id" class="col-4 col-md-4">
+					<div v-if="current_user != current_owner.user_id && collectible.is_selling" class="col-4 col-md-4">
 						<label class="position">Pay with</label>
 						<span class="checkout-currency positionHolder">BHC <i class="fa fa-angle-down"></i></span>
 
@@ -116,20 +122,22 @@
 					</div>
 				</div>
 
-				<div v-if="collectible.isp == 1 && current_user != current_owner.user_id" class="buy-container">
-					<button id="buyBtn" class="buyBtn d-none d-md-block" @click="fetchSingleNft('checkout')" >Buy 1 for {{ collectible.price }}</button>
+				<div v-if="collectible.is_selling == 1 && current_user != current_owner.user_id" class="buy-container">
+					<button id="buyBtn" class="buyBtn d-none d-md-block" @click="fetchSingleNft('checkout')" >Buy 1 for {{ set_collectible.price }}</button>
 
-					<p class="text-gray text-center d-none d-md-block">Service fee 1.5% {{ collectible.price }} = <span class="text-dark-gray">$137.228</span></p>
+					<p class="text-gray text-center d-none d-md-block">Service fee 1.5% {{ set_collectible.price }} = <span class="text-dark-gray">$137.228</span></p>
 
 					<div class="show-footer-btn d-block d-md-none">
-						<button class="buyBtn">Buy 1 for 110.15 BHC</button>
+						<button class="buyBtn" @click="fetchSingleNft('checkout')" >Buy 1 for {{ set_collectible.price }}</button>
 
-						<p class="text-gray text-center">Service fee 1.5% 110.15 BHC = <span class="text-dark-gray">$137.228</span></p>
+						<p class="text-gray text-center">Service fee 1.5% {{ set_collectible.price }} = <span class="text-dark-gray">$137.228</span></p>
 					</div>
 				</div>
 
-				<div v-if="collectible.isp == 0 && current_user != current_owner.user_id" class="bid-container">
+				<div v-if="collectible.is_selling == 0 && current_user != current_owner.user_id" class="bid-container">
 					<button id="bidBtn" class="buyBtn d-none d-md-block">Place a bid</button>
+
+
 				</div>
 
 
@@ -138,28 +146,38 @@
 			<div class="col-sm-12 col-md-8 col-lg-8 col-xl-8 custom-lg-8 showContent my-auto first-mobile">
 				<div class="inner-img">
 
-					<div class="mobile-imgHead">
-						<a  class="mobile-show-link" href="javascript:void(0)">
-							<i class="fa fa-heart"></i>
+					<div class="mobile-imgHead d-block d-md-none">
+
+						<a v-if="auth_check && current_user != current_owner.user_id" 
+							:data-nft-slug="set_collectible.nft_slug" 
+							:data-record-id="set_collectible.record_id" 
+							:class="is_liked==true ? 'nft-liked' : ''" 
+							class="like-btn m-imgHead-link" href="javascript:void(0)">
+								<i class="fa fa-heart nft-option"></i>
 						</a>
 
-						<a class="mobile-show-link" href="javascript:void(0)">
-							<i class="fa fa-arrows-alt"></i>
+						<a class="nft-expand m-imgHead-link" href="javascript:void(0)">
+							<i class="fa fa-arrows-alt expand nft-option"></i>
 						</a>
+
 					</div>
 					<div class="collectible-container">
 
-						<img v-if="collectible.type == 'image'" class="showImg" :src="asset_url+'storage/collectibles/'+collectible.nft">
-						<video v-if="collectible.type == 'video'" class="showImg" autoplay loop controls muted>
-						      <source :src="asset_url+'storage/collectibles/'+collectible.nft" type="video/mp4">
+						<img v-if="set_collectible.type == 'image'" class="showImg" :src="asset_url+'storage/collectibles/'+set_collectible.nft">
+						<video v-if="set_collectible.type == 'video'" class="showImg" autoplay loop controls muted>
+						      <source :src="asset_url+'storage/collectibles/'+set_collectible.nft" type="video/mp4">
 						</video>
 
 						<div class="show-nft-option imgHead d-none d-md-block">
-							<a v-if="auth_check && current_user != current_owner.user_id" id="like-btn" :data-nft-slug="collectible.nft_slug" :class="onWishList==true ? 'nft-liked' : ''" class="imgHead-link" href="javascript:void(0)">
-								<i class="fa fa-heart nft-option"></i>
+							<a v-if="auth_check && current_user != current_owner.user_id" 
+								:data-nft-slug="set_collectible.nft_slug" 
+								:data-record-id="set_collectible.record_id" 
+								:class="is_liked==true ? 'nft-liked' : ''" 
+								class="like-btn imgHead-link" href="javascript:void(0)">
+									<i class="fa fa-heart nft-option"></i>
 							</a>
 
-							<a id="nft-expand" class="imgHead-link" href="javascript:void(0)">
+							<a class="nft-expand imgHead-link" href="javascript:void(0)">
 								<i class="fa fa-arrows-alt expand nft-option"></i>
 							</a>
 						</div>
@@ -180,6 +198,8 @@
 
 <script>
 
+import $ from 'jquery'
+
 import CollectibleDetails from './show_collectible/CollectibleDetailsComponent.vue';
 import BidModal from './modals/BidModalComponent.vue';
 import CheckoutModal from './modals/CheckoutModalComponent.vue';
@@ -190,13 +210,16 @@ export default {
 		BidModal,
 		CheckoutModal,
 	},
-	props: ['collectible','transactions','onWishList','asset_url','auth_check','user_profile', 'current_user','base_url'],
+	props: ['collectible','transactions','onWishList', 'is_liked','asset_url','auth_check','user_profile', 'current_user','base_url'],
 	data () {
 		return {
 			creator: [],
 			current_owner: [],
 			owners: [],
 			singleNft: {},
+			set_collectible: [],
+			set_transactions: [],
+			current_url: "",
 		}
 	},
 	watch: {
@@ -208,7 +231,7 @@ export default {
 	},
 	methods: {
 	    capitalizeFirstLetter(string){
-	    	return string.charAt(0).toUpperCase() + string.slice(1);
+	    	return String(string).charAt(0).toUpperCase() + String(string).slice(1);
 	    },
 	    fetchSingleNft(clicked){
 	    	if (this.current_user == 0) {
@@ -232,18 +255,24 @@ export default {
 	    },
 	    updateData(){
 	    	axios.get('/update/show-page/'+this.collectible.link_user_slug+'/'+this.collectible.link_nft_slug).then((res) =>{
-	    		this.collectible = res.data.collectible
+	    		this.set_collectible = res.data.collectible
 				this.owners = res.data.collectible.owners
-				this.transactions = res.data.transactions
+				this.set_transactions = res.data.transactions
             }).catch((error) =>{
                 console.log(error)
             })
-	    }
+	    },
+		copyUrl(){
+			$('input.linkToCopy').select();      
+    		document.execCommand("copy");
+		}
 	},
 	mounted(){
 		this.creator = this.collectible.creator
 		this.current_owner = this.collectible.current_owner
 		this.owners = this.collectible.owners
+		this.set_collectible = this.collectible
+		this.set_transactions = this.transactions
 	}
 }
 

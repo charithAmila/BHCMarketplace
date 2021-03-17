@@ -16,10 +16,11 @@ class Transaction extends Model
     	foreach ($transactions as $item) {
     		$user = User::find($item->user_id);
     		$data[] = [
-    			"action" => $this->getAction($item->type),
+    			"action" => $this->getAction($item->type, $item->sold),
+                "quantity" => $item->quantity != null ? $item->quantity : 1,
     			"price" => "$item->price $item->currency",
     			"sub_context" => $this->getSubContext($item->type),
-    			"time_ago" => $this->timeAgo($item->created_at),
+    			"time_ago" => $this->timeAgo($item->updated_at),
     			"user_name" => $user->name != null ? $user->name : $user->wallet,
     			"user_image" => $userModel->getDisplayPhoto($user->display_photo),
     			"user_profile" => $user->short_url != null ? $user->short_url : $user->wallet,
@@ -29,18 +30,21 @@ class Transaction extends Model
     }
 
 
-    public function getAction($type){
+    public function getAction($type, $sold){
     	if ($type == 'sell') {
     		return "Put on sale for";
     	}
+        if ($type == 'bidding') {
+            return "Put on bidding";
+        }
     	if ($type == 'buy'){
-    		return "Bought for";
+    		return "Bought";
     	}
-    	if ($type == 'offer'){
+    	if ($type == 'bid'){
+            if ($sold == 1) {
+                return "Bought";
+            }
     		return "Offered";
-    	}
-    	if ($type == 'offer_cancel'){
-    		return "Offer cancelled";
     	}
     }
 
@@ -58,6 +62,9 @@ class Transaction extends Model
 		$seconds_diff = $date2 - $date1;
 
 		$timeDiff = $this->timeDiff($seconds_diff);
+        if (!is_array($timeDiff)) {
+            $timeDiff = ["second" => 1];
+        }
 		$key = array_key_first($timeDiff);
 		$text = ngettext($key, $key."s", $timeDiff[$key]);
 

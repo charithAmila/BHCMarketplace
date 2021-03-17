@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use\ Illuminate\ Support\ Facades\ URL;
+use Illuminate\Support\Facades\URL;
 
 use DB;
 use Auth;
@@ -93,4 +93,45 @@ class User extends Authenticatable
         
         return $following;
     }
+
+    public function setNotificationData($transactions){
+        $data = [];
+        $tModel = new Transaction;
+        foreach ($transactions as $transac) {
+            $context = '';
+            if ($transac->type == 'bid') {
+                if ($transac->sold == 0) {
+                    $context = 'offered '.$transac->price.' '.$transac->currency.' for ';
+                }else{
+                    $context = 'purchased 1 edition for '.$transac->price.' '.$transac->currency.' of ';
+                }
+            }else{
+                $context = 'purchased '.$transac->quantity.' edition of ';
+            }
+
+            $user = User::find($transac->user_id);
+            $photo_path = $user->display_photo == 'default.png' ? \URL::to('/').'/user/photo/' : \URL::to('/').'/storage/user/photo/';
+            $current_name = $user->name != null ? $user->name : $user->wallet;
+            $profile_name = substr($current_name, 0, 11);
+            $addStr = '';
+            if (strlen($current_name) > 12) {
+                $addStr = '...';
+            }
+
+            $nft = Collectible::find($transac->nft_id);
+
+            $data[] = [
+                'profile_link' => $user->short_url != null ? $user->short_url : $user->wallet,
+                'profile_name' => $profile_name.$addStr,
+                'display_photo' => $photo_path.$user->display_photo,
+                'action' => $context,
+                'nft' => $nft->name,
+                'transaction_time' => $tModel->timeAgo($transac->created_at),
+            ];
+        }
+
+        return $data;
+    }
+
+    
 }

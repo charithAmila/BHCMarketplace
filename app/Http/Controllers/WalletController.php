@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use Auth;
 
 class WalletController extends Controller
 {
     public function index(){
+        if (Gate::allows('logged-in')) {
+            return redirect(route('marketplace'));
+        }
     	return view('wallet.index');
     }
 

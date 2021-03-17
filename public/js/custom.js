@@ -11,6 +11,25 @@ $(document).on('click', '.close-checkout-modal', function(){
     modalClose($('#checkoutModal'), $(".checkout-content"));
 });
 
+$(document).on('click', '.close-bid-list-modal', function(){
+    modalClose($('#bidListModal'), $(".bidList-content"));
+});
+
+$(document).on('click', '.report-page', function(){
+    $('#reportModal').attr('data-report-type', 'user');
+    var output = getPath();
+    $('#reportModal').attr('data-report-slug', output);
+    
+});
+
+$(document).on('click', '.report', function(){
+    $('#reportModal').attr('data-report-type', 'nft');
+});
+
+
+
+
+
 
 // $(document).on('click', '.place-bid', function(){
 //     var slug = $(this).attr('id');
@@ -45,6 +64,11 @@ $(document).on('click', function(event) {
     if ($(event.target).closest('.item-menu').length === 0 && $(event.target).closest('.item-menu-drop').length === 0) {
         $(".item-menu-drop").addClass("d-none");
         $(".item-menu-drop").removeClass("fade-in-top");
+    }
+
+    if ($(event.target).closest('.action-menu').length === 0 && $(event.target).closest('.profile-action-menu-drop').length === 0) {
+        $(".profile-action-menu-drop").addClass("d-none");
+        $(".profile-action-menu-drop").removeClass("fade-in-top");
     }
     event.stopPropagation();
 });
@@ -84,6 +108,13 @@ $(document).on('click', '.action-menu', function(){
 });
 
 
+
+function getPath(){
+    var url = new URL(location.href);
+    var pathname = new URL(url).pathname;
+    var output = pathname.split('/').pop();
+    return output;
+}
 
 
 function toggleDropdown(container, stringClass){
@@ -153,7 +184,7 @@ function jsUcFirst(string){
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function showPreferencesModal(){
+/*function showPreferencesModal(){
     $('#preferencesModal').addClass('d-block');
     $(".preferences-content").removeClass("fade-out-bottom").addClass("fade-in-bottom");
 
@@ -180,4 +211,4 @@ function showPreferencesModal(){
             console.log('Something went wrong!');
         },
     });
-}
+}*/

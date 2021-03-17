@@ -24,6 +24,30 @@
 
 			.seller-content{
 				padding-top: 10px;
+				display: flex;
+
+				select{
+				    margin-top: -10px;
+				    margin-left: 10px;
+				    margin-right: 10px;
+				    border: none;
+				    background: none;
+				    font-weight: 600;
+				    color: $primaryColor;
+
+				    &:focus{
+				    	outline: none;
+				    }
+
+				    option{
+				    	color: black;
+				    	font-size: 20px;
+				    }
+
+				    option:checked{
+				    	color: $primaryColor;
+				    }
+				}
 			}
 
 			.dd{
@@ -103,18 +127,23 @@
 .filterList{
 	.topUserList{
 		padding-top: 10px;
-		border-bottom: 1px solid $darkGray;
 		margin-bottom: 10px;
-		.col-3{
-			.filterImg{
-				width: 50px;
-				height: 50px;
-				object-fit: cover;
-				border-radius: 50%;
-			}
+		display: flex;
+		align-items: center;
+		.numbering{
+			font-size: 13px;
+			color: $textGray;
+			margin-right: 15px;
+		}
+		.filterImg{
+			width: 50px;
+			height: 50px;
+			object-fit: cover;
+			border-radius: 50%;
+			margin-right: 30px;
 		}
 
-		.col-9{
+		.user-info{
 			margin-left: 0 !important;
 
 			h6{

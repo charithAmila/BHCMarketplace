@@ -18,6 +18,61 @@
   animation: fade-out-bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
+.notif-fade {
+  -webkit-animation: notif-in-top 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation: notif-in-top 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  -webkit-animation: notif-out-top 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: notif-out-top 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@-webkit-keyframes notif-in-top {
+  0% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes notif-in-top {
+  0% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes notif-out-top {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out-top {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-1px);
+    opacity: 0;
+  }
+}
+
 .scale-in {
   -webkit-animation: custom-scale-in 0.2s;
           animation: custom-scale-in 0.2s;
@@ -289,52 +344,18 @@
   }
 }
 
+#web-content {
+  margin-top: 71px;
+}
+
 .custom-navbar {
-  position: -webkit-sticky;
-  position: sticky;
+  position: fixed;
+  width: 100%;
   top: 0;
   z-index: 99999;
   background: #dedede !important;
   justify-content: space-between;
   padding: 0.5rem 1rem !important;
-}
-
-.custom-navbar .notification {
-  opacity: 0;
-  position: absolute;
-  top: 65px;
-  right: 70px;
-  background: #ececec;
-  z-index: 999999;
-  box-shadow: -1px 3px 14px 0px rgba(0, 0, 0, 0.39);
-  height: 320px;
-  width: 320px;
-  background: white;
-  border-radius: 10px;
-  padding: 25px;
-}
-
-.custom-navbar .notification .notif-title {
-  color: #afafaf;
-  font-weight: 700;
-}
-
-.custom-navbar .notification .notif {
-  padding: 25% 0;
-}
-
-.custom-navbar .notification .notif img {
-  margin: 0 auto;
-  display: block;
-  width: 40px;
-  padding-bottom: 15px;
-}
-
-.custom-navbar .notification .notif .notif-content {
-  display: block;
-  color: #afafaf;
-  font-weight: 700;
-  text-align: center;
 }
 
 .custom-navbar .display-block {

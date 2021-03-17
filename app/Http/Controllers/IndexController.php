@@ -28,10 +28,9 @@ class IndexController extends Controller
 
     public function index(){
         $collectibles = Collectible::all();
-        $nft = new Collectible;
 
-        $seller = $nft->getTopUsers('all', 'sell');
-        $this->data['seller'] = json_decode(json_encode($seller));
+        $nft = new Collectible;
+        $data = $nft->getUserList('all', 'sell');
 
     	return view('index', $this->data);
     }
@@ -104,37 +103,25 @@ class IndexController extends Controller
         ]);
     }
 
-    public function filterCategory(Request $request, $category){
-
-
-        $sortBy = $request->input('sortBy');
-        $order = $request->input('order');
+    public function filterCategory($category, $sortBy, $order){
 
         $nft = new Collectible;
 
         $data = $nft->fetchAllCollectibles($category, $sortBy, $order);
         $data = json_decode(json_encode($data));
 
-
-        
-        // if ($request->input('sortBy') != '') {
-        //     if ($request->input('order') == 'asc') {
-        //         $collectibles = $collectibles->sortBy($request->input('sortBy'));
-        //     }else{
-        //         $collectibles = $collectibles->sortByDesc($request->input('sortBy'));
-        //     }
-        // }
-
-
         return response()->json([
             'collectibles'   => $data,
         ]);
     }
 
-    public function filterUser(Request $request){
+    public function filterUser($type, $day){
         $nft = new Collectible;
-        $data = $nft->getTopUsers($request->input('day'), $request->input('type'));
-        return $data;
+        $data = $nft->getUserList($day, $type);
+
+        return response()->json([
+            'userList'   => $data,
+        ]);
     }
 
 }
