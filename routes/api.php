@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PinataController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\Api\ShortUrlController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,3 +22,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/keygen', [PinataController::class, 'generateJWT']);
 
 Route::resource('profile', ProfileController::class);
+
+Route::apiResource('shorturls',ShortUrlController::class);

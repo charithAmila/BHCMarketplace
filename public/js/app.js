@@ -25699,12 +25699,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["asset_url", "csrf_token", "user_data", "userPhoto", "page", "user_address"],
+  mounted: function mounted() {
+    var _this2 = this;
+
+    axios.get('/api/shorturls').then(function (response) {
+      _this2.shorturls = response.data;
+      _this2.url_previous = user_data.short_url;
+      console.log(_this2.shorturls);
+    });
+  },
   data: function data() {
     return {
+      fields: {},
+      shorturls: null,
+      nameerror: null,
+      url_previous: '',
       j: "",
       s: "",
       pro_pic: "",
@@ -25849,7 +25870,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return updateData;
     }(),
     aqquireKeys: function aqquireKeys() {
-      var _this2 = this;
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var _this;
@@ -25858,7 +25879,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _this = _this2;
+                _this = _this3;
                 _context2.next = 3;
                 return axios.get("/api/keygen").then(function (res) {
                   _this.j = res.data.JWT;
@@ -25873,7 +25894,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     sign: function sign() {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         var _this, sig;
@@ -25882,7 +25903,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _this = _this3;
+                _this = _this4;
                 _context3.next = 3;
                 return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.signMessage)("I agree to update my profile.");
 
@@ -25901,6 +25922,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee3);
       }))();
+    },
+    nameCheck: function nameCheck() {
+      var _this5 = this;
+
+      var shorturl = jquery__WEBPACK_IMPORTED_MODULE_1___default()("#short_url-profile").val();
+
+      if (shorturl.length == 0) {
+        this.nameerror = null;
+      }
+
+      this.nameerror = false;
+      this.shorturls.forEach(function (i) {
+        if (i == shorturl) {
+          _this5.nameerror = true;
+        }
+      });
     }
   }
 });
@@ -85378,20 +85415,43 @@ var render = function() {
                       },
                       domProps: { value: _vm.user_data.short_url },
                       on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(
-                            _vm.user_data,
-                            "short_url",
-                            $event.target.value
-                          )
-                        }
+                        input: [
+                          function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.user_data,
+                              "short_url",
+                              $event.target.value
+                            )
+                          },
+                          _vm.nameCheck
+                        ]
                       }
                     }),
                     _vm._v(" "),
+                    _c("pre", [_vm._v(_vm._s(_vm.url_previous))]),
+                    _vm._v(" "),
                     _c("p", { staticClass: "preferences-error text-danger" }),
+                    _vm._v(" "),
+                    _vm.nameerror &&
+                    _vm.nameerror != null &&
+                    _vm.fields.short_url != _vm.url_previous
+                      ? _c("div", { staticClass: "alert alert-danger" }, [
+                          _vm._v(
+                            "\n                 Already exists\n                "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    !_vm.nameerror && _vm.nameerror != null
+                      ? _c("div", { staticClass: "alert alert-success" }, [
+                          _vm._v(
+                            "\n                 Available\n                "
+                          )
+                        ])
+                      : _vm._e(),
                     _vm._v(" "),
                     _c("span", {
                       staticClass: "custom-error text-danger",
@@ -85412,7 +85472,11 @@ var render = function() {
                             }
                           }
                         },
-                        [_vm._v("\n              Sign Changes\n            ")]
+                        [
+                          _vm._v(
+                            "\n                Sign Changes\n              "
+                          )
+                        ]
                       )
                     : _c(
                         "button",
@@ -85426,9 +85490,9 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n              " +
+                            "\n                " +
                               _vm._s(_vm.process) +
-                              "\n            "
+                              "\n              "
                           )
                         ]
                       )
