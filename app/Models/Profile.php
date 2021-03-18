@@ -11,6 +11,7 @@ class Profile extends Model
     protected $table = 'profiles';
     protected $fillable=[
         'address',
-        'ipfs_hash'
+        'ipfs_hash',
+        'short_url'
     ];
 }

@@ -229,6 +229,7 @@ export default {
             address: ad,
             ipfs_hash: response.data.IpfsHash,
             sign: _this.s,
+            short_url: details.short_url,
           };
           console.log(response);
           axios

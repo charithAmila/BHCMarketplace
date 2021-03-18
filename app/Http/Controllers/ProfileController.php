@@ -41,7 +41,8 @@ class ProfileController extends Controller
         $request->validate([
             'address' => 'required',
             'sign' => 'required',
-            'ipfs_hash' => 'required'
+            'ipfs_hash' => 'required',
+            'short_url' => 'required'
         ]);
         $checker = new CheckSign;
         $message = "I agree to update my profile.";
@@ -49,6 +50,7 @@ class ProfileController extends Controller
         $profile = new Profile;
         $profile->address = $request->address;
         $profile->ipfs_hash = $request->ipfs_hash;
+        $profile->short_url = $request->short_url;
         if ($granted) {
             $profile->save();
         }
@@ -88,7 +90,8 @@ class ProfileController extends Controller
     {
         $request->validate([
             'sign' => 'required',
-            'ipfs_hash' => 'required'
+            'ipfs_hash' => 'required',
+            'short_url' => 'required'
         ]);
         $checker = new CheckSign;
         $message = "I agree to update my profile.";
@@ -99,14 +102,18 @@ class ProfileController extends Controller
                 $profile=new Profile;
                 $profile->address = $address;
                 $profile->ipfs_hash = $request->ipfs_hash;
+                $profile->short_url = $request->short_url;
                 $profile->save();
             }
             else{
                 $profile->ipfs_hash = $request->ipfs_hash;
+                $profile->short_url = $request->short_url;
                 $profile->update();
             }
             return response()->json(['success' => true]);
         }
+    
+        return view('homepage');
     }
 
     /**
