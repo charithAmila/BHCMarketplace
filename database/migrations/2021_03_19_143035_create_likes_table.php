@@ -15,15 +15,10 @@ class CreateLikesTable extends Migration
     {
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('nft_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('record_id');
-
             $table->timestamps();
-
-            $table->foreign('record_id')->references('id')->on('records');
-            $table->foreign('nft_id')->references('id')->on('collectibles');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->string("address")->nullable(false);
+            $table->string("contract")->nullable(false);
+            $table->integer("token_id")->nullable(false);
         });
     }
 

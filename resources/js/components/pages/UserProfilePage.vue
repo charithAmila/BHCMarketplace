@@ -16,6 +16,8 @@
       :base_url="base_url"
       :asset_url="asset_url"
       :marketplace_url="marketplace_url"
+      :user_id="user_id"
+      :current_user="auth_id"
     ></profile-component>
 
     <update-cover-modal-component
@@ -28,6 +30,7 @@
 
 <script>
 import { getUserDetails, checkFollowing, tempUserData } from "./../../data";
+import { toAddress } from "./../../etherFunc";
 export default {
   props: [
     "asset_url",
@@ -42,7 +45,7 @@ export default {
   ],
   data() {
     return {
-      user: tempUserData(this.user_id),
+      user: tempUserData(toAddress(this.user_id)),
       auth_id: "",
       following: true,
     };
@@ -53,8 +56,10 @@ export default {
       var connectionInterval = setInterval(function () {
         var acc = window.ethereum.selectedAddress;
         if (acc) {
-          _this.auth_id = ethers.utils.getAddress(acc);
+          _this.auth_id = toAddress(acc);
           clearInterval(connectionInterval);
+        } else {
+          _this.auth_id = toAddress("");
         }
       }, 300);
     },

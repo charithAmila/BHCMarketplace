@@ -164,6 +164,7 @@
 
 <script>
 import { ethers } from "ethers";
+import { toAddress } from "./../etherFunc";
 export default {
   props: [
     //'auth_id',
@@ -188,7 +189,7 @@ export default {
       var connectionInterval = setInterval(function () {
         var acc = window.ethereum.selectedAddress;
         if (acc) {
-          _this.auth_id = ethers.utils.getAddress(acc);
+          _this.auth_id = toAddress(acc);
           clearInterval(connectionInterval);
         }
       }, 300);

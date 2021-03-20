@@ -107,6 +107,7 @@ class ProfileController extends Controller
             }
             return response()->json(['success' => true]);
         }
+        return abort(403);
     }
 
     /**

@@ -71,6 +71,7 @@ Vue.component('profile-page', require('./components/pages/UserProfilePage.vue').
 Vue.component('show-collectible-component', require('./components/ShowCollectibleComponent.vue').default);
 Vue.component('collectible-details-component', require('./components/show_collectible/CollectibleDetailsComponent.vue').default);
 Vue.component('show-fullscreen-component', require('./components/show_collectible/ShowFullscreenComponent.vue').default);
+Vue.component('collectible-page', require('./components/pages/CollectiblePage.vue').default);
 
 
 // MODALS

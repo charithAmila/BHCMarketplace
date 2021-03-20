@@ -15,15 +15,11 @@ class CreateCollectionsTable extends Migration
     {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
-            $table->string('image');
-            $table->string('display_name');
-            $table->string('symbol');
-            $table->text('description')->nullable();
-            $table->string('short_url')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->string("address")->nullable(false);
+            $table->string("ipfs_hash");
+            $table->string("short_url")->nullable(true);
+            $table->integer("type")->nullable(false);
         });
     }
 

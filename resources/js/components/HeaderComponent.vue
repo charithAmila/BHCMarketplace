@@ -241,6 +241,7 @@
 
 <script>
 import { getUserDetails, tempUserData } from "./../data";
+import { toAddress } from "./../etherFunc";
 export default {
   props: [
     "marketplace_route",
@@ -280,7 +281,7 @@ export default {
           _this.current_user.wallet = acc;
           _this.selectedAddress = acc;
           _this.account = acc.substring(0, 10) + "...";
-          _this.user_link = ethers.utils.getAddress(acc);
+          _this.user_link = toAddress(acc);
           _this.current_user = await getUserDetails(acc);
           _this.userPhoto = _this.current_user.display_photo;
           clearInterval(connectionInterval);

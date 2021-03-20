@@ -32,12 +32,12 @@ class CreateCollectiblesTable extends Migration
             $table->string('currency');
             $table->unsignedBigInteger('category_id')->nullable();
             $table->unsignedBigInteger('legend_id')->nullable();
-           
+
             $table->timestamps();
 
-            $table->foreign('collection_id')->references('id')->on('collections');
-            $table->foreign('category_id')->references('id')->on('categories');
-            $table->foreign('legend_id')->references('id')->on('legends');
+            //$table->foreign('collection_id')->references('id')->on('collections');
+            //$table->foreign('category_id')->references('id')->on('categories');
+            //$table->foreign('legend_id')->references('id')->on('legends');
         });
     }
 
