@@ -57,11 +57,7 @@
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
                 <a :href="asset_url + 'collection/' + collection_url">
-                  <img
-                    class="br-50"
-                    :src="asset_url + collection_image"
-                    width="50"
-                  />
+                  <img class="br-50" :src="collection.icon" width="50" />
                 </a>
                 <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
               </div>
@@ -70,7 +66,7 @@
               <label class="position">Collection</label>
               <label class="positionHolder"
                 ><a :href="asset_url + 'collection/' + collection_url">{{
-                  collection
+                  collection.name
                 }}</a></label
               >
             </div>

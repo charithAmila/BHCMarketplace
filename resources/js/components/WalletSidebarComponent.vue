@@ -44,26 +44,15 @@ export default {
   },
   props: ["url_previous", "asset_url"],
   mounted() {
-    this.checkConnection();
+    //this.checkConnection();
   },
   methods: {
-    connectMetamsk: function () {
+    connectMetamsk: async function () {
       const _this = this;
       window.ethereum.send("eth_requestAccounts").then((data) => {
         _this.selectedAccount = data.result[0];
+        window.location.href = _this.url_previous;
       });
-    },
-    checkConnection: function () {
-      const _this = this;
-      var connectionInterval = setInterval(function () {
-        var acc = window.ethereum.selectedAddress;
-        if (acc) {
-          _this.selectedAccount = acc;
-          clearInterval(connectionInterval);
-          window.location.href = _this.url_previous;
-          //console.log(_this.selectedAccount);
-        }
-      }, 300);
     },
   },
 };

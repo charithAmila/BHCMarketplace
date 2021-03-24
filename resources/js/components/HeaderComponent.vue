@@ -74,7 +74,7 @@
         <a
           v-if="auth_check"
           class="nav-item notif-btn"
-          href="javascript:void(0)"
+          @click="toggleNotification"
         >
           <img
             :src="asset_url + 'images/logo2.png'"
@@ -88,6 +88,7 @@
           v-if="auth_check"
           class="nav-item profile-btn"
           :href="profile_route + '/' + user_link"
+          @mouseover="identifyState(false)"
         >
           <img
             v-if="current_user.display_photo == 'default.png'"
@@ -166,7 +167,11 @@
         :asset_url="asset_url"
       ></notification-component>
 
-      <div v-if="auth_check" class="profile-menu d-none">
+      <div
+        v-if="auth_check"
+        class="profile-menu d-none"
+        @mouseleave="identifyState(true)"
+      >
         <div class="name-section">
           <h6>
             {{
@@ -241,7 +246,7 @@
 
 <script>
 import { getUserDetails, tempUserData } from "./../data";
-import { toAddress } from "./../etherFunc";
+import { toAddress, checkConnection } from "./../etherFunc";
 export default {
   props: [
     "marketplace_route",
@@ -269,13 +274,14 @@ export default {
       auth_check: false,
       current_user: tempUserData(""),
       user_link: "",
+      mouse_leave: false,
     };
   },
   methods: {
     checkConnection: function () {
       const _this = this;
-      var connectionInterval = setInterval(async function () {
-        var acc = window.ethereum.selectedAddress;
+      var interval = setInterval(async function () {
+        var acc = checkConnection();
         if (acc) {
           _this.auth_check = true;
           _this.current_user.wallet = acc;
@@ -284,7 +290,7 @@ export default {
           _this.user_link = toAddress(acc);
           _this.current_user = await getUserDetails(acc);
           _this.userPhoto = _this.current_user.display_photo;
-          clearInterval(connectionInterval);
+          clearInterval(interval);
         }
       }, 300);
     },
@@ -339,10 +345,42 @@ export default {
         }, 6000);
       });
     },
+    toggleNotification: function () {
+      var container = $(".notification");
+      if (!container.hasClass("fade-in-top")) {
+        $(".notification").toggleClass("d-md-block");
+        container.addClass("fade-in-top").removeClass("fade-out-top");
+      } else {
+        container.addClass("fade-out-top").removeClass("fade-in-top");
+        setTimeout(function () {
+          $(".notification").toggleClass("d-md-block");
+        }, 400);
+      }
+    },
+    identifyState: function (leave) {
+      const _this = this;
+      if (leave) {
+        $(".profile-btn").removeClass("hovered");
+      }
+      var container = $(".profile-menu");
+      if (!$(".profile-menu").hasClass("fade-in-top")) {
+        container.toggleClass("d-md-block");
+        container.addClass("fade-in-top").removeClass("fade-out-top");
+        $(".profile-btn").addClass("hovered");
+      } else {
+        if (!$(".profile-btn").hasClass("hovered")) {
+          container.removeClass("fade-in-top").addClass("fade-out-top");
+          $(".profile-btn").removeClass("hovered");
+          setTimeout(function () {
+            container.toggleClass("d-md-block");
+          }, 200);
+        }
+      }
+    },
   },
   mounted() {
     this.checkConnection();
-    this.bidEvent();
+    //this.bidEvent();
   },
 };
 </script>

@@ -22189,6 +22189,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _modals_PutOnSaleModalComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modals/PutOnSaleModalComponent.vue */ "./resources/js/components/modals/PutOnSaleModalComponent.vue");
 //
 //
 //
@@ -22371,14 +22372,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    PutOnSaleModalComponent: _modals_PutOnSaleModalComponent_vue__WEBPACK_IMPORTED_MODULE_0__.default
+  },
   props: ["div_id", "collectible_asset", "show_collectible", "current_user", "base_url", "collectibles", "page", "filter"],
   data: function data() {
     return {
       singleNft: {},
       current_page: "",
       bidList: [],
-      bidListNFT: ""
+      bidListNFT: "",
+      collectible: this.collectibles[0]
     };
   },
   watch: {
@@ -22389,6 +22401,13 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    putOnSale: function putOnSale(collectible) {
+      var _this = this;
+
+      _this.collectible = collectible;
+
+      _this.toggleModal("putOnSale");
+    },
     capitalizeFirstLetter: function capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
@@ -22414,32 +22433,32 @@ __webpack_require__.r(__webpack_exports__);
       return copies.split(" ")[0];
     },
     customUpdateNft: function customUpdateNft(slug, user_id) {
-      var _this = this;
+      var _this2 = this;
 
       axios.get("/update/nft/status/" + slug + "/" + user_id).then(function (res) {
-        _this.$parent.refreshAfterUpdate();
+        _this2.$parent.refreshAfterUpdate();
       })["catch"](function (error) {
         console.log(error);
       });
     },
     fetchBids: function fetchBids(collectible, clicked) {
-      var _this2 = this;
-
-      axios.get("/bid-list/" + collectible.record_id).then(function (res) {
-        _this2.bidListNFT = collectible;
-        _this2.bidList = res.data.list;
-
-        _this2.toggleModal(clicked);
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    updateBidList: function updateBidList(collectible) {
       var _this3 = this;
 
       axios.get("/bid-list/" + collectible.record_id).then(function (res) {
         _this3.bidListNFT = collectible;
         _this3.bidList = res.data.list;
+
+        _this3.toggleModal(clicked);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    updateBidList: function updateBidList(collectible) {
+      var _this4 = this;
+
+      axios.get("/bid-list/" + collectible.record_id).then(function (res) {
+        _this4.bidListNFT = collectible;
+        _this4.bidList = res.data.list;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -22450,7 +22469,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.current_page = this.page;
-    console.log(this.collectibles);
   }
 });
 
@@ -23885,6 +23903,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -23899,20 +23922,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       selectedAddress: "",
       auth_check: false,
       current_user: (0,_data__WEBPACK_IMPORTED_MODULE_1__.tempUserData)(""),
-      user_link: ""
+      user_link: "",
+      mouse_leave: false
     };
   },
   methods: {
     checkConnection: function checkConnection() {
       var _this = this;
 
-      var connectionInterval = setInterval( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+      var interval = setInterval( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var acc;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                acc = window.ethereum.selectedAddress;
+                acc = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.checkConnection)();
 
                 if (!acc) {
                   _context.next = 12;
@@ -23930,7 +23954,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 9:
                 _this.current_user = _context.sent;
                 _this.userPhoto = _this.current_user.display_photo;
-                clearInterval(connectionInterval);
+                clearInterval(interval);
 
               case 12:
               case "end":
@@ -23962,11 +23986,46 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           $(".notif-tab").addClass("d-none");
         }, 6000);
       });
+    },
+    toggleNotification: function toggleNotification() {
+      var container = $(".notification");
+
+      if (!container.hasClass("fade-in-top")) {
+        $(".notification").toggleClass("d-md-block");
+        container.addClass("fade-in-top").removeClass("fade-out-top");
+      } else {
+        container.addClass("fade-out-top").removeClass("fade-in-top");
+        setTimeout(function () {
+          $(".notification").toggleClass("d-md-block");
+        }, 400);
+      }
+    },
+    identifyState: function identifyState(leave) {
+      var _this = this;
+
+      if (leave) {
+        $(".profile-btn").removeClass("hovered");
+      }
+
+      var container = $(".profile-menu");
+
+      if (!$(".profile-menu").hasClass("fade-in-top")) {
+        container.toggleClass("d-md-block");
+        container.addClass("fade-in-top").removeClass("fade-out-top");
+        $(".profile-btn").addClass("hovered");
+      } else {
+        if (!$(".profile-btn").hasClass("hovered")) {
+          container.removeClass("fade-in-top").addClass("fade-out-top");
+          $(".profile-btn").removeClass("hovered");
+          setTimeout(function () {
+            container.toggleClass("d-md-block");
+          }, 200);
+        }
+      }
     }
   },
   mounted: function mounted() {
-    this.checkConnection();
-    this.bidEvent();
+    this.checkConnection(); //this.bidEvent();
   }
 });
 
@@ -24103,6 +24162,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _etherFunc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../etherFunc */ "./resources/js/etherFunc.js");
 //
 //
 //
@@ -24128,14 +24188,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      selectedAddress: '',
-      account: "Connect Wallet"
+      selectedAddress: "",
+      account: "Connect Wallet",
+      connected: false,
+      profile_route: "/profile/"
     };
   },
-  props: ['wallet_route', 'marketplace_route', 'asset_url'],
+  props: ["wallet_route", "marketplace_route", "asset_url"],
   mounted: function mounted() {
     this.checkConnection();
   },
@@ -24143,13 +24211,15 @@ __webpack_require__.r(__webpack_exports__);
     checkConnection: function checkConnection() {
       var _this = this;
 
-      var connectionInterval = setInterval(function () {
-        var acc = window.ethereum.selectedAddress;
+      var interval = setInterval(function () {
+        var acc = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_0__.checkConnection)();
 
-        if (acc) {
+        if (acc && acc != (0,_etherFunc__WEBPACK_IMPORTED_MODULE_0__.toAddress)("")) {
           _this.selectedAddress = acc;
-          _this.account = acc.substring(0, 10) + '...';
-          clearInterval(connectionInterval); //console.log(_this.selectedAccount);
+          _this.account = acc.substring(0, 10) + "...";
+          _this.connected = true;
+          _this.profile_route = _this.profile_route + acc;
+          clearInterval(interval);
         }
       }, 300);
     }
@@ -24941,7 +25011,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var connectionInterval = setInterval(function () {
-        var acc = window.ethereum.selectedAddress;
+        var acc = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_0__.checkConnection)();
 
         if (acc) {
           _this.auth_id = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_0__.toAddress)(acc);
@@ -25422,6 +25492,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -25442,7 +25527,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       singleNft: {},
       set_collectible: [],
       set_transactions: [],
-      current_url: ""
+      current_url: "",
+      loaded: false
     };
   },
   watch: {
@@ -25456,7 +25542,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     toggleDropdown: function toggleDropdown(ct) {
       console.log(ct);
       var container;
-      ct == "option" ? container = jquery__WEBPACK_IMPORTED_MODULE_1___default()(".show-opt-menu") : container = jquery__WEBPACK_IMPORTED_MODULE_1___default()(".show-share-drop");
+      container = jquery__WEBPACK_IMPORTED_MODULE_1___default()(ct);
 
       if (!container.hasClass("fade-in-top")) {
         container.toggleClass("d-none");
@@ -25516,21 +25602,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
+              _this2.loaded = false;
+              _context.next = 3;
               return (0,_data__WEBPACK_IMPORTED_MODULE_5__.getUserDetails)(_this2.collectible.creator);
 
-            case 2:
+            case 3:
               _this2.creator = _context.sent;
-              _context.next = 5;
+              _context.next = 6;
               return (0,_data__WEBPACK_IMPORTED_MODULE_5__.getUserDetails)(_this2.collectible.current_owner);
 
-            case 5:
+            case 6:
               _this2.current_owner = _context.sent;
               //this.owners = this.collectible.owners
               _this2.set_collectible = _this2.collectible;
               _this2.set_transactions = _this2.transactions;
+              _this2.loaded = true;
 
-            case 8:
+            case 10:
             case "end":
               return _context.stop();
           }
@@ -25834,6 +25922,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -25878,30 +25974,37 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   props: ["url_previous", "asset_url"],
-  mounted: function mounted() {
-    this.checkConnection();
+  mounted: function mounted() {//this.checkConnection();
   },
   methods: {
-    connectMetamsk: function connectMetamsk() {
-      var _this = this;
+    connectMetamsk: function () {
+      var _connectMetamsk = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var _this;
 
-      window.ethereum.send("eth_requestAccounts").then(function (data) {
-        _this.selectedAccount = data.result[0];
-      });
-    },
-    checkConnection: function checkConnection() {
-      var _this = this;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this = this;
+                window.ethereum.send("eth_requestAccounts").then(function (data) {
+                  _this.selectedAccount = data.result[0];
+                  window.location.href = _this.url_previous;
+                });
 
-      var connectionInterval = setInterval(function () {
-        var acc = window.ethereum.selectedAddress;
+              case 2:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
 
-        if (acc) {
-          _this.selectedAccount = acc;
-          clearInterval(connectionInterval);
-          window.location.href = _this.url_previous; //console.log(_this.selectedAccount);
-        }
-      }, 300);
-    }
+      function connectMetamsk() {
+        return _connectMetamsk.apply(this, arguments);
+      }
+
+      return connectMetamsk;
+    }()
   }
 });
 
@@ -26801,6 +26904,312 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _etherFunc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../etherFunc */ "./resources/js/etherFunc.js");
+/* harmony import */ var _addresses_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../addresses/constants */ "./resources/js/addresses/constants.js");
+/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../data */ "./resources/js/data.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ["singleNft", "page", "collectible"],
+  data: function data() {
+    return {
+      quantity: 1,
+      balance: 0,
+      service_fee: 0,
+      total_payment: 0,
+      payment: 0,
+      price: 0,
+      //thist.collectible.price,
+      currency: 1,
+      nft_id: 0,
+      record_id: 0,
+      s: "",
+      signed: false,
+      salt: "",
+      progress: "Sign Order",
+      processing: false,
+      orderId: ""
+    };
+  },
+  watch: {
+    singleNft: function singleNft() {
+      this.price = +parseFloat(this.singleNft.total).toFixed(2);
+      this.nft_id = this.singleNft.id;
+      this.record_id = this.singleNft.record_id;
+      this.updateValues();
+    },
+    quantity: function quantity() {
+      this.updateValues();
+    }
+  },
+  methods: {
+    toggleDropdown: function toggleDropdown(ct) {
+      console.log(ct);
+      var container;
+      container = jquery__WEBPACK_IMPORTED_MODULE_1___default()(ct);
+
+      if (!container.hasClass("fade-in-top")) {
+        container.toggleClass("d-none");
+        container.addClass("fade-in-top").removeClass("fade-out-top");
+      } else {
+        container.addClass("fade-out-top").removeClass("fade-in-top");
+        setTimeout(function () {
+          container.toggleClass("d-none");
+        }, 400);
+      }
+    },
+    sign: function sign() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var _this, salt, orderId, sig;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this = _this2;
+                _context.next = 3;
+                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.generateOrderIdMessage)(_this.collectible.contract, _this.collectible.id, _this.collectible.ownedCopies, _this.collectible.contract, _this.collectible.price, "dhgjdfh");
+
+              case 3:
+                orderId = _context.sent;
+                _context.next = 6;
+                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.signMessage)(orderId);
+
+              case 6:
+                sig = _context.sent;
+                _this.s = sig;
+                _this.signed = true;
+                _this.progress = "Put Order";
+                _this.salt = salt;
+                _this.orderId = orderId;
+
+              case 12:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    placeOrder: function placeOrder() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var _this, data;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _this = _this3;
+                data = {
+                  collection: _this.collectible.contract,
+                  current_owner: _this.collectible.owner_id,
+                  token_id: _this.collectible.id,
+                  price: _this.price,
+                  is_instant: false,
+                  currency: _this.currency == 1 ? _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.hpsAddress : _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.bhcAddress,
+                  signature: _this.s,
+                  orderId: _this.orderId
+                };
+                _context2.next = 4;
+                return (0,_data__WEBPACK_IMPORTED_MODULE_4__.addSale)(data);
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    updateValues: function updateValues() {
+      this.payment = +(this.price * this.quantity).toFixed(2);
+      this.service_fee = +(this.payment * 0.025).toFixed(2);
+      this.total_payment = +(this.payment + +this.service_fee).toFixed(2);
+    },
+    purchase: function purchase() {
+      var _this4 = this;
+
+      this.currency = jquery__WEBPACK_IMPORTED_MODULE_1___default()("#checkout-currency").text();
+      axios.post("/create/transaction", {
+        type: "buy",
+        nft_id: this.nft_id,
+        price: this.payment,
+        currency: this.currency,
+        record_id: this.record_id,
+        quantity_input: this.quantity
+      }).then(function (res) {
+        jquery__WEBPACK_IMPORTED_MODULE_1___default()(".toast-message").text(res.data.message);
+        jquery__WEBPACK_IMPORTED_MODULE_1___default()("#purchaseForm").trigger("reset");
+        setTimeout(function () {
+          launch_toast();
+        }, 500);
+        modalClose(jquery__WEBPACK_IMPORTED_MODULE_1___default()("#checkoutModal"), jquery__WEBPACK_IMPORTED_MODULE_1___default()(".checkout-content"));
+        _this4.service_fee = 0;
+        _this4.total_payment = 0;
+        _this4.payment = 0;
+        _this4.bid_input = "";
+        _this4.quantity = 1;
+
+        if (_this4.page == "marketplace" || _this4.page == "profile") {
+          _this4.$parent.$parent.getCollectible();
+        }
+
+        if (_this4.page == "marketplace") {
+          _this4.$parent.$parent.$parent.updateTopUser();
+        }
+
+        if (_this4.page == "showcollectible") {
+          _this4.$parent.updateData();
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/ReportModalComponent.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/ReportModalComponent.vue?vue&type=script&lang=js& ***!
@@ -27194,6 +27603,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../data */ "./resources/js/data.js");
+/* harmony import */ var _etherFunc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../etherFunc */ "./resources/js/etherFunc.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -27223,8 +27633,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ["asset_url", "user_profile", "current_user", "base_url", "contract", "owner", "id"],
+  props: ["asset_url", "user_profile", "base_url", "contract", "owner", "id"],
   data: function data() {
     return {
       is_liked: false,
@@ -27234,7 +27645,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         creator: "dddd"
       },
       transactions: [],
-      loaded: false
+      loaded: false,
+      current_user: ""
     };
   },
   methods: {
@@ -27267,7 +27679,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return getCollectible;
-    }()
+    }(),
+    authCheck: function authCheck() {
+      var _this = this;
+
+      _this.current_user = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.checkConnection)();
+      _this.current_user == _this.owner ? _this.is_auth = true : null;
+    }
   },
   mounted: function mounted() {
     var _this2 = this;
@@ -27282,9 +27700,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
               _this2.collectible = _context2.sent;
+
+              _this2.authCheck();
+
               _this2.loaded = true;
 
-            case 4:
+            case 5:
             case "end":
               return _context2.stop();
           }
@@ -27363,7 +27784,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       var connectionInterval = setInterval(function () {
-        var acc = window.ethereum.selectedAddress;
+        var acc = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.checkConnection)();
 
         if (acc) {
           _this.auth_id = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.toAddress)(acc);
@@ -27418,10 +27839,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-//
-//
-//
-//
 //
 //
 //
@@ -27645,6 +28062,37 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/addresses/constants.js":
+/*!*********************************************!*\
+  !*** ./resources/js/addresses/constants.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "hps721Address": () => (/* binding */ hps721Address),
+/* harmony export */   "hps1155Address": () => (/* binding */ hps1155Address),
+/* harmony export */   "transferProxyAddress": () => (/* binding */ transferProxyAddress),
+/* harmony export */   "erc20TransferProxyAddress": () => (/* binding */ erc20TransferProxyAddress),
+/* harmony export */   "orderStorageAddress": () => (/* binding */ orderStorageAddress),
+/* harmony export */   "exchangeAddress": () => (/* binding */ exchangeAddress),
+/* harmony export */   "hpsAddress": () => (/* binding */ hpsAddress),
+/* harmony export */   "bhcAddress": () => (/* binding */ bhcAddress)
+/* harmony export */ });
+var hps721Address = "0x41fFF2b6F20a6b7E9F27764f092264B30053D4d4";
+var hps1155Address = "0x21EEd53b1d3e5Af80bfE15220625A3B66701277c";
+var transferProxyAddress = "0xb757e85c4869C3c96DbD79cd8022d089FC58aee3";
+var erc20TransferProxyAddress = "0x9e78C6e0410Cc33A0864D0AC6C9ff7dABAF709cb";
+var orderStorageAddress = "0x11e86459339BA4023333157A84B4B973E1971B2b";
+var exchangeAddress = "0x9F78B200a35faA51e762A61873e259890540D719";
+var hpsAddress = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
+var bhcAddress = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876";
+var minter = "";
+
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -27720,6 +28168,7 @@ vue__WEBPACK_IMPORTED_MODULE_1__.default.component('collectible-page', __webpack
 
 vue__WEBPACK_IMPORTED_MODULE_1__.default.component('bid-modal-component', __webpack_require__(/*! ./components/modals/BidModalComponent.vue */ "./resources/js/components/modals/BidModalComponent.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1__.default.component('checkout-modal-component', __webpack_require__(/*! ./components/modals/CheckoutModalComponent.vue */ "./resources/js/components/modals/CheckoutModalComponent.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('puton-modal-component', __webpack_require__(/*! ./components/modals/PutOnSaleModalComponent.vue */ "./resources/js/components/modals/PutOnSaleModalComponent.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1__.default.component('report-modal-component', __webpack_require__(/*! ./components/modals/ReportModalComponent.vue */ "./resources/js/components/modals/ReportModalComponent.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1__.default.component('following-modal-component', __webpack_require__(/*! ./components/modals/FollowingModalComponent.vue */ "./resources/js/components/modals/FollowingModalComponent.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1__.default.component('follower-modal-component', __webpack_require__(/*! ./components/modals/FollowerModalComponent.vue */ "./resources/js/components/modals/FollowerModalComponent.vue").default);
@@ -27805,11 +28254,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "tempCollectionData": () => (/* binding */ tempCollectionData),
 /* harmony export */   "getTokens": () => (/* binding */ getTokens),
 /* harmony export */   "getTokensData": () => (/* binding */ getTokensData),
-/* harmony export */   "getTokenData": () => (/* binding */ getTokenData)
+/* harmony export */   "getTokenData": () => (/* binding */ getTokenData),
+/* harmony export */   "addSale": () => (/* binding */ addSale),
+/* harmony export */   "updateUserDetails": () => (/* binding */ updateUserDetails)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _etherFunc__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./etherFunc */ "./resources/js/etherFunc.js");
+/* harmony import */ var _addresses_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./addresses/constants */ "./resources/js/addresses/constants.js");
 
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -27831,6 +28283,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+ ////////get///////////////////
 
 function tempUserData(addressString) {
   var address = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.toAddress)(addressString);
@@ -27849,8 +28302,8 @@ function tempUserData(addressString) {
 function tempCollectionData() {
   //var address = toAddress(addressString);
   return _defineProperty({
-    'image': "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-    'display_name': "Empty Name",
+    'icon': "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+    'name': "Empty Name",
     'Symbol': "Empty Symbol",
     'description': "Empty Description",
     'owner': "",
@@ -27918,16 +28371,23 @@ function getCollections(_x2, _x3) {
 
 function _getCollections() {
   _getCollections = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(type, me) {
-    var collections, res, collectionsList, i, selected, owner, t;
+    var collections, t, res, collectionsList, i, selected, owner;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            collections = [];
-            _context2.next = 3;
+            collections = []; ///delete///
+
+            t = tempCollectionData();
+            t.address = _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps721Address;
+            type == 721 ? collections.push(t) : null;
+            t = tempCollectionData();
+            t.address = _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps1155Address;
+            type == 1155 ? collections.push(t) : null;
+            _context2.next = 9;
             return axios.get("/api/collections");
 
-          case 3:
+          case 9:
             res = _context2.sent;
             collectionsList = res.data;
 
@@ -27938,19 +28398,17 @@ function _getCollections() {
                 try {//owner = getOwner(selected.owner);
                 } catch (e) {}
 
-                if (
-                /*owner==me||*/
-                selected.id == 1 || selected.id == 2) {
-                  t = tempCollectionData();
-                  t["address"] = selected.address;
-                  collections.push(t);
+                if (owner == me) {//var t = tempCollectionData()
+                  //t["address"] = selected.address
+                  //collections.push(t)
                 }
               }
             }
 
+            console.log(collections);
             return _context2.abrupt("return", collections);
 
-          case 7:
+          case 14:
           case "end":
             return _context2.stop();
         }
@@ -27982,73 +28440,48 @@ function _checkFollowing() {
   return _checkFollowing.apply(this, arguments);
 }
 
-function updateUserDetails(_x6, _x7) {
-  return _updateUserDetails.apply(this, arguments);
-}
-
-function _updateUserDetails() {
-  _updateUserDetails = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(addressString, data) {
-    var address;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            address = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.toAddress)(addressString);
-            _context4.next = 3;
-            return axios.patch("/api/profile/".concat(address), data);
-
-          case 3:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4);
-  }));
-  return _updateUserDetails.apply(this, arguments);
-}
-
-function getTokens(_x8) {
+function getTokens(_x6) {
   return _getTokens.apply(this, arguments);
 }
 
 function _getTokens() {
-  _getTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(owner) {
+  _getTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(owner) {
     var cl721, cl1155, tokens721f, tokens1155f, i, contract, singles, multiples;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
-            _context5.next = 2;
+            _context4.next = 2;
             return getCollections(721, "");
 
           case 2:
-            cl721 = _context5.sent;
-            _context5.next = 5;
+            cl721 = _context4.sent;
+            _context4.next = 5;
             return getCollections(1155, "");
 
           case 5:
-            cl1155 = _context5.sent;
+            cl1155 = _context4.sent;
             tokens721f = [];
             tokens1155f = [];
             i = 0;
 
           case 9:
             if (!(i < cl721.length)) {
-              _context5.next = 18;
+              _context4.next = 18;
               break;
             }
 
             contract = cl721[i].address;
-            _context5.next = 13;
+            _context4.next = 13;
             return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.getSingles)(contract, owner);
 
           case 13:
-            singles = _context5.sent;
+            singles = _context4.sent;
             tokens721f = [].concat(_toConsumableArray(tokens721f), _toConsumableArray(singles));
 
           case 15:
             i++;
-            _context5.next = 9;
+            _context4.next = 9;
             break;
 
           case 18:
@@ -28056,131 +28489,168 @@ function _getTokens() {
 
           case 19:
             if (!(i < cl1155.length)) {
-              _context5.next = 28;
+              _context4.next = 28;
               break;
             }
 
             contract = cl1155[i].address;
-            _context5.next = 23;
+            _context4.next = 23;
             return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.getMultiples)(contract, owner);
 
           case 23:
-            multiples = _context5.sent;
+            multiples = _context4.sent;
             tokens1155f = [].concat(_toConsumableArray(tokens1155f), _toConsumableArray(multiples));
 
           case 25:
             i++;
-            _context5.next = 19;
+            _context4.next = 19;
             break;
 
           case 28:
-            return _context5.abrupt("return", [tokens721f, tokens1155f]);
+            return _context4.abrupt("return", [tokens721f, tokens1155f]);
 
           case 29:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _getTokens.apply(this, arguments);
+}
+
+function getOwnedTokensData(_x7, _x8) {
+  return _getOwnedTokensData.apply(this, arguments);
+}
+
+function _getOwnedTokensData() {
+  _getOwnedTokensData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(owner, base_url) {
+    var listed, data, tokens, tokens721, tokens1155, i, selectedToken, res, nft;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            listed = false;
+            data = [];
+            _context5.next = 4;
+            return getTokens(owner);
+
+          case 4:
+            tokens = _context5.sent;
+            tokens721 = tokens[0];
+            tokens1155 = tokens[1];
+            i = 0;
+
+          case 8:
+            if (!(i < tokens721.length)) {
+              _context5.next = 28;
+              break;
+            }
+
+            selectedToken = tokens721[i];
+            _context5.next = 12;
+            return axios.get(selectedToken.URI);
+
+          case 12:
+            res = _context5.sent;
+            nft = res.data;
+            nft.copies = selectedToken.availableCopies;
+            nft.ownedCopies = selectedToken.ownedCopies;
+            nft.id = selectedToken.id;
+            nft.contract = selectedToken.contract;
+            nft.owner_id = selectedToken.tokenOwner;
+            nft.collection = selectedToken.collection || tempCollectionData();
+            nft.legend = nft.legend || "normal"; ////remove/////
+
+            nft.isp = 1;
+            nft.is_selling = 1;
+            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
+            data.push(nft);
+
+          case 25:
+            i++;
+            _context5.next = 8;
+            break;
+
+          case 28:
+            i = 0;
+
+          case 29:
+            if (!(i < tokens1155.length)) {
+              _context5.next = 51;
+              break;
+            }
+
+            selectedToken = tokens1155[i];
+            _context5.next = 33;
+            return axios.get(selectedToken.URI);
+
+          case 33:
+            res = _context5.sent;
+            nft = res.data;
+            nft.copies = selectedToken.availableCopies;
+            nft.ownedCopies = selectedToken.ownedCopies;
+            nft.id = selectedToken.id;
+            nft.contract = selectedToken.contract;
+            nft.owner_id = selectedToken.tokenOwner;
+            nft.collection = selectedToken.collection || tempCollectionData();
+            nft.legend = nft.legend || "normal"; ////remove/////
+
+            nft.isp = 1;
+            nft.is_selling = 1;
+            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
+            nft.fileType = "image";
+            nft.file = nft.image;
+            data.push(nft);
+
+          case 48:
+            i++;
+            _context5.next = 29;
+            break;
+
+          case 51:
+            return _context5.abrupt("return", data);
+
+          case 52:
           case "end":
             return _context5.stop();
         }
       }
     }, _callee5);
   }));
-  return _getTokens.apply(this, arguments);
-}
-
-function getOwnedTokensData(_x9, _x10) {
   return _getOwnedTokensData.apply(this, arguments);
 }
 
-function _getOwnedTokensData() {
-  _getOwnedTokensData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(owner, base_url) {
-    var data, tokens, tokens721, tokens1155, i, selectedToken, res, dat;
+function getLikedTokens(_x9, _x10) {
+  return _getLikedTokens.apply(this, arguments);
+}
+
+function _getLikedTokens() {
+  _getLikedTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(owner, base_url) {
+    var data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
           case 0:
             data = [];
-            _context6.next = 3;
-            return getTokens(owner);
-
-          case 3:
-            tokens = _context6.sent;
-            tokens721 = tokens[0];
-            tokens1155 = tokens[1];
-            i = 0;
-
-          case 7:
-            if (!(i < tokens721.length)) {
-              _context6.next = 23;
-              break;
-            }
-
-            selectedToken = tokens721[i];
-            _context6.next = 11;
-            return axios.get(selectedToken.uri);
-
-          case 11:
-            res = _context6.sent;
-            dat = res.data;
-            dat.ownedCopies = 1;
-            dat.contract = selectedToken.contract;
-            dat.id = selectedToken.id;
-            dat.owner_id = owner;
-            dat.icon = dat.icon || base_url + "/images/logo.png";
-            dat.legend = dat.legend || "normal";
-            data.push(dat);
-
-          case 20:
-            i++;
-            _context6.next = 7;
-            break;
-
-          case 23:
-            i = 0;
-
-          case 24:
-            if (!(i < tokens1155.length)) {
-              _context6.next = 40;
-              break;
-            }
-
-            selectedToken = tokens1155[i];
-            _context6.next = 28;
-            return axios.get(selectedToken.uri);
-
-          case 28:
-            res = _context6.sent;
-            dat = res.data;
-            dat.ownedCopies = selectedToken.count;
-            dat.contract = selectedToken.contract;
-            dat.id = selectedToken.id;
-            dat.owner_id = owner;
-            dat.icon = dat.icon || base_url + "/images/logo.png";
-            dat.legend = dat.legend || "normal";
-            data.push(dat);
-
-          case 37:
-            i++;
-            _context6.next = 24;
-            break;
-
-          case 40:
             return _context6.abrupt("return", data);
 
-          case 41:
+          case 2:
           case "end":
             return _context6.stop();
         }
       }
     }, _callee6);
   }));
-  return _getOwnedTokensData.apply(this, arguments);
-}
-
-function getLikedTokens(_x11, _x12) {
   return _getLikedTokens.apply(this, arguments);
 }
 
-function _getLikedTokens() {
-  _getLikedTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(owner, base_url) {
+function getCreatedTokens(_x11, _x12) {
+  return _getCreatedTokens.apply(this, arguments);
+}
+
+function _getCreatedTokens() {
+  _getCreatedTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(owner, base_url) {
     var data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
       while (1) {
@@ -28196,15 +28666,15 @@ function _getLikedTokens() {
       }
     }, _callee7);
   }));
-  return _getLikedTokens.apply(this, arguments);
-}
-
-function getCreatedTokens(_x13, _x14) {
   return _getCreatedTokens.apply(this, arguments);
 }
 
-function _getCreatedTokens() {
-  _getCreatedTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(owner, base_url) {
+function getOnSaleokens(_x13, _x14) {
+  return _getOnSaleokens.apply(this, arguments);
+}
+
+function _getOnSaleokens() {
+  _getOnSaleokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(owner, base_url) {
     var data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
       while (1) {
@@ -28220,125 +28690,159 @@ function _getCreatedTokens() {
       }
     }, _callee8);
   }));
-  return _getCreatedTokens.apply(this, arguments);
-}
-
-function getOnSaleokens(_x15, _x16) {
   return _getOnSaleokens.apply(this, arguments);
 }
 
-function _getOnSaleokens() {
-  _getOnSaleokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(owner, base_url) {
-    var data;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee9$(_context9) {
-      while (1) {
-        switch (_context9.prev = _context9.next) {
-          case 0:
-            data = [];
-            return _context9.abrupt("return", data);
-
-          case 2:
-          case "end":
-            return _context9.stop();
-        }
-      }
-    }, _callee9);
-  }));
-  return _getOnSaleokens.apply(this, arguments);
-}
-
-function getTokensData(_x17, _x18) {
+function getTokensData(_x15, _x16) {
   return _getTokensData.apply(this, arguments);
 }
 
 function _getTokensData() {
-  _getTokensData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(owner, base_url) {
+  _getTokensData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(owner, base_url) {
     var ownedTokens, likedTokens, createdTokens, onSaleTokens, data;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee9$(_context9) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context9.prev = _context9.next) {
           case 0:
-            _context10.next = 2;
+            _context9.next = 2;
             return getOwnedTokensData(owner, base_url);
 
           case 2:
-            ownedTokens = _context10.sent;
-            _context10.next = 5;
+            ownedTokens = _context9.sent;
+            _context9.next = 5;
             return getLikedTokens(owner, base_url);
 
           case 5:
-            likedTokens = _context10.sent;
-            _context10.next = 8;
+            likedTokens = _context9.sent;
+            _context9.next = 8;
             return getCreatedTokens(owner, base_url);
 
           case 8:
-            createdTokens = _context10.sent;
-            _context10.next = 11;
+            createdTokens = _context9.sent;
+            _context9.next = 11;
             return getOnSaleokens(owner, base_url);
 
           case 11:
-            onSaleTokens = _context10.sent;
+            onSaleTokens = _context9.sent;
             data = {
               "on-sale": onSaleTokens,
               "liked": likedTokens,
               "created": createdTokens,
               "collectibles": ownedTokens
             };
-            return _context10.abrupt("return", data);
+            return _context9.abrupt("return", data);
 
           case 14:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9);
+  }));
+  return _getTokensData.apply(this, arguments);
+}
+
+function getTokenData(_x17, _x18, _x19) {
+  return _getTokenData.apply(this, arguments);
+} ///////////////set///////////////
+
+
+function _getTokenData() {
+  _getTokenData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(contract, owner, id) {
+    var listed, data, res, type, isPrivate, collectible, colData;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            listed = false;
+            data = {};
+            _context10.next = 4;
+            return axios.get("/api/collections/" + contract);
+
+          case 4:
+            res = _context10.sent;
+            type = res.data.type;
+            isPrivate = res.data.id > 2 ? true : false;
+            _context10.next = 9;
+            return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.getCollectible)(contract, type, isPrivate, owner, id);
+
+          case 9:
+            collectible = _context10.sent;
+            _context10.next = 12;
+            return axios.get(collectible.URI);
+
+          case 12:
+            colData = _context10.sent;
+            data = colData.data;
+            data.current_owner = collectible.tokenOwner;
+            data.is_selling = 1;
+            data.collection = collectible.collection || tempCollectionData();
+            data.ownedCopies = collectible.ownedCopies;
+            data.type = type;
+            listed ? data.price = data.instant_sale_price : data.price = data.instant_sale_price; //////remove////
+
+            data.fileType = data.fileType || "image";
+            data.file = data.image || data.file;
+            data.creator = owner;
+            data.count = collectible.availableCopies;
+            return _context10.abrupt("return", data);
+
+          case 25:
           case "end":
             return _context10.stop();
         }
       }
     }, _callee10);
   }));
-  return _getTokensData.apply(this, arguments);
-}
-
-function getTokenData(_x19, _x20, _x21) {
   return _getTokenData.apply(this, arguments);
 }
 
-function _getTokenData() {
-  _getTokenData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(contract, owner, id) {
-    var data, res, type, isPrivate, collectible, colData;
+function updateUserDetails(_x20, _x21) {
+  return _updateUserDetails.apply(this, arguments);
+}
+
+function _updateUserDetails() {
+  _updateUserDetails = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(addressString, data) {
+    var address;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
           case 0:
-            data = {};
+            address = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.toAddress)(addressString);
             _context11.next = 3;
-            return axios.get("/api/collections/" + contract);
+            return axios.patch("/api/profile/".concat(address), data);
 
           case 3:
-            res = _context11.sent;
-            type = res.data.type;
-            isPrivate = res.data.id > 2 ? true : false;
-            _context11.next = 8;
-            return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.getCollectible)(contract, type, isPrivate, owner, id);
-
-          case 8:
-            collectible = _context11.sent;
-            _context11.next = 11;
-            return axios.get(collectible.uri);
-
-          case 11:
-            colData = _context11.sent;
-            data = colData.data;
-            data.creator = owner;
-            data.current_owner = owner;
-            data.is_selling = 1;
-            return _context11.abrupt("return", data);
-
-          case 17:
           case "end":
             return _context11.stop();
         }
       }
     }, _callee11);
   }));
-  return _getTokenData.apply(this, arguments);
+  return _updateUserDetails.apply(this, arguments);
+}
+
+function addSale(_x22) {
+  return _addSale.apply(this, arguments);
+}
+
+function _addSale() {
+  _addSale = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(data) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee12$(_context12) {
+      while (1) {
+        switch (_context12.prev = _context12.next) {
+          case 0:
+            _context12.next = 2;
+            return axios.post("/api/sales", data);
+
+          case 2:
+          case "end":
+            return _context12.stop();
+        }
+      }
+    }, _callee12);
+  }));
+  return _addSale.apply(this, arguments);
 }
 
 
@@ -28354,6 +28858,7 @@ function _getTokenData() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "checkConnection": () => (/* binding */ checkConnection),
 /* harmony export */   "getOwner": () => (/* binding */ getOwner),
 /* harmony export */   "signMessage": () => (/* binding */ signMessage),
 /* harmony export */   "toAddress": () => (/* binding */ toAddress),
@@ -28362,15 +28867,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createABatch": () => (/* binding */ createABatch),
 /* harmony export */   "getMultiples": () => (/* binding */ getMultiples),
 /* harmony export */   "waitForTransaction": () => (/* binding */ waitForTransaction),
-/* harmony export */   "getCollectible": () => (/* binding */ getCollectible)
+/* harmony export */   "getCollectible": () => (/* binding */ getCollectible),
+/* harmony export */   "generateOrderIdMessage": () => (/* binding */ generateOrderIdMessage)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/providers/lib.esm/web3-provider.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/address/lib.esm/index.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/contracts/lib.esm/index.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bignumber/lib.esm/bignumber.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bytes/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/providers/lib.esm/web3-provider.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/address/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/contracts/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bignumber/lib.esm/bignumber.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bytes/lib.esm/index.js");
+/* harmony import */ var _addresses_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./addresses/constants */ "./resources/js/addresses/constants.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -28378,352 +28885,494 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
+ /////////abis///////////////////
 
 var bhc721 = __webpack_require__(/*! ../js/abis/bhc_721.json */ "./resources/js/abis/bhc_721.json");
 
 var bhc1155 = __webpack_require__(/*! ../js/abis/bhc_1155.json */ "./resources/js/abis/bhc_1155.json");
 
-var provider = new ethers__WEBPACK_IMPORTED_MODULE_1__.Web3Provider(window.ethereum); //const selectedAddress = provider.provider.selectedAddress;
-//reads
+var orderStorageABI = __webpack_require__(/*! ../js/abis/order_storage.json */ "./resources/js/abis/order_storage.json");
 
-function checkConnection() {}
+var exchangeABI = __webpack_require__(/*! ../js/abis/exchange.json */ "./resources/js/abis/exchange.json");
 
-function waitForTransaction(_x) {
-  return _waitForTransaction.apply(this, arguments);
+var provider = new ethers__WEBPACK_IMPORTED_MODULE_2__.Web3Provider(window.ethereum); //const selectedAddress = provider.provider.selectedAddress;
+///////Get function//////////
+
+function toAddress(addressString) {
+  return ethers__WEBPACK_IMPORTED_MODULE_3__.isAddress(addressString) ? ethers__WEBPACK_IMPORTED_MODULE_3__.getAddress(addressString) : ethers__WEBPACK_IMPORTED_MODULE_3__.getAddress('0x0000000000000000000000000000000000000000');
 }
 
-function _waitForTransaction() {
-  _waitForTransaction = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(tx) {
-    var res;
+function checkConnection() {
+  var acc = toAddress(provider.provider.selectedAddress);
+  return acc;
+}
+
+function redirectToConnect() {
+  if (checkConnection() == null) {
+    window.location.href = "/connect";
+  }
+}
+
+function signMessage(_x) {
+  return _signMessage.apply(this, arguments);
+}
+
+function _signMessage() {
+  _signMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(message) {
+    var signer;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return provider.waitForTransaction(tx);
+            signer = provider.getSigner();
+            _context.next = 3;
+            return signer.signMessage(message);
 
-          case 2:
-            res = _context.sent;
-            console.log(res);
-            return _context.abrupt("return", res.status);
+          case 3:
+            return _context.abrupt("return", _context.sent);
 
-          case 5:
+          case 4:
           case "end":
             return _context.stop();
         }
       }
     }, _callee);
   }));
+  return _signMessage.apply(this, arguments);
+}
+
+function waitForTransaction(_x2) {
   return _waitForTransaction.apply(this, arguments);
 }
 
-function toAddress(addressString) {
-  return ethers__WEBPACK_IMPORTED_MODULE_2__.isAddress(addressString) ? ethers__WEBPACK_IMPORTED_MODULE_2__.getAddress(addressString) : ethers__WEBPACK_IMPORTED_MODULE_2__.getAddress('0x0000000000000000000000000000000000000000');
-}
-
-function getOwner(_x2, _x3) {
-  return _getOwner.apply(this, arguments);
-}
-
-function _getOwner() {
-  _getOwner = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(addressString, ABI) {
-    var contractAddress, contract, data;
+function _waitForTransaction() {
+  _waitForTransaction = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(tx) {
+    var res;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            contractAddress = toAddress(addressString);
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_3__.Contract(contractAddress, ABI);
-            _context2.next = 4;
-            return contract.owner();
+            _context2.next = 2;
+            return provider.waitForTransaction(tx);
 
-          case 4:
-            data = _context2.sent;
-            return _context2.abrupt("return", owner);
+          case 2:
+            res = _context2.sent;
+            console.log(res);
+            return _context2.abrupt("return", res.status);
 
-          case 6:
+          case 5:
           case "end":
             return _context2.stop();
         }
       }
     }, _callee2);
   }));
+  return _waitForTransaction.apply(this, arguments);
+}
+
+function getOwner(_x3, _x4) {
   return _getOwner.apply(this, arguments);
 }
 
-function getSingles(_x4, _x5) {
-  return _getSingles.apply(this, arguments);
-}
-
-function _getSingles() {
-  _getSingles = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(contractAddress, owner) {
-    var tokens, contract, singlesHex, singleCount, i, data, dat;
+function _getOwner() {
+  _getOwner = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(addressString, ABI) {
+    var contractAddress, contract, data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            tokens = [];
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_3__.Contract(contractAddress, bhc721, provider);
+            contractAddress = toAddress(addressString);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, ABI);
             _context3.next = 4;
-            return contract.balanceOf(owner);
+            return contract.owner();
 
           case 4:
-            singlesHex = _context3.sent;
-            singleCount = Number(singlesHex);
-            i = 0;
-
-          case 7:
-            if (!(i < singleCount)) {
-              _context3.next = 18;
-              break;
-            }
-
-            _context3.next = 10;
-            return contract.tokenOfOwnerByIndex(owner, i);
-
-          case 10:
             data = _context3.sent;
-            _context3.next = 13;
-            return contract.tokenURI(Number(data));
+            return _context3.abrupt("return", owner);
 
-          case 13:
-            dat = _context3.sent;
-            tokens.push({
-              "contract": contractAddress,
-              "id": Number(data),
-              "uri": dat
-            });
-
-          case 15:
-            i++;
-            _context3.next = 7;
-            break;
-
-          case 18:
-            console.log(tokens.length);
-            return _context3.abrupt("return", tokens);
-
-          case 20:
+          case 6:
           case "end":
             return _context3.stop();
         }
       }
     }, _callee3);
   }));
-  return _getSingles.apply(this, arguments);
+  return _getOwner.apply(this, arguments);
 }
 
-function getMultiples(_x6, _x7) {
-  return _getMultiples.apply(this, arguments);
+function get721Token(_x5, _x6, _x7, _x8) {
+  return _get721Token.apply(this, arguments);
 }
 
-function _getMultiples() {
-  _getMultiples = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(contractAddress, owner) {
-    var tokens, contract, currentIdHex, currentId, i, multiplesHex, multiplesCount, uri;
+function _get721Token() {
+  _get721Token = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(contract, collection, tokenId, owner) {
+    var tokenURI, tokenData;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            tokens = [];
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_3__.Contract(contractAddress, bhc1155, provider);
-            _context4.next = 4;
-            return contract.current_id();
+            _context4.next = 2;
+            return contract.tokenURI(tokenId);
 
-          case 4:
-            currentIdHex = _context4.sent;
-            currentId = Number(currentIdHex);
-            i = 1;
+          case 2:
+            tokenURI = _context4.sent;
+            tokenData = {
+              contract: contract.address,
+              collection: collection,
+              id: tokenId,
+              tokenType: 721,
+              availableCopies: 1,
+              ownedCopies: 1,
+              tokenOwner: owner,
+              URI: tokenURI
+            };
+            return _context4.abrupt("return", tokenData);
 
-          case 7:
-            if (!(i < currentId)) {
-              _context4.next = 20;
-              break;
-            }
-
-            _context4.next = 10;
-            return contract.balanceOf(owner, i);
-
-          case 10:
-            multiplesHex = _context4.sent;
-            multiplesCount = Number(multiplesHex);
-
-            if (!(multiplesCount > 0)) {
-              _context4.next = 17;
-              break;
-            }
-
-            _context4.next = 15;
-            return contract.tokenURI(i);
-
-          case 15:
-            uri = _context4.sent;
-            tokens.push({
-              "contract": contractAddress,
-              "id": i,
-              "uri": uri,
-              count: multiplesCount
-            });
-
-          case 17:
-            i++;
-            _context4.next = 7;
-            break;
-
-          case 20:
-            return _context4.abrupt("return", tokens);
-
-          case 21:
+          case 5:
           case "end":
             return _context4.stop();
         }
       }
     }, _callee4);
   }));
-  return _getMultiples.apply(this, arguments);
+  return _get721Token.apply(this, arguments);
 }
 
-function getCollectible(_x8, _x9, _x10, _x11, _x12) {
-  return _getCollectible.apply(this, arguments);
-} /////writes
+function get1155Token(_x9, _x10, _x11, _x12) {
+  return _get1155Token.apply(this, arguments);
+}
 
-
-function _getCollectible() {
-  _getCollectible = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(contractAddress, type, isPrivate, owner, id) {
-    var collectible, contract, realOwner, uri;
+function _get1155Token() {
+  _get1155Token = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(contract, collection, tokenId, owner) {
+    var tokenURI, ownedCount, tokenData;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
-            collectible = {};
-            contractAddress = toAddress(contractAddress);
-            owner = toAddress(owner);
+            _context5.next = 2;
+            return contract.tokenURI(tokenId);
 
-            if (!(type == 721)) {
-              _context5.next = 13;
-              break;
-            }
+          case 2:
+            tokenURI = _context5.sent;
+            _context5.next = 5;
+            return contract.balanceOf(owner, tokenId);
 
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_3__.Contract(contractAddress, isPrivate ? bhc721 : bhc721, provider);
-            _context5.next = 7;
-            return contract.ownerOf(id);
-
-          case 7:
-            realOwner = _context5.sent;
-
-            if (!(owner == toAddress(realOwner))) {
-              _context5.next = 13;
-              break;
-            }
-
-            _context5.next = 11;
-            return contract.tokenURI(id);
-
-          case 11:
-            uri = _context5.sent;
-            collectible = {
-              contract: contractAddress,
-              owner: owner,
-              uri: uri,
-              id: id
+          case 5:
+            ownedCount = _context5.sent;
+            tokenData = {
+              contract: contract.address,
+              collection: collection,
+              id: tokenId,
+              tokenType: 1155,
+              availableCopies: ownedCount,
+              //tokenCount,
+              ownedCopies: ownedCount,
+              tokenOwner: owner,
+              URI: tokenURI
             };
+            return _context5.abrupt("return", tokenData);
 
-          case 13:
-            return _context5.abrupt("return", collectible);
-
-          case 14:
+          case 8:
           case "end":
             return _context5.stop();
         }
       }
     }, _callee5);
   }));
-  return _getCollectible.apply(this, arguments);
+  return _get1155Token.apply(this, arguments);
 }
 
-function signMessage(_x13) {
-  return _signMessage.apply(this, arguments);
+function getSingles(_x13, _x14) {
+  return _getSingles.apply(this, arguments);
 }
 
-function _signMessage() {
-  _signMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(message) {
-    var signer;
+function _getSingles() {
+  _getSingles = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(contractAddress, owner) {
+    var tokens, contract, collection, nftCount, i, tokenId, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
           case 0:
-            signer = provider.getSigner();
-            _context6.next = 3;
-            return signer.signMessage(message);
+            tokens = [];
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, bhc721, provider);
+            collection = null; //await contract.contractURI();
 
-          case 3:
-            return _context6.abrupt("return", _context6.sent);
+            _context6.next = 5;
+            return contract.balanceOf(owner);
 
-          case 4:
+          case 5:
+            nftCount = _context6.sent;
+            i = 0;
+
+          case 7:
+            if (!(i < Number(nftCount))) {
+              _context6.next = 18;
+              break;
+            }
+
+            _context6.next = 10;
+            return contract.tokenOfOwnerByIndex(owner, i);
+
+          case 10:
+            tokenId = _context6.sent;
+            _context6.next = 13;
+            return get721Token(contract, collection, Number(tokenId), owner);
+
+          case 13:
+            nft = _context6.sent;
+            tokens.push(nft);
+
+          case 15:
+            i++;
+            _context6.next = 7;
+            break;
+
+          case 18:
+            return _context6.abrupt("return", tokens);
+
+          case 19:
           case "end":
             return _context6.stop();
         }
       }
     }, _callee6);
   }));
-  return _signMessage.apply(this, arguments);
+  return _getSingles.apply(this, arguments);
 }
 
-function createASingle(_x14, _x15) {
-  return _createASingle.apply(this, arguments);
+function getMultiples(_x15, _x16) {
+  return _getMultiples.apply(this, arguments);
 }
 
-function _createASingle() {
-  _createASingle = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(url, contract) {
-    var signer, tx;
+function _getMultiples() {
+  _getMultiples = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(contractAddress, owner) {
+    var tokens, contract, currentId, collection, i, ownedCount, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            signer = provider.getSigner();
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_3__.Contract(contract, bhc721, signer);
+            tokens = [];
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, bhc1155, provider);
             _context7.next = 4;
-            return contract.mintToken(window.ethereum.selectedAddress, url);
+            return contract.current_id();
 
           case 4:
-            tx = _context7.sent;
-            return _context7.abrupt("return", tx);
+            currentId = _context7.sent;
+            collection = null; //await contract.contractURI();
 
-          case 6:
+            i = 1;
+
+          case 7:
+            if (!(i < Number(currentId))) {
+              _context7.next = 20;
+              break;
+            }
+
+            _context7.next = 10;
+            return contract.balanceOf(owner, i);
+
+          case 10:
+            ownedCount = _context7.sent;
+            ;
+
+            if (!(ownedCount > 0)) {
+              _context7.next = 17;
+              break;
+            }
+
+            _context7.next = 15;
+            return get1155Token(contract, collection, i, owner);
+
+          case 15:
+            nft = _context7.sent;
+            tokens.push(nft);
+
+          case 17:
+            i++;
+            _context7.next = 7;
+            break;
+
+          case 20:
+            return _context7.abrupt("return", tokens);
+
+          case 21:
           case "end":
             return _context7.stop();
         }
       }
     }, _callee7);
   }));
-  return _createASingle.apply(this, arguments);
+  return _getMultiples.apply(this, arguments);
 }
 
-function createABatch(_x16, _x17, _x18) {
-  return _createABatch.apply(this, arguments);
+function getCollectible(_x17, _x18, _x19, _x20, _x21) {
+  return _getCollectible.apply(this, arguments);
 }
 
-function _createABatch() {
-  _createABatch = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(url, count, contract) {
-    var signer, tx;
+function _getCollectible() {
+  _getCollectible = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(contractAddress, type, isPrivate, owner, id) {
+    var collectible, contract, realOwner, collection, ownerHave;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
-            signer = provider.getSigner();
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_3__.Contract(contract, bhc1155, signer);
-            _context8.next = 4;
-            return contract.mintToken(url, ethers__WEBPACK_IMPORTED_MODULE_4__.BigNumber.from(Number(count)), ethers__WEBPACK_IMPORTED_MODULE_5__.hexlify(0));
+            collectible = {};
+            contractAddress = toAddress(contractAddress);
+            owner = toAddress(owner);
 
-          case 4:
-            tx = _context8.sent;
-            return _context8.abrupt("return", tx);
+            if (!(type == 721)) {
+              _context8.next = 15;
+              break;
+            }
 
-          case 6:
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, isPrivate ? bhc721 : bhc721, provider);
+            _context8.next = 7;
+            return contract.ownerOf(id);
+
+          case 7:
+            realOwner = _context8.sent;
+            collection = null; //await contract.contractURI();
+
+            if (!(owner == toAddress(realOwner))) {
+              _context8.next = 13;
+              break;
+            }
+
+            _context8.next = 12;
+            return get721Token(contract, collection, id, owner);
+
+          case 12:
+            collectible = _context8.sent;
+
+          case 13:
+            _context8.next = 25;
+            break;
+
+          case 15:
+            if (!(type == 1155)) {
+              _context8.next = 25;
+              break;
+            }
+
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, isPrivate ? bhc1155 : bhc1155, provider);
+            _context8.next = 19;
+            return contract.balanceOf(owner, id);
+
+          case 19:
+            ownerHave = _context8.sent;
+            collection = null; //await contract.contractURI();
+
+            if (!(Number(ownerHave) > 0)) {
+              _context8.next = 25;
+              break;
+            }
+
+            _context8.next = 24;
+            return get1155Token(contract, collection, id, owner);
+
+          case 24:
+            collectible = _context8.sent;
+
+          case 25:
+            return _context8.abrupt("return", collectible);
+
+          case 26:
           case "end":
             return _context8.stop();
         }
       }
     }, _callee8);
+  }));
+  return _getCollectible.apply(this, arguments);
+}
+
+function generateOrderIdMessage(_x22, _x23, _x24, _x25, _x26, _x27) {
+  return _generateOrderIdMessage.apply(this, arguments);
+} //////Set functions/////////
+
+
+function _generateOrderIdMessage() {
+  _generateOrderIdMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(tokenAddress, tokenId, value, priceToken, price, salt) {
+    var signer, orderStorage, order;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            signer = provider.getSigner();
+            orderStorage = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.orderStorageAddress, orderStorageABI, signer);
+            _context9.next = 4;
+            return orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, price, salt);
+
+          case 4:
+            order = _context9.sent;
+            return _context9.abrupt("return", (salt, order));
+
+          case 6:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9);
+  }));
+  return _generateOrderIdMessage.apply(this, arguments);
+}
+
+function createASingle(_x28, _x29) {
+  return _createASingle.apply(this, arguments);
+}
+
+function _createASingle() {
+  _createASingle = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(url, contract) {
+    var signer, tx;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            signer = provider.getSigner();
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contract, bhc721, signer);
+            _context10.next = 4;
+            return contract.mintToken(window.ethereum.selectedAddress, url);
+
+          case 4:
+            tx = _context10.sent;
+            return _context10.abrupt("return", tx);
+
+          case 6:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee10);
+  }));
+  return _createASingle.apply(this, arguments);
+}
+
+function createABatch(_x30, _x31, _x32) {
+  return _createABatch.apply(this, arguments);
+}
+
+function _createABatch() {
+  _createABatch = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(url, count, contract) {
+    var signer, tx;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            signer = provider.getSigner();
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contract, bhc1155, signer);
+            _context11.next = 4;
+            return contract.mintToken(url, ethers__WEBPACK_IMPORTED_MODULE_5__.BigNumber.from(Number(count)), ethers__WEBPACK_IMPORTED_MODULE_6__.hexlify(0));
+
+          case 4:
+            tx = _context11.sent;
+            return _context11.abrupt("return", tx);
+
+          case 6:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee11);
   }));
   return _createABatch.apply(this, arguments);
 }
@@ -78603,6 +79252,45 @@ component.options.__file = "resources/js/components/modals/PreferencesModalCompo
 
 /***/ }),
 
+/***/ "./resources/js/components/modals/PutOnSaleModalComponent.vue":
+/*!********************************************************************!*\
+  !*** ./resources/js/components/modals/PutOnSaleModalComponent.vue ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _PutOnSaleModalComponent_vue_vue_type_template_id_24a00a27___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27& */ "./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27&");
+/* harmony import */ var _PutOnSaleModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PutOnSaleModalComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _PutOnSaleModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _PutOnSaleModalComponent_vue_vue_type_template_id_24a00a27___WEBPACK_IMPORTED_MODULE_0__.render,
+  _PutOnSaleModalComponent_vue_vue_type_template_id_24a00a27___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/modals/PutOnSaleModalComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/modals/ReportModalComponent.vue":
 /*!*****************************************************************!*\
   !*** ./resources/js/components/modals/ReportModalComponent.vue ***!
@@ -79445,6 +80133,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PutOnSaleModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PutOnSaleModalComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PutOnSaleModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
 /***/ "./resources/js/components/modals/ReportModalComponent.vue?vue&type=script&lang=js&":
 /*!******************************************************************************************!*\
   !*** ./resources/js/components/modals/ReportModalComponent.vue?vue&type=script&lang=js& ***!
@@ -80268,6 +80972,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27& ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PutOnSaleModalComponent_vue_vue_type_template_id_24a00a27___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PutOnSaleModalComponent_vue_vue_type_template_id_24a00a27___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PutOnSaleModalComponent_vue_vue_type_template_id_24a00a27___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/modals/ReportModalComponent.vue?vue&type=template&id=5d09ecd2&":
 /*!************************************************************************************************!*\
   !*** ./resources/js/components/modals/ReportModalComponent.vue?vue&type=template&id=5d09ecd2& ***!
@@ -80876,8 +81597,12 @@ var render = function() {
                                     attrs: {
                                       type: "text",
                                       "aria-label": "Text input with checkbox",
-                                      value: "Put on sale",
-                                      disabled: ""
+                                      value: "Put on sale"
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.putOnSale(collectible)
+                                      }
                                     }
                                   })
                                 ])
@@ -80907,7 +81632,7 @@ var render = function() {
                           "\n                " +
                             _vm._s(collectible.ownedCopies) +
                             " of " +
-                            _vm._s(collectible.ownedCopies) +
+                            _vm._s(collectible.copies) +
                             "\n              "
                         )
                       ]),
@@ -80936,7 +81661,7 @@ var render = function() {
                           : _vm._e()
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "display-flex" }, [
+                      _c("div", { staticClass: "display-flex d-none" }, [
                         collectible.isp == 1 && collectible.is_selling == 1
                           ? _c(
                               "div",
@@ -81006,6 +81731,14 @@ var render = function() {
       _vm._v(" "),
       _c("checkout-modal-component", {
         attrs: { singleNft: _vm.singleNft, page: _vm.current_page }
+      }),
+      _vm._v(" "),
+      _c("put-on-sale-modal-component", {
+        attrs: {
+          singleNft: _vm.singleNft,
+          page: _vm.current_page,
+          collectible: _vm.collectible
+        }
       }),
       _vm._v(" "),
       _c("bid-modal-component", {
@@ -83459,7 +84192,7 @@ var render = function() {
                     "a",
                     {
                       staticClass: "nav-item notif-btn",
-                      attrs: { href: "javascript:void(0)" }
+                      on: { click: _vm.toggleNotification }
                     },
                     [
                       _c("img", {
@@ -83480,7 +84213,12 @@ var render = function() {
                     "a",
                     {
                       staticClass: "nav-item profile-btn",
-                      attrs: { href: _vm.profile_route + "/" + _vm.user_link }
+                      attrs: { href: _vm.profile_route + "/" + _vm.user_link },
+                      on: {
+                        mouseover: function($event) {
+                          return _vm.identifyState(false)
+                        }
+                      }
                     },
                     [
                       _vm.current_user.display_photo == "default.png"
@@ -83607,71 +84345,82 @@ var render = function() {
             : _vm._e(),
           _vm._v(" "),
           _vm.auth_check
-            ? _c("div", { staticClass: "profile-menu d-none" }, [
-                _c("div", { staticClass: "name-section" }, [
-                  _c("h6", [
-                    _vm._v(
-                      "\n            " +
-                        _vm._s(
-                          _vm.current_user.name != null
-                            ? _vm.current_user.name
-                            : _vm.current_user.wallet
-                        ) +
-                        "\n          "
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _vm.current_user.name == null
-                    ? _c(
-                        "a",
-                        {
-                          staticClass: "preferencesBtn",
-                          attrs: { href: "javascript:void(0)" },
-                          on: {
-                            click: function($event) {
-                              return _vm.getUser()
-                            }
-                          }
-                        },
-                        [_vm._v("Set display name")]
+            ? _c(
+                "div",
+                {
+                  staticClass: "profile-menu d-none",
+                  on: {
+                    mouseleave: function($event) {
+                      return _vm.identifyState(true)
+                    }
+                  }
+                },
+                [
+                  _c("div", { staticClass: "name-section" }, [
+                    _c("h6", [
+                      _vm._v(
+                        "\n            " +
+                          _vm._s(
+                            _vm.current_user.name != null
+                              ? _vm.current_user.name
+                              : _vm.current_user.wallet
+                          ) +
+                          "\n          "
                       )
-                    : _vm._e()
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "menu-options" }, [
-                  _c(
-                    "a",
-                    {
-                      attrs: { href: _vm.profile_route + "/" + _vm.user_link }
-                    },
-                    [_vm._v("My account")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      attrs: {
-                        id: "edit-profile-btn",
-                        href: "javascript:void(0)"
-                      },
-                      on: {
-                        click: function($event) {
-                          return _vm.getUser()
-                        }
-                      }
-                    },
-                    [_vm._v("Edit profile")]
-                  ),
-                  _vm._v(" "),
-                  _c("a", { attrs: { href: "javascript:void(0)" } }, [
-                    _vm._v("Manage funds")
+                    ]),
+                    _vm._v(" "),
+                    _vm.current_user.name == null
+                      ? _c(
+                          "a",
+                          {
+                            staticClass: "preferencesBtn",
+                            attrs: { href: "javascript:void(0)" },
+                            on: {
+                              click: function($event) {
+                                return _vm.getUser()
+                              }
+                            }
+                          },
+                          [_vm._v("Set display name")]
+                        )
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
-                  _c("a", { attrs: { href: _vm.disconnect_route } }, [
-                    _vm._v("Disconnect")
+                  _c("div", { staticClass: "menu-options" }, [
+                    _c(
+                      "a",
+                      {
+                        attrs: { href: _vm.profile_route + "/" + _vm.user_link }
+                      },
+                      [_vm._v("My account")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        attrs: {
+                          id: "edit-profile-btn",
+                          href: "javascript:void(0)"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.getUser()
+                          }
+                        }
+                      },
+                      [_vm._v("Edit profile")]
+                    ),
+                    _vm._v(" "),
+                    _c("a", { attrs: { href: "javascript:void(0)" } }, [
+                      _vm._v("Manage funds")
+                    ]),
+                    _vm._v(" "),
+                    _c("a", { attrs: { href: _vm.disconnect_route } }, [
+                      _vm._v("Disconnect")
+                    ])
                   ])
-                ])
-              ])
+                ]
+              )
             : _vm._e()
         ],
         1
@@ -84006,7 +84755,10 @@ var render = function() {
         "a",
         {
           staticClass: "btn content-title",
-          attrs: { href: _vm.wallet_route, id: "connectWallet" }
+          attrs: {
+            href: !_vm.connected ? _vm.wallet_route : _vm.profile_route,
+            id: "connectWallet"
+          }
         },
         [
           _c("i", { staticClass: "fas fa-angle-double-right" }),
@@ -84022,7 +84774,7 @@ var render = function() {
       })
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "my-auto " }, [
+    _c("div", { staticClass: "my-auto" }, [
       _c("div", { staticClass: "imgSmall imgPos1" }, [
         _c("img", {
           staticClass: "sidebarImg",
@@ -85204,7 +85956,7 @@ var render = function() {
                             },
                             on: {
                               click: function($event) {
-                                return _vm.toggleDropdown("option")
+                                return _vm.toggleDropdown(".show-opt-menu")
                               }
                             }
                           },
@@ -85223,7 +85975,7 @@ var render = function() {
                         attrs: { id: "share-btn", href: "javascript:void(0)" },
                         on: {
                           click: function($event) {
-                            return _vm.toggleDropdown("share")
+                            return _vm.toggleDropdown(".show-share-drop")
                           }
                         }
                       },
@@ -85235,51 +85987,55 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "show-opt-menu d-none" }, [
-                    _c(
-                      "a",
-                      {
-                        staticClass: "buy-now",
-                        class:
-                          _vm.set_collectible.is_selling == 1 ? "" : "d-none",
-                        attrs: { href: "javascript:void(0)" },
-                        on: {
-                          click: function($event) {
-                            return _vm.fetchSingleNft("checkout")
-                          }
-                        }
-                      },
-                      [_vm._v("Buy now")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "place-bid",
-                        attrs: { href: "javascript:void(0)" },
-                        on: {
-                          click: function($event) {
-                            return _vm.fetchSingleNft("bid")
-                          }
-                        }
-                      },
-                      [_vm._v("Place a bid")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "report",
-                        attrs: { href: "javascript:void(0)" },
-                        on: {
-                          click: function($event) {
-                            return _vm.fetchSingleNft("report")
-                          }
-                        }
-                      },
-                      [_vm._v("Report")]
-                    )
-                  ]),
+                  _vm.current_user != _vm.current_owner.wallet
+                    ? _c("div", { staticClass: "show-opt-menu d-none" }, [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "buy-now",
+                            class:
+                              _vm.set_collectible.is_selling == 1
+                                ? ""
+                                : "d-none",
+                            attrs: { href: "javascript:void(0)" },
+                            on: {
+                              click: function($event) {
+                                return _vm.fetchSingleNft("checkout")
+                              }
+                            }
+                          },
+                          [_vm._v("Buy now")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "place-bid",
+                            attrs: { href: "javascript:void(0)" },
+                            on: {
+                              click: function($event) {
+                                return _vm.fetchSingleNft("bid")
+                              }
+                            }
+                          },
+                          [_vm._v("Place a bid")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "report",
+                            attrs: { href: "javascript:void(0)" },
+                            on: {
+                              click: function($event) {
+                                return _vm.fetchSingleNft("report")
+                              }
+                            }
+                          },
+                          [_vm._v("Report")]
+                        )
+                      ])
+                    : _vm._e(),
                   _vm._v(" "),
                   _c("div", { staticClass: "show-share-drop d-none" }, [
                     _c("label", { staticClass: "share-title" }, [
@@ -85464,78 +86220,38 @@ var render = function() {
               _vm._v(_vm._s(_vm.set_collectible.description))
             ]),
             _vm._v(" "),
-            _c("collectible-details-component", {
-              attrs: {
-                creator: _vm.creator,
-                current_owner: _vm.current_owner,
-                owners: _vm.owners,
-                transactions: _vm.set_transactions,
-                user_profile: _vm.user_profile,
-                asset_url: _vm.asset_url,
-                collection: _vm.set_collectible.collection,
-                collection_image: _vm.set_collectible.collection_image,
-                collection_url: _vm.set_collectible.collection_url
-              }
-            }),
+            _vm.loaded
+              ? _c("collectible-details-component", {
+                  attrs: {
+                    creator: _vm.creator,
+                    current_owner: _vm.current_owner,
+                    owners: _vm.owners,
+                    transactions: _vm.set_transactions,
+                    user_profile: _vm.user_profile,
+                    asset_url: _vm.asset_url,
+                    collection: _vm.set_collectible.collection,
+                    collection_image: _vm.set_collectible.collection_image,
+                    collection_url: _vm.set_collectible.collection_url
+                  }
+                })
+              : _vm._e(),
             _vm._v(" "),
             _c("div", { staticClass: "row m-20 text-center end-content" }, [
               _c("div", { staticClass: "col-4 col-md-4" }, [
                 _c("label", { staticClass: "position" }, [_vm._v("Available")]),
                 _vm._v(" "),
                 _c("label", { staticClass: "positionHolder" }, [
-                  _vm._v(_vm._s(_vm.set_collectible.available))
+                  _vm._v(
+                    _vm._s(_vm.set_collectible.ownedCopies) +
+                      " out of\n            " +
+                      _vm._s(_vm.set_collectible.count)
+                  )
                 ])
-              ]),
-              _vm._v(" "),
-              _vm.current_user != _vm.current_owner.user_id &&
-              _vm.collectible.is_selling
-                ? _c("div", { staticClass: "col-4 col-md-4" }, [
-                    _c("label", { staticClass: "position" }, [
-                      _vm._v("Quantity")
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(0),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "quantity-drop d-none" },
-                      _vm._l(_vm.set_collectible.copies_left, function(index) {
-                        return _c(
-                          "div",
-                          { key: index, staticClass: "drop-group" },
-                          [
-                            _c(
-                              "a",
-                              {
-                                staticClass: "quantity-item",
-                                attrs: { href: "javascript:void(0)", id: index }
-                              },
-                              [_vm._v(_vm._s(index))]
-                            )
-                          ]
-                        )
-                      }),
-                      0
-                    )
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.current_user != _vm.current_owner.user_id &&
-              _vm.collectible.is_selling
-                ? _c("div", { staticClass: "col-4 col-md-4" }, [
-                    _c("label", { staticClass: "position" }, [
-                      _vm._v("Pay with")
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(1),
-                    _vm._v(" "),
-                    _vm._m(2)
-                  ])
-                : _vm._e()
+              ])
             ]),
             _vm._v(" "),
             _vm.collectible.is_selling == 1 &&
-            _vm.current_user != _vm.current_owner.user_id
+            _vm.current_user != _vm.current_owner.wallet
               ? _c("div", { staticClass: "buy-container" }, [
                   _c(
                     "button",
@@ -85550,7 +86266,7 @@ var render = function() {
                     },
                     [
                       _vm._v(
-                        "\n          Buy 1 for " +
+                        "\n          Buy " +
                           _vm._s(_vm.set_collectible.price) +
                           "\n        "
                       )
@@ -85611,7 +86327,7 @@ var render = function() {
               : _vm._e(),
             _vm._v(" "),
             _vm.collectible.is_selling == 0 &&
-            _vm.current_user != _vm.current_owner.user_id
+            _vm.current_user != _vm.current_owner.wallet
               ? _c("div", { staticClass: "bid-container" }, [
                   _c(
                     "button",
@@ -85636,7 +86352,7 @@ var render = function() {
           [
             _c("div", { staticClass: "inner-img" }, [
               _c("div", { staticClass: "mobile-imgHead d-block d-md-none" }, [
-                _vm.auth_check && _vm.current_user != _vm.current_owner.user_id
+                _vm.current_user != _vm.current_owner.user_id
                   ? _c(
                       "a",
                       {
@@ -85652,7 +86368,7 @@ var render = function() {
                     )
                   : _vm._e(),
                 _vm._v(" "),
-                _vm._m(3)
+                _vm._m(0)
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "collectible-container" }, [
@@ -85691,7 +86407,6 @@ var render = function() {
                   "div",
                   { staticClass: "show-nft-option imgHead d-none d-md-block" },
                   [
-                    _vm.auth_check &&
                     _vm.current_user != _vm.current_owner.user_id
                       ? _c(
                           "a",
@@ -85708,7 +86423,7 @@ var render = function() {
                         )
                       : _vm._e(),
                     _vm._v(" "),
-                    _vm._m(4)
+                    _vm._m(1)
                   ]
                 )
               ])
@@ -85734,56 +86449,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "quantity-btn positionHolder" }, [
-      _vm._v("1 "),
-      _c("i", { staticClass: "fa fa-angle-down" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "checkout-currency positionHolder" }, [
-      _vm._v("BHC "),
-      _c("i", { staticClass: "fa fa-angle-down" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "checkout-drop d-none" }, [
-      _c("div", { staticClass: "drop-group" }, [
-        _c(
-          "a",
-          {
-            staticClass: "side-drop currency-item",
-            attrs: { href: "javascript:void(0)", id: "BHC" }
-          },
-          [_vm._v("BHC")]
-        ),
-        _vm._v(" "),
-        _c("i", { staticClass: "fa fa-check currency-check" })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "drop-group" }, [
-        _c(
-          "a",
-          {
-            staticClass: "side-drop currency-item",
-            attrs: { href: "javascript:void(0)", id: "BNB" }
-          },
-          [_vm._v("BNB")]
-        ),
-        _vm._v(" "),
-        _c("i", { staticClass: "fa fa-check currency-check opacity-0" })
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -87742,6 +88407,188 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27&":
+/*!******************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/PutOnSaleModalComponent.vue?vue&type=template&id=24a00a27& ***!
+  \******************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "custom-modal d-none", attrs: { id: "putOnSaleModal" } },
+    [
+      _c("div", { staticClass: "modal-content putOnSale-content" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("div", { staticClass: "modal-body" }, [
+          _c("label", { staticClass: "item-description" }, [
+            _vm._v("You are about to put the\n        "),
+            _c("span", { staticClass: "item-name" }, [
+              _vm._v(_vm._s(_vm.collectible.name))
+            ]),
+            _vm._v(
+              " from\n        " +
+                _vm._s(_vm.collectible.collection.name) +
+                " on sale. Check information then\n        submit"
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-section" }, [
+            _c(
+              "form",
+              {
+                attrs: { autocomplete: "off", id: "purchaseForm" },
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.sign($event)
+                  }
+                }
+              },
+              [
+                _c("div", { staticClass: "form-divide" }, [
+                  _c("label", { staticClass: "desc-url" }, [
+                    _vm._v("You Have.")
+                  ]),
+                  _vm._v(" "),
+                  _c("label", { staticClass: "desc-url" }, [
+                    _vm._v(
+                      _vm._s(_vm.collectible.ownedCopies) +
+                        " out of\n              " +
+                        _vm._s(_vm.collectible.copies)
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-divide" }, [
+                  _c("input", {
+                    staticClass: "modal-input",
+                    attrs: {
+                      type: "text",
+                      id: "checkout-price",
+                      name: "price",
+                      "v-model": _vm.price
+                    },
+                    domProps: { value: _vm.collectible.price }
+                  }),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "link-url-end" }, [
+                    _c(
+                      "span",
+                      {
+                        staticClass: "checkout-currency positionHolder",
+                        on: {
+                          click: function($event) {
+                            return _vm.toggleDropdown(".checkout-drop")
+                          }
+                        }
+                      },
+                      [
+                        _vm._v("BHC "),
+                        _c("i", { staticClass: "fa fa-angle-down" })
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "checkout-drop d-none",
+                        on: {
+                          click: function($event) {
+                            return _vm.toggleDropdown(".checkout-drop")
+                          }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "drop-group" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "side-drop currency-item",
+                              attrs: { href: "javascript:void(0)", id: "BHC" },
+                              on: {
+                                click: function($event) {
+                                  _vm.currency = 1
+                                }
+                              }
+                            },
+                            [_vm._v("BHC")]
+                          ),
+                          _vm._v(" "),
+                          _c("i", { staticClass: "fa fa-check currency-check" })
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "drop-group" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "side-drop currency-item",
+                              attrs: { href: "javascript:void(0)", id: "BNB" },
+                              on: {
+                                click: function($event) {
+                                  _vm.currency = 2
+                                }
+                              }
+                            },
+                            [_vm._v("BNB")]
+                          ),
+                          _vm._v(" "),
+                          _c("i", {
+                            staticClass: "fa fa-check currency-check opacity-0"
+                          })
+                        ])
+                      ]
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  { staticClass: "form-submit", attrs: { type: "submit" } },
+                  [
+                    _vm._v(
+                      "\n            " +
+                        _vm._s(_vm.progress || "Sign Order") +
+                        "\n          "
+                    )
+                  ]
+                )
+              ]
+            )
+          ])
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-head" }, [
+      _c("h3", [_vm._v("Put on Sale")]),
+      _vm._v(" "),
+      _c("span", { staticClass: "close-putOnSale-modal" }, [_vm._v("×")])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/ReportModalComponent.vue?vue&type=template&id=5d09ecd2&":
 /*!***************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/modals/ReportModalComponent.vue?vue&type=template&id=5d09ecd2& ***!
@@ -88207,10 +89054,7 @@ var render = function() {
                     [
                       _c("img", {
                         staticClass: "br-50",
-                        attrs: {
-                          src: _vm.asset_url + _vm.collection_image,
-                          width: "50"
-                        }
+                        attrs: { src: _vm.collection.icon, width: "50" }
                       })
                     ]
                   ),
@@ -88235,7 +89079,7 @@ var render = function() {
                         href: _vm.asset_url + "collection/" + _vm.collection_url
                       }
                     },
-                    [_vm._v(_vm._s(_vm.collection))]
+                    [_vm._v(_vm._s(_vm.collection.name))]
                   )
                 ])
               ])
@@ -100670,6 +101514,28 @@ module.exports = JSON.parse("[{\"inputs\":[{\"internalType\":\"string\",\"name\"
 
 "use strict";
 module.exports = JSON.parse("[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"baseURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenOwner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"tokenURI\",\"type\":\"string\"}],\"name\":\"mintToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"tokenByIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"tokenOfOwnerByIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]");
+
+/***/ }),
+
+/***/ "./resources/js/abis/exchange.json":
+/*!*****************************************!*\
+  !*** ./resources/js/abis/exchange.json ***!
+  \*****************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse("[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_buyerFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sellerFee\",\"type\":\"uint256\"},{\"internalType\":\"contract IERC20\",\"name\":\"_bhc\",\"type\":\"address\"},{\"internalType\":\"contract IERC20\",\"name\":\"_hps\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryBNB\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryHPS\",\"type\":\"address\"},{\"internalType\":\"contract IOrderState\",\"name\":\"_orderState\",\"type\":\"address\"},{\"internalType\":\"contract ITransferProxy\",\"name\":\"_transferProxy\",\"type\":\"address\"},{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"_transferProxyERC20\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Bought\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"FeesPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Sold\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BHC\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BUYERFEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"HPS\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SELLERFEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiaryBNB\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiaryHPS\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"is721\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"address payable\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"exchange\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"orderState\",\"outputs\":[{\"internalType\":\"contract IOrderState\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_bnb\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_hps\",\"type\":\"address\"}],\"name\":\"setBeneficiaries\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transferProxy\",\"outputs\":[{\"internalType\":\"contract ITransferProxy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transferProxyERC20\",\"outputs\":[{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]");
+
+/***/ }),
+
+/***/ "./resources/js/abis/order_storage.json":
+/*!**********************************************!*\
+  !*** ./resources/js/abis/order_storage.json ***!
+  \**********************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse("[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_exchange\",\"type\":\"address\"}],\"name\":\"changeExchange\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"exchange\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"}],\"name\":\"generateKey\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"key\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"}],\"name\":\"generateMessage\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"_message\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"orders\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"setComplete\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"verifyMessage\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"verified\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}]");
 
 /***/ }),
 

@@ -77,6 +77,7 @@ Vue.component('collectible-page', require('./components/pages/CollectiblePage.vu
 // MODALS
 Vue.component('bid-modal-component', require('./components/modals/BidModalComponent.vue').default);
 Vue.component('checkout-modal-component', require('./components/modals/CheckoutModalComponent.vue').default);
+Vue.component('puton-modal-component', require('./components/modals/PutOnSaleModalComponent.vue').default);
 Vue.component('report-modal-component', require('./components/modals/ReportModalComponent.vue').default);
 Vue.component('following-modal-component', require('./components/modals/FollowingModalComponent.vue').default);
 Vue.component('follower-modal-component', require('./components/modals/FollowerModalComponent.vue').default);

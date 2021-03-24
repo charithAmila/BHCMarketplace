@@ -1,24 +1,44 @@
 import { BigNumber, ethers } from 'ethers';
+import { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, exchangeAddress, hpsAddress, bhcAddress } from "./addresses/constants"
+
+/////////abis///////////////////
 const bhc721 = require('../js/abis/bhc_721.json')
 const bhc1155 = require('../js/abis/bhc_1155.json')
+const orderStorageABI = require("../js/abis/order_storage.json")
+const exchangeABI = require("../js/abis/exchange.json")
+
+
+
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 //const selectedAddress = provider.provider.selectedAddress;
 
-//reads
-function checkConnection() {
+///////Get function//////////
 
+function toAddress(addressString) {
+    return ethers.utils.isAddress(addressString) ? ethers.utils.getAddress(addressString) :
+        ethers.utils.getAddress('0x0000000000000000000000000000000000000000');
 }
 
+function checkConnection() {
+    var acc = toAddress(provider.provider.selectedAddress);
+    return acc;
+}
+
+function redirectToConnect() {
+    if (checkConnection() == null) {
+        window.location.href = "/connect"
+    }
+}
+
+async function signMessage(message) {
+    const signer = provider.getSigner();
+    return await signer.signMessage(message);
+}
 
 async function waitForTransaction(tx) {
     var res = await provider.waitForTransaction(tx);
     console.log(res)
     return res.status;
-}
-
-function toAddress(addressString) {
-    return ethers.utils.isAddress(addressString) ? ethers.utils.getAddress(addressString) :
-        ethers.utils.getAddress('0x0000000000000000000000000000000000000000');
 }
 
 async function getOwner(addressString, ABI) {
@@ -28,33 +48,63 @@ async function getOwner(addressString, ABI) {
     return owner;
 }
 
+async function get721Token(contract, collection, tokenId, owner) {
+    const tokenURI = await contract.tokenURI(tokenId);
+    const tokenData = {
+        contract: contract.address,
+        collection: collection,
+        id: tokenId,
+        tokenType: 721,
+        availableCopies: 1,
+        ownedCopies: 1,
+        tokenOwner: owner,
+        URI: tokenURI,
+    }
+    return tokenData;
+}
+
+async function get1155Token(contract, collection, tokenId, owner) {
+    //const tokenCount = await contract.tokenCount(tokenId);
+    const tokenURI = await contract.tokenURI(tokenId);
+    const ownedCount = await contract.balanceOf(owner, tokenId);
+
+    const tokenData = {
+        contract: contract.address,
+        collection: collection,
+        id: tokenId,
+        tokenType: 1155,
+        availableCopies: ownedCount,//tokenCount,
+        ownedCopies: ownedCount,
+        tokenOwner: owner,
+        URI: tokenURI,
+    }
+    return tokenData;
+}
+
 async function getSingles(contractAddress, owner) {
     var tokens = [];
-    var contract = new ethers.Contract(contractAddress, bhc721, provider);
-    var singlesHex = await contract.balanceOf(owner);
-    var singleCount = Number(singlesHex);
-    for (var i = 0; i < singleCount; i++) {
-        var data = await contract.tokenOfOwnerByIndex(owner, i)
-        var dat = await contract.tokenURI(Number(data))
-        tokens.push({ "contract": contractAddress, "id": Number(data), "uri": dat })
+    const contract = new ethers.Contract(contractAddress, bhc721, provider);
+    const collection = null//await contract.contractURI();
+    const nftCount = await contract.balanceOf(owner);
+    for (var i = 0; i < Number(nftCount); i++) {
+        var tokenId = await contract.tokenOfOwnerByIndex(owner, i)
+        var nft = await get721Token(contract, collection, Number(tokenId), owner)
+        tokens.push(nft)
     }
-    console.log(tokens.length)
     return tokens;
+
 }
 
 async function getMultiples(contractAddress, owner) {
     var tokens = [];
-    var contract = new ethers.Contract(contractAddress, bhc1155, provider);
-    var currentIdHex = await contract.current_id();
-    var currentId = Number(currentIdHex);
-    for (var i = 1; i < currentId; i++) {
-        var multiplesHex = await contract.balanceOf(owner, i);
-        var multiplesCount = Number(multiplesHex);
-        if (multiplesCount > 0) {
-            var uri = await contract.tokenURI(i);
-            tokens.push({
-                "contract": contractAddress, "id": i, "uri": uri, count: multiplesCount
-            })
+    const contract = new ethers.Contract(contractAddress, bhc1155, provider);
+    const currentId = await contract.current_id();
+    const collection = null;//await contract.contractURI();
+    for (var i = 1; i < Number(currentId); i++) {
+        var ownedCount = await contract.balanceOf(owner, i);;
+        if (ownedCount > 0) {
+            var nft = await get1155Token(contract, collection, i, owner);
+            tokens.push(nft)
         }
     }
     return tokens;
@@ -71,24 +121,33 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             provider
         )
         var realOwner = await contract.ownerOf(id);
+        var collection = null//await contract.contractURI();
         if (owner == toAddress(realOwner)) {
-            var uri = await contract.tokenURI(id);
-            collectible = {
-                contract: contractAddress,
-                owner: owner,
-                uri: uri,
-                id: id
-            }
+            var collectible = await get721Token(contract, collection, id, owner);
+        }
+    }
+    else if (type == 1155) {
+        var contract = new ethers.Contract(
+            contractAddress,
+            isPrivate ? bhc1155 : bhc1155,
+            provider
+        )
+        var ownerHave = await contract.balanceOf(owner, id);
+        var collection = null//await contract.contractURI();
+        if (Number(ownerHave) > 0) {
+            var collectible = await get1155Token(contract, collection, id, owner);
         }
     }
     return collectible;
 }
 
-/////writes
-async function signMessage(message) {
-    const signer = provider.getSigner();
-    return await signer.signMessage(message);
+async function generateOrderIdMessage(tokenAddress, tokenId, value, priceToken, price, salt) {
+    const signer = provider.getSigner()
+    const orderStorage = new ethers.Contract(orderStorageAddress, orderStorageABI, signer);
+    const order = await orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, price, salt);
+    return (salt, order);
 }
+//////Set functions/////////
 
 async function createASingle(url, contract) {
     const signer = provider.getSigner();
@@ -104,4 +163,17 @@ async function createABatch(url, count, contract) {
     return tx;
 }
 
-export { getOwner, signMessage, toAddress, createASingle, getSingles, createABatch, getMultiples, waitForTransaction, getCollectible }
+
+export {
+    checkConnection,
+    getOwner,
+    signMessage,
+    toAddress,
+    createASingle,
+    getSingles,
+    createABatch,
+    getMultiples,
+    waitForTransaction,
+    getCollectible,
+    generateOrderIdMessage
+}

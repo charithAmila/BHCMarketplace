@@ -16,7 +16,7 @@
                   id="options-btn"
                   class="show-drop"
                   href="javascript:void(0)"
-                  @click="toggleDropdown('option')"
+                  @click="toggleDropdown('.show-opt-menu')"
                 >
                   <i class="fas fa-ellipsis-h titleIcon"></i
                 ></a>
@@ -24,13 +24,16 @@
                   id="share-btn"
                   class="show-drop"
                   href="javascript:void(0)"
-                  @click="toggleDropdown('share')"
+                  @click="toggleDropdown('.show-share-drop')"
                 >
                   <i class="fa fa-share-square-o titleIcon"></i
                 ></a>
               </h3>
 
-              <div class="show-opt-menu d-none">
+              <div
+                class="show-opt-menu d-none"
+                v-if="current_user != current_owner.wallet"
+              >
                 <a
                   :class="set_collectible.is_selling == 1 ? '' : 'd-none'"
                   class="buy-now"
@@ -178,6 +181,7 @@
         <p class="itemDesc">{{ set_collectible.description }}</p>
 
         <collectible-details-component
+          v-if="loaded"
           :creator="creator"
           :current_owner="current_owner"
           :owners="owners"
@@ -192,24 +196,30 @@
         <div class="row m-20 text-center end-content">
           <div class="col-4 col-md-4">
             <label class="position">Available</label>
-            <label class="positionHolder">{{
-              set_collectible.available
-            }}</label>
+            <label class="positionHolder"
+              >{{ set_collectible.ownedCopies }} out of
+              {{ set_collectible.count }}</label
+            >
           </div>
-          <div
+          <!--div
             v-if="
-              current_user != current_owner.user_id && collectible.is_selling
+              current_user != current_owner.wallet && collectible.is_selling
             "
             class="col-4 col-md-4"
           >
             <label class="position">Quantity</label>
-            <span class="quantity-btn positionHolder"
+            <span
+              class="quantity-btn positionHolder"
+              @click="toggleDropdown('.quantity-drop')"
               >1 <i class="fa fa-angle-down"></i
             ></span>
 
-            <div class="quantity-drop d-none">
+            <div
+              class="quantity-drop d-none"
+              @click="toggleDropdown('.quantity-drop')"
+            >
               <div
-                v-for="index in set_collectible.copies_left"
+                v-for="index in set_collectible.count"
                 :key="index"
                 class="drop-group"
               >
@@ -224,16 +234,21 @@
           </div>
           <div
             v-if="
-              current_user != current_owner.user_id && collectible.is_selling
+              current_user != current_owner.wallet && collectible.is_selling
             "
             class="col-4 col-md-4"
           >
             <label class="position">Pay with</label>
-            <span class="checkout-currency positionHolder"
+            <span
+              class="checkout-currency positionHolder"
+              @click="toggleDropdown('.checkout-drop')"
               >BHC <i class="fa fa-angle-down"></i
             ></span>
 
-            <div class="checkout-drop d-none">
+            <div
+              class="checkout-drop d-none"
+              @click="toggleDropdown('.checkout-drop')"
+            >
               <div class="drop-group">
                 <a
                   href="javascript:void(0)"
@@ -253,12 +268,12 @@
                 <i class="fa fa-check currency-check opacity-0"></i>
               </div>
             </div>
-          </div>
+          </div-->
         </div>
 
         <div
           v-if="
-            collectible.is_selling == 1 && current_user != current_owner.user_id
+            collectible.is_selling == 1 && current_user != current_owner.wallet
           "
           class="buy-container"
         >
@@ -267,7 +282,7 @@
             class="buyBtn d-none d-md-block"
             @click="fetchSingleNft('checkout')"
           >
-            Buy 1 for {{ set_collectible.price }}
+            Buy {{ set_collectible.price }}
           </button>
 
           <p class="text-gray text-center d-none d-md-block">
@@ -289,7 +304,7 @@
 
         <div
           v-if="
-            collectible.is_selling == 0 && current_user != current_owner.user_id
+            collectible.is_selling == 0 && current_user != current_owner.wallet
           "
           class="bid-container"
         >
@@ -305,7 +320,7 @@
         <div class="inner-img">
           <div class="mobile-imgHead d-block d-md-none">
             <a
-              v-if="auth_check && current_user != current_owner.user_id"
+              v-if="current_user != current_owner.user_id"
               :data-nft-slug="set_collectible.nft_slug"
               :data-record-id="set_collectible.record_id"
               :class="is_liked == true ? 'nft-liked' : ''"
@@ -338,7 +353,7 @@
 
             <div class="show-nft-option imgHead d-none d-md-block">
               <a
-                v-if="auth_check && current_user != current_owner.user_id"
+                v-if="current_user != current_owner.user_id"
                 :data-nft-slug="set_collectible.nft_slug"
                 :data-record-id="set_collectible.record_id"
                 :class="is_liked == true ? 'nft-liked' : ''"
@@ -406,6 +421,7 @@ export default {
       set_collectible: [],
       set_transactions: [],
       current_url: "",
+      loaded: false,
     };
   },
   watch: {
@@ -419,9 +435,7 @@ export default {
     toggleDropdown(ct) {
       console.log(ct);
       var container;
-      ct == "option"
-        ? (container = $(".show-opt-menu"))
-        : (container = $(".show-share-drop"));
+      container = $(ct);
       if (!container.hasClass("fade-in-top")) {
         container.toggleClass("d-none");
         container.addClass("fade-in-top").removeClass("fade-out-top");
@@ -478,11 +492,13 @@ export default {
     },
   },
   async mounted() {
+    this.loaded = false;
     this.creator = await getUserDetails(this.collectible.creator);
     this.current_owner = await getUserDetails(this.collectible.current_owner);
     //this.owners = this.collectible.owners
     this.set_collectible = this.collectible;
     this.set_transactions = this.transactions;
+    this.loaded = true;
   },
 };
 </script>

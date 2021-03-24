@@ -22,16 +22,9 @@
 </template>
 <script>
 import { getTokenData } from "./../../data";
+import { checkConnection } from "./../../etherFunc";
 export default {
-  props: [
-    "asset_url",
-    "user_profile",
-    "current_user",
-    "base_url",
-    "contract",
-    "owner",
-    "id",
-  ],
+  props: ["asset_url", "user_profile", "base_url", "contract", "owner", "id"],
   data() {
     return {
       is_liked: false,
@@ -40,6 +33,7 @@ export default {
       collectible: { creator: "dddd" },
       transactions: [],
       loaded: false,
+      current_user: "",
     };
   },
   methods: {
@@ -52,9 +46,15 @@ export default {
       );
       return data;
     },
+    authCheck: function () {
+      const _this = this;
+      _this.current_user = checkConnection();
+      _this.current_user == _this.owner ? (_this.is_auth = true) : null;
+    },
   },
   async mounted() {
     this.collectible = await this.getCollectible();
+    this.authCheck();
     this.loaded = true;
   },
 };

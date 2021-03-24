@@ -92,7 +92,7 @@
                         class="form-control"
                         aria-label="Text input with checkbox"
                         value="Put on sale"
-                        disabled
+                        @click="putOnSale(collectible)"
                       />
                     </div>
 
@@ -105,7 +105,7 @@
                   </div>
                 </div>
                 <div>
-                  {{ collectible.ownedCopies }} of {{ collectible.ownedCopies }}
+                  {{ collectible.ownedCopies }} of {{ collectible.copies }}
                 </div>
                 <div class="item-img">
                   <img
@@ -122,7 +122,7 @@
                   </video>
                 </div>
 
-                <div class="display-flex">
+                <div class="display-flex d-none">
                   <div
                     v-if="collectible.isp == 1 && collectible.is_selling == 1"
                     class="text-center currency-amount"
@@ -166,6 +166,12 @@
       :singleNft="singleNft"
       :page="current_page"
     ></checkout-modal-component>
+    <put-on-sale-modal-component
+      :singleNft="singleNft"
+      :page="current_page"
+      :collectible="collectible"
+    >
+    </put-on-sale-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
       :page="current_page"
@@ -181,7 +187,9 @@
 </template>
 
 <script>
+import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
+  components: { PutOnSaleModalComponent },
   props: [
     "div_id",
     "collectible_asset",
@@ -198,6 +206,7 @@ export default {
       current_page: "",
       bidList: [],
       bidListNFT: "",
+      collectible: this.collectibles[0],
     };
   },
   watch: {
@@ -208,6 +217,11 @@ export default {
     },
   },
   methods: {
+    putOnSale(collectible) {
+      const _this = this;
+      _this.collectible = collectible;
+      _this.toggleModal("putOnSale");
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
@@ -270,7 +284,6 @@ export default {
   },
   mounted() {
     this.current_page = this.page;
-    console.log(this.collectibles);
   },
 };
 </script>

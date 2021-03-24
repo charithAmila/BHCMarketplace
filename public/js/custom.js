@@ -11,6 +11,11 @@ $(document).on('click', '.close-checkout-modal', function () {
     modalClose($('#checkoutModal'), $(".checkout-content"));
 });
 
+$(document).on('click', '.close-putOnSale-modal', function () {
+    //$('#checkout-quantity').val(1);
+    modalClose($('#putOnSaleModal'), $(".checkout-content"));
+});
+
 $(document).on('click', '.close-bid-list-modal', function () {
     modalClose($('#bidListModal'), $(".bidList-content"));
 });

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PinataController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CollectionsController;
+use App\Http\Controllers\SalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,4 @@ Route::get('/keygen', [PinataController::class, 'generateJWT']);
 
 Route::resource('profile', ProfileController::class);
 Route::resource('collections', CollectionsController::class);
+Route::resource('sales', SalesController::class);

@@ -1,4 +1,8 @@
 import { toAddress, getOwner, getSingles, getMultiples, getCollectible } from './etherFunc';
+import { hps721Address, hps1155Address } from "./addresses/constants"
+
+
+////////get///////////////////
 function tempUserData(addressString) {
     var address = toAddress(addressString);
     return {
@@ -14,8 +18,8 @@ function tempUserData(addressString) {
 function tempCollectionData() {
     //var address = toAddress(addressString);
     return {
-        'image': "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-        'display_name': "Empty Name",
+        'icon': "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+        'name': "Empty Name",
         'Symbol': "Empty Symbol",
         'description': "Empty Description",
         'owner': "",
@@ -44,6 +48,15 @@ async function getUserDetails(addressString) {
 async function getCollections(type, me) {
 
     var collections = [];
+
+    ///delete///
+    var t = tempCollectionData()
+    t.address = hps721Address
+    type == 721 ? collections.push(t) : null;
+    var t = tempCollectionData()
+    t.address = hps1155Address
+    type == 1155 ? collections.push(t) : null;
+
     var res = await axios.get("/api/collections");
     var collectionsList = res.data;
     for (var i = 0; i < collectionsList.length; i++) {
@@ -54,13 +67,14 @@ async function getCollections(type, me) {
                 //owner = getOwner(selected.owner);
             }
             catch (e) { }
-            if (/*owner==me||*/selected.id == 1 || selected.id == 2) {
-                var t = tempCollectionData()
-                t["address"] = selected.address
-                collections.push(t)
+            if (owner == me) {
+                //var t = tempCollectionData()
+                //t["address"] = selected.address
+                //collections.push(t)
             }
         }
     }
+    console.log(collections)
     return collections;
 }
 
@@ -68,10 +82,6 @@ async function checkFollowing(user, address) {
     return false;
 }
 
-async function updateUserDetails(addressString, data) {
-    var address = toAddress(addressString);
-    await axios.patch(`/api/profile/${address}`, data);
-}
 
 async function getTokens(owner) {
     var cl721 = await getCollections(721, "");
@@ -95,33 +105,50 @@ async function getTokens(owner) {
 }
 
 async function getOwnedTokensData(owner, base_url) {
+    var listed = false;
     var data = [];
     var tokens = await getTokens(owner);
     var tokens721 = tokens[0];
     var tokens1155 = tokens[1];
     for (var i = 0; i < tokens721.length; i++) {
         var selectedToken = tokens721[i];
-        var res = await axios.get(selectedToken.uri);
-        var dat = res.data;
-        dat.ownedCopies = 1;
-        dat.contract = selectedToken.contract;
-        dat.id = selectedToken.id;
-        dat.owner_id = owner;
-        dat.icon = dat.icon || base_url + "/images/logo.png"
-        dat.legend = dat.legend || "normal"
-        data.push(dat);
+        var res = await axios.get(selectedToken.URI);
+        var nft = res.data;
+
+        nft.copies = selectedToken.availableCopies;
+        nft.ownedCopies = selectedToken.ownedCopies;
+        nft.id = selectedToken.id;
+        nft.contract = selectedToken.contract;
+        nft.owner_id = selectedToken.tokenOwner;
+        nft.collection = selectedToken.collection || tempCollectionData();
+        nft.legend = nft.legend || "normal"
+
+        ////remove/////
+        nft.isp = 1
+        nft.is_selling = 1
+        listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
+        data.push(nft);
     }
     for (var i = 0; i < tokens1155.length; i++) {
         var selectedToken = tokens1155[i];
-        var res = await axios.get(selectedToken.uri);
-        var dat = res.data;
-        dat.ownedCopies = selectedToken.count;
-        dat.contract = selectedToken.contract;
-        dat.id = selectedToken.id;
-        dat.owner_id = owner;
-        dat.icon = dat.icon || base_url + "/images/logo.png"
-        dat.legend = dat.legend || "normal"
-        data.push(dat);
+        var res = await axios.get(selectedToken.URI);
+        var nft = res.data
+
+        nft.copies = selectedToken.availableCopies;
+        nft.ownedCopies = selectedToken.ownedCopies;
+        nft.id = selectedToken.id;
+        nft.contract = selectedToken.contract;
+        nft.owner_id = selectedToken.tokenOwner;
+        nft.collection = selectedToken.collection || tempCollectionData();
+        nft.legend = nft.legend || "normal"
+
+        ////remove/////
+        nft.isp = 1
+        nft.is_selling = 1
+        listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
+        nft.fileType = "image";
+        nft.file = nft.image
+        data.push(nft);
     }
     return data;
 }
@@ -157,18 +184,40 @@ async function getTokensData(owner, base_url) {
 }
 
 async function getTokenData(contract, owner, id) {
+    var listed = false;
     var data = {}
     var res = await axios.get("/api/collections/" + contract);
     var type = res.data.type
     var isPrivate = res.data.id > 2 ? true : false;
     var collectible = await getCollectible(contract, type, isPrivate, owner, id);
-    var colData = await axios.get(collectible.uri);
+    var colData = await axios.get(collectible.URI);
     data = colData.data;
-    data.creator = owner;
-    data.current_owner = owner;
+    data.current_owner = collectible.tokenOwner;
     data.is_selling = 1;
+    data.collection = collectible.collection || tempCollectionData()
+    data.ownedCopies = collectible.ownedCopies;
+    data.type = type;
+
+    listed ? data.price = data.instant_sale_price : data.price = data.instant_sale_price
+    //////remove////
+    data.fileType = data.fileType || "image";
+    data.file = data.image || data.file
+    data.creator = owner;
+    data.count = collectible.availableCopies
+
     return data;
 
 }
 
-export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData }
+
+///////////////set///////////////
+async function updateUserDetails(addressString, data) {
+    var address = toAddress(addressString);
+    await axios.patch(`/api/profile/${address}`, data);
+}
+async function addSale(data) {
+    await axios.post(`/api/sales`, data);
+}
+
+
+export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails }

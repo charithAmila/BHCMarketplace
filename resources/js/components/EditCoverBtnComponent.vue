@@ -22,7 +22,7 @@
 
 <script>
 import { ethers } from "ethers";
-import { toAddress } from "./../etherFunc";
+import { toAddress, checkConnection } from "./../etherFunc";
 export default {
   props: [
     "user_id",
@@ -38,20 +38,19 @@ export default {
     };
   },
   methods: {
-    checkConnection: function () {
+    checkConnection: async function () {
       const _this = this;
-      var connectionInterval = setInterval(function () {
-        var acc = window.ethereum.selectedAddress;
+      var interval = setInterval(function () {
+        var acc = checkConnection();
+        _this.auth_id = acc;
         if (acc) {
-          //console.log(acc)
-          _this.auth_id = toAddress(acc);
-          clearInterval(connectionInterval);
+          clearInterval(interval);
         }
       }, 300);
     },
   },
-  mounted() {
-    this.checkConnection();
+  async mounted() {
+    await this.checkConnection();
   },
 };
 </script>
