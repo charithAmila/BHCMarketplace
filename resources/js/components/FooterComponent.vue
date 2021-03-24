@@ -22,7 +22,7 @@
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
 		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		        <button class="form-send">Let's go!</button>
+		        <button class="form-send" v-on:click="placeBid()">Let's go!</button>
 		      </div>
 		    </div>
 
@@ -30,6 +30,8 @@
 		</section>
 
 		<section class="footer-mobile d-sm-block d-md-none">
+
+		
 		  <div class="newsletter">
 		    <h3>Subscribe with Happiness newsletter</h3>
 		    <label class="small-text">Don't miss out our latest updates and new created artworks</label>
@@ -51,14 +53,50 @@
 		    <p>&#169; 2020 Billion, Inc.</p>
 		  </div>
 		</section>
+		<div>{{highestBid}}</div>
+		<div>{{highestBidder}}</div>
+		<div>{{biddingStatus}}</div>
 	</div>
 </template>
 
 <script>
-	
+
+import { signMessage,bid,startBidding,getHighestBid,getHighestBidder,getBiddingStatus } from "././../etherFunc";
+
 export default{
 	props: [
 		'base_url',
-	]
+	],
+
+data(){
+return{ 
+	highestBid:{},
+	highestBidder:{},
+	biddingStatus:{}
+}
+ 
+},
+
+async mounted() {
+ this.highestBid = await getHighestBid('18');
+ this.highestBidder = await getHighestBidder('18');
+ this.biddingStatus = await getBiddingStatus('18');
+
+},
+	methods: {
+
+
+	async startBid(){
+		let res = await startBidding('18');
+		console.log(res);
+	},
+	
+	async placeBid(){
+
+	let res = await bid('18','1.2');
+	console.log(res);
+	}
+
+	},
 }
 </script>
