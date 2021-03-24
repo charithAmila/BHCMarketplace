@@ -84,8 +84,16 @@
                   name="short_url"
                   placeholder="Enter short url"
                   v-model="user_data.short_url"
+                  @input="nameCheck"
                 />
-                <p class="preferences-error text-danger"></p>
+                <pre>{{url_previous }}</pre>
+                <p class="preferences-error text-danger"></p>  
+					<div class="alert alert-danger" v-if="nameerror && nameerror!=null && fields.short_url!= url_previous">
+                 Already exists
+                </div>
+                   <div class="alert alert-success" v-if="!nameerror && nameerror!=null">
+                 Available
+                </div>
                 <span
                   id="short_url-preferences"
                   class="custom-error text-danger"
@@ -129,9 +137,22 @@ export default {
     "userPhoto",
     "page",
     "user_address",
+    
   ],
+  mounted() {
+            axios.get('/api/shorturls').then(response => {
+                this.shorturls= response.data;
+				this.url_previous = user_data.short_url
+        console.log(this.shorturls)
+				})
+
+        },
   data() {
     return {
+      fields:{},
+      shorturls:null,
+		nameerror: null,
+		url_previous: '',
       j: "",
       s: "",
       pro_pic: "",
@@ -229,6 +250,7 @@ export default {
             address: ad,
             ipfs_hash: response.data.IpfsHash,
             sign: _this.s,
+            short_url: details.short_url,
           };
           console.log(response);
           axios
@@ -278,6 +300,20 @@ export default {
         _this.signed = true;
       }
     },
-  },
+  
+   nameCheck(){
+    let shorturl =$("#short_url-profile").val();
+
+
+                if(shorturl.length==0){
+                    this.nameerror = null;
+                }
+                this.nameerror =false
+       this.shorturls.forEach(i=>{
+         if(i==shorturl){
+          this.nameerror = true;
+         }
+            })
+            }}
 };
 </script>

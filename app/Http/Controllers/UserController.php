@@ -13,11 +13,12 @@ use App\Models\Legend;
 use App\Models\Ownership;
 use App\Models\Like;
 use App\Models\Record;
+use App\Models\Profile;
 
 class UserController extends Controller
 {
     public function index($slug){
-    	//$user = User::where('short_url', $slug)->orWhere('wallet', $slug)->first();
+    	$user = Profile::where('short_url', $slug)->first();
         // dd($user);
 
         /*$thisUser = new User;
@@ -25,7 +26,12 @@ class UserController extends Controller
 
         $this->data['following'] = $thisUser->followingUser($user->id);
     	$this->data['length'] = strlen($this->data['user']->name);*/
+        if($user){
+            $this->data['address'] = $user['address'];
+        }
+        else{
         $this->data['address']=$slug;
+        }
     	return view('user.index', $this->data);
     }
 
