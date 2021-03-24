@@ -18,23 +18,26 @@ use App\Models\Record;
 
 class CollectibleController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('collectible.create');
     }
 
-    public function create($type){
-        $collect = new Collection;
-        $collections = $collect->getCollections();
-        $this->data['collections'] = json_decode(json_encode($collections));
+    public function create($type)
+    {
+        // $collect = new Collection;
+        // $collections = $collect->getCollections();
+        $this->data['collections'] = json_decode(json_encode([]));
 
         $this->data['categories'] = Category::all();
         $this->data['legends'] = Legend::all();
         $this->data['type'] = $type == 'solo-collectible' ? 'solo' : 'multiple';
-        
-    	return view('collectible.create-collectible', $this->data);
+
+        return view('collectible.create-collectible', $this->data);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
 
         $validatedData = $request->validate([
@@ -52,7 +55,7 @@ class CollectibleController extends Controller
             'currency' => 'required',
             'category_id' => 'required',
             'legend_id' => 'required'
-            ], [
+        ], [
             'nft.required' => 'Primary is required',
             'nft.mimes' => 'File attachment must be gif, png, jpeg, jpg, webp, mp4, mp3',
             'nft.size' => 'File attachment must be equal or less than 50mb',
@@ -67,9 +70,9 @@ class CollectibleController extends Controller
         $collectible = new Collectible($validatedData);
 
         $image = $request->file('nft');
-        $new_name = 'collectible-'.rand(). date("YmdHm") .'.' . $image->getClientOriginalExtension();
+        $new_name = 'collectible-' . rand() . date("YmdHm") . '.' . $image->getClientOriginalExtension();
         $imagePath = $request->file('nft')->storeAs('public/collectibles',  $new_name);
-        $imagePath = explode('/',$imagePath);
+        $imagePath = explode('/', $imagePath);
         $imagePath = $imagePath[2];
 
         $collectible->nft = $imagePath;
@@ -109,6 +112,4 @@ class CollectibleController extends Controller
             'message'   => 'Collectible created successfully!',
         ]);
     }
-
-    
 }

@@ -3,26 +3,31 @@
 //     setTimeout(function() {
 //       modalOpen($('#checkoutModal'), $(".checkout-content"));
 //     }, 200);
-    
+
 // });
 
-$(document).on('click', '.close-checkout-modal', function(){
+$(document).on('click', '.close-checkout-modal', function () {
     $('#checkout-quantity').val(1);
     modalClose($('#checkoutModal'), $(".checkout-content"));
 });
 
-$(document).on('click', '.close-bid-list-modal', function(){
+$(document).on('click', '.close-putOnSale-modal', function () {
+    //$('#checkout-quantity').val(1);
+    modalClose($('#putOnSaleModal'), $(".checkout-content"));
+});
+
+$(document).on('click', '.close-bid-list-modal', function () {
     modalClose($('#bidListModal'), $(".bidList-content"));
 });
 
-$(document).on('click', '.report-page', function(){
+$(document).on('click', '.report-page', function () {
     $('#reportModal').attr('data-report-type', 'user');
     var output = getPath();
     $('#reportModal').attr('data-report-slug', output);
-    
+
 });
 
-$(document).on('click', '.report', function(){
+$(document).on('click', '.report', function () {
     $('#reportModal').attr('data-report-type', 'nft');
 });
 
@@ -36,10 +41,10 @@ $(document).on('click', '.report', function(){
 //     setTimeout(function() {
 //       modalOpen($('#bidModal'), $(".bid-content"));
 //     }, 200);
-    
+
 // });
 
-$(document).on('click', '.close-bid-modal', function(){
+$(document).on('click', '.close-bid-modal', function () {
     $('#bid-service_fee').text('0');
     $('#bid-total').text('0');
     $('#bid-input').val('');
@@ -47,20 +52,20 @@ $(document).on('click', '.close-bid-modal', function(){
 });
 
 
-$(document).on('click', '.currency-btn', function(){
-   toggleDropdown($(".currency-drop"), "d-none");
+$(document).on('click', '.currency-btn', function () {
+    toggleDropdown($(".currency-drop"), "d-none");
 });
 
-$(document).on('click', '.currency-item', function(){
+$(document).on('click', '.currency-item', function () {
     $('.currency-check').addClass('opacity-0');
     $(this).siblings().removeClass('opacity-0');
-    $('.currency-btn').html('<span id="selectedCurrency">'+$(this).attr('id')+'</span>'+' <i class="fa fa-angle-down"></i>');
+    $('.currency-btn').html('<span id="selectedCurrency">' + $(this).attr('id') + '</span>' + ' <i class="fa fa-angle-down"></i>');
     $('.changeDD').text($(this).attr('id'));
     toggleDropdown($(".currency-drop"), "d-none");
 });
 
 
-$(document).on('click', function(event) {
+$(document).on('click', function (event) {
     if ($(event.target).closest('.item-menu').length === 0 && $(event.target).closest('.item-menu-drop').length === 0) {
         $(".item-menu-drop").addClass("d-none");
         $(".item-menu-drop").removeClass("fade-in-top");
@@ -74,7 +79,7 @@ $(document).on('click', function(event) {
 });
 
 
-$(document).on('click', '.item-menu', function(){
+$(document).on('click', '.item-menu', function () {
     $(".item-menu-drop").addClass("d-none");
     var container = $(this).parent().siblings(".item-menu-drop");
     if (!container.hasClass('fade-in-top')) {
@@ -84,14 +89,14 @@ $(document).on('click', '.item-menu', function(){
     }
     else {
         container.addClass("fade-out-top").removeClass("fade-in-top");
-        setTimeout(function() {
+        setTimeout(function () {
             $(".item-menu-drop").addClass("d-none");
         }, 200);
     }
 });
 
 
-$(document).on('click', '.action-menu', function(){
+$(document).on('click', '.action-menu', function () {
     $(".profile-action-menu-drop").addClass("d-none");
     var container = $(this).parent().siblings(".profile-action-menu-drop");
     if (!container.hasClass('fade-in-top')) {
@@ -101,7 +106,7 @@ $(document).on('click', '.action-menu', function(){
     }
     else {
         container.addClass("fade-out-top").removeClass("fade-in-top");
-        setTimeout(function() {
+        setTimeout(function () {
             $(".profile-action-menu-drop").addClass("d-none");
         }, 200);
     }
@@ -109,7 +114,7 @@ $(document).on('click', '.action-menu', function(){
 
 
 
-function getPath(){
+function getPath() {
     var url = new URL(location.href);
     var pathname = new URL(url).pathname;
     var output = pathname.split('/').pop();
@@ -117,16 +122,15 @@ function getPath(){
 }
 
 
-function toggleDropdown(container, stringClass){
+function toggleDropdown(container, stringClass) {
     if (!container.hasClass('fade-in-top')) {
         container.toggleClass(stringClass);
         container.addClass("fade-in-top").removeClass("fade-out-top");
     }
-    else 
-    {
+    else {
         container.addClass("fade-out-top").removeClass("fade-in-top");
-        setTimeout(function() {
-          container.toggleClass(stringClass);
+        setTimeout(function () {
+            container.toggleClass(stringClass);
         }, 400);
     }
 }
@@ -134,12 +138,12 @@ function toggleDropdown(container, stringClass){
 function launch_toast() {
     var x = document.getElementById("toast")
     x.className = "show";
-    setTimeout(function(){ 
+    setTimeout(function () {
         x.className = x.className.replace("show", "");
     }, 5000);
 }
 
-function populateForm(slug){
+function populateForm(slug) {
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -147,9 +151,9 @@ function populateForm(slug){
     });
 
     $.ajax({
-        url: "/nft/fetch/"+slug,
+        url: "/nft/fetch/" + slug,
         type: "GET",
-        success: function(response){
+        success: function (response) {
             var collectible = response.collectible;
             var price = parseFloat(collectible['price']).toFixed(2);
             var service_fee = (price * 0.025).toFixed(2);
@@ -167,20 +171,20 @@ function populateForm(slug){
     });
 }
 
-function modalOpen(modal, content){
+function modalOpen(modal, content) {
     modal.addClass('d-block');
     content.removeClass("fade-out-bottom").addClass("fade-in-bottom");
 }
 
-function modalClose(modal, content){
+function modalClose(modal, content) {
     content.removeClass("fade-in-bottom").addClass("fade-out-bottom");
-    setTimeout(function() {
+    setTimeout(function () {
         modal.removeClass('d-block');
     }, 400);
 }
 
 
-function jsUcFirst(string){
+function jsUcFirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -201,7 +205,7 @@ function jsUcFirst(string){
             var user = response.user;
             $('.user-logo').attr('src', $("#current-display-photo").attr('src'));
 
-           
+
             $('#name-profile').val(user['name']);
             $('#description-profile').val(user['description']);
             $('#short_url-profile').val(user['short_url']);

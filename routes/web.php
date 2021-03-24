@@ -29,7 +29,7 @@ Route::get('/nft', [IndexController::class, 'index'])->name('marketplace');
 Route::get('/nft/fetchCollectibles', [IndexController::class, 'fetchCollectibles']);
 Route::get('/nft/filter/{category}/{sortBy}/{order}', [IndexController::class, 'filterCategory']);
 Route::get('/nft/user/filter/{type}/{day}', [IndexController::class, 'filterUser']);
-Route::get('/nft/{user_slug}/{slug}', [IndexController::class, 'show'])->name('show.collectible');
+Route::get('/nft/{collectible_info}', [IndexController::class, 'show'])->name('show.collectible');
 Route::get('/update/show-page/{user_slug}/{slug}', [IndexController::class, 'fetchShowNft']);
 
 

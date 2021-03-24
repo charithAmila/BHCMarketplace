@@ -112,8 +112,8 @@ class ProfileController extends Controller
             }
             return response()->json(['success' => true]);
         }
-    
-        return view('homepage');
+        return abort(403);
+
     }
 
     /**

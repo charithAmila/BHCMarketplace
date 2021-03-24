@@ -43,29 +43,32 @@ class IndexController extends Controller
         return $data;
     }
 
-    public function show($user_slug, $slug){
-        $nft = new Collectible;
-        $transac = new Transaction;
+    public function show($collectible_info){
+        //$nft = new Collectible;
+        //$transac = new Transaction;
         
-        $collectible = Collectible::where('slug', $slug)->first();
+        //$collectible = Collectible::where('slug', $slug)->first();
         
-        $onWishList = false;
-        if (Auth::check()) {
-            $like = Like::where('nft_id', $collectible->id)->where('user_id', Auth::user()->id)->first();
-            if ($like != null) {
-                $onWishList = true;
-            }
-        }
-        $this->data['onWishList'] = $onWishList;
+        //$onWishList = false;
+        //if (Auth::check()) {
+         //   $like = Like::where('nft_id', $collectible->id)->where('user_id', Auth::user()->id)->first();
+         //   if ($like != null) {
+         //       $onWishList = true;
+         //   }
+        //}
+        //$this->data['onWishList'] = $onWishList;
 
         
-        $thisData = $nft->fetchThisCollectible($user_slug, $slug, $collectible);
-        $this->data['collectible'] = json_decode(json_encode($thisData));
+        //$thisData = $nft->fetchThisCollectible($user_slug, $slug, $collectible);
+        //$this->data['collectible'] = json_decode(json_encode($thisData));
 
 
-        $transactions = $transac->getPastTransactions($collectible->id);
-        $this->data['transactions'] = json_decode(json_encode($transactions));
-
+        //$transactions = $transac->getPastTransactions($collectible->id);
+        //$this->data['transactions'] = json_decode(json_encode($transactions));
+        $dataArray = explode(":",$collectible_info);
+        $this->data["contract"]=$dataArray[0];
+        $this->data["id"]=$dataArray[1];
+        $this->data["owner"]=$dataArray[2];
     	return view('show', $this->data);
     }
 
