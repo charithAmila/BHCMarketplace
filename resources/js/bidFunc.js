@@ -167,16 +167,15 @@ else{
     data.bidding_token = bidding_token
     data.bidding_amount = amount
     data.signature = signature
-
-    
     await axios
     .post('/bid', data, {
     })
     .then(function (response) {
+        return response.data;
     })
     .catch(function (error) {
     });
-    return "Have enough balance";
+
 }
 else{
     return "Not enough balance";
@@ -184,9 +183,8 @@ else{
 
 }
 
-
-
 }
+
 ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
 async function getHighestBid(token_id){
     const contract = getContractDetails(token_type,collection_type,collection_id,'R');

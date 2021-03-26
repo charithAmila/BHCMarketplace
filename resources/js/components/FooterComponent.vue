@@ -53,9 +53,6 @@
 		    <p>&#169; 2020 Billion, Inc.</p>
 		  </div>
 		</section>
-		<div>{{highestBid}}</div>
-		<div>{{highestBidder}}</div>
-		<div>{{biddingStatus}}</div>
 	</div>
 </template>
 
@@ -92,6 +89,7 @@ async mounted() {
 	async placeBid(){
 
 	let res = await bid(1,1,1,1,'18','TEST','21');
+	
 	}
 	}
 

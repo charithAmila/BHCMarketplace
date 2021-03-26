@@ -92,3 +92,5 @@ Route::post('/report', [ReportController::class, 'report']);
 Route::get('/notifications', [NotificationController::class, 'userNotifications']);
 
 Route::post('bid',[BidController::class, 'store']);
+
+Route::get('bid',[BidController::class, 'index']);
