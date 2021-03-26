@@ -22,7 +22,7 @@
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
 		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		        <button class="form-send" v-on:click="placeBid()">Let's go!</button>
+		        <button class="form-send" v-on:click="getMaxBid()">Let's go!</button>
 		      </div>
 		    </div>
 
@@ -53,16 +53,15 @@
 		    <p>&#169; 2020 Billion, Inc.</p>
 		  </div>
 		</section>
-		<div>{{highestBid}}</div>
-		<div>{{highestBidder}}</div>
-		<div>{{biddingStatus}}</div>
+
+		{{highestBid}}
 	</div>
+	
 </template>
 
 <script>
 
-import { signMessage,bid,startBidding,getHighestBid,getHighestBidder,getBiddingStatus } from "././../etherFunc";
-
+import { bid , startBidding, getHighestBid, getHighestBidder, getBiddingStatus } from "././../bidFunc";
 export default{
 	props: [
 		'base_url',
@@ -78,13 +77,12 @@ return{
 },
 
 async mounted() {
- this.highestBid = await getHighestBid('18');
- this.highestBidder = await getHighestBidder('18');
- this.biddingStatus = await getBiddingStatus('18');
+  //this.highestBid = await getHighestBid(1,1,1,1);
+ //this.highestBidder = await getHighestBidder('18');
+ //this.biddingStatus = await getBiddingStatus('18');
 
 },
 	methods: {
-
 
 	async startBid(){
 		let res = await startBidding('18');
@@ -93,10 +91,14 @@ async mounted() {
 	
 	async placeBid(){
 
-	let res = await bid('18','1.2');
-	console.log(res);
+	let res = await bid(1,1,1,1,'18','TEST','21');
+	
+	}
+,
+	async getMaxBid(){
+     let res = await getHighestBid(1,1,1,18);
+	}
 	}
 
-	},
 }
 </script>

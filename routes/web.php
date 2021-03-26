@@ -12,6 +12,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Api\BidController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,3 +90,9 @@ Route::post('/accept/bid', [TransactionController::class, 'acceptBid']);
 Route::post('/report', [ReportController::class, 'report']);
 
 Route::get('/notifications', [NotificationController::class, 'userNotifications']);
+
+Route::post('bid',[BidController::class, 'store']);
+
+Route::post('getHighestBid',[BidController::class, 'highestBid']);
+
+

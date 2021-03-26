@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PinataController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Api\ShortUrlController;
+use App\Http\Controllers\Api\BidController;
 use App\Http\Controllers\CollectionsController;
 use App\Http\Controllers\SalesController;
 /*
@@ -27,3 +28,4 @@ Route::resource('profile', ProfileController::class);
 Route::apiResource('shorturls',ShortUrlController::class);
 Route::resource('collections', CollectionsController::class);
 Route::resource('sales', SalesController::class);
+Route::post('bid',[BidController::class, 'store']);
