@@ -14,7 +14,7 @@
         >
 
         <div class="form-section" @submit.prevent="placeOrder">
-          <form autocomplete="off" id="purchaseForm">
+          <form autocomplete="off" id="saleForm">
             <div class="form-divide">
               <!--input
                 v-model.number="quantity"
@@ -48,7 +48,8 @@
                 <span
                   class="checkout-currency positionHolder"
                   @click="toggleDropdown('.checkout-drop')"
-                  >BHC <i class="fa fa-angle-down"></i
+                  >{{ currency_label[currency] }}
+                  <i class="fa fa-angle-down"></i
                 ></span>
 
                 <div
@@ -71,6 +72,16 @@
                       id="BNB"
                       class="side-drop currency-item"
                       @click="currency = 2"
+                      >HPS</a
+                    >
+                    <i class="fa fa-check currency-check opacity-0"></i>
+                  </div>
+                  <div class="drop-group">
+                    <a
+                      href="javascript:void(0)"
+                      id="BNB"
+                      class="side-drop currency-item"
+                      @click="currency = 3"
                       >BNB</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
@@ -101,11 +112,19 @@
             <button v-if="!signed" class="form-submit" @click.prevent="sign">
               {{ "Sign Order" }}
             </button>
-            <button v-if="!approved" class="form-submit" @click.prevent="sign">
-              {{ "Sign Order" }}
+            <button
+              v-if="!approved"
+              class="form-submit"
+              @click.prevent="approveNFT"
+            >
+              {{ "Approve" }}
             </button>
-            <button class="form-submit" type="submit">
-              {{ progress || "Sign Order" }}
+            <button
+              class="form-submit"
+              type="submit"
+              :disabled="!signed || !approved"
+            >
+              {{ "Put on Sale" }}
             </button>
 
             <!--button class="cancel-btn" type="button">Cancel</button-->
@@ -119,7 +138,14 @@
 
 <script>
 import $ from "jquery";
-import { generateOrderIdMessage, signMessage } from "./../../etherFunc";
+import {
+  generateOrderIdMessage,
+  signMessage,
+  checkNFTApproved,
+  approveNFT,
+  waitForTransaction,
+  toAddress,
+} from "./../../etherFunc";
 import { hpsAddress, bhcAddress } from "./../../addresses/constants";
 import { addSale } from "./../../data";
 export default {
@@ -141,19 +167,30 @@ export default {
       progress: "Sign Order",
       processing: false,
       orderId: "",
+      approved: "",
+      currency_label: {
+        1: "HPS",
+        2: "BHC",
+        3: "BNB",
+      },
     };
   },
-  /*watch: {
-    singleNft: function () {
-      this.price = +parseFloat(this.singleNft.total).toFixed(2);
-      this.nft_id = this.singleNft.id;
-      this.record_id = this.singleNft.record_id;
-      this.updateValues();
+  watch: {
+    singleNft: async function () {
+      //this.price = +parseFloat(this.singleNft.total).toFixed(2);
+      //this.nft_id = this.singleNft.id;
+      //this.record_id = this.singleNft.record_id;
+      //this.updateValues();
+      this.signed = false;
+      this.approved = await checkNFTApproved(
+        this.singleNft.contract,
+        this.singleNft.owner_id
+      );
     },
     quantity: function () {
       this.updateValues();
     },
-  },*/
+  },
   methods: {
     toggleDropdown(ct) {
       console.log(ct);
@@ -176,7 +213,11 @@ export default {
           _this.singleNft.contract,
           _this.singleNft.id,
           _this.singleNft.ownedCopies,
-          _this.currency == 1 ? hpsAddress : bhcAddress,
+          _this.currency == 1
+            ? hpsAddress
+            : _this.currency == 2
+            ? bhcAddress
+            : toAddress(""),
           _this.price,
           "dhgjdfh"
         );
@@ -188,6 +229,14 @@ export default {
       _this.salt = "dhgjdfh";
       _this.orderId = orderId;
     },
+    async approveNFT() {
+      var tx = await approveNFT(this.singleNft.contract);
+      waitForTransaction(tx.hash).then((data) => {
+        if (data) {
+          this.approved = true;
+        }
+      });
+    },
     async placeOrder() {
       const _this = this;
       var data = {
@@ -196,12 +245,28 @@ export default {
         token_id: _this.singleNft.id,
         price: Number(_this.price),
         is_instant: false,
-        currency: _this.currency == 1 ? hpsAddress : bhcAddress,
+        currency:
+          _this.currency == 1
+            ? hpsAddress
+            : _this.currency == 2
+            ? bhcAddress
+            : toAddress(""),
         signature: _this.s,
         order_id: _this.orderId,
         salt: _this.salt,
       };
       await addSale(data);
+      $(".putOnSale-content")
+        .removeClass("fade-in-bottom")
+        .addClass("fade-out-bottom");
+      setTimeout(function () {
+        $("#putOnSaleModal").removeClass("d-block");
+      }, 400);
+      $(".toast-message").text("Added to Marketplace");
+      $("#saleForm").trigger("reset");
+      setTimeout(function () {
+        launch_toast();
+      }, 500);
     },
     updateValues() {
       this.payment = +(this.price * this.quantity).toFixed(2);

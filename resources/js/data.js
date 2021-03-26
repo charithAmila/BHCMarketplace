@@ -176,6 +176,7 @@ async function getOnSaleTokens(owner, base_url) {
                 tokens[i].current_owner,
                 tokens[i].token_id
             )
+            nft.db_id = tokens[i].id;
             nft.is_isp = 1;
             nft.is_selling = 1;
             nft.price = tokens[i].price;
@@ -231,6 +232,7 @@ async function getTokenData(contract, owner, id) {
     nft.owner_id = selectedToken.tokenOwner;
     nft.collection = selectedToken.collection || tempCollectionData();
     nft.legend = nft.legend || "normal"
+    nft.type = type;
 
     ////remove/////
     nft.isp = 1
@@ -260,9 +262,12 @@ async function getAllSales(current_user) {
                     tokens[i].current_owner,
                     tokens[i].token_id
                 )
-                nft.price = 100//tokens[i].price;
+                nft.db_id = tokens[i].id;
+                nft.price = tokens[i].price;
                 nft.isp = 1;
                 nft.is_selling = 1;
+                nft.signature = tokens[i].signature;
+                nft.salt = tokens[i].salt
                 nft.currency = tokens[i].currency == hpsAddress ? "HPS" : tokens[i].currency == bhcAddress ? "BHC" : "BNB";
                 data.push(nft)
             } catch (e) { }
@@ -290,5 +295,10 @@ async function addSale(data) {
     await axios.post(`/api/sales`, data);
 }
 
+async function removeSale(id) {
+    await axios.delete(`/api/sales/${id}`);
+    window.location.reload()
+}
 
-export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales }
+
+export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale }

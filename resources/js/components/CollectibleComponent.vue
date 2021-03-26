@@ -99,14 +99,28 @@
                       :id="collectible.slug"
                       class="sale"
                       @click="putOnSale(collectible)"
+                      v-if="collectible.is_selling != 1"
                       >Put On Sale</a
                     >
-                    <a
-                      :id="collectible.slug"
-                      href="javascript:void(0)"
-                      @click="fetchBids(collectible, 'bidList')"
-                      >Bids</a
+                    <div
+                      class="input-group-prepend"
+                      v-if="collectible.is_selling"
                     >
+                      <div class="input-group-text">
+                        <input
+                          :id="'nft-' + collectible.slug"
+                          type="checkbox"
+                          aria-label="Checkbox for following text input"
+                          v-model="checked"
+                        />
+                      </div>
+                      <a
+                        :id="collectible.slug"
+                        class="sale"
+                        @click="checked ? remove(collectible) : null"
+                        >Remove From Marketplace</a
+                      >
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -170,6 +184,7 @@
     <checkout-modal-component
       :singleNft="singleNft"
       :page="current_page"
+      :current_user="current_user"
     ></checkout-modal-component>
     <put-on-sale-modal-component :singleNft="singleNft" :page="current_page">
     </put-on-sale-modal-component>
@@ -188,6 +203,7 @@
 </template>
 
 <script>
+import { removeSale } from "./../data";
 import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
   components: { PutOnSaleModalComponent },
@@ -207,6 +223,7 @@ export default {
       current_page: "",
       bidList: [],
       bidListNFT: "",
+      checked: false,
       //collectible: this.collectibles[0],
     };
   },
@@ -222,6 +239,10 @@ export default {
       const _this = this;
       _this.singleNft = collectible;
       _this.toggleModal("putOnSale");
+    },
+    async remove(collectible) {
+      const _this = this;
+      const res = await removeSale(collectible.db_id);
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);

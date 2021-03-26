@@ -61,6 +61,10 @@ class SalesController extends Controller
         $message = $request->order_id;
         $granted = $checker->checkSign($message, $request->signature, $request->current_owner);
         if ($granted) {
+            if (Sales::where("collection", $request->collection)->where("current_owner", $request->current_owner)->where("token_id", $request->token_id)->exists()) {
+                $id = Sales::where("collection", $request->collection)->where("current_owner", $request->current_owner)->where("token_id", $request->token_id)->get(id);
+                Sales::destroy($id);
+            }
             $order = Sales::create([
                 "collection" => $request->collection,
                 "current_owner" => $request->current_owner,
@@ -118,8 +122,9 @@ class SalesController extends Controller
      * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sales $sales)
+    public function destroy($id)
     {
-        //
+        Sales::destroy($id);
+        return true;
     }
 }
