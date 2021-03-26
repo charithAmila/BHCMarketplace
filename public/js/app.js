@@ -23626,9 +23626,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['base_url'],
@@ -31906,7 +31903,7 @@ function _bid() {
             address = address.toString().toLowerCase();
 
             if (!(balance > amount)) {
-              _context2.next = 51;
+              _context2.next = 50;
               break;
             }
 
@@ -31943,15 +31940,18 @@ function _bid() {
             data.bidding_amount = amount;
             data.signature = signature;
             _context2.next = 48;
-            return axios.post('/bid', data, {}).then(function (response) {})["catch"](function (error) {});
+            return axios.post('/bid', data, {}).then(function (response) {
+              return response.data;
+            })["catch"](function (error) {});
 
           case 48:
-            return _context2.abrupt("return", "Have enough balance");
+            _context2.next = 51;
+            break;
 
-          case 51:
+          case 50:
             return _context2.abrupt("return", "Not enough balance");
 
-          case 52:
+          case 51:
           case "end":
             return _context2.stop();
         }
@@ -87754,13 +87754,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _vm._m(1)
-    ]),
-    _vm._v(" "),
-    _c("div", [_vm._v(_vm._s(_vm.highestBid))]),
-    _vm._v(" "),
-    _c("div", [_vm._v(_vm._s(_vm.highestBidder))]),
-    _vm._v(" "),
-    _c("div", [_vm._v(_vm._s(_vm.biddingStatus))])
+    ])
   ])
 }
 var staticRenderFns = [
