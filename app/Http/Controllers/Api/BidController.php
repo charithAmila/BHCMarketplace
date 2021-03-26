@@ -59,6 +59,7 @@ class BidController extends Controller
         $bid->bidding_token = $request->bidding_token;
         $bid->bidding_amount = $request->bidding_amount;
         if ($granted) {
+            return true;
             $bid->save();
         }
     }
