@@ -186,11 +186,18 @@ else{
 }
 
 ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
-async function getHighestBid(token_id){
-    const contract = getContractDetails(token_type,collection_type,collection_id,'R');
-    const txResponse =await contract.highestBid(token_id);    
-    let res = txResponse.toString();
-    return res;
+async function getHighestBid(token_type, collection_type, collection_id, token_id){
+    var data = {}
+    data.token_type = token_type
+    data.collection_type = collection_type
+    data.collection_id = collection_id
+    data.token_id = token_id
+    var output ={}
+    await axios.post('/getHighestBid',data ,{
+    }).then(function (response) {
+      return response.data;
+    });
+    
 }
 ///////////////////////////////////////////Get Highest Bidder////////////////////////////////////////////////////////
 async function getHighestBidder(token_id){
