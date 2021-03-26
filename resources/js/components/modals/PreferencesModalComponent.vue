@@ -142,7 +142,7 @@ export default {
   mounted() {
             axios.get('/api/shorturls').then(response => {
                 this.shorturls= response.data;
-				this.url_previous = user_data.short_url
+				this.url_previous = this.user_data.short_url
         console.log(this.shorturls)
 				})
 
@@ -310,7 +310,7 @@ export default {
                 }
                 this.nameerror =false
        this.shorturls.forEach(i=>{
-         if(i==shorturl){
+         if(i==shorturl && shorturl!=this.url_previous){
           this.nameerror = true;
          }
             })
