@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
 import { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, exchangeAddress, hpsAddress, bhcAddress } from "./addresses/constants"
-
+console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
 /////////abis///////////////////
 const bhc721 = require('../js/abis/bhc_721.json')
 const bhc1155 = require('../js/abis/bhc_1155.json')
@@ -144,8 +144,15 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
 async function generateOrderIdMessage(tokenAddress, tokenId, value, priceToken, price, salt) {
     const signer = provider.getSigner()
     const orderStorage = new ethers.Contract(orderStorageAddress, orderStorageABI, signer);
-    const order = await orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, price, salt);
+    const order = await orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, BigNumber.from(price).mul(BigNumber.from(10).pow(18)), salt);
     return (salt, order);
+}
+
+async function checkNFTApproved(contractAddress, from, to) {
+    const ABI = bhc721;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, provider);
+    const res = await contract.isApprovedForAll(from, true);
+    return res;
 }
 //////Set functions/////////
 
@@ -160,6 +167,14 @@ async function createABatch(url, count, contract) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(contract, bhc1155, signer);
     var tx = await contract.mintToken(url, BigNumber.from(Number(count)), ethers.utils.hexlify(0));
+    return tx;
+}
+
+async function ApproveNFT(contractAddress, to) {
+    const signer = provider.getSigner();
+    const ABI = bhc721;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, signer);
+    const tx = await contract.setApprovalForAll(transferProxyAddress, true);
     return tx;
 }
 

@@ -27295,6 +27295,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 
 
 
@@ -27309,7 +27311,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       total_payment: 0,
       payment: 0,
       price: 0,
-      //thist.singleNft.price,
       currency: 1,
       nft_id: 0,
       record_id: 0,
@@ -27361,7 +27362,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _this = _this2;
                 _context.next = 3;
-                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.generateOrderIdMessage)(_this.singleNft.contract, _this.singleNft.id, _this.singleNft.ownedCopies, _this.singleNft.contract, _this.singleNft.price, "dhgjdfh");
+                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.generateOrderIdMessage)(_this.singleNft.contract, _this.singleNft.id, _this.singleNft.ownedCopies, _this.currency == 1 ? _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.hpsAddress : _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.bhcAddress, _this.price, "dhgjdfh");
 
               case 3:
                 orderId = _context.sent;
@@ -27399,7 +27400,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   collection: _this.singleNft.contract,
                   current_owner: _this.singleNft.owner_id,
                   token_id: _this.singleNft.id,
-                  price: _this.price,
+                  price: Number(_this.price),
                   is_instant: false,
                   currency: _this.currency == 1 ? _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.hpsAddress : _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.bhcAddress,
                   signature: _this.s,
@@ -28799,7 +28800,7 @@ function _getOwnedTokensData() {
 
           case 8:
             if (!(i < tokens721.length)) {
-              _context5.next = 28;
+              _context5.next = 30;
               break;
             }
 
@@ -28819,29 +28820,33 @@ function _getOwnedTokensData() {
             nft.legend = nft.legend || "normal"; ////remove/////
 
             nft.isp = 1;
-            nft.is_selling = 1;
+            _context5.next = 24;
+            return checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id);
+
+          case 24:
+            nft.is_selling = _context5.sent;
             listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
             data.push(nft);
 
-          case 25:
+          case 27:
             i++;
             _context5.next = 8;
             break;
 
-          case 28:
+          case 30:
             i = 0;
 
-          case 29:
+          case 31:
             if (!(i < tokens1155.length)) {
-              _context5.next = 51;
+              _context5.next = 53;
               break;
             }
 
             selectedToken = tokens1155[i];
-            _context5.next = 33;
+            _context5.next = 35;
             return axios.get(selectedToken.URI);
 
-          case 33:
+          case 35:
             res = _context5.sent;
             nft = res.data;
             nft.copies = selectedToken.availableCopies;
@@ -28859,15 +28864,15 @@ function _getOwnedTokensData() {
             nft.file = nft.image;
             data.push(nft);
 
-          case 48:
+          case 50:
             i++;
-            _context5.next = 29;
+            _context5.next = 31;
             break;
 
-          case 51:
+          case 53:
             return _context5.abrupt("return", data);
 
-          case 52:
+          case 54:
           case "end":
             return _context5.stop();
         }
@@ -28949,35 +28954,42 @@ function _getOnSaleTokens() {
 
           case 8:
             if (!(i < tokens.length)) {
-              _context8.next = 20;
+              _context8.next = 25;
               break;
             }
 
-            _context8.next = 11;
+            _context8.prev = 9;
+            _context8.next = 12;
             return getTokenData(tokens[i].collection, tokens[i].current_owner, tokens[i].token_id);
 
-          case 11:
+          case 12:
             nft = _context8.sent;
             nft.is_isp = 1;
             nft.is_selling = 1;
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
             data.push(nft);
+            _context8.next = 22;
+            break;
 
-          case 17:
+          case 20:
+            _context8.prev = 20;
+            _context8.t0 = _context8["catch"](9);
+
+          case 22:
             i++;
             _context8.next = 8;
             break;
 
-          case 20:
+          case 25:
             return _context8.abrupt("return", data);
 
-          case 21:
+          case 26:
           case "end":
             return _context8.stop();
         }
       }
-    }, _callee8);
+    }, _callee8, null, [[9, 20]]);
   }));
   return _getOnSaleTokens.apply(this, arguments);
 }
@@ -29129,19 +29141,20 @@ function _getAllSales() {
 
           case 8:
             if (!(i < tokens.length)) {
-              _context11.next = 21;
+              _context11.next = 26;
               break;
             }
 
             if (!(tokens[i].current_owner != current_user)) {
-              _context11.next = 18;
+              _context11.next = 23;
               break;
             }
 
-            _context11.next = 12;
+            _context11.prev = 10;
+            _context11.next = 13;
             return getTokenData(tokens[i].collection, tokens[i].current_owner, tokens[i].token_id);
 
-          case 12:
+          case 13:
             nft = _context11.sent;
             nft.price = 100; //tokens[i].price;
 
@@ -29149,21 +29162,27 @@ function _getAllSales() {
             nft.is_selling = 1;
             nft.currency = tokens[i].currency == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hpsAddress ? "HPS" : tokens[i].currency == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.bhcAddress ? "BHC" : "BNB";
             data.push(nft);
+            _context11.next = 23;
+            break;
 
-          case 18:
+          case 21:
+            _context11.prev = 21;
+            _context11.t0 = _context11["catch"](10);
+
+          case 23:
             i++;
             _context11.next = 8;
             break;
 
-          case 21:
+          case 26:
             return _context11.abrupt("return", data);
 
-          case 22:
+          case 27:
           case "end":
             return _context11.stop();
         }
       }
-    }, _callee11);
+    }, _callee11, null, [[10, 21]]);
   }));
   return _getAllSales.apply(this, arguments);
 }
@@ -29272,11 +29291,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/providers/lib.esm/web3-provider.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/address/lib.esm/index.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/contracts/lib.esm/index.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bignumber/lib.esm/bignumber.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bytes/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bytes/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/providers/lib.esm/web3-provider.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/address/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/contracts/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bignumber/lib.esm/bignumber.js");
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ethers */ "./node_modules/ethers/lib.esm/ethers.js");
 /* harmony import */ var _addresses_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./addresses/constants */ "./resources/js/addresses/constants.js");
 
@@ -29286,7 +29305,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
- /////////abis///////////////////
+
+console.log(ethers__WEBPACK_IMPORTED_MODULE_2__.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b")); /////////abis///////////////////
 
 var bhc721 = __webpack_require__(/*! ../js/abis/bhc_721.json */ "./resources/js/abis/bhc_721.json");
 
@@ -29296,11 +29316,11 @@ var orderStorageABI = __webpack_require__(/*! ../js/abis/order_storage.json */ "
 
 var exchangeABI = __webpack_require__(/*! ../js/abis/exchange.json */ "./resources/js/abis/exchange.json");
 
-var provider = new ethers__WEBPACK_IMPORTED_MODULE_2__.Web3Provider(window.ethereum); //const selectedAddress = provider.provider.selectedAddress;
+var provider = new ethers__WEBPACK_IMPORTED_MODULE_3__.Web3Provider(window.ethereum); //const selectedAddress = provider.provider.selectedAddress;
 ///////Get function//////////
 
 function toAddress(addressString) {
-  return ethers__WEBPACK_IMPORTED_MODULE_3__.isAddress(addressString) ? ethers__WEBPACK_IMPORTED_MODULE_3__.getAddress(addressString) : ethers__WEBPACK_IMPORTED_MODULE_3__.getAddress('0x0000000000000000000000000000000000000000');
+  return ethers__WEBPACK_IMPORTED_MODULE_4__.isAddress(addressString) ? ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress(addressString) : ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress('0x0000000000000000000000000000000000000000');
 }
 
 function checkConnection() {
@@ -29383,7 +29403,7 @@ function _getOwner() {
         switch (_context3.prev = _context3.next) {
           case 0:
             contractAddress = toAddress(addressString);
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, ABI);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, ABI);
             _context3.next = 4;
             return contract.owner();
 
@@ -29495,7 +29515,7 @@ function _getSingles() {
         switch (_context6.prev = _context6.next) {
           case 0:
             tokens = [];
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, bhc721, provider);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, bhc721, provider);
             collection = null; //await contract.contractURI();
 
             _context6.next = 5;
@@ -29553,7 +29573,7 @@ function _getMultiples() {
         switch (_context7.prev = _context7.next) {
           case 0:
             tokens = [];
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, bhc1155, provider);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, bhc1155, provider);
             _context7.next = 4;
             return contract.current_id();
 
@@ -29626,7 +29646,7 @@ function _getCollectible() {
               break;
             }
 
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, isPrivate ? bhc721 : bhc721, provider);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, isPrivate ? bhc721 : bhc721, provider);
             _context8.next = 7;
             return contract.ownerOf(id);
 
@@ -29655,7 +29675,7 @@ function _getCollectible() {
               break;
             }
 
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contractAddress, isPrivate ? bhc1155 : bhc1155, provider);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, isPrivate ? bhc1155 : bhc1155, provider);
             _context8.next = 19;
             return contract.balanceOf(owner, id);
 
@@ -29689,8 +29709,7 @@ function _getCollectible() {
 
 function generateOrderIdMessage(_x22, _x23, _x24, _x25, _x26, _x27) {
   return _generateOrderIdMessage.apply(this, arguments);
-} //////Set functions/////////
-
+}
 
 function _generateOrderIdMessage() {
   _generateOrderIdMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(tokenAddress, tokenId, value, priceToken, price, salt) {
@@ -29700,9 +29719,9 @@ function _generateOrderIdMessage() {
         switch (_context9.prev = _context9.next) {
           case 0:
             signer = provider.getSigner();
-            orderStorage = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.orderStorageAddress, orderStorageABI, signer);
+            orderStorage = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.orderStorageAddress, orderStorageABI, signer);
             _context9.next = 4;
-            return orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, price, salt);
+            return orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), salt);
 
           case 4:
             order = _context9.sent;
@@ -29718,25 +29737,26 @@ function _generateOrderIdMessage() {
   return _generateOrderIdMessage.apply(this, arguments);
 }
 
-function createASingle(_x28, _x29) {
-  return _createASingle.apply(this, arguments);
-}
+function checkNFTApproved(_x28, _x29, _x30) {
+  return _checkNFTApproved.apply(this, arguments);
+} //////Set functions/////////
 
-function _createASingle() {
-  _createASingle = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(url, contract) {
-    var signer, tx;
+
+function _checkNFTApproved() {
+  _checkNFTApproved = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(contractAddress, from, to) {
+    var ABI, contract, res;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
           case 0:
-            signer = provider.getSigner();
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contract, bhc721, signer);
+            ABI = bhc721;
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, provider);
             _context10.next = 4;
-            return contract.mintToken(window.ethereum.selectedAddress, url);
+            return contract.isApprovedForAll(from, true);
 
           case 4:
-            tx = _context10.sent;
-            return _context10.abrupt("return", tx);
+            res = _context10.sent;
+            return _context10.abrupt("return", res);
 
           case 6:
           case "end":
@@ -29745,24 +29765,24 @@ function _createASingle() {
       }
     }, _callee10);
   }));
+  return _checkNFTApproved.apply(this, arguments);
+}
+
+function createASingle(_x31, _x32) {
   return _createASingle.apply(this, arguments);
 }
 
-function createABatch(_x30, _x31, _x32) {
-  return _createABatch.apply(this, arguments);
-}
-
-function _createABatch() {
-  _createABatch = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(url, count, contract) {
+function _createASingle() {
+  _createASingle = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(url, contract) {
     var signer, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
           case 0:
             signer = provider.getSigner();
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_4__.Contract(contract, bhc1155, signer);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contract, bhc721, signer);
             _context11.next = 4;
-            return contract.mintToken(url, ethers__WEBPACK_IMPORTED_MODULE_5__.BigNumber.from(Number(count)), ethers__WEBPACK_IMPORTED_MODULE_6__.hexlify(0));
+            return contract.mintToken(window.ethereum.selectedAddress, url);
 
           case 4:
             tx = _context11.sent;
@@ -29775,36 +29795,97 @@ function _createABatch() {
       }
     }, _callee11);
   }));
+  return _createASingle.apply(this, arguments);
+}
+
+function createABatch(_x33, _x34, _x35) {
   return _createABatch.apply(this, arguments);
 }
 
-function buy(_x33, _x34, _x35, _x36, _x37, _x38, _x39, _x40, _x41) {
-  return _buy.apply(this, arguments);
-}
-
-function _buy() {
-  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
-    var signer, exchange, sig, tx;
+function _createABatch() {
+  _createABatch = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(url, count, contract) {
+    var signer, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee12$(_context12) {
       while (1) {
         switch (_context12.prev = _context12.next) {
           case 0:
             signer = provider.getSigner();
-            exchange = new ethers__WEBPACK_IMPORTED_MODULE_7__.contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.exchangeAddress, exchangeABI, signer);
-            sig = ethers__WEBPACK_IMPORTED_MODULE_6__.splitSignature(signature);
-            _context12.next = 5;
-            return exchange.exchange(is721, collection, tokenId, value, buyWith, price, owner, salt, ethers__WEBPACK_IMPORTED_MODULE_6__.hexlify(0), sig.v, sig.r, sig.s);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contract, bhc1155, signer);
+            _context12.next = 4;
+            return contract.mintToken(url, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(count)), ethers__WEBPACK_IMPORTED_MODULE_2__.hexlify(0));
 
-          case 5:
+          case 4:
             tx = _context12.sent;
             return _context12.abrupt("return", tx);
 
-          case 7:
+          case 6:
           case "end":
             return _context12.stop();
         }
       }
     }, _callee12);
+  }));
+  return _createABatch.apply(this, arguments);
+}
+
+function ApproveNFT(_x36, _x37) {
+  return _ApproveNFT.apply(this, arguments);
+}
+
+function _ApproveNFT() {
+  _ApproveNFT = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee13(contractAddress, to) {
+    var signer, ABI, contract, tx;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee13$(_context13) {
+      while (1) {
+        switch (_context13.prev = _context13.next) {
+          case 0:
+            signer = provider.getSigner();
+            ABI = bhc721;
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, signer);
+            _context13.next = 5;
+            return contract.setApprovalForAll(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.transferProxyAddress, true);
+
+          case 5:
+            tx = _context13.sent;
+            return _context13.abrupt("return", tx);
+
+          case 7:
+          case "end":
+            return _context13.stop();
+        }
+      }
+    }, _callee13);
+  }));
+  return _ApproveNFT.apply(this, arguments);
+}
+
+function buy(_x38, _x39, _x40, _x41, _x42, _x43, _x44, _x45, _x46) {
+  return _buy.apply(this, arguments);
+}
+
+function _buy() {
+  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee14(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
+    var signer, exchange, sig, tx;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee14$(_context14) {
+      while (1) {
+        switch (_context14.prev = _context14.next) {
+          case 0:
+            signer = provider.getSigner();
+            exchange = new ethers__WEBPACK_IMPORTED_MODULE_7__.contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.exchangeAddress, exchangeABI, signer);
+            sig = ethers__WEBPACK_IMPORTED_MODULE_2__.splitSignature(signature);
+            _context14.next = 5;
+            return exchange.exchange(is721, collection, tokenId, value, buyWith, price, owner, salt, ethers__WEBPACK_IMPORTED_MODULE_2__.hexlify(0), sig.v, sig.r, sig.s);
+
+          case 5:
+            tx = _context14.sent;
+            return _context14.abrupt("return", tx);
+
+          case 7:
+          case "end":
+            return _context14.stop();
+        }
+      }
+    }, _callee14);
   }));
   return _buy.apply(this, arguments);
 }
@@ -88903,14 +88984,29 @@ var render = function() {
                   _vm._v(" "),
                   _c("div", { staticClass: "form-divide" }, [
                     _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.price,
+                          expression: "price"
+                        }
+                      ],
                       staticClass: "modal-input",
                       attrs: {
                         type: "text",
                         id: "checkout-price",
-                        name: "price",
-                        "v-model": _vm.price
+                        name: "price"
                       },
-                      domProps: { value: _vm.singleNft.price }
+                      domProps: { value: _vm.price },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.price = $event.target.value
+                        }
+                      }
                     }),
                     _vm._v(" "),
                     _c("span", { staticClass: "link-url-end" }, [
@@ -89007,7 +89103,29 @@ var render = function() {
                         [
                           _vm._v(
                             "\n            " +
-                              _vm._s(_vm.progress || "Sign Order") +
+                              _vm._s("Sign Order") +
+                              "\n          "
+                          )
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  !_vm.approved
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "form-submit",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.sign($event)
+                            }
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s("Sign Order") +
                               "\n          "
                           )
                         ]

@@ -38,8 +38,7 @@
                 type="text"
                 id="checkout-price"
                 name="price"
-                :v-model="price"
-                :value="singleNft.price"
+                v-model="price"
               />
               <span class="link-url-end"
                 ><!--span id="checkout-currency">{{ currency }}</span>
@@ -100,7 +99,10 @@
               </div>
             </div-->
             <button v-if="!signed" class="form-submit" @click.prevent="sign">
-              {{ progress || "Sign Order" }}
+              {{ "Sign Order" }}
+            </button>
+            <button v-if="!approved" class="form-submit" @click.prevent="sign">
+              {{ "Sign Order" }}
             </button>
             <button class="form-submit" type="submit">
               {{ progress || "Sign Order" }}
@@ -129,7 +131,7 @@ export default {
       service_fee: 0,
       total_payment: 0,
       payment: 0,
-      price: 0, //thist.singleNft.price,
+      price: 0,
       currency: 1,
       nft_id: 0,
       record_id: 0,
@@ -174,8 +176,8 @@ export default {
           _this.singleNft.contract,
           _this.singleNft.id,
           _this.singleNft.ownedCopies,
-          _this.singleNft.contract,
-          _this.singleNft.price,
+          _this.currency == 1 ? hpsAddress : bhcAddress,
+          _this.price,
           "dhgjdfh"
         );
       var sig = await signMessage(orderId);
@@ -192,7 +194,7 @@ export default {
         collection: _this.singleNft.contract,
         current_owner: _this.singleNft.owner_id,
         token_id: _this.singleNft.id,
-        price: _this.price,
+        price: Number(_this.price),
         is_instant: false,
         currency: _this.currency == 1 ? hpsAddress : bhcAddress,
         signature: _this.s,

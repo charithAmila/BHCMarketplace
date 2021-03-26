@@ -124,7 +124,7 @@ async function getOwnedTokensData(owner, base_url) {
 
         ////remove/////
         nft.isp = 1
-        nft.is_selling = 1
+        nft.is_selling = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
         listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
         data.push(nft);
     }
@@ -170,16 +170,18 @@ async function getOnSaleTokens(owner, base_url) {
     var tokens = res.data
 
     for (var i = 0; i < tokens.length; i++) {
-        var nft = await getTokenData(
-            tokens[i].collection,
-            tokens[i].current_owner,
-            tokens[i].token_id
-        )
-        nft.is_isp = 1;
-        nft.is_selling = 1;
-        nft.price = tokens[i].price;
-        nft.currency = tokens[i].currency;
-        data.push(nft)
+        try {
+            var nft = await getTokenData(
+                tokens[i].collection,
+                tokens[i].current_owner,
+                tokens[i].token_id
+            )
+            nft.is_isp = 1;
+            nft.is_selling = 1;
+            nft.price = tokens[i].price;
+            nft.currency = tokens[i].currency;
+            data.push(nft)
+        } catch (e) { }
     }
 
     return data;
@@ -252,16 +254,18 @@ async function getAllSales(current_user) {
 
     for (var i = 0; i < tokens.length; i++) {
         if (tokens[i].current_owner != current_user) {
-            var nft = await getTokenData(
-                tokens[i].collection,
-                tokens[i].current_owner,
-                tokens[i].token_id
-            )
-            nft.price = 100//tokens[i].price;
-            nft.isp = 1;
-            nft.is_selling = 1;
-            nft.currency = tokens[i].currency == hpsAddress ? "HPS" : tokens[i].currency == bhcAddress ? "BHC" : "BNB";
-            data.push(nft)
+            try {
+                var nft = await getTokenData(
+                    tokens[i].collection,
+                    tokens[i].current_owner,
+                    tokens[i].token_id
+                )
+                nft.price = 100//tokens[i].price;
+                nft.isp = 1;
+                nft.is_selling = 1;
+                nft.currency = tokens[i].currency == hpsAddress ? "HPS" : tokens[i].currency == bhcAddress ? "BHC" : "BNB";
+                data.push(nft)
+            } catch (e) { }
         }
     }
 
@@ -271,6 +275,8 @@ async function getAllSales(current_user) {
 async function checkSelling(collection, owner, id) {
     var res = await axios.get(`/api/sales?collection=${collection}&current_owner=${owner}&token_id=${id}`
     )
+
+
     return res.data;
 }
 
