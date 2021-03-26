@@ -61,8 +61,7 @@
 
 <script>
 
-import { signMessage,bid,startBidding,getHighestBid,getHighestBidder,getBiddingStatus } from "././../etherFunc";
-
+import { bid , startBidding, getHighestBid, getHighestBidder, getBiddingStatus } from "././../bidFunc";
 export default{
 	props: [
 		'base_url',
@@ -78,13 +77,12 @@ return{
 },
 
 async mounted() {
- this.highestBid = await getHighestBid('18');
- this.highestBidder = await getHighestBidder('18');
- this.biddingStatus = await getBiddingStatus('18');
+ //this.highestBid = await getHighestBid('18');
+ //this.highestBidder = await getHighestBidder('18');
+ //this.biddingStatus = await getBiddingStatus('18');
 
 },
 	methods: {
-
 
 	async startBid(){
 		let res = await startBidding('18');
@@ -93,10 +91,9 @@ async mounted() {
 	
 	async placeBid(){
 
-	let res = await bid('18','1.2');
-	console.log(res);
+	let res = await bid(1,1,1,1,'18','TEST','21');
+	}
 	}
 
-	},
 }
 </script>
