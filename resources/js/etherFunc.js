@@ -163,6 +163,14 @@ async function createABatch(url, count, contract) {
     return tx;
 }
 
+async function buy(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
+    const signer = provider.getSigner()
+    const exchange = new ethers.contract(exchangeAddress, exchangeABI, signer)
+    const sig = ethers.utils.splitSignature(signature)
+
+    const tx = await exchange.exchange(is721, collection, tokenId, value, buyWith, price, owner, salt, ethers.utils.hexlify(0), sig.v, sig.r, sig.s)
+    return tx;
+}
 
 export {
     checkConnection,

@@ -18,5 +18,6 @@ class Sales extends Model
         'is_instant',
         "currency",
         "signature",
+        "salt"
     ];
 }

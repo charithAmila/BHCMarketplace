@@ -22378,6 +22378,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -22389,8 +22390,8 @@ __webpack_require__.r(__webpack_exports__);
       singleNft: {},
       current_page: "",
       bidList: [],
-      bidListNFT: "",
-      collectible: this.collectibles[0]
+      bidListNFT: "" //collectible: this.collectibles[0],
+
     };
   },
   watch: {
@@ -22404,7 +22405,7 @@ __webpack_require__.r(__webpack_exports__);
     putOnSale: function putOnSale(collectible) {
       var _this = this;
 
-      _this.collectible = collectible;
+      _this.singleNft = collectible;
 
       _this.toggleModal("putOnSale");
     },
@@ -22420,17 +22421,20 @@ __webpack_require__.r(__webpack_exports__);
 
       this.singleNft = collectible;
       this.singleNft.total = this.fetchTotal(collectible.price);
-      this.singleNft.currency = this.fetchCurrency(collectible.price);
+      this.singleNft.currency = this.fetchCurrency(collectible.currency);
       this.singleNft.max = this.fetchTotalCopies(collectible.copies);
     },
     fetchTotal: function fetchTotal(price) {
-      return parseFloat(price.split(" ")[0]).toFixed(2);
+      //return parseFloat(price.split(" ")[0]).toFixed(2);
+      return this.singleNft.price;
     },
     fetchCurrency: function fetchCurrency(price) {
-      return price.split(" ")[1];
+      //return price.split(" ")[1];
+      return this.singleNft.currency;
     },
     fetchTotalCopies: function fetchTotalCopies(copies) {
-      return copies.split(" ")[0];
+      //return copies.split(" ")[0];
+      return this.singleNft.copies;
     },
     customUpdateNft: function customUpdateNft(slug, user_id) {
       var _this2 = this;
@@ -24402,12 +24406,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['collectible_asset', 'show_collectible', 'current_user', 'base_url', 'asset_url'],
+  props: ["collectible_asset", "show_collectible", "base_url", "asset_url"],
   data: function data() {
     return {
-      customData: ''
+      customData: ""
     };
   },
   methods: {
@@ -24431,6 +24434,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _CollectibleComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CollectibleComponent.vue */ "./resources/js/components/CollectibleComponent.vue");
+/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../data */ "./resources/js/data.js");
+/* harmony import */ var _etherFunc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../etherFunc */ "./resources/js/etherFunc.js");
 //
 //
 //
@@ -24552,28 +24557,93 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     Collectible: _CollectibleComponent_vue__WEBPACK_IMPORTED_MODULE_0__.default
   },
-  props: ['collectible_asset', 'show_collectible', 'current_user', 'base_url', 'asset_url'],
+  props: ["collectible_asset", "show_collectible", "base_url", "asset_url", "current_user"],
   data: function data() {
     return {
       collectibles: [],
-      category: 'all',
-      sortBy: 'updated_at',
-      order: 'desc',
-      div_id: 'nft-container',
-      notifications: []
+      category: "all",
+      sortBy: "updated_at",
+      order: "desc",
+      div_id: "nft-container",
+      notifications: [],
+      current_user: ""
     };
   },
   methods: {
+    checkConnection: function checkConnection() {
+      var _this = this;
+
+      var connectionInterval = setInterval(function () {
+        var acc = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.checkConnection)();
+
+        if (acc) {
+          _this.current_user = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.toAddress)(acc);
+
+          _this.getCollectible();
+
+          clearInterval(connectionInterval);
+        } else {
+          _this.current_user = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.toAddress)("");
+
+          _this.getCollectible();
+        }
+      }, 300);
+    },
     getCollectible: function getCollectible() {
       var _this = this;
 
-      axios.get('/nft/fetchCollectibles').then(function (res) {
-        _this.collectibles = res.data;
+      (0,_data__WEBPACK_IMPORTED_MODULE_1__.getAllSales)(_this.current_user).then(function (data) {
+        _this.collectibles = data;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -24590,7 +24660,7 @@ __webpack_require__.r(__webpack_exports__);
     fetchFilterNft: function fetchFilterNft() {
       var _this2 = this;
 
-      axios.get("/nft/filter/" + this.category + '/' + this.sortBy + '/' + this.order).then(function (res) {
+      axios.get("/nft/filter/" + this.category + "/" + this.sortBy + "/" + this.order).then(function (res) {
         _this2.collectibles = res.data.collectibles;
       })["catch"](function (error) {
         console.log(error);
@@ -24598,7 +24668,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    this.getCollectible();
+    this.checkConnection();
   }
 });
 
@@ -24681,6 +24751,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
+//
 //
 //
 //
@@ -25163,7 +25236,8 @@ __webpack_require__.r(__webpack_exports__);
     sign: function sign() {}
   },
   mounted: function mounted() {
-    this.checkConnection(); //this.getUserData();
+    this.checkConnection();
+    this.getUserData();
   }
 });
 
@@ -25703,19 +25777,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context.prev = _context.next) {
             case 0:
               _this2.loaded = false;
-              _context.next = 3;
-              return (0,_data__WEBPACK_IMPORTED_MODULE_5__.getUserDetails)(_this2.collectible.creator);
-
-            case 3:
-              _this2.creator = _context.sent;
-              _context.next = 6;
-              return (0,_data__WEBPACK_IMPORTED_MODULE_5__.getUserDetails)(_this2.collectible.current_owner);
-
-            case 6:
-              _this2.current_owner = _context.sent;
-              //this.owners = this.collectible.owners
               _this2.set_collectible = _this2.collectible;
               _this2.set_transactions = _this2.transactions;
+              _context.next = 5;
+              return (0,_data__WEBPACK_IMPORTED_MODULE_5__.getUserDetails)(_this2.collectible.creator);
+
+            case 5:
+              _this2.creator = _context.sent;
+              _context.next = 8;
+              return (0,_data__WEBPACK_IMPORTED_MODULE_5__.getUserDetails)(_this2.collectible.owner_id);
+
+            case 8:
+              _this2.current_owner = _context.sent;
+              //this.owners = this.collectible.owners
               _this2.loaded = true;
 
             case 10:
@@ -26376,9 +26450,37 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['singleNft', 'page'],
+  props: ["singleNft", "page"],
   data: function data() {
     return {
       quantity: 1,
@@ -26387,7 +26489,7 @@ __webpack_require__.r(__webpack_exports__);
       total_payment: 0,
       payment: 0,
       price: 0,
-      currency: '',
+      currency: "",
       nft_id: 0,
       record_id: 0
     };
@@ -26412,36 +26514,36 @@ __webpack_require__.r(__webpack_exports__);
     purchase: function purchase() {
       var _this = this;
 
-      this.currency = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#checkout-currency').text();
-      axios.post('/create/transaction', {
-        type: 'buy',
+      this.currency = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#checkout-currency").text();
+      axios.post("/create/transaction", {
+        type: "buy",
         nft_id: this.nft_id,
         price: this.payment,
         currency: this.currency,
         record_id: this.record_id,
         quantity_input: this.quantity
       }).then(function (res) {
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.toast-message').text(res.data.message);
-        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#purchaseForm').trigger("reset");
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(".toast-message").text(res.data.message);
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()("#purchaseForm").trigger("reset");
         setTimeout(function () {
           launch_toast();
         }, 500);
-        modalClose(jquery__WEBPACK_IMPORTED_MODULE_0___default()('#checkoutModal'), jquery__WEBPACK_IMPORTED_MODULE_0___default()(".checkout-content"));
+        modalClose(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#checkoutModal"), jquery__WEBPACK_IMPORTED_MODULE_0___default()(".checkout-content"));
         _this.service_fee = 0;
         _this.total_payment = 0;
         _this.payment = 0;
-        _this.bid_input = '';
+        _this.bid_input = "";
         _this.quantity = 1;
 
-        if (_this.page == 'marketplace' || _this.page == 'profile') {
+        if (_this.page == "marketplace" || _this.page == "profile") {
           _this.$parent.$parent.getCollectible();
         }
 
-        if (_this.page == 'marketplace') {
+        if (_this.page == "marketplace") {
           _this.$parent.$parent.$parent.updateTopUser();
         }
 
-        if (_this.page == 'showcollectible') {
+        if (_this.page == "showcollectible") {
           _this.$parent.updateData();
         }
       })["catch"](function (error) {
@@ -26805,6 +26907,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -26812,9 +26924,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     var _this2 = this;
 
-    axios.get('/api/shorturls').then(function (response) {
+    axios.get("/api/shorturls").then(function (response) {
       _this2.shorturls = response.data;
-      _this2.url_previous = user_data.short_url;
+      _this2.url_previous = _this2.user_data.short_url;
       console.log(_this2.shorturls);
     });
   },
@@ -26823,7 +26935,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       fields: {},
       shorturls: null,
       nameerror: null,
-      url_previous: '',
+      url_previous: "",
       j: "",
       s: "",
       pro_pic: "",
@@ -27179,12 +27291,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
 
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ["singleNft", "page", "collectible"],
+  props: ["singleNft", "page"],
   data: function data() {
     return {
       quantity: 1,
@@ -27193,7 +27309,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       total_payment: 0,
       payment: 0,
       price: 0,
-      //thist.collectible.price,
+      //thist.singleNft.price,
       currency: 1,
       nft_id: 0,
       record_id: 0,
@@ -27205,17 +27321,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       orderId: ""
     };
   },
-  watch: {
-    singleNft: function singleNft() {
+
+  /*watch: {
+    singleNft: function () {
       this.price = +parseFloat(this.singleNft.total).toFixed(2);
       this.nft_id = this.singleNft.id;
       this.record_id = this.singleNft.record_id;
       this.updateValues();
     },
-    quantity: function quantity() {
+    quantity: function () {
       this.updateValues();
-    }
-  },
+    },
+  },*/
   methods: {
     toggleDropdown: function toggleDropdown(ct) {
       console.log(ct);
@@ -27244,7 +27361,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _this = _this2;
                 _context.next = 3;
-                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.generateOrderIdMessage)(_this.collectible.contract, _this.collectible.id, _this.collectible.ownedCopies, _this.collectible.contract, _this.collectible.price, "dhgjdfh");
+                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.generateOrderIdMessage)(_this.singleNft.contract, _this.singleNft.id, _this.singleNft.ownedCopies, _this.singleNft.contract, _this.singleNft.price, "dhgjdfh");
 
               case 3:
                 orderId = _context.sent;
@@ -27256,7 +27373,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this.s = sig;
                 _this.signed = true;
                 _this.progress = "Put Order";
-                _this.salt = salt;
+                _this.salt = "dhgjdfh";
                 _this.orderId = orderId;
 
               case 12:
@@ -27279,14 +27396,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _this = _this3;
                 data = {
-                  collection: _this.collectible.contract,
-                  current_owner: _this.collectible.owner_id,
-                  token_id: _this.collectible.id,
+                  collection: _this.singleNft.contract,
+                  current_owner: _this.singleNft.owner_id,
+                  token_id: _this.singleNft.id,
                   price: _this.price,
                   is_instant: false,
                   currency: _this.currency == 1 ? _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.hpsAddress : _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.bhcAddress,
                   signature: _this.s,
-                  orderId: _this.orderId
+                  order_id: _this.orderId,
+                  salt: _this.salt
                 };
                 _context2.next = 4;
                 return (0,_data__WEBPACK_IMPORTED_MODULE_4__.addSale)(data);
@@ -28394,7 +28512,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getTokensData": () => (/* binding */ getTokensData),
 /* harmony export */   "getTokenData": () => (/* binding */ getTokenData),
 /* harmony export */   "addSale": () => (/* binding */ addSale),
-/* harmony export */   "updateUserDetails": () => (/* binding */ updateUserDetails)
+/* harmony export */   "updateUserDetails": () => (/* binding */ updateUserDetails),
+/* harmony export */   "getAllSales": () => (/* binding */ getAllSales)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
@@ -28543,10 +28662,9 @@ function _getCollections() {
               }
             }
 
-            console.log(collections);
             return _context2.abrupt("return", collections);
 
-          case 14:
+          case 13:
           case "end":
             return _context2.stop();
         }
@@ -28807,28 +28925,61 @@ function _getCreatedTokens() {
   return _getCreatedTokens.apply(this, arguments);
 }
 
-function getOnSaleokens(_x13, _x14) {
-  return _getOnSaleokens.apply(this, arguments);
+function getOnSaleTokens(_x13, _x14) {
+  return _getOnSaleTokens.apply(this, arguments);
 }
 
-function _getOnSaleokens() {
-  _getOnSaleokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(owner, base_url) {
-    var data;
+function _getOnSaleTokens() {
+  _getOnSaleTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(owner, base_url) {
+    var data, tokens721, tokens1155, res, tokens, i, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             data = [];
+            tokens721 = [];
+            tokens1155 = [];
+            _context8.next = 5;
+            return axios.get("/api/sales/" + owner);
+
+          case 5:
+            res = _context8.sent;
+            tokens = res.data;
+            i = 0;
+
+          case 8:
+            if (!(i < tokens.length)) {
+              _context8.next = 20;
+              break;
+            }
+
+            _context8.next = 11;
+            return getTokenData(tokens[i].collection, tokens[i].current_owner, tokens[i].token_id);
+
+          case 11:
+            nft = _context8.sent;
+            nft.is_isp = 1;
+            nft.is_selling = 1;
+            nft.price = tokens[i].price;
+            nft.currency = tokens[i].currency;
+            data.push(nft);
+
+          case 17:
+            i++;
+            _context8.next = 8;
+            break;
+
+          case 20:
             return _context8.abrupt("return", data);
 
-          case 2:
+          case 21:
           case "end":
             return _context8.stop();
         }
       }
     }, _callee8);
   }));
-  return _getOnSaleokens.apply(this, arguments);
+  return _getOnSaleTokens.apply(this, arguments);
 }
 
 function getTokensData(_x15, _x16) {
@@ -28858,7 +29009,7 @@ function _getTokensData() {
           case 8:
             createdTokens = _context9.sent;
             _context9.next = 11;
-            return getOnSaleokens(owner, base_url);
+            return getOnSaleTokens(owner, base_url);
 
           case 11:
             onSaleTokens = _context9.sent;
@@ -28867,7 +29018,8 @@ function _getTokensData() {
               "liked": likedTokens,
               "created": createdTokens,
               "collectibles": ownedTokens
-            };
+            }; //console.log(data)
+
             return _context9.abrupt("return", data);
 
           case 14:
@@ -28882,50 +29034,68 @@ function _getTokensData() {
 
 function getTokenData(_x17, _x18, _x19) {
   return _getTokenData.apply(this, arguments);
-} ///////////////set///////////////
-
+}
 
 function _getTokenData() {
   _getTokenData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(contract, owner, id) {
-    var listed, data, res, type, isPrivate, collectible, colData;
+    var listed, res, type, isPrivate, selectedToken, colData, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
           case 0:
             listed = false;
-            data = {};
-            _context10.next = 4;
+            _context10.next = 3;
             return axios.get("/api/collections/" + contract);
 
-          case 4:
+          case 3:
             res = _context10.sent;
             type = res.data.type;
             isPrivate = res.data.id > 2 ? true : false;
-            _context10.next = 9;
+            _context10.next = 8;
             return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.getCollectible)(contract, type, isPrivate, owner, id);
 
-          case 9:
-            collectible = _context10.sent;
-            _context10.next = 12;
-            return axios.get(collectible.URI);
+          case 8:
+            selectedToken = _context10.sent;
+            _context10.next = 11;
+            return axios.get(selectedToken.URI);
 
-          case 12:
+          case 11:
             colData = _context10.sent;
-            data = colData.data;
-            data.current_owner = collectible.tokenOwner;
+            nft = colData.data;
+            /*data.current_owner = collectible.tokenOwner;
             data.is_selling = 1;
-            data.collection = collectible.collection || tempCollectionData();
+            data.collection = collectible.collection || tempCollectionData()
             data.ownedCopies = collectible.ownedCopies;
             data.type = type;
-            listed ? data.price = data.instant_sale_price : data.price = data.instant_sale_price; //////remove////
-
+             listed ? data.price = data.instant_sale_price : data.price = data.instant_sale_price
+            //////remove////
             data.fileType = data.fileType || "image";
-            data.file = data.image || data.file;
+            data.file = data.image || data.file
             data.creator = owner;
-            data.count = collectible.availableCopies;
-            return _context10.abrupt("return", data);
+            data.count = collectible.availableCopies*/
 
-          case 25:
+            nft.copies = selectedToken.availableCopies;
+            nft.ownedCopies = selectedToken.ownedCopies;
+            nft.id = selectedToken.id;
+            nft.contract = selectedToken.contract;
+            nft.owner_id = selectedToken.tokenOwner;
+            nft.collection = selectedToken.collection || tempCollectionData();
+            nft.legend = nft.legend || "normal"; ////remove/////
+
+            nft.isp = 1;
+            _context10.next = 23;
+            return checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id);
+
+          case 23:
+            nft.is_selling = _context10.sent;
+            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
+            nft.fileType = nft.fileType || "image";
+            nft.file = nft.image || nft.file;
+            nft.creator = owner;
+            nft.count = selectedToken.availableCopies;
+            return _context10.abrupt("return", nft);
+
+          case 30:
           case "end":
             return _context10.stop();
         }
@@ -28935,50 +29105,142 @@ function _getTokenData() {
   return _getTokenData.apply(this, arguments);
 }
 
-function updateUserDetails(_x20, _x21) {
-  return _updateUserDetails.apply(this, arguments);
+function getAllSales(_x20) {
+  return _getAllSales.apply(this, arguments);
 }
 
-function _updateUserDetails() {
-  _updateUserDetails = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(addressString, data) {
-    var address;
+function _getAllSales() {
+  _getAllSales = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(current_user) {
+    var data, tokens721, tokens1155, res, tokens, i, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
           case 0:
-            address = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.toAddress)(addressString);
-            _context11.next = 3;
-            return axios.patch("/api/profile/".concat(address), data);
+            data = [];
+            tokens721 = [];
+            tokens1155 = [];
+            _context11.next = 5;
+            return axios.get("/api/sales");
 
-          case 3:
+          case 5:
+            res = _context11.sent;
+            tokens = res.data;
+            i = 0;
+
+          case 8:
+            if (!(i < tokens.length)) {
+              _context11.next = 21;
+              break;
+            }
+
+            if (!(tokens[i].current_owner != current_user)) {
+              _context11.next = 18;
+              break;
+            }
+
+            _context11.next = 12;
+            return getTokenData(tokens[i].collection, tokens[i].current_owner, tokens[i].token_id);
+
+          case 12:
+            nft = _context11.sent;
+            nft.price = 100; //tokens[i].price;
+
+            nft.isp = 1;
+            nft.is_selling = 1;
+            nft.currency = tokens[i].currency == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hpsAddress ? "HPS" : tokens[i].currency == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.bhcAddress ? "BHC" : "BNB";
+            data.push(nft);
+
+          case 18:
+            i++;
+            _context11.next = 8;
+            break;
+
+          case 21:
+            return _context11.abrupt("return", data);
+
+          case 22:
           case "end":
             return _context11.stop();
         }
       }
     }, _callee11);
   }));
-  return _updateUserDetails.apply(this, arguments);
+  return _getAllSales.apply(this, arguments);
 }
 
-function addSale(_x22) {
-  return _addSale.apply(this, arguments);
-}
+function checkSelling(_x21, _x22, _x23) {
+  return _checkSelling.apply(this, arguments);
+} ///////////////set///////////////
 
-function _addSale() {
-  _addSale = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(data) {
+
+function _checkSelling() {
+  _checkSelling = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(collection, owner, id) {
+    var res;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee12$(_context12) {
       while (1) {
         switch (_context12.prev = _context12.next) {
           case 0:
             _context12.next = 2;
-            return axios.post("/api/sales", data);
+            return axios.get("/api/sales?collection=".concat(collection, "&current_owner=").concat(owner, "&token_id=").concat(id));
 
           case 2:
+            res = _context12.sent;
+            return _context12.abrupt("return", res.data);
+
+          case 4:
           case "end":
             return _context12.stop();
         }
       }
     }, _callee12);
+  }));
+  return _checkSelling.apply(this, arguments);
+}
+
+function updateUserDetails(_x24, _x25) {
+  return _updateUserDetails.apply(this, arguments);
+}
+
+function _updateUserDetails() {
+  _updateUserDetails = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee13(addressString, data) {
+    var address;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee13$(_context13) {
+      while (1) {
+        switch (_context13.prev = _context13.next) {
+          case 0:
+            address = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.toAddress)(addressString);
+            _context13.next = 3;
+            return axios.patch("/api/profile/".concat(address), data);
+
+          case 3:
+          case "end":
+            return _context13.stop();
+        }
+      }
+    }, _callee13);
+  }));
+  return _updateUserDetails.apply(this, arguments);
+}
+
+function addSale(_x26) {
+  return _addSale.apply(this, arguments);
+}
+
+function _addSale() {
+  _addSale = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee14(data) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee14$(_context14) {
+      while (1) {
+        switch (_context14.prev = _context14.next) {
+          case 0:
+            _context14.next = 2;
+            return axios.post("/api/sales", data);
+
+          case 2:
+          case "end":
+            return _context14.stop();
+        }
+      }
+    }, _callee14);
   }));
   return _addSale.apply(this, arguments);
 }
@@ -29015,6 +29277,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/contracts/lib.esm/index.js");
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bignumber/lib.esm/bignumber.js");
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bytes/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ethers */ "./node_modules/ethers/lib.esm/ethers.js");
 /* harmony import */ var _addresses_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./addresses/constants */ "./resources/js/addresses/constants.js");
 
 
@@ -29513,6 +29776,37 @@ function _createABatch() {
     }, _callee11);
   }));
   return _createABatch.apply(this, arguments);
+}
+
+function buy(_x33, _x34, _x35, _x36, _x37, _x38, _x39, _x40, _x41) {
+  return _buy.apply(this, arguments);
+}
+
+function _buy() {
+  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
+    var signer, exchange, sig, tx;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee12$(_context12) {
+      while (1) {
+        switch (_context12.prev = _context12.next) {
+          case 0:
+            signer = provider.getSigner();
+            exchange = new ethers__WEBPACK_IMPORTED_MODULE_7__.contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.exchangeAddress, exchangeABI, signer);
+            sig = ethers__WEBPACK_IMPORTED_MODULE_6__.splitSignature(signature);
+            _context12.next = 5;
+            return exchange.exchange(is721, collection, tokenId, value, buyWith, price, owner, salt, ethers__WEBPACK_IMPORTED_MODULE_6__.hexlify(0), sig.v, sig.r, sig.s);
+
+          case 5:
+            tx = _context12.sent;
+            return _context12.abrupt("return", tx);
+
+          case 7:
+          case "end":
+            return _context12.stop();
+        }
+      }
+    }, _callee12);
+  }));
+  return _buy.apply(this, arguments);
 }
 
 
@@ -81696,55 +81990,22 @@ var render = function() {
                           },
                           [
                             collectible.isp == 1
-                              ? _c("div", { staticClass: "input-group mb-3" }, [
-                                  _c(
-                                    "div",
-                                    { staticClass: "input-group-prepend" },
-                                    [
-                                      _c(
-                                        "div",
-                                        { staticClass: "input-group-text" },
-                                        [
-                                          _c("input", {
-                                            attrs: {
-                                              id: "nft-" + collectible.slug,
-                                              type: "checkbox",
-                                              "aria-label":
-                                                "Checkbox for following text input"
-                                            },
-                                            domProps: {
-                                              checked:
-                                                collectible.is_selling == 1
-                                            },
-                                            on: {
-                                              change: function($event) {
-                                                return _vm.customUpdateNft(
-                                                  collectible.slug,
-                                                  collectible.owner_id
-                                                )
-                                              }
-                                            }
-                                          })
-                                        ]
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("input", {
-                                    staticClass: "form-control",
-                                    attrs: {
-                                      type: "text",
-                                      "aria-label": "Text input with checkbox",
-                                      value: "Put on sale"
-                                    },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.putOnSale(collectible)
-                                      }
-                                    }
-                                  })
-                                ])
+                              ? _c("div", { staticClass: "input-group mb-3" })
                               : _vm._e(),
+                            _vm._v(" "),
+                            _c(
+                              "a",
+                              {
+                                staticClass: "sale",
+                                attrs: { id: collectible.slug },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.putOnSale(collectible)
+                                  }
+                                }
+                              },
+                              [_vm._v("Put On Sale")]
+                            ),
                             _vm._v(" "),
                             _c(
                               "a",
@@ -81872,11 +82133,7 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("put-on-sale-modal-component", {
-        attrs: {
-          singleNft: _vm.singleNft,
-          page: _vm.current_page,
-          collectible: _vm.collectible
-        }
+        attrs: { singleNft: _vm.singleNft, page: _vm.current_page }
       }),
       _vm._v(" "),
       _c("bid-modal-component", {
@@ -85056,13 +85313,12 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "col-md-10  col-lg-10  item-content" },
+      { staticClass: "col-md-10 col-lg-10 item-content" },
       [
         _c("marketplace-component", {
           attrs: {
             collectible_asset: _vm.collectible_asset,
             show_collectible: _vm.show_collectible,
-            current_user: _vm.current_user,
             base_url: _vm.base_url,
             asset_url: _vm.asset_url
           }
@@ -85109,7 +85365,7 @@ var render = function() {
               }
             }
           },
-          [_vm._v("All")]
+          [_vm._v("\n        All\n      ")]
         ),
         _vm._v(" "),
         _c(
@@ -85123,7 +85379,7 @@ var render = function() {
               }
             }
           },
-          [_vm._v("Arts")]
+          [_vm._v("\n        Arts\n      ")]
         ),
         _vm._v(" "),
         _c(
@@ -85137,7 +85393,7 @@ var render = function() {
               }
             }
           },
-          [_vm._v("Memes")]
+          [_vm._v("\n        Memes\n      ")]
         )
       ]),
       _vm._v(" "),
@@ -85153,7 +85409,7 @@ var render = function() {
               staticClass: "imgFilter",
               attrs: { src: _vm.asset_url + "/images/filter.png", width: "25" }
             }),
-            _vm._v(" Sort & Filter\n\t\t\t")
+            _vm._v("\n        Sort & Filter\n      ")
           ]
         ),
         _vm._v(" "),
@@ -85324,9 +85580,7 @@ var staticRenderFns = [
       _c("li", [
         _c("a", { attrs: { href: "javascript:void(0)" } }, [
           _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-md-9" }, [
-              _vm._v("\n\t\t\t\t\t\t\t\t\tVerified only\n\t\t\t\t\t\t\t\t")
-            ]),
+            _c("div", { staticClass: "col-md-9" }, [_vm._v("Verified only")]),
             _vm._v(" "),
             _c("div", { staticClass: "col-md-3" }, [
               _c("div", { staticClass: "custom-control custom-switch" }, [
@@ -85625,7 +85879,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("span", { staticClass: "collection-desc" }, [
                   _vm._v(
-                    "Come back soon! Or try to browse something for you on our\n            marketplace"
+                    "Come back soon! Or try to browse something for you on our\n          marketplace"
                   )
                 ]),
                 _vm._v(" "),
@@ -87530,11 +87784,13 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "modal-body" }, [
           _c("label", { staticClass: "item-description" }, [
-            _vm._v("You are about to purchase "),
+            _vm._v("You are about to purchase\n        "),
             _c("span", { staticClass: "item-name" }, [
               _vm._v(_vm._s(_vm.singleNft.name))
             ]),
-            _vm._v(" from billion. Check information then proceed to payment")
+            _vm._v(
+              " from billion.\n        Check information then proceed to payment"
+            )
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "form-section" }, [
@@ -87568,7 +87824,7 @@ var render = function() {
                       name: "quantity",
                       placeholder: "Enter quantity",
                       min: "1",
-                      max: _vm.singleNft.max
+                      max: _vm.singleNft.ownedCopies
                     },
                     domProps: { value: _vm.quantity },
                     on: {
@@ -87598,7 +87854,7 @@ var render = function() {
                       name: "price",
                       readonly: ""
                     },
-                    domProps: { value: _vm.singleNft.total }
+                    domProps: { value: _vm.singleNft.price }
                   }),
                   _vm._v(" "),
                   _c("span", { staticClass: "link-url-end" }, [
@@ -87662,7 +87918,7 @@ var render = function() {
                 _c(
                   "button",
                   { staticClass: "form-submit", attrs: { type: "submit" } },
-                  [_vm._v("Proceed to payment")]
+                  [_vm._v("\n            Proceed to payment\n          ")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -88468,16 +88724,14 @@ var render = function() {
                     _vm.fields.short_url != _vm.url_previous
                       ? _c("div", { staticClass: "alert alert-danger" }, [
                           _vm._v(
-                            "\n                 Already exists\n                "
+                            "\n                Already exists\n              "
                           )
                         ])
                       : _vm._e(),
                     _vm._v(" "),
                     !_vm.nameerror && _vm.nameerror != null
                       ? _c("div", { staticClass: "alert alert-success" }, [
-                          _vm._v(
-                            "\n                 Available\n                "
-                          )
+                          _vm._v("\n                Available\n              ")
                         ])
                       : _vm._e(),
                     _vm._v(" "),
@@ -88500,11 +88754,7 @@ var render = function() {
                             }
                           }
                         },
-                        [
-                          _vm._v(
-                            "\n                Sign Changes\n              "
-                          )
-                        ]
+                        [_vm._v("\n              Sign Changes\n            ")]
                       )
                     : _c(
                         "button",
@@ -88518,9 +88768,9 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                " +
+                            "\n              " +
                               _vm._s(_vm.process) +
-                              "\n              "
+                              "\n            "
                           )
                         ]
                       )
@@ -88612,138 +88862,173 @@ var render = function() {
           _c("label", { staticClass: "item-description" }, [
             _vm._v("You are about to put the\n        "),
             _c("span", { staticClass: "item-name" }, [
-              _vm._v(_vm._s(_vm.collectible.name))
+              _vm._v(_vm._s(_vm.singleNft.name))
             ]),
             _vm._v(
               " from\n        " +
-                _vm._s(_vm.collectible.collection.name) +
+                _vm._s(_vm.singleNft.collection.name) +
                 " on sale. Check information then\n        submit"
             )
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "form-section" }, [
-            _c(
-              "form",
-              {
-                attrs: { autocomplete: "off", id: "purchaseForm" },
-                on: {
-                  submit: function($event) {
-                    $event.preventDefault()
-                    return _vm.sign($event)
-                  }
+          _c(
+            "div",
+            {
+              staticClass: "form-section",
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.placeOrder($event)
                 }
-              },
-              [
-                _c("div", { staticClass: "form-divide" }, [
-                  _c("label", { staticClass: "desc-url" }, [
-                    _vm._v("You Have.")
+              }
+            },
+            [
+              _c(
+                "form",
+                { attrs: { autocomplete: "off", id: "purchaseForm" } },
+                [
+                  _c("div", { staticClass: "form-divide" }, [
+                    _c("label", { staticClass: "desc-url" }, [
+                      _vm._v("You Have.")
+                    ]),
+                    _vm._v(" "),
+                    _c("label", { staticClass: "desc-url" }, [
+                      _vm._v(
+                        _vm._s(_vm.singleNft.ownedCopies) +
+                          " out of\n              " +
+                          _vm._s(_vm.singleNft.copies)
+                      )
+                    ])
                   ]),
                   _vm._v(" "),
-                  _c("label", { staticClass: "desc-url" }, [
-                    _vm._v(
-                      _vm._s(_vm.collectible.ownedCopies) +
-                        " out of\n              " +
-                        _vm._s(_vm.collectible.copies)
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-divide" }, [
-                  _c("input", {
-                    staticClass: "modal-input",
-                    attrs: {
-                      type: "text",
-                      id: "checkout-price",
-                      name: "price",
-                      "v-model": _vm.price
-                    },
-                    domProps: { value: _vm.collectible.price }
-                  }),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "link-url-end" }, [
-                    _c(
-                      "span",
-                      {
-                        staticClass: "checkout-currency positionHolder",
-                        on: {
-                          click: function($event) {
-                            return _vm.toggleDropdown(".checkout-drop")
-                          }
-                        }
+                  _c("div", { staticClass: "form-divide" }, [
+                    _c("input", {
+                      staticClass: "modal-input",
+                      attrs: {
+                        type: "text",
+                        id: "checkout-price",
+                        name: "price",
+                        "v-model": _vm.price
                       },
-                      [
-                        _vm._v("BHC "),
-                        _c("i", { staticClass: "fa fa-angle-down" })
-                      ]
-                    ),
+                      domProps: { value: _vm.singleNft.price }
+                    }),
                     _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass: "checkout-drop d-none",
-                        on: {
-                          click: function($event) {
-                            return _vm.toggleDropdown(".checkout-drop")
+                    _c("span", { staticClass: "link-url-end" }, [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "checkout-currency positionHolder",
+                          on: {
+                            click: function($event) {
+                              return _vm.toggleDropdown(".checkout-drop")
+                            }
                           }
-                        }
-                      },
-                      [
-                        _c("div", { staticClass: "drop-group" }, [
-                          _c(
-                            "a",
-                            {
-                              staticClass: "side-drop currency-item",
-                              attrs: { href: "javascript:void(0)", id: "BHC" },
-                              on: {
-                                click: function($event) {
-                                  _vm.currency = 1
+                        },
+                        [
+                          _vm._v("BHC "),
+                          _c("i", { staticClass: "fa fa-angle-down" })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "checkout-drop d-none",
+                          on: {
+                            click: function($event) {
+                              return _vm.toggleDropdown(".checkout-drop")
+                            }
+                          }
+                        },
+                        [
+                          _c("div", { staticClass: "drop-group" }, [
+                            _c(
+                              "a",
+                              {
+                                staticClass: "side-drop currency-item",
+                                attrs: {
+                                  href: "javascript:void(0)",
+                                  id: "BHC"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.currency = 1
+                                  }
                                 }
-                              }
-                            },
-                            [_vm._v("BHC")]
-                          ),
+                              },
+                              [_vm._v("BHC")]
+                            ),
+                            _vm._v(" "),
+                            _c("i", {
+                              staticClass: "fa fa-check currency-check"
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("i", { staticClass: "fa fa-check currency-check" })
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "drop-group" }, [
-                          _c(
-                            "a",
-                            {
-                              staticClass: "side-drop currency-item",
-                              attrs: { href: "javascript:void(0)", id: "BNB" },
-                              on: {
-                                click: function($event) {
-                                  _vm.currency = 2
+                          _c("div", { staticClass: "drop-group" }, [
+                            _c(
+                              "a",
+                              {
+                                staticClass: "side-drop currency-item",
+                                attrs: {
+                                  href: "javascript:void(0)",
+                                  id: "BNB"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.currency = 2
+                                  }
                                 }
-                              }
-                            },
-                            [_vm._v("BNB")]
-                          ),
-                          _vm._v(" "),
-                          _c("i", {
-                            staticClass: "fa fa-check currency-check opacity-0"
-                          })
-                        ])
-                      ]
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  { staticClass: "form-submit", attrs: { type: "submit" } },
-                  [
-                    _vm._v(
-                      "\n            " +
-                        _vm._s(_vm.progress || "Sign Order") +
-                        "\n          "
-                    )
-                  ]
-                )
-              ]
-            )
-          ])
+                              },
+                              [_vm._v("BNB")]
+                            ),
+                            _vm._v(" "),
+                            _c("i", {
+                              staticClass:
+                                "fa fa-check currency-check opacity-0"
+                            })
+                          ])
+                        ]
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  !_vm.signed
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "form-submit",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.sign($event)
+                            }
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(_vm.progress || "Sign Order") +
+                              "\n          "
+                          )
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    { staticClass: "form-submit", attrs: { type: "submit" } },
+                    [
+                      _vm._v(
+                        "\n            " +
+                          _vm._s(_vm.progress || "Sign Order") +
+                          "\n          "
+                      )
+                    ]
+                  )
+                ]
+              )
+            ]
+          )
         ])
       ])
     ]

@@ -71,7 +71,7 @@
                     class="profile-action-menu-drop d-none"
                   >
                     <div v-if="collectible.isp == 1" class="input-group mb-3">
-                      <div class="input-group-prepend">
+                      <!--div class="input-group-prepend">
                         <div class="input-group-text">
                           <input
                             :id="'nft-' + collectible.slug"
@@ -93,9 +93,14 @@
                         aria-label="Text input with checkbox"
                         value="Put on sale"
                         @click="putOnSale(collectible)"
-                      />
+                      /-->
                     </div>
-
+                    <a
+                      :id="collectible.slug"
+                      class="sale"
+                      @click="putOnSale(collectible)"
+                      >Put On Sale</a
+                    >
                     <a
                       :id="collectible.slug"
                       href="javascript:void(0)"
@@ -166,11 +171,7 @@
       :singleNft="singleNft"
       :page="current_page"
     ></checkout-modal-component>
-    <put-on-sale-modal-component
-      :singleNft="singleNft"
-      :page="current_page"
-      :collectible="collectible"
-    >
+    <put-on-sale-modal-component :singleNft="singleNft" :page="current_page">
     </put-on-sale-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
@@ -206,7 +207,7 @@ export default {
       current_page: "",
       bidList: [],
       bidListNFT: "",
-      collectible: this.collectibles[0],
+      //collectible: this.collectibles[0],
     };
   },
   watch: {
@@ -219,7 +220,7 @@ export default {
   methods: {
     putOnSale(collectible) {
       const _this = this;
-      _this.collectible = collectible;
+      _this.singleNft = collectible;
       _this.toggleModal("putOnSale");
     },
     capitalizeFirstLetter(string) {
@@ -233,17 +234,20 @@ export default {
       }
       this.singleNft = collectible;
       this.singleNft.total = this.fetchTotal(collectible.price);
-      this.singleNft.currency = this.fetchCurrency(collectible.price);
+      this.singleNft.currency = this.fetchCurrency(collectible.currency);
       this.singleNft.max = this.fetchTotalCopies(collectible.copies);
     },
     fetchTotal(price) {
-      return parseFloat(price.split(" ")[0]).toFixed(2);
+      //return parseFloat(price.split(" ")[0]).toFixed(2);
+      return this.singleNft.price;
     },
     fetchCurrency(price) {
-      return price.split(" ")[1];
+      //return price.split(" ")[1];
+      return this.singleNft.currency;
     },
     fetchTotalCopies(copies) {
-      return copies.split(" ")[0];
+      //return copies.split(" ")[0];
+      return this.singleNft.copies;
     },
     customUpdateNft(slug, user_id) {
       axios

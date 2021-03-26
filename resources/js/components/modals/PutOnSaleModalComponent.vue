@@ -8,13 +8,13 @@
       <div class="modal-body">
         <label class="item-description"
           >You are about to put the
-          <span class="item-name">{{ collectible.name }}</span> from
-          {{ collectible.collection.name }} on sale. Check information then
+          <span class="item-name">{{ singleNft.name }}</span> from
+          {{ singleNft.collection.name }} on sale. Check information then
           submit</label
         >
 
-        <div class="form-section">
-          <form autocomplete="off" id="purchaseForm" @submit.prevent="sign">
+        <div class="form-section" @submit.prevent="placeOrder">
+          <form autocomplete="off" id="purchaseForm">
             <div class="form-divide">
               <!--input
                 v-model.number="quantity"
@@ -28,8 +28,8 @@
               /-->
               <label class="desc-url">You Have.</label>
               <label class="desc-url"
-                >{{ collectible.ownedCopies }} out of
-                {{ collectible.copies }}</label
+                >{{ singleNft.ownedCopies }} out of
+                {{ singleNft.copies }}</label
               >
             </div>
             <div class="form-divide">
@@ -39,7 +39,7 @@
                 id="checkout-price"
                 name="price"
                 :v-model="price"
-                :value="collectible.price"
+                :value="singleNft.price"
               />
               <span class="link-url-end"
                 ><!--span id="checkout-currency">{{ currency }}</span>
@@ -99,9 +99,13 @@
                 >
               </div>
             </div-->
+            <button v-if="!signed" class="form-submit" @click.prevent="sign">
+              {{ progress || "Sign Order" }}
+            </button>
             <button class="form-submit" type="submit">
               {{ progress || "Sign Order" }}
             </button>
+
             <!--button class="cancel-btn" type="button">Cancel</button-->
           </form>
         </div>
@@ -117,7 +121,7 @@ import { generateOrderIdMessage, signMessage } from "./../../etherFunc";
 import { hpsAddress, bhcAddress } from "./../../addresses/constants";
 import { addSale } from "./../../data";
 export default {
-  props: ["singleNft", "page", "collectible"],
+  props: ["singleNft", "page"],
   data() {
     return {
       quantity: 1,
@@ -125,7 +129,7 @@ export default {
       service_fee: 0,
       total_payment: 0,
       payment: 0,
-      price: 0, //thist.collectible.price,
+      price: 0, //thist.singleNft.price,
       currency: 1,
       nft_id: 0,
       record_id: 0,
@@ -137,7 +141,7 @@ export default {
       orderId: "",
     };
   },
-  watch: {
+  /*watch: {
     singleNft: function () {
       this.price = +parseFloat(this.singleNft.total).toFixed(2);
       this.nft_id = this.singleNft.id;
@@ -147,7 +151,7 @@ export default {
     quantity: function () {
       this.updateValues();
     },
-  },
+  },*/
   methods: {
     toggleDropdown(ct) {
       console.log(ct);
@@ -167,11 +171,11 @@ export default {
       const _this = this;
       var salt,
         orderId = await generateOrderIdMessage(
-          _this.collectible.contract,
-          _this.collectible.id,
-          _this.collectible.ownedCopies,
-          _this.collectible.contract,
-          _this.collectible.price,
+          _this.singleNft.contract,
+          _this.singleNft.id,
+          _this.singleNft.ownedCopies,
+          _this.singleNft.contract,
+          _this.singleNft.price,
           "dhgjdfh"
         );
       var sig = await signMessage(orderId);
@@ -179,20 +183,21 @@ export default {
       _this.s = sig;
       _this.signed = true;
       _this.progress = "Put Order";
-      _this.salt = salt;
+      _this.salt = "dhgjdfh";
       _this.orderId = orderId;
     },
     async placeOrder() {
       const _this = this;
       var data = {
-        collection: _this.collectible.contract,
-        current_owner: _this.collectible.owner_id,
-        token_id: _this.collectible.id,
+        collection: _this.singleNft.contract,
+        current_owner: _this.singleNft.owner_id,
+        token_id: _this.singleNft.id,
         price: _this.price,
         is_instant: false,
         currency: _this.currency == 1 ? hpsAddress : bhcAddress,
         signature: _this.s,
-        orderId: _this.orderId,
+        order_id: _this.orderId,
+        salt: _this.salt,
       };
       await addSale(data);
     },

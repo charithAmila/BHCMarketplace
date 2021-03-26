@@ -13,9 +13,19 @@ class SalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $current_owner = $request->current_owner;
+        $collection = $request->collection;
+        $token_id = $request->token_id;
+        if ($request->has(["current_owner", "collection", "token_id"])) {
+            if ($sales = Sales::where("collection", $collection)->where('current_owner', $current_owner)->where("token_id", $token_id)->doesntExist()) {
+                return response(false);
+            }
+            return response(true);
+        }
+        $sales = Sales::all();
+        return $sales;
     }
 
     /**
@@ -44,7 +54,8 @@ class SalesController extends Controller
             'is_instant' => "required",
             "currency" => "required",
             "signature" => "required",
-            "order_id" => "required"
+            "order_id" => "required",
+            "salt" => "required"
         ]);
         $checker = new CheckSign;
         $message = $request->order_id;
@@ -58,10 +69,11 @@ class SalesController extends Controller
                 "is_instant" => $request->is_instant,
                 "currency" => $request->currency,
                 "signature" => $request->signature,
+                "salt" => $request->salt,
             ]);
             return response()->json(["success" => true]);
         } else {
-            return abort(403);
+            return response()->json($granted);
         }
     }
 
@@ -71,9 +83,10 @@ class SalesController extends Controller
      * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
-    public function show(Sales $sales)
+    public function show($address)
     {
-        //
+        $sales = Sales::where("current_owner", $address)->get();
+        return $sales;
     }
 
     /**

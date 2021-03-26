@@ -98,7 +98,10 @@
           :asset_url="asset_url"
         ></follower-modal-component>
 
-        <div v-if="collectibles.length == 0 && !loading" class="no-item-found w-30">
+        <div
+          v-if="collectibles.length == 0 && !loading"
+          class="no-item-found w-30"
+        >
           <span class="sad-face">:(</span>
           <span class="collection-title">No items found</span>
           <span class="collection-desc"
@@ -107,7 +110,7 @@
           >
           <a class="browse" :href="marketplace_url">Browse marketplace</a>
         </div>
-		<div v-if="loading" class="no-item-found w-30">
+        <div v-if="loading" class="no-item-found w-30">
           <span class="collection-title">Items are loading....</span>
         </div>
       </div>
@@ -146,17 +149,17 @@ export default {
       filter: "on-sale",
       following: [],
       followers: [],
-	  loading:false
+      loading: false,
     };
   },
   methods: {
     async getCollectible() {
       const _this = this;
-	  _this.loading=true;
-	  _this.collectibles=[];
+      _this.loading = true;
+      _this.collectibles = [];
       var data = await getTokensData(_this.user_id, _this.base_url);
       _this.collectibles = data[_this.filter];
-	  _this.loading=false;
+      _this.loading = false;
     },
     async filterProfileNft(selectedFilter) {
       const _this = this;
