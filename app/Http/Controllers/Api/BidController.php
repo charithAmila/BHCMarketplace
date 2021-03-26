@@ -23,9 +23,17 @@ class BidController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function highestBid(Request $request)
     {
-        
+        $request->validate([
+            'token_type' => 'required',
+            'collection_type' => 'required',
+            'collection_id'=> 'required',
+            'token_id' => 'required',
+        ]);
+        $data = Bid::where(['token_type'=>$request->token_type,'collection_type'=>$request->collection_type,'collection_id'=>$request->collection_id,'token_id'=>$request->token_id])->get();
+        return $data;
+    
     }
 
     /**

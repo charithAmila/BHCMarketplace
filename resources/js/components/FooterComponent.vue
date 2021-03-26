@@ -22,7 +22,7 @@
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
 		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		        <button class="form-send" v-on:click="placeBid()">Let's go!</button>
+		        <button class="form-send" v-on:click="getMaxBid()">Let's go!</button>
 		      </div>
 		    </div>
 
@@ -53,7 +53,10 @@
 		    <p>&#169; 2020 Billion, Inc.</p>
 		  </div>
 		</section>
+
+		{{highestBid}}
 	</div>
+	
 </template>
 
 <script>
@@ -74,7 +77,7 @@ return{
 },
 
 async mounted() {
- //this.highestBid = await getHighestBid('18');
+  //this.highestBid = await getHighestBid(1,1,1,1);
  //this.highestBidder = await getHighestBidder('18');
  //this.biddingStatus = await getBiddingStatus('18');
 
@@ -90,6 +93,10 @@ async mounted() {
 
 	let res = await bid(1,1,1,1,'18','TEST','21');
 	
+	}
+,
+	async getMaxBid(){
+     let res = await getHighestBid(1,1,1,18);
 	}
 	}
 

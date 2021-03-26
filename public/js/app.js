@@ -23626,6 +23626,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['base_url'],
@@ -23636,15 +23639,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       biddingStatus: {}
     };
   },
-  mounted: function mounted() {//this.highestBid = await getHighestBid('18');
-    //this.highestBidder = await getHighestBidder('18');
-    //this.biddingStatus = await getBiddingStatus('18');
+  mounted: function mounted() {
+    var _this = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              _context.next = 2;
+              return (0,_bidFunc__WEBPACK_IMPORTED_MODULE_1__.getHighestBid)(1, 1, 1, 1);
+
+            case 2:
+              _this.highestBid = _context.sent;
+
+            case 3:
             case "end":
               return _context.stop();
           }
@@ -23694,6 +23703,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             }
           }
         }, _callee3);
+      }))();
+    },
+    getMaxBid: function getMaxBid() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return (0,_bidFunc__WEBPACK_IMPORTED_MODULE_1__.getHighestBid)(1, 1, 1, 18);
+
+              case 2:
+                res = _context4.sent;
+
+              case 3:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
       }))();
     }
   }
@@ -31961,28 +31991,33 @@ function _bid() {
   return _bid.apply(this, arguments);
 }
 
-function getHighestBid(_x13) {
+function getHighestBid(_x13, _x14, _x15, _x16) {
   return _getHighestBid.apply(this, arguments);
 } ///////////////////////////////////////////Get Highest Bidder////////////////////////////////////////////////////////
 
 
 function _getHighestBid() {
-  _getHighestBid = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(token_id) {
-    var contract, txResponse, res;
+  _getHighestBid = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(token_type, collection_type, collection_id, token_id) {
+    var data, output;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            contract = getContractDetails(token_type, collection_type, collection_id, 'R');
-            _context3.next = 3;
-            return contract.highestBid(token_id);
+            data = {};
+            data.token_type = token_type;
+            data.collection_type = collection_type;
+            data.collection_id = collection_id;
+            data.token_id = token_id;
+            output = {};
+            _context3.next = 8;
+            return axios.post('/getHighestBid', data, {}).then(function (response) {
+              output = response.data;
+            });
 
-          case 3:
-            txResponse = _context3.sent;
-            res = txResponse.toString();
-            return _context3.abrupt("return", res);
+          case 8:
+            console.log(output);
 
-          case 6:
+          case 9:
           case "end":
             return _context3.stop();
         }
@@ -31992,7 +32027,7 @@ function _getHighestBid() {
   return _getHighestBid.apply(this, arguments);
 }
 
-function getHighestBidder(_x14) {
+function getHighestBidder(_x17) {
   return _getHighestBidder.apply(this, arguments);
 } ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
 
@@ -32022,7 +32057,7 @@ function _getHighestBidder() {
   return _getHighestBidder.apply(this, arguments);
 }
 
-function getBiddingStatus(_x15) {
+function getBiddingStatus(_x18) {
   return _getBiddingStatus.apply(this, arguments);
 } /////////////////////////////////////////////Finish Bidding///////////////////////////////////////////////////////
 
@@ -32052,7 +32087,7 @@ function _getBiddingStatus() {
   return _getBiddingStatus.apply(this, arguments);
 }
 
-function finishBidding(_x16) {
+function finishBidding(_x19) {
   return _finishBidding.apply(this, arguments);
 } ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -87702,7 +87737,7 @@ var render = function() {
                 staticClass: "form-send",
                 on: {
                   click: function($event) {
-                    return _vm.placeBid()
+                    return _vm.getMaxBid()
                   }
                 }
               },
@@ -87754,7 +87789,8 @@ var render = function() {
       ]),
       _vm._v(" "),
       _vm._m(1)
-    ])
+    ]),
+    _vm._v("\n\n\t" + _vm._s(_vm.highestBid) + "\n")
   ])
 }
 var staticRenderFns = [

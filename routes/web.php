@@ -93,4 +93,6 @@ Route::get('/notifications', [NotificationController::class, 'userNotifications'
 
 Route::post('bid',[BidController::class, 'store']);
 
-Route::get('bid',[BidController::class, 'index']);
+Route::post('getHighestBid',[BidController::class, 'highestBid']);
+
+
