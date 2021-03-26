@@ -100,7 +100,8 @@ async function startBidding(user_id,token_type,collection_type,collection_id,tok
     data.biddingStatus = true
 
     const contract = getContractDetails(token_type,collection_type,collection_id,'R');
-    const owner = await contract.ownerOf
+    const owner = await contract.ownerOf(token_id)
+    console.log(owner)
     await axios
     .post('/startBidding', data, {
       maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
@@ -117,8 +118,6 @@ async function startBidding(user_id,token_type,collection_type,collection_id,tok
 //////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
 async function bid(user_id,token_type,collection_type,collection_id,token_id,bidding_token,amount){
 const contract = getContractDetails(token_type,collection_type,collection_id,'R');
-
-console.log(contract);
 let overrides = {
     value: ethers.utils.parseEther(amount),
 };
@@ -147,7 +146,7 @@ var token_contract;
       } 
 
 const balance = await token_contract.balanceOf(address);
-console.log(balance.toString());
+var address = address.toString().toLowerCase();
 if(balance>amount){
 const txResponse = await token_contract.approve(TEST_token, (amount*1.2*10**18).toString());
 const txReceipt = await txResponse.wait();
@@ -158,7 +157,6 @@ else{
     console.log("Failed")
 }
     const signature = await signer.signMessage("Place a Bid");
-    console.log(signature);
     let data = {}
     data.address = address
     data.user_id = user_id
@@ -168,7 +166,7 @@ else{
     data.token_id = token_id
     data.bidding_token = bidding_token
     data.bidding_amount = amount
-    data.signature = signature.toString()
+    data.signature = signature
 
     
     await axios

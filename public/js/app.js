@@ -31819,11 +31819,12 @@ function _startBidding() {
             data.biddingStatus = true;
             contract = getContractDetails(token_type, collection_type, collection_id, 'R');
             _context.next = 10;
-            return contract.ownerOf;
+            return contract.ownerOf(token_id);
 
           case 10:
             owner = _context.sent;
-            _context.next = 13;
+            console.log(owner);
+            _context.next = 14;
             return axios.post('/startBidding', data, {
               maxContentLength: "Infinity",
               //this is needed to prevent axios from erroring out with large files
@@ -31833,7 +31834,7 @@ function _startBidding() {
               }
             }).then(function (response) {})["catch"](function (error) {});
 
-          case 13:
+          case 14:
           case "end":
             return _context.stop();
         }
@@ -31856,69 +31857,68 @@ function _bid() {
         switch (_context2.prev = _context2.next) {
           case 0:
             contract = getContractDetails(token_type, collection_type, collection_id, 'R');
-            console.log(contract);
             overrides = {
               value: ethers__WEBPACK_IMPORTED_MODULE_6__.parseEther(amount)
             };
-            _context2.next = 5;
+            _context2.next = 4;
             return contract.ownerOf(token_id);
 
-          case 5:
+          case 4:
             tokenOwner = _context2.sent;
             address = (0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.toAddress)((0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.checkConnection)());
 
             if (!(tokenOwner == address)) {
-              _context2.next = 11;
+              _context2.next = 10;
               break;
             }
 
             return _context2.abrupt("return", "owner");
 
-          case 11:
+          case 10:
             _context2.t0 = bidding_token;
-            _context2.next = _context2.t0 === "CAD" ? 14 : _context2.t0 === "ANKR" ? 16 : _context2.t0 === "BELL" ? 18 : _context2.t0 === "TEST" ? 19 : 21;
+            _context2.next = _context2.t0 === "CAD" ? 13 : _context2.t0 === "ANKR" ? 15 : _context2.t0 === "BELL" ? 17 : _context2.t0 === "TEST" ? 18 : 20;
             break;
 
-          case 14:
+          case 13:
             token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(CAD_token, token_ABI, signer);
-            return _context2.abrupt("break", 22);
+            return _context2.abrupt("break", 21);
 
-          case 16:
+          case 15:
             token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(ANKR_token, token_ABI, signer);
-            return _context2.abrupt("break", 22);
+            return _context2.abrupt("break", 21);
 
-          case 18:
+          case 17:
             token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(BELL_token, token_ABI, signer);
 
-          case 19:
+          case 18:
             token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(TEST_token, token_ABI, signer);
-            return _context2.abrupt("break", 22);
+            return _context2.abrupt("break", 21);
 
-          case 21:
+          case 20:
             token_contract = "Not in list";
 
-          case 22:
-            _context2.next = 24;
+          case 21:
+            _context2.next = 23;
             return token_contract.balanceOf(address);
 
-          case 24:
+          case 23:
             balance = _context2.sent;
-            console.log(balance.toString());
+            address = address.toString().toLowerCase();
 
             if (!(balance > amount)) {
-              _context2.next = 53;
+              _context2.next = 51;
               break;
             }
 
-            _context2.next = 29;
+            _context2.next = 28;
             return token_contract.approve(TEST_token, (amount * 1.2 * Math.pow(10, 18)).toString());
 
-          case 29:
+          case 28:
             txResponse = _context2.sent;
-            _context2.next = 32;
+            _context2.next = 31;
             return txResponse.wait();
 
-          case 32:
+          case 31:
             txReceipt = _context2.sent;
 
             if (txReceipt['status'] == 1) {
@@ -31927,12 +31927,11 @@ function _bid() {
               console.log("Failed");
             }
 
-            _context2.next = 36;
+            _context2.next = 35;
             return signer.signMessage("Place a Bid");
 
-          case 36:
+          case 35:
             signature = _context2.sent;
-            console.log(signature);
             data = {};
             data.address = address;
             data.user_id = user_id;
@@ -31942,17 +31941,17 @@ function _bid() {
             data.token_id = token_id;
             data.bidding_token = bidding_token;
             data.bidding_amount = amount;
-            data.signature = signature.toString();
-            _context2.next = 50;
+            data.signature = signature;
+            _context2.next = 48;
             return axios.post('/bid', data, {}).then(function (response) {})["catch"](function (error) {});
 
-          case 50:
+          case 48:
             return _context2.abrupt("return", "Have enough balance");
 
-          case 53:
+          case 51:
             return _context2.abrupt("return", "Not enough balance");
 
-          case 54:
+          case 52:
           case "end":
             return _context2.stop();
         }

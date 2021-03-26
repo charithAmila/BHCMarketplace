@@ -51,9 +51,8 @@ class BidController extends Controller
         $message = "Place a Bid";
         $granted = $checker->checkSign($message, $request->signature, $request->address);
         $bid = new Bid;
-        $bid->address = $request->address;
         $bid->user_id = $request->user_id;
-        $bid->token_type = $request->token_types;
+        $bid->token_type = $request->token_type;
         $bid->collection_type = $request->collection_type;
         $bid->collection_id = $request->collection_id;
         $bid->token_id = $request->token_id;
@@ -61,7 +60,6 @@ class BidController extends Controller
         $bid->bidding_amount = $request->bidding_amount;
         if ($granted) {
             $bid->save();
-            return true;
         }
     }
 
