@@ -17,6 +17,7 @@ const CAD_token = ethers.utils.getAddress(CAD_tokenAddress);
 const ANKR_token = ethers.utils.getAddress(ANKR_tokenAddress);
 const BELL_token = ethers.utils.getAddress(BELL_tokenAddress);
 const TEST_token = ethers.utils.getAddress('0xfd8b6d8552d20b346567460fc163a1e2298787a2');
+const WBNB_token = ethers.utils.getAddress('0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c');
 //////////////////////////////////////////////Pancake Router//////////////////////////////////////////////////////
 const pancake_ABI = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
 {"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
@@ -89,46 +90,9 @@ function getContractDetails(token_type,collection_type,collection_id,usage){
     }
     return contract;
 }
-///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
-async function startBidding(user_id,token_type,collection_type,collection_id,token_id){
-    let data = {}
-    data.user_id = user_id
-    data.token_type = token_type
-    data.collection_type = collection_type
-    data.collection_id = collection_id
-    data.token_id = token_id
-    data.biddingStatus = true
-
-    const contract = getContractDetails(token_type,collection_type,collection_id,'R');
-    const owner = await contract.ownerOf(token_id)
-    console.log(owner)
-    await axios
-    .post('/startBidding', data, {
-      maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
-      headers: {
-        "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-        Authorization: `Bearer ${_this.j}`,
-      },
-    })
-    .then(function (response) {
-    })
-    .catch(function (error) {
-    });
-}
-//////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
-async function bid(user_id,token_type,collection_type,collection_id,token_id,bidding_token,amount){
-const contract = getContractDetails(token_type,collection_type,collection_id,'R');
-let overrides = {
-    value: ethers.utils.parseEther(amount),
-};
-const tokenOwner =await contract.ownerOf(token_id);
-var address = toAddress(checkConnection());
-if(tokenOwner==address){
-    return "owner";
-}
-else{
-
-var token_contract; 
+//////////////////////////////////////////Get Token Contract////////////////////////////////////////////////////////
+function getTokenContract(bidding_token){
+    var token_contract; 
     switch(bidding_token) {
         case "CAD":
           token_contract = new ethers.Contract(CAD_token, token_ABI, signer);
@@ -144,7 +108,111 @@ var token_contract;
         default:
             token_contract = "Not in list";
       } 
+    return token_contract;
+}
+////////////////////////////////////////////Get User from User Id///////////////////////////////////////////////////
+function getUser(user_id){
 
+
+}
+///////////////////////////////////////////Get Token Address////////////////////////////////////////////////////////
+function getTokenAddress(bidding_token){
+    var token_address; 
+    switch(bidding_token) {
+        case "CAD":
+          token_address = CAD_token;
+          break;
+        case "ANKR":
+            token_address = ANKR_token;
+          break;
+        case "BELL":
+            token_address = BELL_token;
+            break;
+        case "TEST":
+            token_address = ANKR_token;
+          break;
+        default:
+            token_address = "Not in list";
+      } 
+    return token_address;
+}
+///////////////////////////////////////////Get Token Price//////////////////////////////////////////////////////////
+async function getTokenPrice(bidding_token,amount){
+const contract = getTokenAddress(bidding_token);
+const price = await pancake_Read.getAmountsIn(ethers.BigNumber.from('1000000000000000000'),[WBNB_token,contract])
+return parseInt(price[0].toString());
+}
+///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
+async function startBidding(user_id,token_type,collection_type,collection_id,token_id){
+    let data = {}
+    data.user_id = user_id
+    data.token_type = token_type
+    data.collection_type = collection_type
+    data.collection_id = collection_id
+    data.token_id = token_id
+    data.bidding_status = true
+
+    const contract = getContractDetails(token_type,collection_type,collection_id,'R');
+    const owner = await contract.ownerOf(token_id)
+    console.log(owner);
+    var address = toAddress(checkConnection());
+    if(address==owner){
+        const signature = await signer.signMessage("Allow bidding for token");
+        data.signature = signature;
+        data.address = address.toLowerCase();
+        await axios
+        .post('/startBid', data, {
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+        });
+    }
+    else{
+        return "Not owner"
+    }
+  
+}
+
+///////////////////////////////////////////End Bidding//////////////////////////////////////////////////////////////
+async function endBidding(index,token_type,collection_type,collection_id,token_id){
+    let data = {}
+    data.index = index;
+    const contract = getContractDetails(token_type,collection_type,collection_id,'R');
+    const owner = await contract.ownerOf(token_id)
+    console.log(owner);
+    var address = toAddress(checkConnection());
+    if(address==owner){
+        const signature = await signer.signMessage("Stop bidding for token");
+        data.signature = signature;
+        data.address = address.toLowerCase();
+        await axios
+        .post('/endBid', data, {
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+        });
+    }
+    else{
+        return "Not owner"
+    }
+}
+//////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
+async function bid(user_id,token_type,collection_type,collection_id,token_id,bidding_token,amount){
+const contract = getContractDetails(token_type,collection_type,collection_id,'R');
+let overrides = {
+    value: ethers.utils.parseEther(amount),
+};
+const tokenOwner =await contract.ownerOf(token_id);
+var address = toAddress(checkConnection());
+if(tokenOwner==address){
+    return "owner";
+}
+else{
+token_contract = getTokenContract(bidding_token);
 const balance = await token_contract.balanceOf(address);
 var address = address.toString().toLowerCase();
 if(balance>amount){
@@ -180,36 +248,46 @@ else{
 else{
     return "Not enough balance";
 }
-
 }
-
 }
-
-////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
-async function getHighestBid(token_type, collection_type, collection_id, token_id){
+////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
+async function getAllBids(token_type, collection_type, collection_id, token_id){
     var data = {}
     data.token_type = token_type
     data.collection_type = collection_type
     data.collection_id = collection_id
     data.token_id = token_id
     var output ={}
-    await axios.post('/getHighestBid',data ,{
+   
+    await axios.post('/getAllBids',data ,{
     }).then(function (response) {
-      return response.data;
+    output = response.data;
     });
-    
+    return output;
 }
-///////////////////////////////////////////Get Highest Bidder////////////////////////////////////////////////////////
-async function getHighestBidder(token_id){
-const txResponse =await readWriteContract.highestBidder(token_id);
-let res = txResponse.toString();
-return res;
+////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
+async function getHighestBid(token_type, collection_type, collection_id, token_id){
+
+    var output = await getAllBids(token_type, collection_type,collection_id,token_id);
+    var maxAmount =0
+    var maxBidder;
+    var maxBidToken;
+    for(var i = 0; i <output.length; i++){
+    var price = await getTokenPrice(output[i].bidding_token,output[i].bidding_token);
+    if(price*output[i].bidding_amount>maxAmount*10**18){
+        maxAmount = price/10**18
+        maxBidder = output[i].user_id
+        maxBidToken = output[i].bidding_token
+    }
 }
+console.log(maxBidToken);
+console.log(maxAmount);
+console.log(maxBidder);
+}
+
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
 async function getBiddingStatus(token_id){
-    const txResponse =await readWriteContract.biddingStatus(token_id);
-    let res = txResponse.toString();
-    return res;
+   
 }
 /////////////////////////////////////////////Finish Bidding///////////////////////////////////////////////////////
 async function finishBidding(token_id){
@@ -217,6 +295,6 @@ async function finishBidding(token_id){
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export { toAddress ,bid,startBidding,getHighestBid,getHighestBidder,getBiddingStatus}
+export { toAddress ,bid,startBidding,getHighestBid,getBiddingStatus,getAllBids,endBidding}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

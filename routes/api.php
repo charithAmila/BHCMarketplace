@@ -28,4 +28,3 @@ Route::resource('profile', ProfileController::class);
 Route::apiResource('shorturls',ShortUrlController::class);
 Route::resource('collections', CollectionsController::class);
 Route::resource('sales', SalesController::class);
-Route::post('bid',[BidController::class, 'store']);
