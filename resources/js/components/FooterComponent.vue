@@ -22,7 +22,7 @@
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
 		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		        <button class="form-send" v-on:click="getMaxBid()">Let's go!</button>
+		        <button class="form-send" v-on:click="startBid()">Let's go!</button>
 		      </div>
 		    </div>
 
@@ -61,7 +61,7 @@
 
 <script>
 
-import { bid , startBidding, getHighestBid, getHighestBidder, getBiddingStatus } from "././../bidFunc";
+import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding } from "././../bidFunc";
 export default{
 	props: [
 		'base_url',
@@ -97,7 +97,21 @@ async mounted() {
 ,
 	async getMaxBid(){
      let res = await getHighestBid(1,1,1,18);
+	},
+
+	async startBid(){
+	
+	let res = await startBidding(1,1,1,0,18)
+	},
+	async AllBids(){
+let res = await getAllBids(1,1,1,18)
+console.log(res);
+	},
+
+	async stopBid(){
+let res = await endBidding(1,1,1,1,18)
 	}
+
 	}
 
 }
