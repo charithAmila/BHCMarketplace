@@ -8,13 +8,13 @@
       <div class="modal-body">
         <label class="item-description"
           >You are about to put the
-          <span class="item-name">{{ collectible.name }}</span> from
-          {{ collectible.collection.name }} on sale. Check information then
+          <span class="item-name">{{ singleNft.name }}</span> from
+          {{ singleNft.collection.name }} on sale. Check information then
           submit</label
         >
 
-        <div class="form-section">
-          <form autocomplete="off" id="purchaseForm" @submit.prevent="sign">
+        <div class="form-section" @submit.prevent="placeOrder">
+          <form autocomplete="off" id="saleForm">
             <div class="form-divide">
               <!--input
                 v-model.number="quantity"
@@ -28,8 +28,8 @@
               /-->
               <label class="desc-url">You Have.</label>
               <label class="desc-url"
-                >{{ collectible.ownedCopies }} out of
-                {{ collectible.copies }}</label
+                >{{ singleNft.ownedCopies }} out of
+                {{ singleNft.copies }}</label
               >
             </div>
             <div class="form-divide">
@@ -38,8 +38,7 @@
                 type="text"
                 id="checkout-price"
                 name="price"
-                :v-model="price"
-                :value="collectible.price"
+                v-model="price"
               />
               <span class="link-url-end"
                 ><!--span id="checkout-currency">{{ currency }}</span>
@@ -49,7 +48,8 @@
                 <span
                   class="checkout-currency positionHolder"
                   @click="toggleDropdown('.checkout-drop')"
-                  >BHC <i class="fa fa-angle-down"></i
+                  >{{ currency_label[currency] }}
+                  <i class="fa fa-angle-down"></i
                 ></span>
 
                 <div
@@ -72,6 +72,16 @@
                       id="BNB"
                       class="side-drop currency-item"
                       @click="currency = 2"
+                      >HPS</a
+                    >
+                    <i class="fa fa-check currency-check opacity-0"></i>
+                  </div>
+                  <div class="drop-group">
+                    <a
+                      href="javascript:void(0)"
+                      id="BNB"
+                      class="side-drop currency-item"
+                      @click="currency = 3"
                       >BNB</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
@@ -99,9 +109,24 @@
                 >
               </div>
             </div-->
-            <button class="form-submit" type="submit">
-              {{ progress || "Sign Order" }}
+            <button v-if="!signed" class="form-submit" @click.prevent="sign">
+              {{ "Sign Order" }}
             </button>
+            <button
+              v-if="!approved"
+              class="form-submit"
+              @click.prevent="approveNFT"
+            >
+              {{ "Approve" }}
+            </button>
+            <button
+              class="form-submit"
+              type="submit"
+              :disabled="!signed || !approved"
+            >
+              {{ "Put on Sale" }}
+            </button>
+
             <!--button class="cancel-btn" type="button">Cancel</button-->
           </form>
         </div>
@@ -113,11 +138,18 @@
 
 <script>
 import $ from "jquery";
-import { generateOrderIdMessage, signMessage } from "./../../etherFunc";
+import {
+  generateOrderIdMessage,
+  signMessage,
+  checkNFTApproved,
+  approveNFT,
+  waitForTransaction,
+  toAddress,
+} from "./../../etherFunc";
 import { hpsAddress, bhcAddress } from "./../../addresses/constants";
 import { addSale } from "./../../data";
 export default {
-  props: ["singleNft", "page", "collectible"],
+  props: ["singleNft", "page"],
   data() {
     return {
       quantity: 1,
@@ -125,7 +157,7 @@ export default {
       service_fee: 0,
       total_payment: 0,
       payment: 0,
-      price: 0, //thist.collectible.price,
+      price: 0,
       currency: 1,
       nft_id: 0,
       record_id: 0,
@@ -135,14 +167,25 @@ export default {
       progress: "Sign Order",
       processing: false,
       orderId: "",
+      approved: "",
+      currency_label: {
+        1: "HPS",
+        2: "BHC",
+        3: "BNB",
+      },
     };
   },
   watch: {
-    singleNft: function () {
-      this.price = +parseFloat(this.singleNft.total).toFixed(2);
-      this.nft_id = this.singleNft.id;
-      this.record_id = this.singleNft.record_id;
-      this.updateValues();
+    singleNft: async function () {
+      //this.price = +parseFloat(this.singleNft.total).toFixed(2);
+      //this.nft_id = this.singleNft.id;
+      //this.record_id = this.singleNft.record_id;
+      //this.updateValues();
+      this.signed = false;
+      this.approved = await checkNFTApproved(
+        this.singleNft.contract,
+        this.singleNft.owner_id
+      );
     },
     quantity: function () {
       this.updateValues();
@@ -167,11 +210,15 @@ export default {
       const _this = this;
       var salt,
         orderId = await generateOrderIdMessage(
-          _this.collectible.contract,
-          _this.collectible.id,
-          _this.collectible.ownedCopies,
-          _this.collectible.contract,
-          _this.collectible.price,
+          _this.singleNft.contract,
+          _this.singleNft.id,
+          _this.singleNft.ownedCopies,
+          _this.currency == 1
+            ? hpsAddress
+            : _this.currency == 2
+            ? bhcAddress
+            : toAddress(""),
+          _this.price,
           "dhgjdfh"
         );
       var sig = await signMessage(orderId);
@@ -179,22 +226,47 @@ export default {
       _this.s = sig;
       _this.signed = true;
       _this.progress = "Put Order";
-      _this.salt = salt;
+      _this.salt = "dhgjdfh";
       _this.orderId = orderId;
+    },
+    async approveNFT() {
+      var tx = await approveNFT(this.singleNft.contract);
+      waitForTransaction(tx.hash).then((data) => {
+        if (data) {
+          this.approved = true;
+        }
+      });
     },
     async placeOrder() {
       const _this = this;
       var data = {
-        collection: _this.collectible.contract,
-        current_owner: _this.collectible.owner_id,
-        token_id: _this.collectible.id,
-        price: _this.price,
+        collection: _this.singleNft.contract,
+        current_owner: _this.singleNft.owner_id,
+        token_id: _this.singleNft.id,
+        price: Number(_this.price),
         is_instant: false,
-        currency: _this.currency == 1 ? hpsAddress : bhcAddress,
+        currency:
+          _this.currency == 1
+            ? hpsAddress
+            : _this.currency == 2
+            ? bhcAddress
+            : toAddress(""),
         signature: _this.s,
-        orderId: _this.orderId,
+        order_id: _this.orderId,
+        salt: _this.salt,
       };
       await addSale(data);
+      $(".putOnSale-content")
+        .removeClass("fade-in-bottom")
+        .addClass("fade-out-bottom");
+      setTimeout(function () {
+        $("#putOnSaleModal").removeClass("d-block");
+      }, 400);
+      $(".toast-message").text("Added to Marketplace");
+      $("#saleForm").trigger("reset");
+      setTimeout(function () {
+        launch_toast();
+      }, 500);
     },
     updateValues() {
       this.payment = +(this.price * this.quantity).toFixed(2);

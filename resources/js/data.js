@@ -1,5 +1,5 @@
 import { toAddress, getOwner, getSingles, getMultiples, getCollectible } from './etherFunc';
-import { hps721Address, hps1155Address } from "./addresses/constants"
+import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
 
 
 ////////get///////////////////
@@ -74,7 +74,6 @@ async function getCollections(type, me) {
             }
         }
     }
-    console.log(collections)
     return collections;
 }
 
@@ -125,7 +124,7 @@ async function getOwnedTokensData(owner, base_url) {
 
         ////remove/////
         nft.isp = 1
-        nft.is_selling = 1
+        nft.is_selling = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
         listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
         data.push(nft);
     }
@@ -163,8 +162,29 @@ async function getCreatedTokens(owner, base_url) {
     return data;
 }
 
-async function getOnSaleokens(owner, base_url) {
+async function getOnSaleTokens(owner, base_url) {
     var data = [];
+    var tokens721 = [];
+    var tokens1155 = [];
+    var res = await axios.get("/api/sales/" + owner);
+    var tokens = res.data
+
+    for (var i = 0; i < tokens.length; i++) {
+        try {
+            var nft = await getTokenData(
+                tokens[i].collection,
+                tokens[i].current_owner,
+                tokens[i].token_id
+            )
+            nft.db_id = tokens[i].id;
+            nft.is_isp = 1;
+            nft.is_selling = 1;
+            nft.price = tokens[i].price;
+            nft.currency = tokens[i].currency;
+            data.push(nft)
+        } catch (e) { }
+    }
+
     return data;
 }
 
@@ -172,7 +192,7 @@ async function getTokensData(owner, base_url) {
     var ownedTokens = await getOwnedTokensData(owner, base_url)
     var likedTokens = await getLikedTokens(owner, base_url);
     var createdTokens = await getCreatedTokens(owner, base_url);
-    var onSaleTokens = await getOnSaleokens(owner, base_url);
+    var onSaleTokens = await getOnSaleTokens(owner, base_url);
 
     var data = {
         "on-sale": onSaleTokens,
@@ -180,19 +200,19 @@ async function getTokensData(owner, base_url) {
         "created": createdTokens,
         "collectibles": ownedTokens
     }
+    //console.log(data)
     return data;
 }
 
 async function getTokenData(contract, owner, id) {
     var listed = false;
-    var data = {}
     var res = await axios.get("/api/collections/" + contract);
     var type = res.data.type
     var isPrivate = res.data.id > 2 ? true : false;
-    var collectible = await getCollectible(contract, type, isPrivate, owner, id);
-    var colData = await axios.get(collectible.URI);
-    data = colData.data;
-    data.current_owner = collectible.tokenOwner;
+    var selectedToken = await getCollectible(contract, type, isPrivate, owner, id);
+    var colData = await axios.get(selectedToken.URI);
+    var nft = colData.data;
+    /*data.current_owner = collectible.tokenOwner;
     data.is_selling = 1;
     data.collection = collectible.collection || tempCollectionData()
     data.ownedCopies = collectible.ownedCopies;
@@ -203,10 +223,66 @@ async function getTokenData(contract, owner, id) {
     data.fileType = data.fileType || "image";
     data.file = data.image || data.file
     data.creator = owner;
-    data.count = collectible.availableCopies
+    data.count = collectible.availableCopies*/
+
+    nft.copies = selectedToken.availableCopies;
+    nft.ownedCopies = selectedToken.ownedCopies;
+    nft.id = selectedToken.id;
+    nft.contract = selectedToken.contract;
+    nft.owner_id = selectedToken.tokenOwner;
+    nft.collection = selectedToken.collection || tempCollectionData();
+    nft.legend = nft.legend || "normal"
+    nft.type = type;
+
+    ////remove/////
+    nft.isp = 1
+    nft.is_selling = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
+    listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
+    nft.fileType = nft.fileType || "image";
+    nft.file = nft.image || nft.file
+    nft.creator = owner;
+    nft.count = selectedToken.availableCopies
+
+    return nft;
+
+}
+
+async function getAllSales(current_user) {
+    var data = [];
+    var tokens721 = [];
+    var tokens1155 = [];
+    var res = await axios.get("/api/sales");
+    var tokens = res.data
+
+    for (var i = 0; i < tokens.length; i++) {
+        if (tokens[i].current_owner != current_user) {
+            try {
+                var nft = await getTokenData(
+                    tokens[i].collection,
+                    tokens[i].current_owner,
+                    tokens[i].token_id
+                )
+                nft.db_id = tokens[i].id;
+                nft.price = tokens[i].price;
+                nft.isp = 1;
+                nft.is_selling = 1;
+                nft.signature = tokens[i].signature;
+                nft.salt = tokens[i].salt
+                nft.currency = tokens[i].currency == hpsAddress ? "HPS" : tokens[i].currency == bhcAddress ? "BHC" : "BNB";
+                data.push(nft)
+            } catch (e) { }
+        }
+    }
 
     return data;
+}
 
+async function checkSelling(collection, owner, id) {
+    var res = await axios.get(`/api/sales?collection=${collection}&current_owner=${owner}&token_id=${id}`
+    )
+
+
+    return res.data;
 }
 
 
@@ -219,5 +295,10 @@ async function addSale(data) {
     await axios.post(`/api/sales`, data);
 }
 
+async function removeSale(id) {
+    await axios.delete(`/api/sales/${id}`);
+    window.location.reload()
+}
 
-export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails }
+
+export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale }

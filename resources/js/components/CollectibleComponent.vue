@@ -71,7 +71,7 @@
                     class="profile-action-menu-drop d-none"
                   >
                     <div v-if="collectible.isp == 1" class="input-group mb-3">
-                      <div class="input-group-prepend">
+                      <!--div class="input-group-prepend">
                         <div class="input-group-text">
                           <input
                             :id="'nft-' + collectible.slug"
@@ -93,15 +93,34 @@
                         aria-label="Text input with checkbox"
                         value="Put on sale"
                         @click="putOnSale(collectible)"
-                      />
+                      /-->
                     </div>
-
                     <a
                       :id="collectible.slug"
-                      href="javascript:void(0)"
-                      @click="fetchBids(collectible, 'bidList')"
-                      >Bids</a
+                      class="sale"
+                      @click="putOnSale(collectible)"
+                      v-if="collectible.is_selling != 1"
+                      >Put On Sale</a
                     >
+                    <div
+                      class="input-group-prepend"
+                      v-if="collectible.is_selling"
+                    >
+                      <div class="input-group-text">
+                        <input
+                          :id="'nft-' + collectible.slug"
+                          type="checkbox"
+                          aria-label="Checkbox for following text input"
+                          v-model="checked"
+                        />
+                      </div>
+                      <a
+                        :id="collectible.slug"
+                        class="sale"
+                        @click="checked ? remove(collectible) : null"
+                        >Remove From Marketplace</a
+                      >
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -165,12 +184,9 @@
     <checkout-modal-component
       :singleNft="singleNft"
       :page="current_page"
+      :current_user="current_user"
     ></checkout-modal-component>
-    <put-on-sale-modal-component
-      :singleNft="singleNft"
-      :page="current_page"
-      :collectible="collectible"
-    >
+    <put-on-sale-modal-component :singleNft="singleNft" :page="current_page">
     </put-on-sale-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
@@ -187,6 +203,7 @@
 </template>
 
 <script>
+import { removeSale } from "./../data";
 import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
   components: { PutOnSaleModalComponent },
@@ -206,7 +223,8 @@ export default {
       current_page: "",
       bidList: [],
       bidListNFT: "",
-      collectible: this.collectibles[0],
+      checked: false,
+      //collectible: this.collectibles[0],
     };
   },
   watch: {
@@ -219,8 +237,12 @@ export default {
   methods: {
     putOnSale(collectible) {
       const _this = this;
-      _this.collectible = collectible;
+      _this.singleNft = collectible;
       _this.toggleModal("putOnSale");
+    },
+    async remove(collectible) {
+      const _this = this;
+      const res = await removeSale(collectible.db_id);
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
@@ -233,17 +255,20 @@ export default {
       }
       this.singleNft = collectible;
       this.singleNft.total = this.fetchTotal(collectible.price);
-      this.singleNft.currency = this.fetchCurrency(collectible.price);
+      this.singleNft.currency = this.fetchCurrency(collectible.currency);
       this.singleNft.max = this.fetchTotalCopies(collectible.copies);
     },
     fetchTotal(price) {
-      return parseFloat(price.split(" ")[0]).toFixed(2);
+      //return parseFloat(price.split(" ")[0]).toFixed(2);
+      return this.singleNft.price;
     },
     fetchCurrency(price) {
-      return price.split(" ")[1];
+      //return price.split(" ")[1];
+      return this.singleNft.currency;
     },
     fetchTotalCopies(copies) {
-      return copies.split(" ")[0];
+      //return copies.split(" ")[0];
+      return this.singleNft.copies;
     },
     customUpdateNft(slug, user_id) {
       axios

@@ -493,11 +493,12 @@ export default {
   },
   async mounted() {
     this.loaded = false;
-    this.creator = await getUserDetails(this.collectible.creator);
-    this.current_owner = await getUserDetails(this.collectible.current_owner);
-    //this.owners = this.collectible.owners
     this.set_collectible = this.collectible;
     this.set_transactions = this.transactions;
+    this.creator = await getUserDetails(this.collectible.creator);
+    this.current_owner = await getUserDetails(this.collectible.owner_id);
+    //this.owners = this.collectible.owners
+
     this.loaded = true;
   },
 };

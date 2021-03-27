@@ -252,7 +252,7 @@ export default {
   },
   mounted() {
     this.checkConnection();
-    //this.getUserData();
+    this.getUserData();
   },
 };
 </script>
