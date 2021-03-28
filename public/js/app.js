@@ -20330,6 +20330,7 @@ module.exports = __webpack_require__(/*! ./lib/axios */ "./node_modules/axios/li
 
 var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
 var settle = __webpack_require__(/*! ./../core/settle */ "./node_modules/axios/lib/core/settle.js");
+var cookies = __webpack_require__(/*! ./../helpers/cookies */ "./node_modules/axios/lib/helpers/cookies.js");
 var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ "./node_modules/axios/lib/helpers/buildURL.js");
 var buildFullPath = __webpack_require__(/*! ../core/buildFullPath */ "./node_modules/axios/lib/core/buildFullPath.js");
 var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ "./node_modules/axios/lib/helpers/parseHeaders.js");
@@ -20350,7 +20351,7 @@ module.exports = function xhrAdapter(config) {
     // HTTP basic authentication
     if (config.auth) {
       var username = config.auth.username || '';
-      var password = config.auth.password || '';
+      var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : '';
       requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
     }
 
@@ -20431,8 +20432,6 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(/*! ./../helpers/cookies */ "./node_modules/axios/lib/helpers/cookies.js");
-
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
         cookies.read(config.xsrfCookieName) :
@@ -20498,7 +20497,7 @@ module.exports = function xhrAdapter(config) {
       });
     }
 
-    if (requestData === undefined) {
+    if (!requestData) {
       requestData = null;
     }
 
@@ -20565,6 +20564,9 @@ axios.all = function all(promises) {
   return Promise.all(promises);
 };
 axios.spread = __webpack_require__(/*! ./helpers/spread */ "./node_modules/axios/lib/helpers/spread.js");
+
+// Expose isAxiosError
+axios.isAxiosError = __webpack_require__(/*! ./helpers/isAxiosError */ "./node_modules/axios/lib/helpers/isAxiosError.js");
 
 module.exports = axios;
 
@@ -20770,9 +20772,10 @@ Axios.prototype.getUri = function getUri(config) {
 utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
   /*eslint func-names:0*/
   Axios.prototype[method] = function(url, config) {
-    return this.request(utils.merge(config || {}, {
+    return this.request(mergeConfig(config || {}, {
       method: method,
-      url: url
+      url: url,
+      data: (config || {}).data
     }));
   };
 });
@@ -20780,7 +20783,7 @@ utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData
 utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
   /*eslint func-names:0*/
   Axios.prototype[method] = function(url, data, config) {
-    return this.request(utils.merge(config || {}, {
+    return this.request(mergeConfig(config || {}, {
       method: method,
       url: url,
       data: data
@@ -21035,7 +21038,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   error.response = response;
   error.isAxiosError = true;
 
-  error.toJSON = function() {
+  error.toJSON = function toJSON() {
     return {
       // Standard
       message: this.message,
@@ -21083,59 +21086,73 @@ module.exports = function mergeConfig(config1, config2) {
   config2 = config2 || {};
   var config = {};
 
-  var valueFromConfig2Keys = ['url', 'method', 'params', 'data'];
-  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy'];
+  var valueFromConfig2Keys = ['url', 'method', 'data'];
+  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy', 'params'];
   var defaultToConfig2Keys = [
-    'baseURL', 'url', 'transformRequest', 'transformResponse', 'paramsSerializer',
-    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
-    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress',
-    'maxContentLength', 'validateStatus', 'maxRedirects', 'httpAgent',
-    'httpsAgent', 'cancelToken', 'socketPath'
+    'baseURL', 'transformRequest', 'transformResponse', 'paramsSerializer',
+    'timeout', 'timeoutMessage', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
+    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress', 'decompress',
+    'maxContentLength', 'maxBodyLength', 'maxRedirects', 'transport', 'httpAgent',
+    'httpsAgent', 'cancelToken', 'socketPath', 'responseEncoding'
   ];
+  var directMergeKeys = ['validateStatus'];
+
+  function getMergedValue(target, source) {
+    if (utils.isPlainObject(target) && utils.isPlainObject(source)) {
+      return utils.merge(target, source);
+    } else if (utils.isPlainObject(source)) {
+      return utils.merge({}, source);
+    } else if (utils.isArray(source)) {
+      return source.slice();
+    }
+    return source;
+  }
+
+  function mergeDeepProperties(prop) {
+    if (!utils.isUndefined(config2[prop])) {
+      config[prop] = getMergedValue(config1[prop], config2[prop]);
+    } else if (!utils.isUndefined(config1[prop])) {
+      config[prop] = getMergedValue(undefined, config1[prop]);
+    }
+  }
 
   utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
-    if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
+    if (!utils.isUndefined(config2[prop])) {
+      config[prop] = getMergedValue(undefined, config2[prop]);
     }
   });
 
-  utils.forEach(mergeDeepPropertiesKeys, function mergeDeepProperties(prop) {
-    if (utils.isObject(config2[prop])) {
-      config[prop] = utils.deepMerge(config1[prop], config2[prop]);
-    } else if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    } else if (utils.isObject(config1[prop])) {
-      config[prop] = utils.deepMerge(config1[prop]);
-    } else if (typeof config1[prop] !== 'undefined') {
-      config[prop] = config1[prop];
-    }
-  });
+  utils.forEach(mergeDeepPropertiesKeys, mergeDeepProperties);
 
   utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
-    if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    } else if (typeof config1[prop] !== 'undefined') {
-      config[prop] = config1[prop];
+    if (!utils.isUndefined(config2[prop])) {
+      config[prop] = getMergedValue(undefined, config2[prop]);
+    } else if (!utils.isUndefined(config1[prop])) {
+      config[prop] = getMergedValue(undefined, config1[prop]);
+    }
+  });
+
+  utils.forEach(directMergeKeys, function merge(prop) {
+    if (prop in config2) {
+      config[prop] = getMergedValue(config1[prop], config2[prop]);
+    } else if (prop in config1) {
+      config[prop] = getMergedValue(undefined, config1[prop]);
     }
   });
 
   var axiosKeys = valueFromConfig2Keys
     .concat(mergeDeepPropertiesKeys)
-    .concat(defaultToConfig2Keys);
+    .concat(defaultToConfig2Keys)
+    .concat(directMergeKeys);
 
   var otherKeys = Object
-    .keys(config2)
+    .keys(config1)
+    .concat(Object.keys(config2))
     .filter(function filterAxiosKeys(key) {
       return axiosKeys.indexOf(key) === -1;
     });
 
-  utils.forEach(otherKeys, function otherKeysDefaultToConfig2(prop) {
-    if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    } else if (typeof config1[prop] !== 'undefined') {
-      config[prop] = config1[prop];
-    }
-  });
+  utils.forEach(otherKeys, mergeDeepProperties);
 
   return config;
 };
@@ -21163,7 +21180,7 @@ var createError = __webpack_require__(/*! ./createError */ "./node_modules/axios
  */
 module.exports = function settle(resolve, reject, response) {
   var validateStatus = response.config.validateStatus;
-  if (!validateStatus || validateStatus(response.status)) {
+  if (!response.status || !validateStatus || validateStatus(response.status)) {
     resolve(response);
   } else {
     reject(createError(
@@ -21293,6 +21310,7 @@ var defaults = {
   xsrfHeaderName: 'X-XSRF-TOKEN',
 
   maxContentLength: -1,
+  maxBodyLength: -1,
 
   validateStatus: function validateStatus(status) {
     return status >= 200 && status < 300;
@@ -21353,7 +21371,6 @@ var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/util
 
 function encode(val) {
   return encodeURIComponent(val).
-    replace(/%40/gi, '@').
     replace(/%3A/gi, ':').
     replace(/%24/g, '$').
     replace(/%2C/gi, ',').
@@ -21531,6 +21548,28 @@ module.exports = function isAbsoluteURL(url) {
   // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
   // by any combination of letters, digits, plus, period, or hyphen.
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/isAxiosError.js":
+/*!********************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/isAxiosError.js ***!
+  \********************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/**
+ * Determines whether the payload is an error thrown by Axios
+ *
+ * @param {*} payload The value to test
+ * @returns {boolean} True if the payload is an error thrown by Axios, otherwise false
+ */
+module.exports = function isAxiosError(payload) {
+  return (typeof payload === 'object') && (payload.isAxiosError === true);
 };
 
 
@@ -21855,6 +21894,21 @@ function isObject(val) {
 }
 
 /**
+ * Determine if a value is a plain Object
+ *
+ * @param {Object} val The value to test
+ * @return {boolean} True if value is a plain Object, otherwise false
+ */
+function isPlainObject(val) {
+  if (toString.call(val) !== '[object Object]') {
+    return false;
+  }
+
+  var prototype = Object.getPrototypeOf(val);
+  return prototype === null || prototype === Object.prototype;
+}
+
+/**
  * Determine if a value is a Date
  *
  * @param {Object} val The value to test
@@ -22010,34 +22064,12 @@ function forEach(obj, fn) {
 function merge(/* obj1, obj2, obj3, ... */) {
   var result = {};
   function assignValue(val, key) {
-    if (typeof result[key] === 'object' && typeof val === 'object') {
+    if (isPlainObject(result[key]) && isPlainObject(val)) {
       result[key] = merge(result[key], val);
-    } else {
-      result[key] = val;
-    }
-  }
-
-  for (var i = 0, l = arguments.length; i < l; i++) {
-    forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-
-/**
- * Function equal to merge with the difference being that no reference
- * to original objects is kept.
- *
- * @see merge
- * @param {Object} obj1 Object to merge
- * @returns {Object} Result of all merge properties
- */
-function deepMerge(/* obj1, obj2, obj3, ... */) {
-  var result = {};
-  function assignValue(val, key) {
-    if (typeof result[key] === 'object' && typeof val === 'object') {
-      result[key] = deepMerge(result[key], val);
-    } else if (typeof val === 'object') {
-      result[key] = deepMerge({}, val);
+    } else if (isPlainObject(val)) {
+      result[key] = merge({}, val);
+    } else if (isArray(val)) {
+      result[key] = val.slice();
     } else {
       result[key] = val;
     }
@@ -22068,6 +22100,19 @@ function extend(a, b, thisArg) {
   return a;
 }
 
+/**
+ * Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
+ *
+ * @param {string} content with BOM
+ * @return {string} content value without BOM
+ */
+function stripBOM(content) {
+  if (content.charCodeAt(0) === 0xFEFF) {
+    content = content.slice(1);
+  }
+  return content;
+}
+
 module.exports = {
   isArray: isArray,
   isArrayBuffer: isArrayBuffer,
@@ -22077,6 +22122,7 @@ module.exports = {
   isString: isString,
   isNumber: isNumber,
   isObject: isObject,
+  isPlainObject: isPlainObject,
   isUndefined: isUndefined,
   isDate: isDate,
   isFile: isFile,
@@ -22087,9 +22133,9 @@ module.exports = {
   isStandardBrowserEnv: isStandardBrowserEnv,
   forEach: forEach,
   merge: merge,
-  deepMerge: deepMerge,
   extend: extend,
-  trim: trim
+  trim: trim,
+  stripBOM: stripBOM
 };
 
 
@@ -23149,6 +23195,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -23176,7 +23231,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       uploadedImage: "",
       fileType: "image",
       selectedContract: "",
-      copies: 0
+      copies: 0,
+      imgselectok: false,
+      uploadPercentageimg: 0
     };
   },
   methods: {
@@ -23287,6 +23344,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this.process = "Uploading Image...";
                 _context4.next = 16;
                 return axios.post(url, data, {
+                  onUploadProgress: function onUploadProgress(uploadEvent) {
+                    _this.imgselectok = true;
+                    _this.uploadPercentageimg = Math.round(uploadEvent.loaded / uploadEvent.total * 100);
+                  },
                   maxContentLength: "Infinity",
                   //this is needed to prevent axios from erroring out with large files
                   headers: {
@@ -23573,6 +23634,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bidFunc__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ././../bidFunc */ "./resources/js/bidFunc.js");
 
 
+var _methods;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -23664,7 +23729,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee);
     }))();
   },
-  methods: {
+  methods: (_methods = {
     startBid: function startBid() {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var res;
@@ -23729,7 +23794,68 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     }
-  }
+  }, _defineProperty(_methods, "startBid", function startBid() {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+      var res;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              _context5.next = 2;
+              return (0,_bidFunc__WEBPACK_IMPORTED_MODULE_1__.startBidding)(1, 1, 1, 0, 18);
+
+            case 2:
+              res = _context5.sent;
+
+            case 3:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5);
+    }))();
+  }), _defineProperty(_methods, "AllBids", function AllBids() {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
+      var res;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.next = 2;
+              return (0,_bidFunc__WEBPACK_IMPORTED_MODULE_1__.getAllBids)(1, 1, 1, 18);
+
+            case 2:
+              res = _context6.sent;
+              console.log(res);
+
+            case 4:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6);
+    }))();
+  }), _defineProperty(_methods, "stopBid", function stopBid() {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7() {
+      var res;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              _context7.next = 2;
+              return (0,_bidFunc__WEBPACK_IMPORTED_MODULE_1__.endBidding)(1, 1, 1, 1, 18);
+
+            case 2:
+              res = _context7.sent;
+
+            case 3:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, _callee7);
+    }))();
+  }), _methods)
 });
 
 /***/ }),
@@ -28714,8 +28840,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "bid": () => (/* binding */ bid),
 /* harmony export */   "startBidding": () => (/* binding */ startBidding),
 /* harmony export */   "getHighestBid": () => (/* binding */ getHighestBid),
-/* harmony export */   "getHighestBidder": () => (/* binding */ getHighestBidder),
-/* harmony export */   "getBiddingStatus": () => (/* binding */ getBiddingStatus)
+/* harmony export */   "getBiddingStatus": () => (/* binding */ getBiddingStatus),
+/* harmony export */   "getAllBids": () => (/* binding */ getAllBids),
+/* harmony export */   "endBidding": () => (/* binding */ endBidding)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
@@ -28723,7 +28850,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/providers/lib.esm/web3-provider.js");
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/address/lib.esm/index.js");
 /* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/contracts/lib.esm/index.js");
-/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/units/lib.esm/index.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/bignumber/lib.esm/bignumber.js");
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ethers */ "./node_modules/@ethersproject/units/lib.esm/index.js");
 /* harmony import */ var _etherFunc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./etherFunc.js */ "./resources/js/etherFunc.js");
 
 
@@ -29061,7 +29189,8 @@ var token_ABI = [{
 var CAD_token = ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress(_js_addresses_constants_js__WEBPACK_IMPORTED_MODULE_1__.CAD_tokenAddress);
 var ANKR_token = ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress(_js_addresses_constants_js__WEBPACK_IMPORTED_MODULE_1__.ANKR_tokenAddress);
 var BELL_token = ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress(_js_addresses_constants_js__WEBPACK_IMPORTED_MODULE_1__.BELL_tokenAddress);
-var TEST_token = ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress('0xfd8b6d8552d20b346567460fc163a1e2298787a2'); //////////////////////////////////////////////Pancake Router//////////////////////////////////////////////////////
+var TEST_token = ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress('0xfd8b6d8552d20b346567460fc163a1e2298787a2');
+var WBNB_token = ethers__WEBPACK_IMPORTED_MODULE_4__.getAddress('0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'); //////////////////////////////////////////////Pancake Router//////////////////////////////////////////////////////
 
 var pancake_ABI = [{
   "inputs": [{
@@ -32128,20 +32257,108 @@ function getContractDetails(token_type, collection_type, collection_id, usage) {
   }
 
   return contract;
+} //////////////////////////////////////////Get Token Contract////////////////////////////////////////////////////////
+
+
+function getTokenContract(bidding_token) {
+  var token_contract;
+
+  switch (bidding_token) {
+    case "CAD":
+      token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(CAD_token, token_ABI, signer);
+      break;
+
+    case "ANKR":
+      token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(ANKR_token, token_ABI, signer);
+      break;
+
+    case "BELL":
+      token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(BELL_token, token_ABI, signer);
+
+    case "TEST":
+      token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(TEST_token, token_ABI, signer);
+      break;
+
+    default:
+      token_contract = "Not in list";
+  }
+
+  return token_contract;
+} ////////////////////////////////////////////Get User from User Id///////////////////////////////////////////////////
+
+
+function getUser(user_id) {} ///////////////////////////////////////////Get Token Address////////////////////////////////////////////////////////
+
+
+function getTokenAddress(bidding_token) {
+  var token_address;
+
+  switch (bidding_token) {
+    case "CAD":
+      token_address = CAD_token;
+      break;
+
+    case "ANKR":
+      token_address = ANKR_token;
+      break;
+
+    case "BELL":
+      token_address = BELL_token;
+      break;
+
+    case "TEST":
+      token_address = ANKR_token;
+      break;
+
+    default:
+      token_address = "Not in list";
+  }
+
+  return token_address;
+} ///////////////////////////////////////////Get Token Price//////////////////////////////////////////////////////////
+
+
+function getTokenPrice(_x, _x2) {
+  return _getTokenPrice.apply(this, arguments);
 } ///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
 
 
-function startBidding(_x, _x2, _x3, _x4, _x5) {
-  return _startBidding.apply(this, arguments);
-} //////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
-
-
-function _startBidding() {
-  _startBidding = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(user_id, token_type, collection_type, collection_id, token_id) {
-    var data, contract, owner;
+function _getTokenPrice() {
+  _getTokenPrice = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(bidding_token, amount) {
+    var contract, price;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
+          case 0:
+            contract = getTokenAddress(bidding_token);
+            _context.next = 3;
+            return pancake_Read.getAmountsIn(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from('1000000000000000000'), [WBNB_token, contract]);
+
+          case 3:
+            price = _context.sent;
+            return _context.abrupt("return", parseInt(price[0].toString()));
+
+          case 5:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _getTokenPrice.apply(this, arguments);
+}
+
+function startBidding(_x3, _x4, _x5, _x6, _x7) {
+  return _startBidding.apply(this, arguments);
+} ///////////////////////////////////////////End Bidding//////////////////////////////////////////////////////////////
+
+
+function _startBidding() {
+  _startBidding = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(user_id, token_type, collection_type, collection_id, token_id) {
+    var data, contract, owner, address, signature;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
           case 0:
             data = {};
             data.user_id = user_id;
@@ -32149,110 +32366,161 @@ function _startBidding() {
             data.collection_type = collection_type;
             data.collection_id = collection_id;
             data.token_id = token_id;
-            data.biddingStatus = true;
+            data.bidding_status = true;
             contract = getContractDetails(token_type, collection_type, collection_id, 'R');
-            _context.next = 10;
+            _context2.next = 10;
             return contract.ownerOf(token_id);
 
           case 10:
-            owner = _context.sent;
+            owner = _context2.sent;
             console.log(owner);
-            _context.next = 14;
-            return axios.post('/startBidding', data, {
-              maxContentLength: "Infinity",
-              //this is needed to prevent axios from erroring out with large files
-              headers: {
-                "Content-Type": "multipart/form-data; boundary=".concat(data._boundary),
-                Authorization: "Bearer ".concat(_this.j)
-              }
-            }).then(function (response) {})["catch"](function (error) {});
+            address = (0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.toAddress)((0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.checkConnection)());
 
-          case 14:
+            if (!(address == owner)) {
+              _context2.next = 23;
+              break;
+            }
+
+            _context2.next = 16;
+            return signer.signMessage("Allow bidding for token");
+
+          case 16:
+            signature = _context2.sent;
+            data.signature = signature;
+            data.address = address.toLowerCase();
+            _context2.next = 21;
+            return axios.post('/startBid', data, {}).then(function (response) {
+              console.log(response.data);
+            })["catch"](function (error) {});
+
+          case 21:
+            _context2.next = 24;
+            break;
+
+          case 23:
+            return _context2.abrupt("return", "Not owner");
+
+          case 24:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee);
+    }, _callee2);
   }));
   return _startBidding.apply(this, arguments);
 }
 
-function bid(_x6, _x7, _x8, _x9, _x10, _x11, _x12) {
+function endBidding(_x8, _x9, _x10, _x11, _x12) {
+  return _endBidding.apply(this, arguments);
+} //////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
+
+
+function _endBidding() {
+  _endBidding = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(index, token_type, collection_type, collection_id, token_id) {
+    var data, contract, owner, address, signature;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            data = {};
+            data.index = index;
+            contract = getContractDetails(token_type, collection_type, collection_id, 'R');
+            _context3.next = 5;
+            return contract.ownerOf(token_id);
+
+          case 5:
+            owner = _context3.sent;
+            console.log(owner);
+            address = (0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.toAddress)((0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.checkConnection)());
+
+            if (!(address == owner)) {
+              _context3.next = 18;
+              break;
+            }
+
+            _context3.next = 11;
+            return signer.signMessage("Stop bidding for token");
+
+          case 11:
+            signature = _context3.sent;
+            data.signature = signature;
+            data.address = address.toLowerCase();
+            _context3.next = 16;
+            return axios.post('/endBid', data, {}).then(function (response) {
+              console.log(response.data);
+            })["catch"](function (error) {});
+
+          case 16:
+            _context3.next = 19;
+            break;
+
+          case 18:
+            return _context3.abrupt("return", "Not owner");
+
+          case 19:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+  return _endBidding.apply(this, arguments);
+}
+
+function bid(_x13, _x14, _x15, _x16, _x17, _x18, _x19) {
   return _bid.apply(this, arguments);
-} ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
+} ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
 
 
 function _bid() {
-  _bid = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(user_id, token_type, collection_type, collection_id, token_id, bidding_token, amount) {
-    var contract, overrides, tokenOwner, address, token_contract, balance, txResponse, txReceipt, signature, data;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+  _bid = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(user_id, token_type, collection_type, collection_id, token_id, bidding_token, amount) {
+    var contract, overrides, tokenOwner, address, balance, txResponse, txReceipt, signature, data;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
             contract = getContractDetails(token_type, collection_type, collection_id, 'R');
             overrides = {
-              value: ethers__WEBPACK_IMPORTED_MODULE_6__.parseEther(amount)
+              value: ethers__WEBPACK_IMPORTED_MODULE_7__.parseEther(amount)
             };
-            _context2.next = 4;
+            _context4.next = 4;
             return contract.ownerOf(token_id);
 
           case 4:
-            tokenOwner = _context2.sent;
+            tokenOwner = _context4.sent;
             address = (0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.toAddress)((0,_etherFunc_js__WEBPACK_IMPORTED_MODULE_2__.checkConnection)());
 
             if (!(tokenOwner == address)) {
-              _context2.next = 10;
+              _context4.next = 10;
               break;
             }
 
-            return _context2.abrupt("return", "owner");
+            return _context4.abrupt("return", "owner");
 
           case 10:
-            _context2.t0 = bidding_token;
-            _context2.next = _context2.t0 === "CAD" ? 13 : _context2.t0 === "ANKR" ? 15 : _context2.t0 === "BELL" ? 17 : _context2.t0 === "TEST" ? 18 : 20;
-            break;
-
-          case 13:
-            token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(CAD_token, token_ABI, signer);
-            return _context2.abrupt("break", 21);
-
-          case 15:
-            token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(ANKR_token, token_ABI, signer);
-            return _context2.abrupt("break", 21);
-
-          case 17:
-            token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(BELL_token, token_ABI, signer);
-
-          case 18:
-            token_contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(TEST_token, token_ABI, signer);
-            return _context2.abrupt("break", 21);
-
-          case 20:
-            token_contract = "Not in list";
-
-          case 21:
-            _context2.next = 23;
+            token_contract = getTokenContract(bidding_token);
+            _context4.next = 13;
             return token_contract.balanceOf(address);
 
-          case 23:
-            balance = _context2.sent;
+          case 13:
+            balance = _context4.sent;
             address = address.toString().toLowerCase();
 
             if (!(balance > amount)) {
-              _context2.next = 50;
+              _context4.next = 40;
               break;
             }
 
-            _context2.next = 28;
+            _context4.next = 18;
             return token_contract.approve(TEST_token, (amount * 1.2 * Math.pow(10, 18)).toString());
 
-          case 28:
-            txResponse = _context2.sent;
-            _context2.next = 31;
+          case 18:
+            txResponse = _context4.sent;
+            _context4.next = 21;
             return txResponse.wait();
 
-          case 31:
-            txReceipt = _context2.sent;
+          case 21:
+            txReceipt = _context4.sent;
 
             if (txReceipt['status'] == 1) {
               console.log("Successful");
@@ -32260,11 +32528,11 @@ function _bid() {
               console.log("Failed");
             }
 
-            _context2.next = 35;
+            _context4.next = 25;
             return signer.signMessage("Place a Bid");
 
-          case 35:
-            signature = _context2.sent;
+          case 25:
+            signature = _context4.sent;
             data = {};
             data.address = address;
             data.user_id = user_id;
@@ -32275,39 +32543,39 @@ function _bid() {
             data.bidding_token = bidding_token;
             data.bidding_amount = amount;
             data.signature = signature;
-            _context2.next = 48;
+            _context4.next = 38;
             return axios.post('/bid', data, {}).then(function (response) {
               return response.data;
             })["catch"](function (error) {});
 
-          case 48:
-            _context2.next = 51;
+          case 38:
+            _context4.next = 41;
             break;
 
-          case 50:
-            return _context2.abrupt("return", "Not enough balance");
+          case 40:
+            return _context4.abrupt("return", "Not enough balance");
 
-          case 51:
+          case 41:
           case "end":
-            return _context2.stop();
+            return _context4.stop();
         }
       }
-    }, _callee2);
+    }, _callee4);
   }));
   return _bid.apply(this, arguments);
 }
 
-function getHighestBid(_x13, _x14, _x15, _x16) {
-  return _getHighestBid.apply(this, arguments);
-} ///////////////////////////////////////////Get Highest Bidder////////////////////////////////////////////////////////
+function getAllBids(_x20, _x21, _x22, _x23) {
+  return _getAllBids.apply(this, arguments);
+} ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
 
 
-function _getHighestBid() {
-  _getHighestBid = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(token_type, collection_type, collection_id, token_id) {
+function _getAllBids() {
+  _getAllBids = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(token_type, collection_type, collection_id, token_id) {
     var data, output;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
             data = {};
             data.token_type = token_type;
@@ -32315,97 +32583,118 @@ function _getHighestBid() {
             data.collection_id = collection_id;
             data.token_id = token_id;
             output = {};
-            _context3.next = 8;
-            return axios.post('/getHighestBid', data, {}).then(function (response) {
-              return response.data;
+            _context5.next = 8;
+            return axios.post('/getAllBids', data, {}).then(function (response) {
+              output = response.data;
             });
 
           case 8:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
-  }));
-  return _getHighestBid.apply(this, arguments);
-}
+            return _context5.abrupt("return", output);
 
-function getHighestBidder(_x17) {
-  return _getHighestBidder.apply(this, arguments);
-} ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
-
-
-function _getHighestBidder() {
-  _getHighestBidder = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(token_id) {
-    var txResponse, res;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            _context4.next = 2;
-            return readWriteContract.highestBidder(token_id);
-
-          case 2:
-            txResponse = _context4.sent;
-            res = txResponse.toString();
-            return _context4.abrupt("return", res);
-
-          case 5:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4);
-  }));
-  return _getHighestBidder.apply(this, arguments);
-}
-
-function getBiddingStatus(_x18) {
-  return _getBiddingStatus.apply(this, arguments);
-} /////////////////////////////////////////////Finish Bidding///////////////////////////////////////////////////////
-
-
-function _getBiddingStatus() {
-  _getBiddingStatus = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(token_id) {
-    var txResponse, res;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            _context5.next = 2;
-            return readWriteContract.biddingStatus(token_id);
-
-          case 2:
-            txResponse = _context5.sent;
-            res = txResponse.toString();
-            return _context5.abrupt("return", res);
-
-          case 5:
+          case 9:
           case "end":
             return _context5.stop();
         }
       }
     }, _callee5);
   }));
-  return _getBiddingStatus.apply(this, arguments);
+  return _getAllBids.apply(this, arguments);
 }
 
-function finishBidding(_x19) {
-  return _finishBidding.apply(this, arguments);
-} ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function getHighestBid(_x24, _x25, _x26, _x27) {
+  return _getHighestBid.apply(this, arguments);
+} ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
 
 
-function _finishBidding() {
-  _finishBidding = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(token_id) {
+function _getHighestBid() {
+  _getHighestBid = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(token_type, collection_type, collection_id, token_id) {
+    var output, maxAmount, maxBidder, maxBidToken, i, price;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
           case 0:
+            _context6.next = 2;
+            return getAllBids(token_type, collection_type, collection_id, token_id);
+
+          case 2:
+            output = _context6.sent;
+            maxAmount = 0;
+            i = 0;
+
+          case 5:
+            if (!(i < output.length)) {
+              _context6.next = 13;
+              break;
+            }
+
+            _context6.next = 8;
+            return getTokenPrice(output[i].bidding_token, output[i].bidding_token);
+
+          case 8:
+            price = _context6.sent;
+
+            if (price * output[i].bidding_amount > maxAmount * Math.pow(10, 18)) {
+              maxAmount = price / Math.pow(10, 18);
+              maxBidder = output[i].user_id;
+              maxBidToken = output[i].bidding_token;
+            }
+
+          case 10:
+            i++;
+            _context6.next = 5;
+            break;
+
+          case 13:
+            console.log(maxBidToken);
+            console.log(maxAmount);
+            console.log(maxBidder);
+
+          case 16:
           case "end":
             return _context6.stop();
         }
       }
     }, _callee6);
+  }));
+  return _getHighestBid.apply(this, arguments);
+}
+
+function getBiddingStatus(_x28) {
+  return _getBiddingStatus.apply(this, arguments);
+} /////////////////////////////////////////////Finish Bidding///////////////////////////////////////////////////////
+
+
+function _getBiddingStatus() {
+  _getBiddingStatus = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(token_id) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7);
+  }));
+  return _getBiddingStatus.apply(this, arguments);
+}
+
+function finishBidding(_x29) {
+  return _finishBidding.apply(this, arguments);
+} ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function _finishBidding() {
+  _finishBidding = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(token_id) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8);
   }));
   return _finishBidding.apply(this, arguments);
 }
@@ -32418,11 +32707,8 @@ function _finishBidding() {
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
   \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var laravel_echo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! laravel-echo */ "./node_modules/laravel-echo/dist/echo.js");
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -32444,7 +32730,7 @@ try {
 
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -32452,14 +32738,19 @@ window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/d
  * allows your team to easily build robust real-time web applications.
  */
 
+/*
+import Echo from 'laravel-echo';
 
-window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
-window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__.default({
-  broadcaster: 'pusher',
-  key: "",
-  cluster: "mt1",
-  forceTLS: true
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.MIX_PUSHER_APP_KEY,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    forceTLS: true
 });
+
+*/
 
 /***/ }),
 
@@ -33049,7 +33340,7 @@ function _getTokenData() {
             data.collection = collectible.collection || tempCollectionData()
             data.ownedCopies = collectible.ownedCopies;
             data.type = type;
-             listed ? data.price = data.instant_sale_price : data.price = data.instant_sale_price
+              listed ? data.price = data.instant_sale_price : data.price = data.instant_sale_price
             //////remove////
             data.fileType = data.fileType || "image";
             data.file = data.image || data.file
@@ -42074,7 +42365,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.item-description {\n  font-size: 16px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.item-description {\r\n  font-size: 16px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -54668,1554 +54959,6 @@ if ( typeof noGlobal === "undefined" ) {
 
 return jQuery;
 } );
-
-
-/***/ }),
-
-/***/ "./node_modules/laravel-echo/dist/echo.js":
-/*!************************************************!*\
-  !*** ./node_modules/laravel-echo/dist/echo.js ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-function _isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-  if (Reflect.construct.sham) return false;
-  if (typeof Proxy === "function") return true;
-
-  try {
-    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (typeof call === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-  return function () {
-    var Super = _getPrototypeOf(Derived),
-        result;
-
-    if (hasNativeReflectConstruct) {
-      var NewTarget = _getPrototypeOf(this).constructor;
-
-      result = Reflect.construct(Super, arguments, NewTarget);
-    } else {
-      result = Super.apply(this, arguments);
-    }
-
-    return _possibleConstructorReturn(this, result);
-  };
-}
-
-var Connector = /*#__PURE__*/function () {
-  /**
-   * Create a new class instance.
-   */
-  function Connector(options) {
-    _classCallCheck(this, Connector);
-
-    /**
-     * Default connector options.
-     */
-    this._defaultOptions = {
-      auth: {
-        headers: {}
-      },
-      authEndpoint: '/broadcasting/auth',
-      broadcaster: 'pusher',
-      csrfToken: null,
-      host: null,
-      key: null,
-      namespace: 'App.Events'
-    };
-    this.setOptions(options);
-    this.connect();
-  }
-  /**
-   * Merge the custom options with the defaults.
-   */
-
-
-  _createClass(Connector, [{
-    key: "setOptions",
-    value: function setOptions(options) {
-      this.options = _extends(this._defaultOptions, options);
-
-      if (this.csrfToken()) {
-        this.options.auth.headers['X-CSRF-TOKEN'] = this.csrfToken();
-      }
-
-      return options;
-    }
-    /**
-     * Extract the CSRF token from the page.
-     */
-
-  }, {
-    key: "csrfToken",
-    value: function csrfToken() {
-      var selector;
-
-      if (typeof window !== 'undefined' && window['Laravel'] && window['Laravel'].csrfToken) {
-        return window['Laravel'].csrfToken;
-      } else if (this.options.csrfToken) {
-        return this.options.csrfToken;
-      } else if (typeof document !== 'undefined' && typeof document.querySelector === 'function' && (selector = document.querySelector('meta[name="csrf-token"]'))) {
-        return selector.getAttribute('content');
-      }
-
-      return null;
-    }
-  }]);
-
-  return Connector;
-}();
-
-/**
- * This class represents a basic channel.
- */
-var Channel = /*#__PURE__*/function () {
-  function Channel() {
-    _classCallCheck(this, Channel);
-  }
-
-  _createClass(Channel, [{
-    key: "listenForWhisper",
-
-    /**
-     * Listen for a whisper event on the channel instance.
-     */
-    value: function listenForWhisper(event, callback) {
-      return this.listen('.client-' + event, callback);
-    }
-    /**
-     * Listen for an event on the channel instance.
-     */
-
-  }, {
-    key: "notification",
-    value: function notification(callback) {
-      return this.listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', callback);
-    }
-    /**
-     * Stop listening for a whisper event on the channel instance.
-     */
-
-  }, {
-    key: "stopListeningForWhisper",
-    value: function stopListeningForWhisper(event, callback) {
-      return this.stopListening('.client-' + event, callback);
-    }
-  }]);
-
-  return Channel;
-}();
-
-/**
- * Event name formatter
- */
-var EventFormatter = /*#__PURE__*/function () {
-  /**
-   * Create a new class instance.
-   */
-  function EventFormatter(namespace) {
-    _classCallCheck(this, EventFormatter);
-
-    this.setNamespace(namespace);
-  }
-  /**
-   * Format the given event name.
-   */
-
-
-  _createClass(EventFormatter, [{
-    key: "format",
-    value: function format(event) {
-      if (event.charAt(0) === '.' || event.charAt(0) === '\\') {
-        return event.substr(1);
-      } else if (this.namespace) {
-        event = this.namespace + '.' + event;
-      }
-
-      return event.replace(/\./g, '\\');
-    }
-    /**
-     * Set the event namespace.
-     */
-
-  }, {
-    key: "setNamespace",
-    value: function setNamespace(value) {
-      this.namespace = value;
-    }
-  }]);
-
-  return EventFormatter;
-}();
-
-/**
- * This class represents a Pusher channel.
- */
-
-var PusherChannel = /*#__PURE__*/function (_Channel) {
-  _inherits(PusherChannel, _Channel);
-
-  var _super = _createSuper(PusherChannel);
-
-  /**
-   * Create a new class instance.
-   */
-  function PusherChannel(pusher, name, options) {
-    var _this;
-
-    _classCallCheck(this, PusherChannel);
-
-    _this = _super.call(this);
-    _this.name = name;
-    _this.pusher = pusher;
-    _this.options = options;
-    _this.eventFormatter = new EventFormatter(_this.options.namespace);
-
-    _this.subscribe();
-
-    return _this;
-  }
-  /**
-   * Subscribe to a Pusher channel.
-   */
-
-
-  _createClass(PusherChannel, [{
-    key: "subscribe",
-    value: function subscribe() {
-      this.subscription = this.pusher.subscribe(this.name);
-    }
-    /**
-     * Unsubscribe from a Pusher channel.
-     */
-
-  }, {
-    key: "unsubscribe",
-    value: function unsubscribe() {
-      this.pusher.unsubscribe(this.name);
-    }
-    /**
-     * Listen for an event on the channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(event, callback) {
-      this.on(this.eventFormatter.format(event), callback);
-      return this;
-    }
-    /**
-     * Stop listening for an event on the channel instance.
-     */
-
-  }, {
-    key: "stopListening",
-    value: function stopListening(event, callback) {
-      if (callback) {
-        this.subscription.unbind(this.eventFormatter.format(event), callback);
-      } else {
-        this.subscription.unbind(this.eventFormatter.format(event));
-      }
-
-      return this;
-    }
-    /**
-     * Register a callback to be called anytime a subscription succeeds.
-     */
-
-  }, {
-    key: "subscribed",
-    value: function subscribed(callback) {
-      this.on('pusher:subscription_succeeded', function () {
-        callback();
-      });
-      return this;
-    }
-    /**
-     * Register a callback to be called anytime a subscription error occurs.
-     */
-
-  }, {
-    key: "error",
-    value: function error(callback) {
-      this.on('pusher:subscription_error', function (status) {
-        callback(status);
-      });
-      return this;
-    }
-    /**
-     * Bind a channel to an event.
-     */
-
-  }, {
-    key: "on",
-    value: function on(event, callback) {
-      this.subscription.bind(event, callback);
-      return this;
-    }
-  }]);
-
-  return PusherChannel;
-}(Channel);
-
-/**
- * This class represents a Pusher private channel.
- */
-
-var PusherPrivateChannel = /*#__PURE__*/function (_PusherChannel) {
-  _inherits(PusherPrivateChannel, _PusherChannel);
-
-  var _super = _createSuper(PusherPrivateChannel);
-
-  function PusherPrivateChannel() {
-    _classCallCheck(this, PusherPrivateChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(PusherPrivateChannel, [{
-    key: "whisper",
-
-    /**
-     * Trigger client event on the channel.
-     */
-    value: function whisper(eventName, data) {
-      this.pusher.channels.channels[this.name].trigger("client-".concat(eventName), data);
-      return this;
-    }
-  }]);
-
-  return PusherPrivateChannel;
-}(PusherChannel);
-
-/**
- * This class represents a Pusher private channel.
- */
-
-var PusherEncryptedPrivateChannel = /*#__PURE__*/function (_PusherChannel) {
-  _inherits(PusherEncryptedPrivateChannel, _PusherChannel);
-
-  var _super = _createSuper(PusherEncryptedPrivateChannel);
-
-  function PusherEncryptedPrivateChannel() {
-    _classCallCheck(this, PusherEncryptedPrivateChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(PusherEncryptedPrivateChannel, [{
-    key: "whisper",
-
-    /**
-     * Trigger client event on the channel.
-     */
-    value: function whisper(eventName, data) {
-      this.pusher.channels.channels[this.name].trigger("client-".concat(eventName), data);
-      return this;
-    }
-  }]);
-
-  return PusherEncryptedPrivateChannel;
-}(PusherChannel);
-
-/**
- * This class represents a Pusher presence channel.
- */
-
-var PusherPresenceChannel = /*#__PURE__*/function (_PusherChannel) {
-  _inherits(PusherPresenceChannel, _PusherChannel);
-
-  var _super = _createSuper(PusherPresenceChannel);
-
-  function PusherPresenceChannel() {
-    _classCallCheck(this, PusherPresenceChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(PusherPresenceChannel, [{
-    key: "here",
-
-    /**
-     * Register a callback to be called anytime the member list changes.
-     */
-    value: function here(callback) {
-      this.on('pusher:subscription_succeeded', function (data) {
-        callback(Object.keys(data.members).map(function (k) {
-          return data.members[k];
-        }));
-      });
-      return this;
-    }
-    /**
-     * Listen for someone joining the channel.
-     */
-
-  }, {
-    key: "joining",
-    value: function joining(callback) {
-      this.on('pusher:member_added', function (member) {
-        callback(member.info);
-      });
-      return this;
-    }
-    /**
-     * Listen for someone leaving the channel.
-     */
-
-  }, {
-    key: "leaving",
-    value: function leaving(callback) {
-      this.on('pusher:member_removed', function (member) {
-        callback(member.info);
-      });
-      return this;
-    }
-    /**
-     * Trigger client event on the channel.
-     */
-
-  }, {
-    key: "whisper",
-    value: function whisper(eventName, data) {
-      this.pusher.channels.channels[this.name].trigger("client-".concat(eventName), data);
-      return this;
-    }
-  }]);
-
-  return PusherPresenceChannel;
-}(PusherChannel);
-
-/**
- * This class represents a Socket.io channel.
- */
-
-var SocketIoChannel = /*#__PURE__*/function (_Channel) {
-  _inherits(SocketIoChannel, _Channel);
-
-  var _super = _createSuper(SocketIoChannel);
-
-  /**
-   * Create a new class instance.
-   */
-  function SocketIoChannel(socket, name, options) {
-    var _this;
-
-    _classCallCheck(this, SocketIoChannel);
-
-    _this = _super.call(this);
-    /**
-     * The event callbacks applied to the socket.
-     */
-
-    _this.events = {};
-    /**
-     * User supplied callbacks for events on this channel.
-     */
-
-    _this.listeners = {};
-    _this.name = name;
-    _this.socket = socket;
-    _this.options = options;
-    _this.eventFormatter = new EventFormatter(_this.options.namespace);
-
-    _this.subscribe();
-
-    return _this;
-  }
-  /**
-   * Subscribe to a Socket.io channel.
-   */
-
-
-  _createClass(SocketIoChannel, [{
-    key: "subscribe",
-    value: function subscribe() {
-      this.socket.emit('subscribe', {
-        channel: this.name,
-        auth: this.options.auth || {}
-      });
-    }
-    /**
-     * Unsubscribe from channel and ubind event callbacks.
-     */
-
-  }, {
-    key: "unsubscribe",
-    value: function unsubscribe() {
-      this.unbind();
-      this.socket.emit('unsubscribe', {
-        channel: this.name,
-        auth: this.options.auth || {}
-      });
-    }
-    /**
-     * Listen for an event on the channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(event, callback) {
-      this.on(this.eventFormatter.format(event), callback);
-      return this;
-    }
-    /**
-     * Stop listening for an event on the channel instance.
-     */
-
-  }, {
-    key: "stopListening",
-    value: function stopListening(event, callback) {
-      this.unbindEvent(this.eventFormatter.format(event), callback);
-      return this;
-    }
-    /**
-     * Register a callback to be called anytime a subscription succeeds.
-     */
-
-  }, {
-    key: "subscribed",
-    value: function subscribed(callback) {
-      this.on('connect', function (socket) {
-        callback(socket);
-      });
-      return this;
-    }
-    /**
-     * Register a callback to be called anytime an error occurs.
-     */
-
-  }, {
-    key: "error",
-    value: function error(callback) {
-      return this;
-    }
-    /**
-     * Bind the channel's socket to an event and store the callback.
-     */
-
-  }, {
-    key: "on",
-    value: function on(event, callback) {
-      var _this2 = this;
-
-      this.listeners[event] = this.listeners[event] || [];
-
-      if (!this.events[event]) {
-        this.events[event] = function (channel, data) {
-          if (_this2.name === channel && _this2.listeners[event]) {
-            _this2.listeners[event].forEach(function (cb) {
-              return cb(data);
-            });
-          }
-        };
-
-        this.socket.on(event, this.events[event]);
-      }
-
-      this.listeners[event].push(callback);
-      return this;
-    }
-    /**
-     * Unbind the channel's socket from all stored event callbacks.
-     */
-
-  }, {
-    key: "unbind",
-    value: function unbind() {
-      var _this3 = this;
-
-      Object.keys(this.events).forEach(function (event) {
-        _this3.unbindEvent(event);
-      });
-    }
-    /**
-     * Unbind the listeners for the given event.
-     */
-
-  }, {
-    key: "unbindEvent",
-    value: function unbindEvent(event, callback) {
-      this.listeners[event] = this.listeners[event] || [];
-
-      if (callback) {
-        this.listeners[event] = this.listeners[event].filter(function (cb) {
-          return cb !== callback;
-        });
-      }
-
-      if (!callback || this.listeners[event].length === 0) {
-        if (this.events[event]) {
-          this.socket.removeListener(event, this.events[event]);
-          delete this.events[event];
-        }
-
-        delete this.listeners[event];
-      }
-    }
-  }]);
-
-  return SocketIoChannel;
-}(Channel);
-
-/**
- * This class represents a Socket.io private channel.
- */
-
-var SocketIoPrivateChannel = /*#__PURE__*/function (_SocketIoChannel) {
-  _inherits(SocketIoPrivateChannel, _SocketIoChannel);
-
-  var _super = _createSuper(SocketIoPrivateChannel);
-
-  function SocketIoPrivateChannel() {
-    _classCallCheck(this, SocketIoPrivateChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(SocketIoPrivateChannel, [{
-    key: "whisper",
-
-    /**
-     * Trigger client event on the channel.
-     */
-    value: function whisper(eventName, data) {
-      this.socket.emit('client event', {
-        channel: this.name,
-        event: "client-".concat(eventName),
-        data: data
-      });
-      return this;
-    }
-  }]);
-
-  return SocketIoPrivateChannel;
-}(SocketIoChannel);
-
-/**
- * This class represents a Socket.io presence channel.
- */
-
-var SocketIoPresenceChannel = /*#__PURE__*/function (_SocketIoPrivateChann) {
-  _inherits(SocketIoPresenceChannel, _SocketIoPrivateChann);
-
-  var _super = _createSuper(SocketIoPresenceChannel);
-
-  function SocketIoPresenceChannel() {
-    _classCallCheck(this, SocketIoPresenceChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(SocketIoPresenceChannel, [{
-    key: "here",
-
-    /**
-     * Register a callback to be called anytime the member list changes.
-     */
-    value: function here(callback) {
-      this.on('presence:subscribed', function (members) {
-        callback(members.map(function (m) {
-          return m.user_info;
-        }));
-      });
-      return this;
-    }
-    /**
-     * Listen for someone joining the channel.
-     */
-
-  }, {
-    key: "joining",
-    value: function joining(callback) {
-      this.on('presence:joining', function (member) {
-        return callback(member.user_info);
-      });
-      return this;
-    }
-    /**
-     * Listen for someone leaving the channel.
-     */
-
-  }, {
-    key: "leaving",
-    value: function leaving(callback) {
-      this.on('presence:leaving', function (member) {
-        return callback(member.user_info);
-      });
-      return this;
-    }
-  }]);
-
-  return SocketIoPresenceChannel;
-}(SocketIoPrivateChannel);
-
-/**
- * This class represents a null channel.
- */
-
-var NullChannel = /*#__PURE__*/function (_Channel) {
-  _inherits(NullChannel, _Channel);
-
-  var _super = _createSuper(NullChannel);
-
-  function NullChannel() {
-    _classCallCheck(this, NullChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(NullChannel, [{
-    key: "subscribe",
-
-    /**
-     * Subscribe to a channel.
-     */
-    value: function subscribe() {} //
-
-    /**
-     * Unsubscribe from a channel.
-     */
-
-  }, {
-    key: "unsubscribe",
-    value: function unsubscribe() {} //
-
-    /**
-     * Listen for an event on the channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(event, callback) {
-      return this;
-    }
-    /**
-     * Stop listening for an event on the channel instance.
-     */
-
-  }, {
-    key: "stopListening",
-    value: function stopListening(event, callback) {
-      return this;
-    }
-    /**
-     * Register a callback to be called anytime a subscription succeeds.
-     */
-
-  }, {
-    key: "subscribed",
-    value: function subscribed(callback) {
-      return this;
-    }
-    /**
-     * Register a callback to be called anytime an error occurs.
-     */
-
-  }, {
-    key: "error",
-    value: function error(callback) {
-      return this;
-    }
-    /**
-     * Bind a channel to an event.
-     */
-
-  }, {
-    key: "on",
-    value: function on(event, callback) {
-      return this;
-    }
-  }]);
-
-  return NullChannel;
-}(Channel);
-
-/**
- * This class represents a null private channel.
- */
-
-var NullPrivateChannel = /*#__PURE__*/function (_NullChannel) {
-  _inherits(NullPrivateChannel, _NullChannel);
-
-  var _super = _createSuper(NullPrivateChannel);
-
-  function NullPrivateChannel() {
-    _classCallCheck(this, NullPrivateChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(NullPrivateChannel, [{
-    key: "whisper",
-
-    /**
-     * Trigger client event on the channel.
-     */
-    value: function whisper(eventName, data) {
-      return this;
-    }
-  }]);
-
-  return NullPrivateChannel;
-}(NullChannel);
-
-/**
- * This class represents a null presence channel.
- */
-
-var NullPresenceChannel = /*#__PURE__*/function (_NullChannel) {
-  _inherits(NullPresenceChannel, _NullChannel);
-
-  var _super = _createSuper(NullPresenceChannel);
-
-  function NullPresenceChannel() {
-    _classCallCheck(this, NullPresenceChannel);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(NullPresenceChannel, [{
-    key: "here",
-
-    /**
-     * Register a callback to be called anytime the member list changes.
-     */
-    value: function here(callback) {
-      return this;
-    }
-    /**
-     * Listen for someone joining the channel.
-     */
-
-  }, {
-    key: "joining",
-    value: function joining(callback) {
-      return this;
-    }
-    /**
-     * Listen for someone leaving the channel.
-     */
-
-  }, {
-    key: "leaving",
-    value: function leaving(callback) {
-      return this;
-    }
-    /**
-     * Trigger client event on the channel.
-     */
-
-  }, {
-    key: "whisper",
-    value: function whisper(eventName, data) {
-      return this;
-    }
-  }]);
-
-  return NullPresenceChannel;
-}(NullChannel);
-
-/**
- * This class creates a connector to Pusher.
- */
-
-var PusherConnector = /*#__PURE__*/function (_Connector) {
-  _inherits(PusherConnector, _Connector);
-
-  var _super = _createSuper(PusherConnector);
-
-  function PusherConnector() {
-    var _this;
-
-    _classCallCheck(this, PusherConnector);
-
-    _this = _super.apply(this, arguments);
-    /**
-     * All of the subscribed channel names.
-     */
-
-    _this.channels = {};
-    return _this;
-  }
-  /**
-   * Create a fresh Pusher connection.
-   */
-
-
-  _createClass(PusherConnector, [{
-    key: "connect",
-    value: function connect() {
-      if (typeof this.options.client !== 'undefined') {
-        this.pusher = this.options.client;
-      } else {
-        this.pusher = new Pusher(this.options.key, this.options);
-      }
-    }
-    /**
-     * Listen for an event on a channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(name, event, callback) {
-      return this.channel(name).listen(event, callback);
-    }
-    /**
-     * Get a channel instance by name.
-     */
-
-  }, {
-    key: "channel",
-    value: function channel(name) {
-      if (!this.channels[name]) {
-        this.channels[name] = new PusherChannel(this.pusher, name, this.options);
-      }
-
-      return this.channels[name];
-    }
-    /**
-     * Get a private channel instance by name.
-     */
-
-  }, {
-    key: "privateChannel",
-    value: function privateChannel(name) {
-      if (!this.channels['private-' + name]) {
-        this.channels['private-' + name] = new PusherPrivateChannel(this.pusher, 'private-' + name, this.options);
-      }
-
-      return this.channels['private-' + name];
-    }
-    /**
-     * Get a private encrypted channel instance by name.
-     */
-
-  }, {
-    key: "encryptedPrivateChannel",
-    value: function encryptedPrivateChannel(name) {
-      if (!this.channels['private-encrypted-' + name]) {
-        this.channels['private-encrypted-' + name] = new PusherEncryptedPrivateChannel(this.pusher, 'private-encrypted-' + name, this.options);
-      }
-
-      return this.channels['private-encrypted-' + name];
-    }
-    /**
-     * Get a presence channel instance by name.
-     */
-
-  }, {
-    key: "presenceChannel",
-    value: function presenceChannel(name) {
-      if (!this.channels['presence-' + name]) {
-        this.channels['presence-' + name] = new PusherPresenceChannel(this.pusher, 'presence-' + name, this.options);
-      }
-
-      return this.channels['presence-' + name];
-    }
-    /**
-     * Leave the given channel, as well as its private and presence variants.
-     */
-
-  }, {
-    key: "leave",
-    value: function leave(name) {
-      var _this2 = this;
-
-      var channels = [name, 'private-' + name, 'presence-' + name];
-      channels.forEach(function (name, index) {
-        _this2.leaveChannel(name);
-      });
-    }
-    /**
-     * Leave the given channel.
-     */
-
-  }, {
-    key: "leaveChannel",
-    value: function leaveChannel(name) {
-      if (this.channels[name]) {
-        this.channels[name].unsubscribe();
-        delete this.channels[name];
-      }
-    }
-    /**
-     * Get the socket ID for the connection.
-     */
-
-  }, {
-    key: "socketId",
-    value: function socketId() {
-      return this.pusher.connection.socket_id;
-    }
-    /**
-     * Disconnect Pusher connection.
-     */
-
-  }, {
-    key: "disconnect",
-    value: function disconnect() {
-      this.pusher.disconnect();
-    }
-  }]);
-
-  return PusherConnector;
-}(Connector);
-
-/**
- * This class creates a connnector to a Socket.io server.
- */
-
-var SocketIoConnector = /*#__PURE__*/function (_Connector) {
-  _inherits(SocketIoConnector, _Connector);
-
-  var _super = _createSuper(SocketIoConnector);
-
-  function SocketIoConnector() {
-    var _this;
-
-    _classCallCheck(this, SocketIoConnector);
-
-    _this = _super.apply(this, arguments);
-    /**
-     * All of the subscribed channel names.
-     */
-
-    _this.channels = {};
-    return _this;
-  }
-  /**
-   * Create a fresh Socket.io connection.
-   */
-
-
-  _createClass(SocketIoConnector, [{
-    key: "connect",
-    value: function connect() {
-      var _this2 = this;
-
-      var io = this.getSocketIO();
-      this.socket = io(this.options.host, this.options);
-      this.socket.on('reconnect', function () {
-        Object.values(_this2.channels).forEach(function (channel) {
-          channel.subscribe();
-        });
-      });
-      return this.socket;
-    }
-    /**
-     * Get socket.io module from global scope or options.
-     */
-
-  }, {
-    key: "getSocketIO",
-    value: function getSocketIO() {
-      if (typeof this.options.client !== 'undefined') {
-        return this.options.client;
-      }
-
-      if (typeof io !== 'undefined') {
-        return io;
-      }
-
-      throw new Error('Socket.io client not found. Should be globally available or passed via options.client');
-    }
-    /**
-     * Listen for an event on a channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(name, event, callback) {
-      return this.channel(name).listen(event, callback);
-    }
-    /**
-     * Get a channel instance by name.
-     */
-
-  }, {
-    key: "channel",
-    value: function channel(name) {
-      if (!this.channels[name]) {
-        this.channels[name] = new SocketIoChannel(this.socket, name, this.options);
-      }
-
-      return this.channels[name];
-    }
-    /**
-     * Get a private channel instance by name.
-     */
-
-  }, {
-    key: "privateChannel",
-    value: function privateChannel(name) {
-      if (!this.channels['private-' + name]) {
-        this.channels['private-' + name] = new SocketIoPrivateChannel(this.socket, 'private-' + name, this.options);
-      }
-
-      return this.channels['private-' + name];
-    }
-    /**
-     * Get a presence channel instance by name.
-     */
-
-  }, {
-    key: "presenceChannel",
-    value: function presenceChannel(name) {
-      if (!this.channels['presence-' + name]) {
-        this.channels['presence-' + name] = new SocketIoPresenceChannel(this.socket, 'presence-' + name, this.options);
-      }
-
-      return this.channels['presence-' + name];
-    }
-    /**
-     * Leave the given channel, as well as its private and presence variants.
-     */
-
-  }, {
-    key: "leave",
-    value: function leave(name) {
-      var _this3 = this;
-
-      var channels = [name, 'private-' + name, 'presence-' + name];
-      channels.forEach(function (name) {
-        _this3.leaveChannel(name);
-      });
-    }
-    /**
-     * Leave the given channel.
-     */
-
-  }, {
-    key: "leaveChannel",
-    value: function leaveChannel(name) {
-      if (this.channels[name]) {
-        this.channels[name].unsubscribe();
-        delete this.channels[name];
-      }
-    }
-    /**
-     * Get the socket ID for the connection.
-     */
-
-  }, {
-    key: "socketId",
-    value: function socketId() {
-      return this.socket.id;
-    }
-    /**
-     * Disconnect Socketio connection.
-     */
-
-  }, {
-    key: "disconnect",
-    value: function disconnect() {
-      this.socket.disconnect();
-    }
-  }]);
-
-  return SocketIoConnector;
-}(Connector);
-
-/**
- * This class creates a null connector.
- */
-
-var NullConnector = /*#__PURE__*/function (_Connector) {
-  _inherits(NullConnector, _Connector);
-
-  var _super = _createSuper(NullConnector);
-
-  function NullConnector() {
-    var _this;
-
-    _classCallCheck(this, NullConnector);
-
-    _this = _super.apply(this, arguments);
-    /**
-     * All of the subscribed channel names.
-     */
-
-    _this.channels = {};
-    return _this;
-  }
-  /**
-   * Create a fresh connection.
-   */
-
-
-  _createClass(NullConnector, [{
-    key: "connect",
-    value: function connect() {} //
-
-    /**
-     * Listen for an event on a channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(name, event, callback) {
-      return new NullChannel();
-    }
-    /**
-     * Get a channel instance by name.
-     */
-
-  }, {
-    key: "channel",
-    value: function channel(name) {
-      return new NullChannel();
-    }
-    /**
-     * Get a private channel instance by name.
-     */
-
-  }, {
-    key: "privateChannel",
-    value: function privateChannel(name) {
-      return new NullPrivateChannel();
-    }
-    /**
-     * Get a presence channel instance by name.
-     */
-
-  }, {
-    key: "presenceChannel",
-    value: function presenceChannel(name) {
-      return new NullPresenceChannel();
-    }
-    /**
-     * Leave the given channel, as well as its private and presence variants.
-     */
-
-  }, {
-    key: "leave",
-    value: function leave(name) {} //
-
-    /**
-     * Leave the given channel.
-     */
-
-  }, {
-    key: "leaveChannel",
-    value: function leaveChannel(name) {} //
-
-    /**
-     * Get the socket ID for the connection.
-     */
-
-  }, {
-    key: "socketId",
-    value: function socketId() {
-      return 'fake-socket-id';
-    }
-    /**
-     * Disconnect the connection.
-     */
-
-  }, {
-    key: "disconnect",
-    value: function disconnect() {//
-    }
-  }]);
-
-  return NullConnector;
-}(Connector);
-
-/**
- * This class is the primary API for interacting with broadcasting.
- */
-
-var Echo = /*#__PURE__*/function () {
-  /**
-   * Create a new class instance.
-   */
-  function Echo(options) {
-    _classCallCheck(this, Echo);
-
-    this.options = options;
-    this.connect();
-
-    if (!this.options.withoutInterceptors) {
-      this.registerInterceptors();
-    }
-  }
-  /**
-   * Get a channel instance by name.
-   */
-
-
-  _createClass(Echo, [{
-    key: "channel",
-    value: function channel(_channel) {
-      return this.connector.channel(_channel);
-    }
-    /**
-     * Create a new connection.
-     */
-
-  }, {
-    key: "connect",
-    value: function connect() {
-      if (this.options.broadcaster == 'pusher') {
-        this.connector = new PusherConnector(this.options);
-      } else if (this.options.broadcaster == 'socket.io') {
-        this.connector = new SocketIoConnector(this.options);
-      } else if (this.options.broadcaster == 'null') {
-        this.connector = new NullConnector(this.options);
-      } else if (typeof this.options.broadcaster == 'function') {
-        this.connector = new this.options.broadcaster(this.options);
-      }
-    }
-    /**
-     * Disconnect from the Echo server.
-     */
-
-  }, {
-    key: "disconnect",
-    value: function disconnect() {
-      this.connector.disconnect();
-    }
-    /**
-     * Get a presence channel instance by name.
-     */
-
-  }, {
-    key: "join",
-    value: function join(channel) {
-      return this.connector.presenceChannel(channel);
-    }
-    /**
-     * Leave the given channel, as well as its private and presence variants.
-     */
-
-  }, {
-    key: "leave",
-    value: function leave(channel) {
-      this.connector.leave(channel);
-    }
-    /**
-     * Leave the given channel.
-     */
-
-  }, {
-    key: "leaveChannel",
-    value: function leaveChannel(channel) {
-      this.connector.leaveChannel(channel);
-    }
-    /**
-     * Listen for an event on a channel instance.
-     */
-
-  }, {
-    key: "listen",
-    value: function listen(channel, event, callback) {
-      return this.connector.listen(channel, event, callback);
-    }
-    /**
-     * Get a private channel instance by name.
-     */
-
-  }, {
-    key: "private",
-    value: function _private(channel) {
-      return this.connector.privateChannel(channel);
-    }
-    /**
-     * Get a private encrypted channel instance by name.
-     */
-
-  }, {
-    key: "encryptedPrivate",
-    value: function encryptedPrivate(channel) {
-      return this.connector.encryptedPrivateChannel(channel);
-    }
-    /**
-     * Get the Socket ID for the connection.
-     */
-
-  }, {
-    key: "socketId",
-    value: function socketId() {
-      return this.connector.socketId();
-    }
-    /**
-     * Register 3rd party request interceptiors. These are used to automatically
-     * send a connections socket id to a Laravel app with a X-Socket-Id header.
-     */
-
-  }, {
-    key: "registerInterceptors",
-    value: function registerInterceptors() {
-      if (typeof Vue === 'function' && Vue.http) {
-        this.registerVueRequestInterceptor();
-      }
-
-      if (typeof axios === 'function') {
-        this.registerAxiosRequestInterceptor();
-      }
-
-      if (typeof jQuery === 'function') {
-        this.registerjQueryAjaxSetup();
-      }
-    }
-    /**
-     * Register a Vue HTTP interceptor to add the X-Socket-ID header.
-     */
-
-  }, {
-    key: "registerVueRequestInterceptor",
-    value: function registerVueRequestInterceptor() {
-      var _this = this;
-
-      Vue.http.interceptors.push(function (request, next) {
-        if (_this.socketId()) {
-          request.headers.set('X-Socket-ID', _this.socketId());
-        }
-
-        next();
-      });
-    }
-    /**
-     * Register an Axios HTTP interceptor to add the X-Socket-ID header.
-     */
-
-  }, {
-    key: "registerAxiosRequestInterceptor",
-    value: function registerAxiosRequestInterceptor() {
-      var _this2 = this;
-
-      axios.interceptors.request.use(function (config) {
-        if (_this2.socketId()) {
-          config.headers['X-Socket-Id'] = _this2.socketId();
-        }
-
-        return config;
-      });
-    }
-    /**
-     * Register jQuery AjaxPrefilter to add the X-Socket-ID header.
-     */
-
-  }, {
-    key: "registerjQueryAjaxSetup",
-    value: function registerjQueryAjaxSetup() {
-      var _this3 = this;
-
-      if (typeof jQuery.ajax != 'undefined') {
-        jQuery.ajaxPrefilter(function (options, originalOptions, xhr) {
-          if (_this3.socketId()) {
-            xhr.setRequestHeader('X-Socket-Id', _this3.socketId());
-          }
-        });
-      }
-    }
-  }]);
-
-  return Echo;
-}();
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Echo);
 
 
 /***/ }),
@@ -86832,6 +85575,13 @@ var render = function() {
                       })
                     ]),
                     _vm._v(" "),
+                    _vm.imgselectok
+                      ? _c("progress", {
+                          attrs: { max: "100" },
+                          domProps: { value: _vm.uploadPercentageimg }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("p", { staticClass: "this-error text-danger" }),
                     _vm._v(" "),
                     _c("span", {
@@ -87687,6 +86437,19 @@ var staticRenderFns = [
           "a",
           {
             staticClass: "currency-item",
+            attrs: { href: "javascript:void(0)", id: "HPS" }
+          },
+          [_vm._v("HPS")]
+        ),
+        _vm._v(" "),
+        _c("i", { staticClass: "fa fa-check currency-check opacity-0" })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "drop-group" }, [
+        _c(
+          "a",
+          {
+            staticClass: "currency-item",
             attrs: { href: "javascript:void(0)", id: "BNB" }
           },
           [_vm._v("BNB")]
@@ -88466,7 +87229,7 @@ var render = function() {
                 staticClass: "form-send",
                 on: {
                   click: function($event) {
-                    return _vm.getMaxBid()
+                    return _vm.startBid()
                   }
                 }
               },
