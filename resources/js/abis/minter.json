@@ -205,12 +205,38 @@
     },
     {
         "inputs": [],
+        "name": "erc20TrasferProxy",
+        "outputs": [
+            {
+                "internalType": "contract IERC20TransferProxy",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "fee",
         "outputs": [
             {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "hps",
+        "outputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -244,7 +270,7 @@
                 "type": "bool"
             }
         ],
-        "name": "mint721",
+        "name": "mint1155",
         "outputs": [],
         "stateMutability": "payable",
         "type": "function"
@@ -275,6 +301,19 @@
         "name": "mint721",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "nftStorage",
+        "outputs": [
+            {
+                "internalType": "contract INFTStorage",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

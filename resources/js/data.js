@@ -206,9 +206,9 @@ async function getTokensData(owner, base_url) {
 
 async function getTokenData(contract, owner, id) {
     var listed = false;
-    var res = await axios.get("/api/collections/" + contract);
-    var type = res.data.type
-    var isPrivate = res.data.id > 2 ? true : false;
+    //var res = await axios.get("/api/collections/" + contract);
+    var type = contract == hpsAddress ? 721 : bhcAddress ? 1155 : null
+    var isPrivate = contract == hpsAddress ? true : bhcAddress ? true : false
     var selectedToken = await getCollectible(contract, type, isPrivate, owner, id);
     var colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
