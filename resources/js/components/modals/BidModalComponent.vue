@@ -9,15 +9,15 @@
 	    	<label class="item-description">You are about to purchase <span class="item-name">{{ singleNft.name }}</span> from billion. Check information then proceed to payment</label>
 
 			<div class="form-section">
-				<form id="bidForm" autocomplete="off" @submit.prevent="placeBid">
+				<form id="bidForm" autocomplete="off" @submit.prevent="placeBid()">
 					<div class="form-divide">
 						<label class="input-label">Your bid</label>
 						<input v-model.number="bid_input" class="modal-input dropdown-bid" type="number" id="bid-input" name="bid" placeholder="Enter bid" step=".01">
-						<span class="link-url-end currency-btn"><span id="selectedCurrency">BHC</span> <i class="fa fa-angle-down"></i></span>
+						<span class="link-url-end currency-btn"><span id="selectedCurrency">HPS</span> <i class="fa fa-angle-down"></i></span>
 
 						<div class="currency-drop d-none">
 							<div class="drop-group">
-								<a href="javascript:void(0)" id="BHC" class="currency-item">BHC</a>
+								<a href="javascript:void(0)" id="HPS" class="currency-item">HPS</a>
 								<i class="fa fa-check currency-check"></i>
 							</div>
 							<div class="drop-group">
@@ -31,15 +31,15 @@
 					<div class="purchase">
 						<div class="purchase-info">
 							<label class="text-details">Your balance</label>
-							<label class="text-value">{{ balance }} <span class="changeDD">BHC</span></label>
+							<label class="text-value">{{ balance }} <span class="changeDD">HPS</span></label>
 						</div>
 						<div class="purchase-info">
 							<label class="text-details">Service fee</label>
-							<label class="text-value">{{ service_fee }} <span class="changeDD">BHC</span></label>
+							<label class="text-value">{{ service_fee }} <span class="changeDD">HPS</span></label>
 						</div>
 						<div class="purchase-info">
 							<label class="text-details">You will pay</label>
-							<label class="text-value">{{ total_payment }} <span class="changeDD">BHC</span></label>
+							<label class="text-value">{{ total_payment }} <span class="changeDD">HPS</span></label>
 						</div>
 					</div>
 					<button class="form-submit" type="submit">Place a bid</button>
@@ -55,6 +55,10 @@
 
 
 <script>
+
+
+import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance } from ".././../bidFunc";
+
 import $ from 'jquery'
 
 export default {
@@ -72,22 +76,31 @@ export default {
 			record_id: 0
 		}
 	},
+	async mounted() {
+		let balance = await getHpsBalance()
+		this.balance = balance
+		console.log(this.balance)
+	},
+
 	watch: {
 		singleNft: function() {
 			this.nft_id = this.singleNft.id
 			this.record_id = this.singleNft.record_id
 		},
 		bid_input: function() {
-			this.payment = +(this.bid_input).toFixed(2)
-			this.service_fee = +(this.payment * 0.025).toFixed(2)
-		    this.total_payment = +(this.payment + +this.service_fee).toFixed(2)
+			this.payment = +(this.bid_input)
+			this.service_fee = +(this.payment * 0.025)
+		    this.total_payment = +(this.payment + +this.service_fee)
 		}
 	},
 	methods: {
-		placeBid() {
+		async placeBid() {
 			this.currency = $('#selectedCurrency').text()
 
-			axios.post('/create/transaction', {
+			let res = await bid(this.singleNft.owner_id,this.singleNft.contract,this.singleNft.id,this.currency,this.payment);
+			console.log(res);
+
+			/*axios.post('/create/transaction', {
 			    type: 'bid',
 			    nft_id: this.nft_id,
 			    price: this.payment,
@@ -111,7 +124,7 @@ export default {
 			})
 			.catch((error) => {
                 alert("error")
-            })
+            })*/
 
 		}
 	}

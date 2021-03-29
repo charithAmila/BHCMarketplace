@@ -16,10 +16,9 @@ class CreateBidsTable extends Migration
         Schema::create('bids', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('user_id');
-            $table->integer('token_type');
-            $table->integer('collection_type');
-            $table->integer('collection_id');
+            $table->string('owner');
+            $table->string('bidding_address');
+            $table->string('contract_address');
             $table->integer('token_id');
             $table->string('bidding_token');
             $table->integer('bidding_amount');
