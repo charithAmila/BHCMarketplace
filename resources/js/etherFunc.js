@@ -214,18 +214,21 @@ async function buy(collection, is721, tokenId, value, buyWith, price, salt, owne
     const sig = ethers.utils.splitSignature(signature)
 
     const tx = await exchange.exchange(
-        is721,
-        collection,
-        tokenId,
-        value,
-        buyWith,
-        BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
-        owner,
-        salt,
-        ethers.utils.hexlify(0),
-        sig.v,
-        sig.r,
-        sig.s)
+        [
+            is721,
+            collection,
+            tokenId,
+            value,
+            buyWith,
+            BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+            owner,
+            salt,
+            ethers.utils.hexlify(0),
+            sig.v,
+            sig.r,
+            sig.s
+        ]
+    )
     return tx.hash;
 }
 

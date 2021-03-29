@@ -1,0 +1,410 @@
+[
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20TransferProxy",
+                "name": "_erc20TransferProxy",
+                "type": "address"
+            },
+            {
+                "internalType": "contract INFTStorage",
+                "name": "_nftStorage",
+                "type": "address"
+            },
+            {
+                "internalType": "contract IERC20",
+                "name": "_hps",
+                "type": "address"
+            },
+            {
+                "internalType": "address payable",
+                "name": "_benefeciary",
+                "type": "address"
+            },
+            {
+                "internalType": "address payable",
+                "name": "_com",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_fee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_benPercentage",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_comPercentage",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address payable",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address payable",
+                "name": "_to",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_value",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "contract IERC20",
+                "name": "_paidIn",
+                "type": "address"
+            }
+        ],
+        "name": "FeesPaid",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "contract IERC721",
+                "name": "_collection",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_id",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_value",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address payable",
+                "name": "_creator",
+                "type": "address"
+            }
+        ],
+        "name": "NFT1155Minted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "contract IERC721",
+                "name": "_collection",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_id",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address payable",
+                "name": "_creator",
+                "type": "address"
+            }
+        ],
+        "name": "NFT721Minted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+            }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "benPercentage",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "benefeciary",
+        "outputs": [
+            {
+                "internalType": "address payable",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "com",
+        "outputs": [
+            {
+                "internalType": "address payable",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "comPercentage",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "fee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC1155Mintable",
+                "name": "_collection",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "token_uri",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_supply",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_royalty",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "isBNB",
+                "type": "bool"
+            }
+        ],
+        "name": "mint721",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC721Mintable",
+                "name": "_collection",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "token_uri",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_royalty",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "isBNB",
+                "type": "bool"
+            }
+        ],
+        "name": "mint721",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "requiredFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "_fee",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20TransferProxy",
+                "name": "_erc20TransferProxy",
+                "type": "address"
+            }
+        ],
+        "name": "setERC20TransferProxy",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_fee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_benPercentage",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_comPercentage",
+                "type": "uint256"
+            }
+        ],
+        "name": "setFees",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "_hps",
+                "type": "address"
+            }
+        ],
+        "name": "setHPS",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract INFTStorage",
+                "name": "_nftStorage",
+                "type": "address"
+            }
+        ],
+        "name": "setNFTStorage",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address payable",
+                "name": "_benefeciary",
+                "type": "address"
+            },
+            {
+                "internalType": "address payable",
+                "name": "_com",
+                "type": "address"
+            }
+        ],
+        "name": "setReceivers",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+            }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "stateMutability": "payable",
+        "type": "receive"
+    }
+]
