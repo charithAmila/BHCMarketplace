@@ -353,7 +353,7 @@
               </div>
               <div class="col-6 col-md-6">
                 <input
-                  id="createCollectible"
+                  id="createCollectiblea"
                   class="submitBtn"
                   type="button"
                   name=""
@@ -595,6 +595,7 @@ export default {
           _this.type == "solo"
             ? createASingle(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
+                _this.royalties,
                 _this.selectedContract
               ).then((res) => {
                 console.log(res);
