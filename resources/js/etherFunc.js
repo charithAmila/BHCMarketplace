@@ -189,7 +189,7 @@ async function createABatch(url, count, royalty, collection) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract)
-    var tx = await contract.mint721(collection, url, BigNumber.from(Number(count)), BigNumber.from(Number(royalty)), true)//, { value: ethers.utils.parseEther("0.25") });
+    var tx = await contract.mint1155(collection, url, BigNumber.from(Number(count)), BigNumber.from(Number(royalty)), true, { value: ethers.utils.parseEther("0.25") });
     return tx;
 }
 

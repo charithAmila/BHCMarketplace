@@ -612,6 +612,7 @@ export default {
             : createABatch(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.copies,
+                _this.royalties,
                 _this.selectedContract
               ).then((res) => {
                 console.log(res);

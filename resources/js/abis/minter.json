@@ -230,6 +230,57 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "contract ITokenFactory",
+                "name": "_factory",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "contract_uri",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "isBNB",
+                "type": "bool"
+            }
+        ],
+        "name": "generate1155",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract ITokenFactory",
+                "name": "_factory",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "contract_uri",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "isBNB",
+                "type": "bool"
+            }
+        ],
+        "name": "generate721",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "hps",
         "outputs": [
