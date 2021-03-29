@@ -1,11 +1,12 @@
 import { BigNumber, ethers } from 'ethers';
 import { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, exchangeAddress, hpsAddress, bhcAddress } from "./addresses/constants"
-
+//console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
 /////////abis///////////////////
 const bhc721 = require('../js/abis/bhc_721.json')
 const bhc1155 = require('../js/abis/bhc_1155.json')
 const orderStorageABI = require("../js/abis/order_storage.json")
 const exchangeABI = require("../js/abis/exchange.json")
+const bep20ABI = require("./abis/bep20.json")
 
 
 
@@ -33,6 +34,10 @@ function redirectToConnect() {
 async function signMessage(message) {
     const signer = provider.getSigner();
     return await signer.signMessage(message);
+}
+
+function splitSign(signature) {
+    return ethers.utils.splitSignature(signature)
 }
 
 async function waitForTransaction(tx) {
@@ -144,9 +149,31 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
 async function generateOrderIdMessage(tokenAddress, tokenId, value, priceToken, price, salt) {
     const signer = provider.getSigner()
     const orderStorage = new ethers.Contract(orderStorageAddress, orderStorageABI, signer);
-    const order = await orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, price, salt);
+    const order = await orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, BigNumber.from(price).mul(BigNumber.from(10).pow(18)), salt);
     return (salt, order);
 }
+
+async function checkNFTApproved(contractAddress, from) {
+    const ABI = bhc721;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, provider);
+    const res = await contract.isApprovedForAll(from, transferProxyAddress);
+    return res;
+}
+async function checkTokensApproved(contractAddress, from) {
+    const ABI = bep20ABI;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, provider);
+    const res = await contract.allowance(from, erc20TransferProxyAddress);
+    console.log(Number(res) / (10 ** 18))
+    return Number(res) / (10 ** 18);
+}
+
+async function checkTokensBalance(contractAddress, from) {
+    const ABI = bep20ABI;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, provider);
+    const res = await contract.balanceOf(from);
+    return Number(res) / (10 ** 18);
+}
+
 //////Set functions/////////
 
 async function createASingle(url, contract) {
@@ -163,6 +190,47 @@ async function createABatch(url, count, contract) {
     return tx;
 }
 
+async function approveNFT(contractAddress) {
+    const signer = provider.getSigner();
+    const ABI = bhc721;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, signer);
+    const tx = await contract.setApprovalForAll(transferProxyAddress, true);
+    return tx;
+}
+
+async function approveTokens(contractAddress, price) {
+    const signer = provider.getSigner();
+    const ABI = bep20ABI;
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, signer);
+    const tx = await contract.approve(erc20TransferProxyAddress, BigNumber.from(price).mul(BigNumber.from(10).pow(18)));
+    return tx.hash;
+}
+
+async function buy(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
+    console.log([is721, collection, tokenId, value, buyWith, price, owner, salt, signature])
+    const signer = provider.getSigner()
+    const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer)
+    console.log(exchange)
+    const sig = ethers.utils.splitSignature(signature)
+
+    const tx = await exchange.exchange(
+        [
+            is721,
+            collection,
+            tokenId,
+            value,
+            buyWith,
+            BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+            owner,
+            salt,
+            ethers.utils.hexlify(0),
+            sig.v,
+            sig.r,
+            sig.s
+        ]
+    )
+    return tx.hash;
+}
 
 export {
     checkConnection,
@@ -175,5 +243,12 @@ export {
     getMultiples,
     waitForTransaction,
     getCollectible,
-    generateOrderIdMessage
+    generateOrderIdMessage,
+    checkNFTApproved,
+    approveNFT,
+    checkTokensApproved,
+    approveTokens,
+    checkTokensBalance,
+    buy,
+    splitSign
 }

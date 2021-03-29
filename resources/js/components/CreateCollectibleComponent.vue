@@ -44,6 +44,11 @@
                     onclick="document.getElementById('selectedFile').click();"
                   />
                 </div>
+                <progress
+                  v-if="imgselectok"
+                  max="100"
+                  :value.prop="uploadPercentageimg"
+                ></progress>
                 <p class="this-error text-danger"></p>
                 <span
                   id="nft-validation"
@@ -311,13 +316,18 @@
                 <span id="BHC" class="link-url-end sale-price-btn"
                   >BHC <i class="fa fa-angle-down"></i
                 ></span>
-
                 <div class="sale-price-drop d-none">
                   <div class="drop-group">
                     <a href="javascript:void(0)" id="BHC" class="currency-item"
                       >BHC</a
                     >
                     <i class="fa fa-check currency-check"></i>
+                  </div>
+                  <div class="drop-group">
+                    <a href="javascript:void(0)" id="HPS" class="currency-item"
+                      >HPS</a
+                    >
+                    <i class="fa fa-check currency-check opacity-0"></i>
                   </div>
                   <div class="drop-group">
                     <a href="javascript:void(0)" id="BNB" class="currency-item"
@@ -407,7 +417,6 @@
         </div>
       </div>
     </div>
-
     <create-collection-modal-component
       :store_route="store_route"
       :asset_url="asset_url"
@@ -462,6 +471,8 @@ export default {
       fileType: "image",
       selectedContract: "",
       copies: 0,
+      imgselectok: false,
+      uploadPercentageimg: 0,
     };
   },
   methods: {
@@ -528,6 +539,12 @@ export default {
 
         await axios
           .post(url, data, {
+            onUploadProgress: function (uploadEvent) {
+              _this.imgselectok = true;
+              _this.uploadPercentageimg = Math.round(
+                (uploadEvent.loaded / uploadEvent.total) * 100
+              );
+            },
             maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
             headers: {
               "Content-Type": `multipart/form-data; boundary=${data._boundary}`,

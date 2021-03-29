@@ -86,13 +86,23 @@
                   v-model="user_data.short_url"
                   @input="nameCheck"
                 />
-                <pre>{{url_previous }}</pre>
-                <p class="preferences-error text-danger"></p>  
-					<div class="alert alert-danger" v-if="nameerror && nameerror!=null && fields.short_url!= url_previous">
-                 Already exists
+                <pre>{{ url_previous }}</pre>
+                <p class="preferences-error text-danger"></p>
+                <div
+                  class="alert alert-danger"
+                  v-if="
+                    nameerror &&
+                    nameerror != null &&
+                    fields.short_url != url_previous
+                  "
+                >
+                  Already exists
                 </div>
-                   <div class="alert alert-success" v-if="!nameerror && nameerror!=null">
-                 Available
+                <div
+                  class="alert alert-success"
+                  v-if="!nameerror && nameerror != null"
+                >
+                  Available
                 </div>
                 <span
                   id="short_url-preferences"
@@ -137,22 +147,21 @@ export default {
     "userPhoto",
     "page",
     "user_address",
-    
   ],
   mounted() {
-            axios.get('/api/shorturls').then(response => {
-                this.shorturls= response.data;
-				this.url_previous = this.user_data.short_url
-        console.log(this.shorturls)
-				})
+    axios.get("/api/shorturls").then((response) => {
+      this.shorturls = response.data;
+      this.url_previous = this.user_data.short_url;
+      console.log(this.shorturls);
+    });
+  },
 
-        },
   data() {
     return {
-      fields:{},
-      shorturls:null,
-		nameerror: null,
-		url_previous: '',
+      fields: {},
+      shorturls: null,
+      nameerror: null,
+      url_previous: "",
       j: "",
       s: "",
       pro_pic: "",
@@ -300,9 +309,9 @@ export default {
         _this.signed = true;
       }
     },
-  
-   nameCheck(){
-    let shorturl =$("#short_url-profile").val();
+
+    nameCheck() {
+      let shorturl = $("#short_url-profile").val();
 
 
                 if(shorturl.length==0){
@@ -312,8 +321,9 @@ export default {
        this.shorturls.forEach(i=>{
          if(i==shorturl && shorturl!=this.url_previous){
           this.nameerror = true;
-         }
-            })
-            }}
+        }
+      });
+    },
+  },
 };
 </script>

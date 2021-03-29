@@ -18,6 +18,7 @@ class CreateProfilesTable extends Migration
             $table->timestamps();
             $table->string('address')->unique();
             $table->string('ipfs_hash');
+            $table->string('short_url');
         });
     }
 
