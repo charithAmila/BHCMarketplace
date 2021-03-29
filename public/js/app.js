@@ -28576,13 +28576,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "transferProxyAddress": () => (/* binding */ transferProxyAddress),
 /* harmony export */   "erc20TransferProxyAddress": () => (/* binding */ erc20TransferProxyAddress),
 /* harmony export */   "orderStorageAddress": () => (/* binding */ orderStorageAddress),
+/* harmony export */   "NFTStorageAddress": () => (/* binding */ NFTStorageAddress),
 /* harmony export */   "exchangeAddress": () => (/* binding */ exchangeAddress),
 /* harmony export */   "hpsAddress": () => (/* binding */ hpsAddress),
 /* harmony export */   "bhcAddress": () => (/* binding */ bhcAddress),
 /* harmony export */   "pancake_routerAddress": () => (/* binding */ pancake_routerAddress),
 /* harmony export */   "CAD_tokenAddress": () => (/* binding */ CAD_tokenAddress),
 /* harmony export */   "ANKR_tokenAddress": () => (/* binding */ ANKR_tokenAddress),
-/* harmony export */   "BELL_tokenAddress": () => (/* binding */ BELL_tokenAddress)
+/* harmony export */   "BELL_tokenAddress": () => (/* binding */ BELL_tokenAddress),
+/* harmony export */   "minterAddress": () => (/* binding */ minterAddress)
 /* harmony export */ });
 //////////////////////////////////////////Token Contracts//////////////////////////////////////////
 var hps721Address = "0x41fFF2b6F20a6b7E9F27764f092264B30053D4d4";
@@ -28591,11 +28593,13 @@ var hps1155Address = "0x21EEd53b1d3e5Af80bfE15220625A3B66701277c"; /////////////
 var transferProxyAddress = "0xb757e85c4869C3c96DbD79cd8022d089FC58aee3";
 var erc20TransferProxyAddress = "0x9e78C6e0410Cc33A0864D0AC6C9ff7dABAF709cb";
 var orderStorageAddress = "0x11e86459339BA4023333157A84B4B973E1971B2b";
-var exchangeAddress = "0x9F78B200a35faA51e762A61873e259890540D719"; /////////////////////////////////////////Token address////////////////////////////////////////////
+var exchangeAddress = "0x9F78B200a35faA51e762A61873e259890540D719"; //"0xD43403F8611Ce542a47BC0b19595D7efa3815d01"
+
+var NFTStorageAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831"; /////////////////////////////////////////Token address////////////////////////////////////////////
 
 var hpsAddress = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
 var bhcAddress = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876";
-var minter = "";
+var minterAddress = "0xC3db58eac6d44f6e91335B618B462A2515744FAb";
 var CAD_tokenAddress = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47";
 var ANKR_tokenAddress = "0xf307910a4c7bbc79691fd374889b36d8531b08e3";
 var BELL_tokenAddress = "0x8443f091997f06a61670b735ed92734f5628692f"; /////////////////////////////////////////Exchanges////////////////////////////////////////////////
@@ -33979,7 +33983,7 @@ function _buy() {
             console.log(exchange);
             sig = ethers__WEBPACK_IMPORTED_MODULE_4__.splitSignature(signature);
             _context17.next = 7;
-            return exchange.exchange(is721, collection, tokenId, value, buyWith, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), owner, salt, ethers__WEBPACK_IMPORTED_MODULE_4__.hexlify(0), sig.v, sig.r, sig.s);
+            return exchange.exchange([is721, collection, tokenId, value, buyWith, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), owner, salt, ethers__WEBPACK_IMPORTED_MODULE_4__.hexlify(0), sig.v, sig.r, sig.s]);
 
           case 7:
             tx = _context17.sent;
