@@ -1,12 +1,12 @@
 //////////////////////////////////////////Token Contracts//////////////////////////////////////////
 const hps721Address = "0xC8026213ea46f2eCB15069f0d6182c5C0920085D"
-const hps1155Address = "0xEF91DC7EB8B70452f0438594d8548a688FEa6906"
+const hps1155Address = "0x3C09A031925fBEcaA533F1C7C40ae6b3ab6CF236"
 //////////////////////////////////////////Utility Contracts///////////////////////////////////////
 const transferProxyAddress = "0xb757e85c4869C3c96DbD79cd8022d089FC58aee3"
 const erc20TransferProxyAddress = "0x9e78C6e0410Cc33A0864D0AC6C9ff7dABAF709cb"
 const orderStorageAddress = "0x11e86459339BA4023333157A84B4B973E1971B2b"
-const exchangeAddress = /*"0x9F78B200a35faA51e762A61873e259890540D719"*/ "0xD43403F8611Ce542a47BC0b19595D7efa3815d01"
-const NFTStorageAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831"
+const exchangeAddress = /*"0x9F78B200a35faA51e762A61873e259890540D719"*/ "0xe30dc2cAF90b7388de459042232DdAE94c65cbE0"
+const NFTStorageAddress = "0xE6767c6d8a2b4B4Af1c1F27000dD88aBcD0EA37e"
 const contractFactoryAddress = "0xa805bF37959E1CEDf58F074453d8ce63211798bD"
 /////////////////////////////////////////Token address////////////////////////////////////////////
 const hpsAddress = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937"

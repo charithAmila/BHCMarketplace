@@ -56,24 +56,6 @@ async function getCollections(type, me) {
     var t = tempCollectionData()
     t.address = hps1155Address
     type == 1155 ? collections.push(t) : null;
-
-    var res = await axios.get("/api/collections");
-    var collectionsList = res.data;
-    for (var i = 0; i < collectionsList.length; i++) {
-        var selected = collectionsList[i];
-        if (selected.type == type) {
-            var owner;
-            try {
-                //owner = getOwner(selected.owner);
-            }
-            catch (e) { }
-            if (owner == me) {
-                //var t = tempCollectionData()
-                //t["address"] = selected.address
-                //collections.push(t)
-            }
-        }
-    }
     return collections;
 }
 
@@ -109,6 +91,7 @@ async function getOwnedTokensData(owner, base_url) {
     var tokens = await getTokens(owner);
     var tokens721 = tokens[0];
     var tokens1155 = tokens[1];
+    console.log([tokens721, tokens1155])
     for (var i = 0; i < tokens721.length; i++) {
         var selectedToken = tokens721[i];
         var res = await axios.get(selectedToken.URI);
@@ -119,7 +102,7 @@ async function getOwnedTokensData(owner, base_url) {
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
         nft.owner_id = selectedToken.tokenOwner;
-        nft.collection = selectedToken.collection || tempCollectionData();
+        nft.collection = tempCollectionData();
         nft.legend = nft.legend || "normal"
 
         ////remove/////
@@ -138,15 +121,15 @@ async function getOwnedTokensData(owner, base_url) {
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
         nft.owner_id = selectedToken.tokenOwner;
-        nft.collection = selectedToken.collection || tempCollectionData();
+        nft.collection = tempCollectionData();
         nft.legend = nft.legend || "normal"
 
         ////remove/////
         nft.isp = 1
-        nft.is_selling = 1
+        //nft.is_selling = 1
         listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
-        nft.fileType = "image";
-        nft.file = nft.image
+        //nft.fileType = "image";
+        //nft.file = nft.image
         data.push(nft);
     }
     return data;
@@ -181,10 +164,12 @@ async function getOnSaleTokens(owner, base_url) {
             nft.is_selling = 1;
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
+            nft.collection = tempCollectionData();
             data.push(nft)
-        } catch (e) { }
+        } catch (e) {
+            console.log(e)
+        }
     }
-
     return data;
 }
 
@@ -207,8 +192,8 @@ async function getTokensData(owner, base_url) {
 async function getTokenData(contract, owner, id) {
     var listed = false;
     //var res = await axios.get("/api/collections/" + contract);
-    var type = contract == hpsAddress ? 721 : bhcAddress ? 1155 : null
-    var isPrivate = contract == hpsAddress ? true : bhcAddress ? true : false
+    var type = contract == hps721Address ? 721 : hps1155Address ? 1155 : null
+    var isPrivate = contract == hps721Address ? true : hps1155Address ? true : false
     var selectedToken = await getCollectible(contract, type, isPrivate, owner, id);
     var colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
@@ -230,7 +215,7 @@ async function getTokenData(contract, owner, id) {
     nft.id = selectedToken.id;
     nft.contract = selectedToken.contract;
     nft.owner_id = selectedToken.tokenOwner;
-    nft.collection = selectedToken.collection || tempCollectionData();
+    nft.collection = tempCollectionData();
     nft.legend = nft.legend || "normal"
     nft.type = type;
 
@@ -238,9 +223,9 @@ async function getTokenData(contract, owner, id) {
     nft.isp = 1
     nft.is_selling = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
     listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
-    nft.fileType = nft.fileType || "image";
-    nft.file = nft.image || nft.file
-    nft.creator = owner;
+    //nft.fileType = nft.fileType || "image";
+    // nft.file = nft.image || nft.file
+    //nft.creator = owner;
     nft.count = selectedToken.availableCopies
 
     return nft;

@@ -26699,7 +26699,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     updateValues: function updateValues() {
       this.payment = +(this.price * this.quantity).toFixed(2);
       this.service_fee = +(this.payment * 0.025).toFixed(2);
-      this.total_payment = +(this.payment + +this.service_fee).toFixed(2);
+      this.total_payment = +(this.payment + this.service_fee).toFixed(2);
     },
     approve: function approve() {
       var _this = this;
@@ -26731,7 +26731,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     purchase: function purchase() {
       var collectible = this.singleNft;
-      (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.buy)(collectible.contract, collectible.type == 721 ? true : false, collectible.id, this.quantity, this.currency, "".concat(this.price), collectible.salt, collectible.owner_id, collectible.signature).then( /*#__PURE__*/function () {
+      (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.buy)(collectible.contract, collectible.type == 721 ? true : false, collectible.id, this.quantity, this.quantity, this.currency, "".concat(this.price), collectible.salt, collectible.owner_id, collectible.signature).then( /*#__PURE__*/function () {
         var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(hash) {
           var status;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
@@ -28669,15 +28669,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 //////////////////////////////////////////Token Contracts//////////////////////////////////////////
 var hps721Address = "0xC8026213ea46f2eCB15069f0d6182c5C0920085D";
-var hps1155Address = "0xEF91DC7EB8B70452f0438594d8548a688FEa6906"; //////////////////////////////////////////Utility Contracts///////////////////////////////////////
+var hps1155Address = "0x3C09A031925fBEcaA533F1C7C40ae6b3ab6CF236"; //////////////////////////////////////////Utility Contracts///////////////////////////////////////
 
 var transferProxyAddress = "0xb757e85c4869C3c96DbD79cd8022d089FC58aee3";
 var erc20TransferProxyAddress = "0x9e78C6e0410Cc33A0864D0AC6C9ff7dABAF709cb";
 var orderStorageAddress = "0x11e86459339BA4023333157A84B4B973E1971B2b";
 var exchangeAddress =
 /*"0x9F78B200a35faA51e762A61873e259890540D719"*/
-"0xD43403F8611Ce542a47BC0b19595D7efa3815d01";
-var NFTStorageAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831";
+"0xe30dc2cAF90b7388de459042232DdAE94c65cbE0";
+var NFTStorageAddress = "0xE6767c6d8a2b4B4Af1c1F27000dD88aBcD0EA37e";
 var contractFactoryAddress = "0xa805bF37959E1CEDf58F074453d8ce63211798bD"; /////////////////////////////////////////Token address////////////////////////////////////////////
 
 var hpsAddress = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
@@ -32850,7 +32850,7 @@ function getCollections(_x2, _x3) {
 
 function _getCollections() {
   _getCollections = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(type, me) {
-    var collections, t, res, collectionsList, i, selected, owner;
+    var collections, t;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
@@ -32863,30 +32863,9 @@ function _getCollections() {
             t = tempCollectionData();
             t.address = _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps1155Address;
             type == 1155 ? collections.push(t) : null;
-            _context2.next = 9;
-            return axios.get("/api/collections");
-
-          case 9:
-            res = _context2.sent;
-            collectionsList = res.data;
-
-            for (i = 0; i < collectionsList.length; i++) {
-              selected = collectionsList[i];
-
-              if (selected.type == type) {
-                try {//owner = getOwner(selected.owner);
-                } catch (e) {}
-
-                if (owner == me) {//var t = tempCollectionData()
-                  //t["address"] = selected.address
-                  //collections.push(t)
-                }
-              }
-            }
-
             return _context2.abrupt("return", collections);
 
-          case 13:
+          case 8:
           case "end":
             return _context2.stop();
         }
@@ -33017,19 +32996,20 @@ function _getOwnedTokensData() {
             tokens = _context5.sent;
             tokens721 = tokens[0];
             tokens1155 = tokens[1];
+            console.log([tokens721, tokens1155]);
             i = 0;
 
-          case 8:
+          case 9:
             if (!(i < tokens721.length)) {
-              _context5.next = 30;
+              _context5.next = 31;
               break;
             }
 
             selectedToken = tokens721[i];
-            _context5.next = 12;
+            _context5.next = 13;
             return axios.get(selectedToken.URI);
 
-          case 12:
+          case 13:
             res = _context5.sent;
             nft = res.data;
             nft.copies = selectedToken.availableCopies;
@@ -33037,37 +33017,37 @@ function _getOwnedTokensData() {
             nft.id = selectedToken.id;
             nft.contract = selectedToken.contract;
             nft.owner_id = selectedToken.tokenOwner;
-            nft.collection = selectedToken.collection || tempCollectionData();
+            nft.collection = tempCollectionData();
             nft.legend = nft.legend || "normal"; ////remove/////
 
             nft.isp = 1;
-            _context5.next = 24;
+            _context5.next = 25;
             return checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id);
 
-          case 24:
+          case 25:
             nft.is_selling = _context5.sent;
             listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
             data.push(nft);
 
-          case 27:
+          case 28:
             i++;
-            _context5.next = 8;
+            _context5.next = 9;
             break;
 
-          case 30:
+          case 31:
             i = 0;
 
-          case 31:
+          case 32:
             if (!(i < tokens1155.length)) {
-              _context5.next = 53;
+              _context5.next = 51;
               break;
             }
 
             selectedToken = tokens1155[i];
-            _context5.next = 35;
+            _context5.next = 36;
             return axios.get(selectedToken.URI);
 
-          case 35:
+          case 36:
             res = _context5.sent;
             nft = res.data;
             nft.copies = selectedToken.availableCopies;
@@ -33075,25 +33055,25 @@ function _getOwnedTokensData() {
             nft.id = selectedToken.id;
             nft.contract = selectedToken.contract;
             nft.owner_id = selectedToken.tokenOwner;
-            nft.collection = selectedToken.collection || tempCollectionData();
+            nft.collection = tempCollectionData();
             nft.legend = nft.legend || "normal"; ////remove/////
 
-            nft.isp = 1;
-            nft.is_selling = 1;
-            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
-            nft.fileType = "image";
-            nft.file = nft.image;
+            nft.isp = 1; //nft.is_selling = 1
+
+            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price; //nft.fileType = "image";
+            //nft.file = nft.image
+
             data.push(nft);
 
-          case 50:
+          case 48:
             i++;
-            _context5.next = 31;
+            _context5.next = 32;
             break;
 
-          case 53:
+          case 51:
             return _context5.abrupt("return", data);
 
-          case 54:
+          case 52:
           case "end":
             return _context5.stop();
         }
@@ -33175,7 +33155,7 @@ function _getOnSaleTokens() {
 
           case 8:
             if (!(i < tokens.length)) {
-              _context8.next = 26;
+              _context8.next = 28;
               break;
             }
 
@@ -33190,28 +33170,30 @@ function _getOnSaleTokens() {
             nft.is_selling = 1;
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
+            nft.collection = tempCollectionData();
             data.push(nft);
-            _context8.next = 23;
+            _context8.next = 25;
             break;
 
-          case 21:
-            _context8.prev = 21;
+          case 22:
+            _context8.prev = 22;
             _context8.t0 = _context8["catch"](9);
+            console.log(_context8.t0);
 
-          case 23:
+          case 25:
             i++;
             _context8.next = 8;
             break;
 
-          case 26:
+          case 28:
             return _context8.abrupt("return", data);
 
-          case 27:
+          case 29:
           case "end":
             return _context8.stop();
         }
       }
-    }, _callee8, null, [[9, 21]]);
+    }, _callee8, null, [[9, 22]]);
   }));
   return _getOnSaleTokens.apply(this, arguments);
 }
@@ -33279,8 +33261,8 @@ function _getTokenData() {
           case 0:
             listed = false; //var res = await axios.get("/api/collections/" + contract);
 
-            type = contract == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hpsAddress ? 721 : _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.bhcAddress ? 1155 : null;
-            isPrivate = contract == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hpsAddress ? true : _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.bhcAddress ? true : false;
+            type = contract == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps721Address ? 721 : _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps1155Address ? 1155 : null;
+            isPrivate = contract == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps721Address ? true : _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hps1155Address ? true : false;
             _context10.next = 5;
             return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_1__.getCollectible)(contract, type, isPrivate, owner, id);
 
@@ -33309,7 +33291,7 @@ function _getTokenData() {
             nft.id = selectedToken.id;
             nft.contract = selectedToken.contract;
             nft.owner_id = selectedToken.tokenOwner;
-            nft.collection = selectedToken.collection || tempCollectionData();
+            nft.collection = tempCollectionData();
             nft.legend = nft.legend || "normal";
             nft.type = type; ////remove/////
 
@@ -33319,14 +33301,14 @@ function _getTokenData() {
 
           case 21:
             nft.is_selling = _context10.sent;
-            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
-            nft.fileType = nft.fileType || "image";
-            nft.file = nft.image || nft.file;
-            nft.creator = owner;
+            listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price; //nft.fileType = nft.fileType || "image";
+            // nft.file = nft.image || nft.file
+            //nft.creator = owner;
+
             nft.count = selectedToken.availableCopies;
             return _context10.abrupt("return", nft);
 
-          case 28:
+          case 25:
           case "end":
             return _context10.stop();
         }
@@ -33846,8 +33828,8 @@ function _getMultiples() {
             i = 1;
 
           case 7:
-            if (!(i < Number(currentId))) {
-              _context7.next = 20;
+            if (!(i < Number(currentId) + 1)) {
+              _context7.next = 19;
               break;
             }
 
@@ -33856,29 +33838,28 @@ function _getMultiples() {
 
           case 10:
             ownedCount = _context7.sent;
-            ;
 
             if (!(ownedCount > 0)) {
-              _context7.next = 17;
+              _context7.next = 16;
               break;
             }
 
-            _context7.next = 15;
+            _context7.next = 14;
             return get1155Token(contract, collection, i, owner);
 
-          case 15:
+          case 14:
             nft = _context7.sent;
             tokens.push(nft);
 
-          case 17:
+          case 16:
             i++;
             _context7.next = 7;
             break;
 
-          case 20:
+          case 19:
             return _context7.abrupt("return", tokens);
 
-          case 21:
+          case 20:
           case "end":
             return _context7.stop();
         }
@@ -34219,30 +34200,32 @@ function _approveTokens() {
   return _approveTokens.apply(this, arguments);
 }
 
-function buy(_x44, _x45, _x46, _x47, _x48, _x49, _x50, _x51, _x52) {
+function buy(_x44, _x45, _x46, _x47, _x48, _x49, _x50, _x51, _x52, _x53) {
   return _buy.apply(this, arguments);
 }
 
 function _buy() {
-  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee17(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
+  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee17(collection, is721, tokenId, total, value, buyWith, price, salt, owner, signature) {
     var signer, exchange, sig, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee17$(_context17) {
       while (1) {
         switch (_context17.prev = _context17.next) {
           case 0:
-            console.log([is721, collection, tokenId, value, buyWith, price, owner, salt, signature]);
             signer = provider.getSigner();
             exchange = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.exchangeAddress, exchangeABI, signer);
-            console.log(exchange);
             sig = ethers__WEBPACK_IMPORTED_MODULE_4__.splitSignature(signature);
-            _context17.next = 7;
-            return exchange.exchange([is721, collection, tokenId, value, value, buyWith, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), owner, salt, sig.v, sig.r, sig.s]);
+            console.log([is721, collection, tokenId, total, value, buyWith, price, owner, salt, sig]);
+            _context17.next = 6;
+            return exchange.exchange([is721, collection, tokenId, 5, value, buyWith, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), owner, salt, sig.v, sig.r, sig.s], {
+              gasPrice: ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(30000000000),
+              gasLimit: ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(8500000)
+            });
 
-          case 7:
+          case 6:
             tx = _context17.sent;
             return _context17.abrupt("return", tx.hash);
 
-          case 9:
+          case 8:
           case "end":
             return _context17.stop();
         }
@@ -105049,7 +105032,7 @@ module.exports = JSON.parse("[{\"inputs\":[{\"internalType\":\"contract IERC20Tr
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse("[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_buyerFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sellerFee\",\"type\":\"uint256\"},{\"internalType\":\"contract IERC20\",\"name\":\"_bhc\",\"type\":\"address\"},{\"internalType\":\"contract IERC20\",\"name\":\"_hps\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryBNB\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryHPS\",\"type\":\"address\"},{\"internalType\":\"contract IOrderState\",\"name\":\"_orderState\",\"type\":\"address\"},{\"internalType\":\"contract INFTStorage\",\"name\":\"_nftStorage\",\"type\":\"address\"},{\"internalType\":\"contract ITransferProxy\",\"name\":\"_transferProxy\",\"type\":\"address\"},{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"_transferProxyERC20\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Bought\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"FeesPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Sold\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BHC\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BUYERFEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"HPS\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SELLERFEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiaryBNB\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiaryHPS\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_buyerFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sellerFee\",\"type\":\"uint256\"},{\"internalType\":\"contract IERC20\",\"name\":\"_bhc\",\"type\":\"address\"},{\"internalType\":\"contract IERC20\",\"name\":\"_hps\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryBNB\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryHPS\",\"type\":\"address\"},{\"internalType\":\"contract IOrderState\",\"name\":\"_orderState\",\"type\":\"address\"},{\"internalType\":\"contract INFTStorage\",\"name\":\"_nftStorage\",\"type\":\"address\"},{\"internalType\":\"contract ITransferProxy\",\"name\":\"_transferProxy\",\"type\":\"address\"},{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"_transferProxyERC20\",\"type\":\"address\"}],\"name\":\"construct\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bool\",\"name\":\"is721\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"prevTotal\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"address payable\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"internalType\":\"struct Exchange.ExchangeData\",\"name\":\"data\",\"type\":\"tuple\"}],\"name\":\"exchange\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"orderState\",\"outputs\":[{\"internalType\":\"contract IOrderState\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transferProxy\",\"outputs\":[{\"internalType\":\"contract ITransferProxy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transferProxyERC20\",\"outputs\":[{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]");
+module.exports = JSON.parse("[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_buyerFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sellerFee\",\"type\":\"uint256\"},{\"internalType\":\"contract IERC20\",\"name\":\"_bhc\",\"type\":\"address\"},{\"internalType\":\"contract IERC20\",\"name\":\"_hps\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryBNB\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryHPS\",\"type\":\"address\"},{\"internalType\":\"contract INFTStorage\",\"name\":\"_nftStorage\",\"type\":\"address\"},{\"internalType\":\"contract ITransferProxy\",\"name\":\"_transferProxy\",\"type\":\"address\"},{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"_transferProxyERC20\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Bought\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"FeesPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"tokenAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Sold\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BHC\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BUYERFEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"HPS\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SELLERFEE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiaryBNB\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiaryHPS\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_buyerFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sellerFee\",\"type\":\"uint256\"},{\"internalType\":\"contract IERC20\",\"name\":\"_bhc\",\"type\":\"address\"},{\"internalType\":\"contract IERC20\",\"name\":\"_hps\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryBNB\",\"type\":\"address\"},{\"internalType\":\"address payable\",\"name\":\"_beneficiaryHPS\",\"type\":\"address\"},{\"internalType\":\"contract INFTStorage\",\"name\":\"_nftStorage\",\"type\":\"address\"},{\"internalType\":\"contract ITransferProxy\",\"name\":\"_transferProxy\",\"type\":\"address\"},{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"_transferProxyERC20\",\"type\":\"address\"}],\"name\":\"construct\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bool\",\"name\":\"is721\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"prevTotal\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"address payable\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"internalType\":\"struct Exchange.ExchangeData\",\"name\":\"data\",\"type\":\"tuple\"}],\"name\":\"exchange\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"}],\"name\":\"generateKey\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"key\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"}],\"name\":\"generateMessage\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"_message\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transferProxy\",\"outputs\":[{\"internalType\":\"contract ITransferProxy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"transferProxyERC20\",\"outputs\":[{\"internalType\":\"contract IERC20TransferProxy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bool\",\"name\":\"is721\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"prevTotal\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"priceToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"address payable\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"salt\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"internalType\":\"struct Exchange.ExchangeData\",\"name\":\"data\",\"type\":\"tuple\"}],\"name\":\"verifyOrder\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"verified\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]");
 
 /***/ }),
 

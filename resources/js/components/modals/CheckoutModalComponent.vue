@@ -135,7 +135,7 @@ export default {
     updateValues() {
       this.payment = +(this.price * this.quantity).toFixed(2);
       this.service_fee = +(this.payment * 0.025).toFixed(2);
-      this.total_payment = +(this.payment + +this.service_fee).toFixed(2);
+      this.total_payment = +(this.payment + this.service_fee).toFixed(2);
     },
     async approve() {
       var hash = await approveTokens(
@@ -154,6 +154,7 @@ export default {
         collectible.contract,
         collectible.type == 721 ? true : false,
         collectible.id,
+        this.quantity,
         this.quantity,
         this.currency,
         `${this.price}`,
