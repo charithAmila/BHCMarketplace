@@ -141,9 +141,15 @@ class BidController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function getBiddingStatus(Request $request)
     {
-        //
+        $request->validate([
+            'owner' => 'required',
+            'contract_address' => 'required',
+            'token_id' => 'required',
+        ]);
+         $data = Bidding_Tokens::where(['contract_address'=>$request->contract_address,'owner'=>$request->owner,'token_id'=>$request->token_id])->get();
+        return $data['bidding_status'];
     }
 
     /**
