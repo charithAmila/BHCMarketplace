@@ -2587,18 +2587,17 @@ async function getTokenPrice(bidding_token, amount) {
     return parseInt(price[0].toString());
 }
 ///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
-async function startBidding(owner, contract_address, token_id) {
+async function startBidding(_owner, contract_address, token_id) {
     let data = {};
-    data.owner = owner;
+    data.owner = _owner;
     data.contract_address = contract_address;
     data.token_id = token_id;
     data.bidding_status = true;
 
     const contract = ERC721_Website_Read;
     const owner = await contract.ownerOf(token_id);
-    console.log(owner);
     var address = toAddress(checkConnection());
-    if (address == owner) {
+    if (address == _owner) {
         const signature = await signer.signMessage("Allow bidding for token");
         data.signature = signature;
         data.address = address.toLowerCase();
