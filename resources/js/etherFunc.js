@@ -106,8 +106,8 @@ async function getMultiples(contractAddress, owner) {
     const contract = new ethers.Contract(contractAddress, bhc1155, provider);
     const currentId = await contract.current_id();
     const collection = null;//await contract.contractURI();
-    for (var i = 1; i < Number(currentId); i++) {
-        var ownedCount = await contract.balanceOf(owner, i);;
+    for (var i = 1; i < Number(currentId) + 1; i++) {
+        var ownedCount = await contract.balanceOf(owner, i);
         if (ownedCount > 0) {
             var nft = await get1155Token(contract, collection, i, owner);
             tokens.push(nft)
@@ -209,19 +209,18 @@ async function approveTokens(contractAddress, price) {
     return tx.hash;
 }
 
-async function buy(collection, is721, tokenId, value, buyWith, price, salt, owner, signature) {
-    console.log([is721, collection, tokenId, value, buyWith, price, owner, salt, signature])
+async function buy(collection, is721, tokenId, total, value, buyWith, price, salt, owner, signature) {
+
     const signer = provider.getSigner()
     const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer)
-    console.log(exchange)
     const sig = ethers.utils.splitSignature(signature)
-
+    console.log([is721, collection, tokenId, total, value, buyWith, price, owner, salt, sig])
     const tx = await exchange.exchange(
         [
             is721,
             collection,
             tokenId,
-            value,
+            5,
             value,
             buyWith,
             BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
@@ -230,7 +229,8 @@ async function buy(collection, is721, tokenId, value, buyWith, price, salt, owne
             sig.v,
             sig.r,
             sig.s
-        ]
+        ],
+        { gasPrice: BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000) }
     )
     return tx.hash;
 }

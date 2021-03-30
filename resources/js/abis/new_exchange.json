@@ -32,11 +32,6 @@
                 "type": "address"
             },
             {
-                "internalType": "contract IOrderState",
-                "name": "_orderState",
-                "type": "address"
-            },
-            {
                 "internalType": "contract INFTStorage",
                 "name": "_nftStorage",
                 "type": "address"
@@ -266,11 +261,6 @@
                 "type": "address"
             },
             {
-                "internalType": "contract IOrderState",
-                "name": "_orderState",
-                "type": "address"
-            },
-            {
                 "internalType": "contract INFTStorage",
                 "name": "_nftStorage",
                 "type": "address"
@@ -363,20 +353,95 @@
         ],
         "name": "exchange",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "orderState",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "contract IOrderState",
-                "name": "",
+                "internalType": "address",
+                "name": "token",
                 "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "priceToken",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
             }
         ],
-        "stateMutability": "view",
+        "name": "generateKey",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "priceToken",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            }
+        ],
+        "name": "generateMessage",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "_message",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "pure",
         "type": "function"
     },
     {
@@ -437,5 +502,90 @@
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "bool",
+                        "name": "is721",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "prevTotal",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "priceToken",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "salt",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "v",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "r",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "s",
+                        "type": "bytes32"
+                    }
+                ],
+                "internalType": "struct Exchange.ExchangeData",
+                "name": "data",
+                "type": "tuple"
+            }
+        ],
+        "name": "verifyOrder",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "verified",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "stateMutability": "payable",
+        "type": "receive"
     }
 ]
