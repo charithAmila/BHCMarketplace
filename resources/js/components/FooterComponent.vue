@@ -22,7 +22,7 @@
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
 		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		        <button class="form-send" v-on:click="placeBid()">Let's go!</button>
+		        <button class="form-send" v-on:click="AllBids()">Let's go!</button>
 		      </div>
 		    </div>
 
@@ -101,7 +101,7 @@ async mounted() {
 	},
 
 	async AllBids(){
-let res = await getAllBids(1,1,1,18)
+let res = await getAllBids('0x0c7117eCEFc947df6507D0fC47E8C80EbA62E7DC','0x41fFF2b6F20a6b7E9F27764f092264B30053D4d4',21)
 console.log(res);
 	},
 

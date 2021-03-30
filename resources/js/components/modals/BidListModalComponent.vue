@@ -38,7 +38,8 @@
  </template>
 
  <script>
- 	
+import { getAllBids} from ".././../bidFunc";
+
  export default{
  	props: ['collectible','bidList'],
  	data() {
@@ -47,6 +48,12 @@
  		}
  	},
  	methods: {
+
+		 getBidList(){
+			 
+
+		 },
+
  		acceptBid(bid){
  			axios.post('/accept/bid', {
 			    transaction_id: bid.id,

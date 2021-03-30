@@ -22,6 +22,7 @@ class CreateBidsTable extends Migration
             $table->integer('token_id');
             $table->string('bidding_token');
             $table->integer('bidding_amount');
+            $table->string('signature');
         });
     }
 

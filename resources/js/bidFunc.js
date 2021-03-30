@@ -2587,27 +2587,14 @@ async function getTokenPrice(bidding_token, amount) {
     return parseInt(price[0].toString());
 }
 ///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
-async function startBidding(
-    user_id,
-    token_type,
-    collection_type,
-    collection_id,
-    token_id
-) {
+async function startBidding(owner, contract_address, token_id) {
     let data = {};
-    data.user_id = user_id;
-    data.token_type = token_type;
-    data.collection_type = collection_type;
-    data.collection_id = collection_id;
+    data.owner = owner;
+    data.contract_address = contract_address;
     data.token_id = token_id;
     data.bidding_status = true;
 
-    const contract = getContractDetails(
-        token_type,
-        collection_type,
-        collection_id,
-        "R"
-    );
+    const contract = ERC721_Website_Read;
     const owner = await contract.ownerOf(token_id);
     console.log(owner);
     var address = toAddress(checkConnection());
@@ -2756,16 +2743,10 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
     }
 }
 ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
-async function getAllBids(
-    token_type,
-    collection_type,
-    collection_id,
-    token_id
-) {
+async function getAllBids(owner, contract_address, token_id) {
     var data = {};
-    data.token_type = token_type;
-    data.collection_type = collection_type;
-    data.collection_id = collection_id;
+    data.contract_address = contract_address;
+    data.owner = owner;
     data.token_id = token_id;
     var output = {};
 
@@ -2775,18 +2756,8 @@ async function getAllBids(
     return output;
 }
 ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
-async function getHighestBid(
-    token_type,
-    collection_type,
-    collection_id,
-    token_id
-) {
-    var output = await getAllBids(
-        token_type,
-        collection_type,
-        collection_id,
-        token_id
-    );
+async function getHighestBid(owner, contract_address, token_id) {
+    var output = await getAllBids(owner, contract_address, token_id);
     var maxAmount = 0;
     var maxBidder;
     var maxBidToken;
