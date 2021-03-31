@@ -14,13 +14,13 @@
 
     <div class="row walletconnect">
       <div class="col-sm-12 col-md-6 wallet-link">
-        <div id="wallet_item" @click="connectMetamsk()">
+        <div id="wallet_item_connect" @click="connectMetamsk()">
           <img :src="asset_url + 'images/metamask.png'" />
           <h6 class="content-title">Metamask</h6>
         </div>
       </div>
       <div class="col-sm-12 col-md-6 wallet-link">
-        <div id="wallet_item">
+        <div id="wallet_item_connect" @click="walletConnect()">
           <img :src="asset_url + 'images/walletconnect.png'" />
           <h6 class="content-title">WalletConnect</h6>
         </div>
@@ -35,7 +35,9 @@
   </div>
 </template>
 
+
 <script>
+
 export default {
   data() {
     return {
@@ -44,7 +46,7 @@ export default {
   },
   props: ["url_previous", "asset_url"],
   mounted() {
-    //this.checkConnection();
+    
   },
   methods: {
     connectMetamsk: async function () {
@@ -54,6 +56,91 @@ export default {
         window.location.href = _this.url_previous;
       });
     },
+    walletConnect: async function () {
+      const connector = new WalletConnect({
+  bridge: "https://bridge.walletconnect.org", // Required
+  qrcodeModal: QRCodeModal,
+});
+
+// Check if connection is already established
+if (!connector.connected) {
+  // create new session
+  connector.createSession();
+}
+
+// Subscribe to connection events
+connector.on("connect", (error, payload) => {
+  if (error) {
+    throw error;
+  }
+
+  // Get provided accounts and chainId
+  const { accounts, chainId } = payload.params[0];
+});
+
+connector.on("session_update", (error, payload) => {
+  if (error) {
+    throw error;
+  }
+
+  // Get updated accounts and chainId
+  const { accounts, chainId } = payload.params[0];
+});
+
+connector.on("disconnect", (error, payload) => {
+  if (error) {
+    throw error;
+  }
+
+  // Delete connector
+});
+    },
+    
   },
 };
 </script>
+<style>
+
+.walletconnect #wallet_item_connect {
+  color: black !important;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 10px;
+  width: 100%;
+  height: 100px;
+  background: white;
+  color: white;
+  border: 1px solid white;
+  box-shadow: 0 0 0 1px #FFC170, 0 0 0 6px white, 0 0 0 9px #FFC170;
+}
+
+.walletconnect #wallet_item_connect img {
+  height: 50px;
+  margin: auto;
+  display: block;
+}
+
+.walletconnect #wallet_item_connect:hover {
+  cursor: pointer;
+}
+
+
+  .walletconnect #wallet_item_connect {
+    color: black !important;
+    text-align: center;
+    padding: 25px 0;
+    border-radius: 10px;
+    width: 100%;
+    height: 150px;
+    background: white;
+    border: 1px solid white;
+    box-shadow: 0 0 0 1px #FFC170, 0 0 0 6px white, 0 0 0 9px #FFC170;
+  }
+
+  .walletconnect #wallet_item_connect img {
+    height: 50px;
+    margin: auto;
+    display: block;
+  }
+
+</style>

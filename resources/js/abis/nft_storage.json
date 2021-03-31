@@ -8,51 +8,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": true,
-                "internalType": "address",
-                "name": "previousOwner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "OwnershipTransferred",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_moderator",
-                "type": "address"
-            }
-        ],
-        "name": "moderatorAdded",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_moderator",
-                "type": "address"
-            }
-        ],
-        "name": "moderatorRemoved",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": false,
                 "internalType": "address",
                 "name": "moderator",
@@ -83,7 +38,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "nftAdded",
+        "name": "NFTAdded",
         "type": "event"
     },
     {
@@ -91,18 +46,43 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "address",
-                "name": "_collection",
-                "type": "address"
+                "internalType": "bytes32",
+                "name": "orderId",
+                "type": "bytes32"
             },
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "_id",
+                "name": "total",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "sold",
                 "type": "uint256"
             }
         ],
-        "name": "nftAdded",
+        "name": "OrderExecuted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+            }
+        ],
+        "name": "OwnershipTransferred",
         "type": "event"
     },
     {
@@ -150,35 +130,6 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "collectible",
-        "outputs": [
-            {
-                "internalType": "address payable",
-                "name": "creator",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "fee",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
                 "name": "_collection",
                 "type": "address"
             },
@@ -192,12 +143,36 @@
         "outputs": [
             {
                 "internalType": "address payable",
-                "name": "_benefeciary",
+                "name": "creator",
                 "type": "address"
             },
             {
                 "internalType": "uint256",
-                "name": "_fee",
+                "name": "feePrecentage",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "_orderId",
+                "type": "bytes32"
+            }
+        ],
+        "name": "getOrder",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "total",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "sold",
                 "type": "uint256"
             }
         ],
@@ -208,15 +183,15 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "",
+                "name": "_moderator",
                 "type": "address"
             }
         ],
-        "name": "moderator",
+        "name": "isModerator",
         "outputs": [
             {
                 "internalType": "bool",
-                "name": "",
+                "name": "_isModerator",
                 "type": "bool"
             }
         ],
@@ -252,6 +227,29 @@
     {
         "inputs": [],
         "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "orderId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint256",
+                "name": "total",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "setComplete",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

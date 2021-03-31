@@ -40,7 +40,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sharer.js@latest/sharer.min.js"></script>
-
+    
 
 </head>
 
@@ -55,7 +55,7 @@
         @include('includes.notif-tab')
     </div>
     @yield('extra_scripts')
-    <script src="{{ asset('js/create-collectible.js') }}"></script>
+    <script src="{{ asset('js/create-collectible.js') }}"></scrip>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/main2.js') }}"></script>
 
