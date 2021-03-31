@@ -1,21 +1,13 @@
-import { BigNumber, ethers } from "ethers";
-import {
-    hps721Address,
-    hps1155Address,
-    transferProxyAddress,
-    erc20TransferProxyAddress,
-    orderStorageAddress,
-    exchangeAddress,
-    hpsAddress,
-    bhcAddress
-} from "./addresses/constants";
+import { BigNumber, ethers } from 'ethers';
+import { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, exchangeAddress, hpsAddress, bhcAddress, minterAddress } from "./addresses/constants"
 //console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
 /////////abis///////////////////
-const bhc721 = require("../js/abis/bhc_721.json");
-const bhc1155 = require("../js/abis/bhc_1155.json");
-const orderStorageABI = require("../js/abis/order_storage.json");
-const exchangeABI = require("../js/abis/exchange.json");
-const bep20ABI = require("./abis/bep20.json");
+const bhc721 = require('../js/abis/bhc_721.json')
+const bhc1155 = require('../js/abis/bhc_1155.json')
+const orderStorageABI = require("../js/abis/order_storage.json")
+const exchangeABI = require("../js/abis/new_exchange.json")
+const bep20ABI = require("./abis/bep20.json")
+const minterABI = require("./abis/minter.json")
 
 if (typeof window.ethereum == "undefined") {
     alert("no provider fround");
@@ -122,8 +114,8 @@ async function getMultiples(contractAddress, owner) {
     var tokens = [];
     const contract = new ethers.Contract(contractAddress, bhc1155, provider);
     const currentId = await contract.current_id();
-    const collection = null; //await contract.contractURI();
-    for (var i = 1; i < Number(currentId); i++) {
+    const collection = null;//await contract.contractURI();
+    for (var i = 1; i < Number(currentId) + 1; i++) {
         var ownedCount = await contract.balanceOf(owner, i);
         if (ownedCount > 0) {
             var nft = await get1155Token(contract, collection, i, owner);
@@ -233,21 +225,20 @@ async function checkTokensBalance(contractAddress, from) {
 
 //////Set functions/////////
 
-async function createASingle(url, contract) {
+async function createASingle(url, royalty, collection) {
     const signer = provider.getSigner();
-    var contract = new ethers.Contract(contract, bhc721, signer);
-    var tx = await contract.mintToken(window.ethereum.selectedAddress, url);
+    var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    console.log(contract)
+    var tx = await contract.mint721(collection, url, BigNumber.from(Number(royalty)), true, { value: ethers.utils.parseEther("0.25") });
     return tx;
 }
 
-async function createABatch(url, count, contract) {
+async function createABatch(url, count, royalty, collection) {
     const signer = provider.getSigner();
-    var contract = new ethers.Contract(contract, bhc1155, signer);
-    var tx = await contract.mintToken(
-        url,
-        BigNumber.from(Number(count)),
-        ethers.utils.hexlify(0)
-    );
+    var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    console.log(contract)
+    var tx = await contract.mint1155(collection, url, BigNumber.from(Number(count)), BigNumber.from(Number(royalty)), true, { value: ethers.utils.parseEther("0.25") });
+
     return tx;
 }
 
@@ -265,60 +256,35 @@ async function approveNFT(contractAddress) {
 
 async function approveTokens(contractAddress, price) {
     const signer = provider.getSigner();
-    const ABI = bep20ABI;
-    const contract = new ethers.Contract(
-        toAddress(contractAddress),
-        ABI,
-        signer
-    );
-    const tx = await contract.approve(
-        erc20TransferProxyAddress,
-        BigNumber.from(price).mul(BigNumber.from(10).pow(18))
-    );
+    const ABI = bep20ABI; 
+    const contract = new ethers.Contract(toAddress(contractAddress), ABI, signer);
+    const tx = await contract.approve(erc20TransferProxyAddress, ethers.utils.parseEther(price));
     return tx.hash;
 }
 
-async function buy(
-    collection,
-    is721,
-    tokenId,
-    value,
-    buyWith,
-    price,
-    salt,
-    owner,
-    signature
-) {
-    console.log([
-        is721,
-        collection,
-        tokenId,
-        value,
-        buyWith,
-        price,
-        owner,
-        salt,
-        signature
-    ]);
-    const signer = provider.getSigner();
-    const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
-    console.log(exchange);
-    const sig = ethers.utils.splitSignature(signature);
+async function buy(collection, is721, tokenId, total, value, buyWith, price, salt, owner, signature) {
 
+    const signer = provider.getSigner()
+    const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer)
+    const sig = ethers.utils.splitSignature(signature)
+    console.log([is721, collection, tokenId, total, value, buyWith, price, owner, salt, sig])
     const tx = await exchange.exchange(
-        is721,
-        collection,
-        tokenId,
-        value,
-        buyWith,
-        BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
-        owner,
-        salt,
-        ethers.utils.hexlify(0),
-        sig.v,
-        sig.r,
-        sig.s
-    );
+        [
+            is721,
+            collection,
+            tokenId,
+            5,
+            value,
+            buyWith,
+            BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+            owner,
+            salt,
+            sig.v,
+            sig.r,
+            sig.s
+        ],
+        { gasPrice: BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000) }
+    )
     return tx.hash;
 }
 

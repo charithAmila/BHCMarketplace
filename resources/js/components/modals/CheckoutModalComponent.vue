@@ -122,7 +122,7 @@ export default {
       );
       this.balance = await checkTokensBalance(this.currency, this.current_user);
       this.balance = this.balance.toFixed(3);
-      if (this.price <= allowance) {
+      if (this.price * 1.025 <= allowance) {
         this.approved = true;
       }
       this.updateValues();
@@ -135,10 +135,13 @@ export default {
     updateValues() {
       this.payment = +(this.price * this.quantity).toFixed(2);
       this.service_fee = +(this.payment * 0.025).toFixed(2);
-      this.total_payment = +(this.payment + +this.service_fee).toFixed(2);
+      this.total_payment = +(this.payment + this.service_fee).toFixed(2);
     },
     async approve() {
-      var hash = await approveTokens(this.currency, this.price);
+      var hash = await approveTokens(
+        this.currency,
+        `${Number(this.price * 1.025).toFixed(5)}`
+      );
       waitForTransaction(hash).then((stat) => {
         if (stat) {
           this.approved = true;
@@ -152,8 +155,9 @@ export default {
         collectible.type == 721 ? true : false,
         collectible.id,
         this.quantity,
+        this.quantity,
         this.currency,
-        this.price,
+        `${this.price}`,
         collectible.salt,
         collectible.owner_id,
         collectible.signature
