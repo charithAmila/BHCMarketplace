@@ -14,6 +14,7 @@ class Sales extends Model
         "collection",
         "current_owner",
         "token_id",
+        "signed_to",
         "price",
         'is_instant',
         "currency",

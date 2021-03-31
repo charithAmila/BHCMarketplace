@@ -21,6 +21,7 @@ function toAddress(addressString) {
         ethers.utils.getAddress('0x0000000000000000000000000000000000000000');
 }
 
+
 function checkConnection() {
     var acc = toAddress(provider.provider.selectedAddress);
     return acc;
@@ -32,6 +33,11 @@ function redirectToConnect() {
     }
 }
 
+
+async function getBNBBalance(address) {
+    var balance = await provider.getBalance(toAddress(address));
+    return balance / (10 ** 18);
+}
 async function signMessage(message) {
     const signer = provider.getSigner();
     return await signer.signMessage(message);
@@ -210,7 +216,7 @@ async function approveTokens(contractAddress, price) {
 }
 
 async function buy(collection, is721, tokenId, total, value, buyWith, price, salt, owner, signature) {
-
+    var _price = Number(Number(price) * 1.125 * (10 ** 18)).toString();
     const signer = provider.getSigner()
     const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer)
     const sig = ethers.utils.splitSignature(signature)
@@ -220,7 +226,7 @@ async function buy(collection, is721, tokenId, total, value, buyWith, price, sal
             is721,
             collection,
             tokenId,
-            5,
+            total,
             value,
             buyWith,
             BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
@@ -230,7 +236,7 @@ async function buy(collection, is721, tokenId, total, value, buyWith, price, sal
             sig.r,
             sig.s
         ],
-        { gasPrice: BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000) }
+        { gasPrice: BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000), value: buyWith == toAddress("") ? BigNumber.from(_price) : "0" }
     )
     return tx.hash;
 }
@@ -253,5 +259,6 @@ export {
     approveTokens,
     checkTokensBalance,
     buy,
-    splitSign
+    splitSign,
+    getBNBBalance
 }
