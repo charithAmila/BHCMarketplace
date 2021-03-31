@@ -2555,7 +2555,11 @@ async function getHpsBalance() {
     return balance / 10 ** 18;
 }
 ////////////////////////////////////////////Get User from User Id///////////////////////////////////////////////////
-function getUser(user_id) {}
+async function getBNBBalance() {
+    var address = toAddress(checkConnection());
+    const balance = await provider.getBalance(address);
+    return parseFloat(balance.toString()) / 10 ** 18;
+}
 ///////////////////////////////////////////Get Token Address////////////////////////////////////////////////////////
 function getTokenAddress(bidding_token) {
     var token_address;
@@ -2589,13 +2593,12 @@ async function getTokenPrice(bidding_token, amount) {
 ///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
 async function startBidding(_owner, contract_address, token_id) {
     let data = {};
-    data.owner = _owner;
     data.contract_address = contract_address;
     data.token_id = token_id;
     data.bidding_status = true;
 
     const contract = ERC721_Website_Read;
-    const owner = await contract.ownerOf(token_id);
+    // const owner = await contract.ownerOf(token_id);
     var address = toAddress(checkConnection());
     if (address == _owner) {
         const signature = await signer.signMessage("Allow bidding for token");
@@ -2613,40 +2616,38 @@ async function startBidding(_owner, contract_address, token_id) {
 }
 
 ///////////////////////////////////////////End Bidding//////////////////////////////////////////////////////////////
-async function endBidding(
-    index,
-    token_type,
-    collection_type,
-    collection_id,
-    token_id
-) {
+async function endBidding(_owner, contract_address, token_id) {
     let data = {};
-    data.index = index;
-    const contract = getContractDetails(
-        token_type,
-        collection_type,
-        collection_id,
-        "R"
-    );
-    const owner = await contract.ownerOf(token_id);
-    console.log(owner);
+
+    //const owner = await contract.ownerOf(token_id);
+
     var address = toAddress(checkConnection());
-    if (address == owner) {
+    console.log(_owner);
+    if (address == _owner) {
         const signature = await signer.signMessage("Stop bidding for token");
+        data.contract_address = contract_address;
+        data.token_id = token_id;
         data.signature = signature;
         data.address = address.toLowerCase();
+        var res = {};
         await axios
             .post("/endBid", data, {})
             .then(function(response) {
-                console.log(response.data);
+                res = response.data;
             })
             .catch(function(error) {});
+        return res;
     } else {
         return "Not owner";
     }
 }
+
 //////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
 async function bid(owner, contract_address, token_id, bidding_token, amount) {
+    var status = await getBiddingStatus(owner, contract_address, token_id);
+    if (status == 0) {
+        return "Not open for bidding";
+    }
     var address = toAddress(checkConnection()); //Get collected wallet address
     let success = false;
     let data = {};
@@ -2741,6 +2742,33 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
         //}
     }
 }
+////////////////////////////////////////////Get Time Difference//////////////////////////////////////////////////////
+function timeDifference(date1, date2) {
+    var difference = date1.getTime() - date2.getTime();
+
+    var daysDifference = Math.floor(difference / 1000 / 60 / 60 / 24);
+    difference -= daysDifference * 1000 * 60 * 60 * 24;
+
+    var hoursDifference = Math.floor(difference / 1000 / 60 / 60);
+    difference -= hoursDifference * 1000 * 60 * 60;
+
+    var minutesDifference = Math.floor(difference / 1000 / 60);
+    difference -= minutesDifference * 1000 * 60;
+
+    var secondsDifference = Math.floor(difference / 1000);
+
+    console.log(
+        "difference = " +
+            daysDifference +
+            " day/s " +
+            hoursDifference +
+            " hour/s " +
+            minutesDifference +
+            " minute/s " +
+            secondsDifference +
+            " second/s "
+    );
+}
 ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
 async function getAllBids(owner, contract_address, token_id) {
     var data = {};
@@ -2751,6 +2779,10 @@ async function getAllBids(owner, contract_address, token_id) {
 
     await axios.post("/getAllBids", data, {}).then(function(response) {
         output = response.data;
+        // var now = new Date();
+        // var date1 = now.getTime();
+        // console.log(date1);
+        ///timeDifference(date1, response.data[0].created_at);
     });
     return output;
 }
@@ -2801,7 +2833,8 @@ export {
     getBiddingStatus,
     getAllBids,
     endBidding,
-    getHpsBalance
+    getHpsBalance,
+    getBNBBalance
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

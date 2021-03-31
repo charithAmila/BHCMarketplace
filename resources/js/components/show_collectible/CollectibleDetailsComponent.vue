@@ -2,15 +2,15 @@
   <div>
     <div class="details-tab">
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#home" class="tabLink">Details</a></li>
-        <li><a href="#holder" class="tabLink">Holder</a></li>
-        <li>
-          <a href="#past_transactions" class="tabLink">Bids</a>
+        <li><a href="#home" @click="detailsActive()" class="tabLink">Details</a></li>
+        <li><a href="#holder" @click="holderActive()" class="tabLink">Holder</a></li>
+        
+        <li class="active">
+          <a href="#past_transactions" @click="bidsActive()" class="tabLink">Bids</a>
         </li>
       </ul>
-
       <div class="tabGroup">
-        <div id="home" class="tab-pane tab-active">
+        <div id="home" class="tab-pane" v-bind:class="{'tab-active' : home_active}">
           <div class="row dtab">
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
@@ -73,7 +73,7 @@
           </div>
         </div>
 
-        <div id="holder" class="tab-pane">
+        <div id="holder" class="tab-pane" v-bind:class="{'tab-active' : holder_active}">
           <div v-for="(owner, index) in owners" :key="index" class="row dtab">
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
@@ -98,15 +98,17 @@
           </div>
         </div>
 
-        <div id="past_transactions" class="tab-pane">
-          <div
-            v-for="(transac, index) in transactions"
-            :key="index"
-            class="row dtab"
+        <div id="past_transactions" class="tab-pane" v-bind:class="{'tab-active' : bid_active}" >
+          <button type="submit" class="btn btn-success" v-if="!biddingStatus" @click="startBid()"> Open Token for Bidding
+          </button>
+           <button type="submit" class="btn btn-danger" v-if="biddingStatus" @click="endBid()">Remove from Bidding
+          </button>
+         
+          <div v-for="(transac, index) in allBids" :key="index" class="row dtab"  v-show="biddingStatus"
           >
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
-                <a :href="user_profile + '/' + transac.user_profile">
+                <a :href="user_profile + '/' + transac.bidding_address">
                   <img
                     class="br-50"
                     :src=asset_url
@@ -117,18 +119,18 @@
               </div>
             </div>
             <div class="col-9 col-md-10">
-              <label v-if="transac.action == 'Bought'" class="position"
-                >{{ transac.action }} {{ transac.quantity }} edition for
-                <span class="positionHolder">{{ transac.price }}</span>
-                {{ transac.sub_context }}{{ transac.time_ago }} by
-                <a :href="user_profile + '/' + transac.user_profile"
+              <label class="position"
+                >{{ transac.bidding_amount }} {{transac.bidding_token}}
+                <span class="positionHolder">{{ bidding_amount }}</span>
+              on {{ transac.created_at.slice(0,10) }} by
+                <a :href="user_profile + '/' + transac.bidding_address"
                   ><span class="positionHolder">{{
-                    transac.user_name
+                    transac.bidding_address
                   }}</span></a
                 >
               </label>
 
-              <label v-if="transac.action == 'Offered'" class="position"
+              <!--label v-if="transac.action == 'Offered'" class="position"
                 >{{ transac.action }}
                 <span class="positionHolder">{{ transac.price }}</span> for
                 {{ transac.quantity }} edition {{ transac.sub_context
@@ -138,9 +140,9 @@
                     transac.user_name
                   }}</span></a
                 >
-              </label>
+              </label-->
 
-              <label v-if="transac.action == 'Put on sale for'" class="position"
+              <!--label v-if="transac.action == 'Put on sale for'" class="position"
                 >{{ transac.action }}
                 <span class="positionHolder">{{ transac.price }}</span>
                 {{ transac.time_ago }} by
@@ -150,16 +152,16 @@
                   }}</span></a
                 >
               </label>
-            </div>
+            </div-->
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div></div>
 </template>
 
 <script>
-import { getHighestBid, getBiddingStatus,getAllBids} from ".././../bidFunc";
+import { getHighestBid, getBiddingStatus,getAllBids,startBidding,endBidding} from ".././../bidFunc";
 
 export default {
   props: [
@@ -169,7 +171,7 @@ export default {
     "transactions",
     "user_profile",
     "collectible",
-    "asset_url",
+   // "asset_url",
     "collection",
     "collection_image",
     "collection_url",
@@ -177,17 +179,47 @@ export default {
   data() {
     return {
 
-     // asset_url :  "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png"
-
+     asset_url :  "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png",
+     allBids:{},
+     bid_active: false,
+     home_active: true,
+     holder_active:false,
+     biddingStatus:false
     };
   },
   async mounted() {
     //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     var allBids = await getAllBids(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
-    var biddingStatus = await getBiddingStatus(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
-    console.log(highestBid);
-    console.log(allBids);
-    console.log(biddingStatus);
+    var output = await getBiddingStatus(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+    this.biddingStatus = output;
+    this.allBids = allBids;
+  },
+  methods: {
+    detailsActive(){
+      this.home_active = true;
+      this.holder_active = false;
+      this.bid_active = false
+    },
+holderActive(){
+  this.home_active = false;
+  this.holder_active = true;
+  this.bid_active = false
+},
+bidsActive(){
+  this.home_active =false;
+  this.holder_active =false;
+  this.bid_active = true;
+},
+startBid(){
+var res  = startBidding(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+console.log(res);
+}
+,
+endBid(){
+  var res = endBidding(this.current_owner.wallet,this.collectible.contract, this.collectible.id);
+  console.log(res);
+}
+
   }
 };
 </script>

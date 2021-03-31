@@ -79,7 +79,6 @@ class BidController extends Controller
     public function startBid(Request $request)
     {
         $request->validate([
-            'owner' => 'required',
             'contract_address' => 'required',
             'token_id' => 'required',
             'bidding_status' => 'required',
@@ -118,17 +117,22 @@ class BidController extends Controller
     public function endBid(Request $request)
     {
         $request->validate([
-            'address' => 'required',
-            'index' => 'required',
-            'signature'=>'required'
+           'contract_address' => 'required',
+            'token_id' => 'required',
+          'address' => 'required',
+            'signature' => 'required'
             ]);
             $checker = new CheckSign;
             $message = "Stop bidding for token";
             $granted = $checker->checkSign($message, $request->signature, $request->address);
             if ($granted) {
-                $item = Bidding_Tokens::where( 'index' , $request->index)->update(['bidding_status'=>false]);
+                $item = Bidding_Tokens::where(['contract_address' => $request->contract_address,'token_id' => $request->token_id])->update(['status'=>false]);
+            return true;
             }
-    }
+    
+   return false; 
+        }
+
 
     /**
      * Update the specified resource in storage.
@@ -140,12 +144,17 @@ class BidController extends Controller
     public function getBiddingStatus(Request $request)
     {
         $request->validate([
-            'owner' => 'required',
             'contract_address' => 'required',
             'token_id' => 'required',
         ]);
-         $data = Bidding_Tokens::where(['contract_address'=>$request->contract_address,'owner'=>$request->owner,'token_id'=>$request->token_id])->get();
-        return $data['bidding_status'];
+       
+        $data = Bidding_Tokens::where(['contract_address'=>$request->contract_address,'token_id'=>$request->token_id])->first();
+        if($data==null){
+            return 0;
+        }
+        else{
+            return $data['status'];
+        }    
     }
 
     /**
