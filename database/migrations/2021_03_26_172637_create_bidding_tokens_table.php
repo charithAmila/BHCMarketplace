@@ -14,13 +14,10 @@ class CreateBiddingTokensTable extends Migration
     public function up()
     {
         Schema::create('bidding_tokens', function (Blueprint $table) {
-            $table->integer('user_id');
-            $table->integer('token_type');
-            $table->integer('collection_type');
-            $table->integer('collection_id');
-            $table->integer('token_id');
-            $table->boolean('bidding_status');
             $table->id();
+            $table->string('contract_address');
+            $table->integer('token_id');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

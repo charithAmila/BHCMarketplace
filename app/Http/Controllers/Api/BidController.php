@@ -27,12 +27,11 @@ class BidController extends Controller
     public function allBids(Request $request)
     {
         $request->validate([
-            'token_type' => 'required',
-            'collection_type' => 'required',
-            'collection_id'=> 'required',
+            'contract_address' => 'required',
+            'owner'=> 'required',
             'token_id' => 'required',
         ]);
-        $data = Bid::where(['token_type'=>$request->token_type,'collection_type'=>$request->collection_type,'collection_id'=>$request->collection_id,'token_id'=>$request->token_id])->get();
+        $data = Bid::where(['contract_address'=>$request->contract_address,'owner'=>$request->owner,'token_id'=>$request->token_id])->get();
         return $data;
     
     }
@@ -46,11 +45,9 @@ class BidController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'address' => 'required',
-            'user_id' => 'required',
-            'token_type' => 'required',
-            'collection_type' => 'required',
-            'collection_id'=> 'required',
+            'owner' => 'required',
+            'bidding_address' => 'required',
+            'contract_address' => 'required',
             'token_id' => 'required',
             'bidding_token' => 'required',
             'bidding_amount' => 'required',
@@ -58,15 +55,15 @@ class BidController extends Controller
         ]);
         $checker = new CheckSign;
         $message = "Place a Bid";
-        $granted = $checker->checkSign($message, $request->signature, $request->address);
+        $granted = $checker->checkSign($message, $request->signature, $request->bidding_address);
         $bid = new Bid;
-        $bid->user_id = $request->user_id;
-        $bid->token_type = $request->token_type;
-        $bid->collection_type = $request->collection_type;
-        $bid->collection_id = $request->collection_id;
+        $bid->owner = $request->owner;
+        $bid->bidding_address = $request->bidding_address;
+        $bid->contract_address = $request->contract_address;
         $bid->token_id = $request->token_id;
         $bid->bidding_token = $request->bidding_token;
         $bid->bidding_amount = $request->bidding_amount;
+        $bid->signature = $request->signature;
         if ($granted) {
             $bid->save();
             return true;
@@ -82,11 +79,8 @@ class BidController extends Controller
     public function startBid(Request $request)
     {
         $request->validate([
-            'address' => 'required',
-            'user_id' => 'required',
-            'token_type' => 'required',
-            'collection_type' => 'required',
-            'collection_id'=> 'required',
+            'owner' => 'required',
+            'contract_address' => 'required',
             'token_id' => 'required',
             'bidding_status' => 'required',
             'signature' => 'required'
@@ -95,20 +89,15 @@ class BidController extends Controller
         $checker = new CheckSign;
         $message = "Allow bidding for token";
         $granted = $checker->checkSign($message, $request->signature, $request->address);
-        $available = Bidding_Tokens::where(['user_id' => $request->user_id,'token_type' => $request->token_type,
-        'collection_id'=> $request->collection_id,'token_id' =>$request->token_id])->exists();
+        $available = Bidding_Tokens::where(['contract_address' => $request->contract_address,'token_id' => $request->token_id])->exists();
         $bidding_token = new Bidding_Tokens;
-        $bidding_token->user_id = $request->user_id;
-        $bidding_token->token_type = $request->token_type;
-        $bidding_token->collection_type = $request->collection_type;
-        $bidding_token->collection_id = $request->collection_id;
+        $bidding_token->contract_address = $request->contract_address;
         $bidding_token->token_id = $request->token_id;
-        $bidding_token->bidding_status = $request->bidding_status;
+        $bidding_token->status = $request->bidding_status;
         if($granted){
             if($available){
-                
-            $res =  Bidding_Tokens::where(['user_id' => $request->user_id,'token_type' => $request->token_type,
-                'collection_id'=> $request->collection_id,'token_id' =>$request->token_id])->update(['bidding_status'=>true]);
+            $res =  Bidding_Tokens::where([
+                'contract_address'=> $request->contract_address,'token_id' =>$request->token_id])->update(['status'=>true]);
                 return $res;
                 }
                 else{
@@ -148,9 +137,15 @@ class BidController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function getBiddingStatus(Request $request)
     {
-        //
+        $request->validate([
+            'owner' => 'required',
+            'contract_address' => 'required',
+            'token_id' => 'required',
+        ]);
+         $data = Bidding_Tokens::where(['contract_address'=>$request->contract_address,'owner'=>$request->owner,'token_id'=>$request->token_id])->get();
+        return $data['bidding_status'];
     }
 
     /**
