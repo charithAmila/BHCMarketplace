@@ -33,10 +33,13 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script>
+import CollectibleDetailsComponent from './CollectibleDetailsComponent.vue';
 export default {
+  components: { CollectibleDetailsComponent },
   props: ["collectible", "asset_url"],
 };
 </script>

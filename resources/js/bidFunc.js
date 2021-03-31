@@ -2777,7 +2777,18 @@ async function getHighestBid(owner, contract_address, token_id) {
 }
 
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
-async function getBiddingStatus(owner, contract_address, token_id) {}
+async function getBiddingStatus(owner, contract_address, token_id) {
+    var data = {};
+    data.contract_address = contract_address;
+    data.owner = owner;
+    data.token_id = token_id;
+    var output = {};
+
+    await axios.post("/getBiddingStatus", data, {}).then(function(response) {
+        output = response.data;
+    });
+    return output;
+}
 /////////////////////////////////////////////Finish Bidding///////////////////////////////////////////////////////
 async function finishBidding(token_id) {}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

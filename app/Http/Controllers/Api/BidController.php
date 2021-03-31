@@ -55,7 +55,7 @@ class BidController extends Controller
         ]);
         $checker = new CheckSign;
         $message = "Place a Bid";
-        $granted = $checker->checkSign($message, $request->signature, $request->address);
+        $granted = $checker->checkSign($message, $request->signature, $request->bidding_address);
         $bid = new Bid;
         $bid->owner = $request->owner;
         $bid->bidding_address = $request->bidding_address;
@@ -89,19 +89,15 @@ class BidController extends Controller
         $checker = new CheckSign;
         $message = "Allow bidding for token";
         $granted = $checker->checkSign($message, $request->signature, $request->address);
-        $available = Bidding_Tokens::where(['user_id' => $request->user_id,'token_type' => $request->token_type,
-        'collection_id'=> $request->collection_id,'token_id' =>$request->token_id])->exists();
+        $available = Bidding_Tokens::where(['contract_address' => $request->contract_address,'token_id' => $request->token_id])->exists();
         $bidding_token = new Bidding_Tokens;
-        $bidding_token->owner = $request->owner;
         $bidding_token->contract_address = $request->contract_address;
         $bidding_token->token_id = $request->token_id;
-        $bidding_token->bidding_status = $request->bidding_status;
-        $bidding_token->signature = $request->signature;
+        $bidding_token->status = $request->bidding_status;
         if($granted){
             if($available){
-                
-            $res =  Bidding_Tokens::where(['owner' => $request->owner,
-                'contract_address'=> $request->contract_address,'token_id' =>$request->token_id,'signature'=>$request->signature])->update(['bidding_status'=>true]);
+            $res =  Bidding_Tokens::where([
+                'contract_address'=> $request->contract_address,'token_id' =>$request->token_id])->update(['status'=>true]);
                 return $res;
                 }
                 else{

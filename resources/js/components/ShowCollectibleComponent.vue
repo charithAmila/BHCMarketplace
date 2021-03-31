@@ -191,6 +191,7 @@
           :collection="set_collectible.collection"
           :collection_image="set_collectible.collection_image"
           :collection_url="set_collectible.collection_url"
+          :collectible = "collectible"
         ></collectible-details-component>
 
         <div class="row m-20 text-center end-content">
@@ -385,6 +386,7 @@
       :singleNft="singleNft"
       :page="'showcollectible'"
     ></bid-modal-component>
+   
   </div>
 </template>
 
