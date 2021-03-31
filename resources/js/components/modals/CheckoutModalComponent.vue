@@ -89,6 +89,8 @@ import {
   checkTokensBalance,
   buy,
   waitForTransaction,
+  toAddress,
+  getBNBBalance,
 } from "./../../etherFunc";
 export default {
   props: ["singleNft", "page", "current_user"],
@@ -97,6 +99,7 @@ export default {
       quantity: 1,
       balance: 0,
       service_fee: 0,
+      royalty_fee: 0,
       total_payment: 0,
       payment: 0,
       price: 0,
@@ -110,18 +113,27 @@ export default {
     singleNft: async function () {
       this.singleNft.currency == "HPS"
         ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
-        : this.singleNft.currency == "HPS"
-        ? "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876"
-        : null;
+        : this.singleNft.currency == "BHC"
+        ? (this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876")
+        : (this.currency = toAddress(""));
       this.price = this.singleNft.price;
       this.nft_id = this.singleNft.id;
       this.record_id = this.singleNft.record_id;
-      var allowance = await checkTokensApproved(
-        this.currency,
-        this.current_user
-      );
-      this.balance = await checkTokensBalance(this.currency, this.current_user);
-      this.balance = this.balance.toFixed(3);
+      if (this.currency != toAddress("")) {
+        var allowance = await checkTokensApproved(
+          this.currency,
+          this.current_user
+        );
+        this.balance = await checkTokensBalance(
+          this.currency,
+          this.current_user
+        );
+        this.balance = this.balance.toFixed(3);
+      } else {
+        this.balance = await getBNBBalance(this.current_user);
+        var allowance = this.balance;
+      }
+
       if (this.price * 1.025 <= allowance) {
         this.approved = true;
       }
@@ -133,9 +145,14 @@ export default {
   },
   methods: {
     updateValues() {
-      this.payment = +(this.price * this.quantity).toFixed(2);
-      this.service_fee = +(this.payment * 0.025).toFixed(2);
-      this.total_payment = +(this.payment + this.service_fee).toFixed(2);
+      this.payment = +(this.price * this.quantity);
+      this.service_fee = +(this.payment * 0.025);
+      this.royalty_fee = (this.price * this.singleNft.royalties) / 100;
+      this.total_payment = +(
+        this.payment +
+        this.service_fee +
+        this.royalty_fee
+      );
     },
     async approve() {
       var hash = await approveTokens(
@@ -154,7 +171,7 @@ export default {
         collectible.contract,
         collectible.type == 721 ? true : false,
         collectible.id,
-        this.quantity,
+        collectible.signed_to,
         this.quantity,
         this.currency,
         `${this.price}`,

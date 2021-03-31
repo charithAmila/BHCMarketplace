@@ -243,6 +243,7 @@ export default {
         collection: _this.singleNft.contract,
         current_owner: _this.singleNft.owner_id,
         token_id: _this.singleNft.id,
+        signed_to: Number(_this.singleNft.ownedCopies),
         price: Number(_this.price),
         is_instant: false,
         currency:

@@ -247,6 +247,7 @@ async function getAllSales(current_user) {
                     tokens[i].current_owner,
                     tokens[i].token_id
                 )
+                nft.signed_to = tokens[i].signed_to;
                 nft.db_id = tokens[i].id;
                 nft.price = tokens[i].price;
                 nft.isp = 1;

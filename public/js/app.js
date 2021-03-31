@@ -26638,6 +26638,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       quantity: 1,
       balance: 0,
       service_fee: 0,
+      royalty_fee: 0,
       total_payment: 0,
       payment: 0,
       price: 0,
@@ -26655,29 +26656,46 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                this.singleNft.currency == "HPS" ? this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937" : this.singleNft.currency == "HPS" ? "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876" : null;
+                this.singleNft.currency == "HPS" ? this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937" : this.singleNft.currency == "BHC" ? this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876" : this.currency = (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.toAddress)("");
                 this.price = this.singleNft.price;
                 this.nft_id = this.singleNft.id;
                 this.record_id = this.singleNft.record_id;
-                _context.next = 6;
+
+                if (!(this.currency != (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.toAddress)(""))) {
+                  _context.next = 14;
+                  break;
+                }
+
+                _context.next = 7;
                 return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.checkTokensApproved)(this.currency, this.current_user);
 
-              case 6:
+              case 7:
                 allowance = _context.sent;
-                _context.next = 9;
+                _context.next = 10;
                 return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.checkTokensBalance)(this.currency, this.current_user);
 
-              case 9:
+              case 10:
                 this.balance = _context.sent;
                 this.balance = this.balance.toFixed(3);
+                _context.next = 18;
+                break;
 
+              case 14:
+                _context.next = 16;
+                return (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.getBNBBalance)(this.current_user);
+
+              case 16:
+                this.balance = _context.sent;
+                allowance = this.balance;
+
+              case 18:
                 if (this.price * 1.025 <= allowance) {
                   this.approved = true;
                 }
 
                 this.updateValues();
 
-              case 13:
+              case 20:
               case "end":
                 return _context.stop();
             }
@@ -26697,9 +26715,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   methods: {
     updateValues: function updateValues() {
-      this.payment = +(this.price * this.quantity).toFixed(2);
-      this.service_fee = +(this.payment * 0.025).toFixed(2);
-      this.total_payment = +(this.payment + this.service_fee).toFixed(2);
+      this.payment = +(this.price * this.quantity);
+      this.service_fee = +(this.payment * 0.025);
+      this.royalty_fee = this.price * this.singleNft.royalties / 100;
+      this.total_payment = +(this.payment + this.service_fee + this.royalty_fee);
     },
     approve: function approve() {
       var _this = this;
@@ -26731,7 +26750,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     purchase: function purchase() {
       var collectible = this.singleNft;
-      (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.buy)(collectible.contract, collectible.type == 721 ? true : false, collectible.id, this.quantity, this.quantity, this.currency, "".concat(this.price), collectible.salt, collectible.owner_id, collectible.signature).then( /*#__PURE__*/function () {
+      (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.buy)(collectible.contract, collectible.type == 721 ? true : false, collectible.id, collectible.signed_to, this.quantity, this.currency, "".concat(this.price), collectible.salt, collectible.owner_id, collectible.signature).then( /*#__PURE__*/function () {
         var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(hash) {
           var status;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
@@ -27712,6 +27731,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   collection: _this.singleNft.contract,
                   current_owner: _this.singleNft.owner_id,
                   token_id: _this.singleNft.id,
+                  signed_to: Number(_this.singleNft.ownedCopies),
                   price: Number(_this.price),
                   is_instant: false,
                   currency: _this.currency == 1 ? _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.hpsAddress : _this.currency == 2 ? _addresses_constants__WEBPACK_IMPORTED_MODULE_3__.bhcAddress : (0,_etherFunc__WEBPACK_IMPORTED_MODULE_2__.toAddress)(""),
@@ -33342,12 +33362,12 @@ function _getAllSales() {
 
           case 8:
             if (!(i < tokens.length)) {
-              _context11.next = 29;
+              _context11.next = 30;
               break;
             }
 
             if (!(tokens[i].current_owner != current_user)) {
-              _context11.next = 26;
+              _context11.next = 27;
               break;
             }
 
@@ -33357,6 +33377,7 @@ function _getAllSales() {
 
           case 13:
             nft = _context11.sent;
+            nft.signed_to = tokens[i].signed_to;
             nft.db_id = tokens[i].id;
             nft.price = tokens[i].price;
             nft.isp = 1;
@@ -33365,27 +33386,27 @@ function _getAllSales() {
             nft.salt = tokens[i].salt;
             nft.currency = tokens[i].currency == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.hpsAddress ? "HPS" : tokens[i].currency == _addresses_constants__WEBPACK_IMPORTED_MODULE_2__.bhcAddress ? "BHC" : "BNB";
             data.push(nft);
-            _context11.next = 26;
+            _context11.next = 27;
             break;
 
-          case 24:
-            _context11.prev = 24;
+          case 25:
+            _context11.prev = 25;
             _context11.t0 = _context11["catch"](10);
 
-          case 26:
+          case 27:
             i++;
             _context11.next = 8;
             break;
 
-          case 29:
+          case 30:
             return _context11.abrupt("return", data);
 
-          case 30:
+          case 31:
           case "end":
             return _context11.stop();
         }
       }
-    }, _callee11, null, [[10, 24]]);
+    }, _callee11, null, [[10, 25]]);
   }));
   return _getAllSales.apply(this, arguments);
 }
@@ -33523,7 +33544,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "approveTokens": () => (/* binding */ approveTokens),
 /* harmony export */   "checkTokensBalance": () => (/* binding */ checkTokensBalance),
 /* harmony export */   "buy": () => (/* binding */ buy),
-/* harmony export */   "splitSign": () => (/* binding */ splitSign)
+/* harmony export */   "splitSign": () => (/* binding */ splitSign),
+/* harmony export */   "getBNBBalance": () => (/* binding */ getBNBBalance)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
@@ -33574,23 +33596,23 @@ function redirectToConnect() {
   }
 }
 
-function signMessage(_x) {
-  return _signMessage.apply(this, arguments);
+function getBNBBalance(_x) {
+  return _getBNBBalance.apply(this, arguments);
 }
 
-function _signMessage() {
-  _signMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(message) {
-    var signer;
+function _getBNBBalance() {
+  _getBNBBalance = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(address) {
+    var balance;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            signer = provider.getSigner();
-            _context.next = 3;
-            return signer.signMessage(message);
+            _context.next = 2;
+            return provider.getBalance(toAddress(address));
 
-          case 3:
-            return _context.abrupt("return", _context.sent);
+          case 2:
+            balance = _context.sent;
+            return _context.abrupt("return", balance / Math.pow(10, 18));
 
           case 4:
           case "end":
@@ -33599,6 +33621,34 @@ function _signMessage() {
       }
     }, _callee);
   }));
+  return _getBNBBalance.apply(this, arguments);
+}
+
+function signMessage(_x2) {
+  return _signMessage.apply(this, arguments);
+}
+
+function _signMessage() {
+  _signMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(message) {
+    var signer;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            signer = provider.getSigner();
+            _context2.next = 3;
+            return signer.signMessage(message);
+
+          case 3:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
   return _signMessage.apply(this, arguments);
 }
 
@@ -33606,81 +33656,81 @@ function splitSign(signature) {
   return ethers__WEBPACK_IMPORTED_MODULE_4__.splitSignature(signature);
 }
 
-function waitForTransaction(_x2) {
+function waitForTransaction(_x3) {
   return _waitForTransaction.apply(this, arguments);
 }
 
 function _waitForTransaction() {
-  _waitForTransaction = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(tx) {
+  _waitForTransaction = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(tx) {
     var res;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
-            return provider.waitForTransaction(tx);
-
-          case 2:
-            res = _context2.sent;
-            console.log(res);
-            return _context2.abrupt("return", res.status);
-
-          case 5:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
-  return _waitForTransaction.apply(this, arguments);
-}
-
-function getOwner(_x3, _x4) {
-  return _getOwner.apply(this, arguments);
-}
-
-function _getOwner() {
-  _getOwner = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(addressString, ABI) {
-    var contractAddress, contract, data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            contractAddress = toAddress(addressString);
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, ABI);
-            _context3.next = 4;
-            return contract.owner();
+            _context3.next = 2;
+            return provider.waitForTransaction(tx);
 
-          case 4:
-            data = _context3.sent;
-            return _context3.abrupt("return", owner);
+          case 2:
+            res = _context3.sent;
+            console.log(res);
+            return _context3.abrupt("return", res.status);
 
-          case 6:
+          case 5:
           case "end":
             return _context3.stop();
         }
       }
     }, _callee3);
   }));
+  return _waitForTransaction.apply(this, arguments);
+}
+
+function getOwner(_x4, _x5) {
   return _getOwner.apply(this, arguments);
 }
 
-function get721Token(_x5, _x6, _x7, _x8) {
-  return _get721Token.apply(this, arguments);
-}
-
-function _get721Token() {
-  _get721Token = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(contract, collection, tokenId, owner) {
-    var tokenURI, tokenData;
+function _getOwner() {
+  _getOwner = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(addressString, ABI) {
+    var contractAddress, contract, data;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            _context4.next = 2;
+            contractAddress = toAddress(addressString);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, ABI);
+            _context4.next = 4;
+            return contract.owner();
+
+          case 4:
+            data = _context4.sent;
+            return _context4.abrupt("return", owner);
+
+          case 6:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _getOwner.apply(this, arguments);
+}
+
+function get721Token(_x6, _x7, _x8, _x9) {
+  return _get721Token.apply(this, arguments);
+}
+
+function _get721Token() {
+  _get721Token = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(contract, collection, tokenId, owner) {
+    var tokenURI, tokenData;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
             return contract.tokenURI(tokenId);
 
           case 2:
-            tokenURI = _context4.sent;
+            tokenURI = _context5.sent;
             tokenData = {
               contract: contract.address,
               collection: collection,
@@ -33691,39 +33741,39 @@ function _get721Token() {
               tokenOwner: owner,
               URI: tokenURI
             };
-            return _context4.abrupt("return", tokenData);
+            return _context5.abrupt("return", tokenData);
 
           case 5:
           case "end":
-            return _context4.stop();
+            return _context5.stop();
         }
       }
-    }, _callee4);
+    }, _callee5);
   }));
   return _get721Token.apply(this, arguments);
 }
 
-function get1155Token(_x9, _x10, _x11, _x12) {
+function get1155Token(_x10, _x11, _x12, _x13) {
   return _get1155Token.apply(this, arguments);
 }
 
 function _get1155Token() {
-  _get1155Token = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(contract, collection, tokenId, owner) {
+  _get1155Token = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(contract, collection, tokenId, owner) {
     var tokenURI, ownedCount, tokenData;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context6.prev = _context6.next) {
           case 0:
-            _context5.next = 2;
+            _context6.next = 2;
             return contract.tokenURI(tokenId);
 
           case 2:
-            tokenURI = _context5.sent;
-            _context5.next = 5;
+            tokenURI = _context6.sent;
+            _context6.next = 5;
             return contract.balanceOf(owner, tokenId);
 
           case 5:
-            ownedCount = _context5.sent;
+            ownedCount = _context6.sent;
             tokenData = {
               contract: contract.address,
               collection: collection,
@@ -33735,270 +33785,240 @@ function _get1155Token() {
               tokenOwner: owner,
               URI: tokenURI
             };
-            return _context5.abrupt("return", tokenData);
+            return _context6.abrupt("return", tokenData);
 
           case 8:
-          case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee5);
-  }));
-  return _get1155Token.apply(this, arguments);
-}
-
-function getSingles(_x13, _x14) {
-  return _getSingles.apply(this, arguments);
-}
-
-function _getSingles() {
-  _getSingles = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(contractAddress, owner) {
-    var tokens, contract, collection, nftCount, i, tokenId, nft;
-    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
-      while (1) {
-        switch (_context6.prev = _context6.next) {
-          case 0:
-            tokens = [];
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, bhc721, provider);
-            collection = null; //await contract.contractURI();
-
-            _context6.next = 5;
-            return contract.balanceOf(owner);
-
-          case 5:
-            nftCount = _context6.sent;
-            i = 0;
-
-          case 7:
-            if (!(i < Number(nftCount))) {
-              _context6.next = 18;
-              break;
-            }
-
-            _context6.next = 10;
-            return contract.tokenOfOwnerByIndex(owner, i);
-
-          case 10:
-            tokenId = _context6.sent;
-            _context6.next = 13;
-            return get721Token(contract, collection, Number(tokenId), owner);
-
-          case 13:
-            nft = _context6.sent;
-            tokens.push(nft);
-
-          case 15:
-            i++;
-            _context6.next = 7;
-            break;
-
-          case 18:
-            return _context6.abrupt("return", tokens);
-
-          case 19:
           case "end":
             return _context6.stop();
         }
       }
     }, _callee6);
   }));
+  return _get1155Token.apply(this, arguments);
+}
+
+function getSingles(_x14, _x15) {
   return _getSingles.apply(this, arguments);
 }
 
-function getMultiples(_x15, _x16) {
-  return _getMultiples.apply(this, arguments);
-}
-
-function _getMultiples() {
-  _getMultiples = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(contractAddress, owner) {
-    var tokens, contract, currentId, collection, i, ownedCount, nft;
+function _getSingles() {
+  _getSingles = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(contractAddress, owner) {
+    var tokens, contract, collection, nftCount, i, tokenId, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             tokens = [];
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, bhc1155, provider);
-            _context7.next = 4;
-            return contract.current_id();
-
-          case 4:
-            currentId = _context7.sent;
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, bhc721, provider);
             collection = null; //await contract.contractURI();
 
-            i = 1;
+            _context7.next = 5;
+            return contract.balanceOf(owner);
+
+          case 5:
+            nftCount = _context7.sent;
+            i = 0;
 
           case 7:
-            if (!(i < Number(currentId) + 1)) {
-              _context7.next = 19;
+            if (!(i < Number(nftCount))) {
+              _context7.next = 18;
               break;
             }
 
             _context7.next = 10;
-            return contract.balanceOf(owner, i);
+            return contract.tokenOfOwnerByIndex(owner, i);
 
           case 10:
-            ownedCount = _context7.sent;
+            tokenId = _context7.sent;
+            _context7.next = 13;
+            return get721Token(contract, collection, Number(tokenId), owner);
 
-            if (!(ownedCount > 0)) {
-              _context7.next = 16;
-              break;
-            }
-
-            _context7.next = 14;
-            return get1155Token(contract, collection, i, owner);
-
-          case 14:
+          case 13:
             nft = _context7.sent;
             tokens.push(nft);
 
-          case 16:
+          case 15:
             i++;
             _context7.next = 7;
             break;
 
-          case 19:
+          case 18:
             return _context7.abrupt("return", tokens);
 
-          case 20:
+          case 19:
           case "end":
             return _context7.stop();
         }
       }
     }, _callee7);
   }));
+  return _getSingles.apply(this, arguments);
+}
+
+function getMultiples(_x16, _x17) {
   return _getMultiples.apply(this, arguments);
 }
 
-function getCollectible(_x17, _x18, _x19, _x20, _x21) {
-  return _getCollectible.apply(this, arguments);
-}
-
-function _getCollectible() {
-  _getCollectible = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(contractAddress, type, isPrivate, owner, id) {
-    var collectible, contract, realOwner, collection, ownerHave;
+function _getMultiples() {
+  _getMultiples = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(contractAddress, owner) {
+    var tokens, contract, currentId, collection, i, ownedCount, nft;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
-            collectible = {};
-            contractAddress = toAddress(contractAddress);
-            owner = toAddress(owner);
+            tokens = [];
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, bhc1155, provider);
+            _context8.next = 4;
+            return contract.current_id();
 
-            if (!(type == 721)) {
-              _context8.next = 15;
-              break;
-            }
+          case 4:
+            currentId = _context8.sent;
+            collection = null; //await contract.contractURI();
 
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, isPrivate ? bhc721 : bhc721, provider);
-            _context8.next = 7;
-            return contract.ownerOf(id);
+            i = 1;
 
           case 7:
-            realOwner = _context8.sent;
-            collection = null; //await contract.contractURI();
-
-            if (!(owner == toAddress(realOwner))) {
-              _context8.next = 13;
+            if (!(i < Number(currentId) + 1)) {
+              _context8.next = 19;
               break;
             }
 
-            _context8.next = 12;
-            return get721Token(contract, collection, id, owner);
+            _context8.next = 10;
+            return contract.balanceOf(owner, i);
 
-          case 12:
-            collectible = _context8.sent;
+          case 10:
+            ownedCount = _context8.sent;
 
-          case 13:
-            _context8.next = 25;
+            if (!(ownedCount > 0)) {
+              _context8.next = 16;
+              break;
+            }
+
+            _context8.next = 14;
+            return get1155Token(contract, collection, i, owner);
+
+          case 14:
+            nft = _context8.sent;
+            tokens.push(nft);
+
+          case 16:
+            i++;
+            _context8.next = 7;
             break;
 
-          case 15:
-            if (!(type == 1155)) {
-              _context8.next = 25;
-              break;
-            }
-
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, isPrivate ? bhc1155 : bhc1155, provider);
-            _context8.next = 19;
-            return contract.balanceOf(owner, id);
-
           case 19:
-            ownerHave = _context8.sent;
-            collection = null; //await contract.contractURI();
+            return _context8.abrupt("return", tokens);
 
-            if (!(Number(ownerHave) > 0)) {
-              _context8.next = 25;
-              break;
-            }
-
-            _context8.next = 24;
-            return get1155Token(contract, collection, id, owner);
-
-          case 24:
-            collectible = _context8.sent;
-
-          case 25:
-            return _context8.abrupt("return", collectible);
-
-          case 26:
+          case 20:
           case "end":
             return _context8.stop();
         }
       }
     }, _callee8);
   }));
+  return _getMultiples.apply(this, arguments);
+}
+
+function getCollectible(_x18, _x19, _x20, _x21, _x22) {
   return _getCollectible.apply(this, arguments);
 }
 
-function generateOrderIdMessage(_x22, _x23, _x24, _x25, _x26, _x27) {
-  return _generateOrderIdMessage.apply(this, arguments);
-}
-
-function _generateOrderIdMessage() {
-  _generateOrderIdMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(tokenAddress, tokenId, value, priceToken, price, salt) {
-    var signer, orderStorage, order;
+function _getCollectible() {
+  _getCollectible = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(contractAddress, type, isPrivate, owner, id) {
+    var collectible, contract, realOwner, collection, ownerHave;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
           case 0:
-            signer = provider.getSigner();
-            orderStorage = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.orderStorageAddress, orderStorageABI, signer);
-            _context9.next = 4;
-            return orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), salt);
+            collectible = {};
+            contractAddress = toAddress(contractAddress);
+            owner = toAddress(owner);
 
-          case 4:
-            order = _context9.sent;
-            return _context9.abrupt("return", (salt, order));
+            if (!(type == 721)) {
+              _context9.next = 15;
+              break;
+            }
 
-          case 6:
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, isPrivate ? bhc721 : bhc721, provider);
+            _context9.next = 7;
+            return contract.ownerOf(id);
+
+          case 7:
+            realOwner = _context9.sent;
+            collection = null; //await contract.contractURI();
+
+            if (!(owner == toAddress(realOwner))) {
+              _context9.next = 13;
+              break;
+            }
+
+            _context9.next = 12;
+            return get721Token(contract, collection, id, owner);
+
+          case 12:
+            collectible = _context9.sent;
+
+          case 13:
+            _context9.next = 25;
+            break;
+
+          case 15:
+            if (!(type == 1155)) {
+              _context9.next = 25;
+              break;
+            }
+
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(contractAddress, isPrivate ? bhc1155 : bhc1155, provider);
+            _context9.next = 19;
+            return contract.balanceOf(owner, id);
+
+          case 19:
+            ownerHave = _context9.sent;
+            collection = null; //await contract.contractURI();
+
+            if (!(Number(ownerHave) > 0)) {
+              _context9.next = 25;
+              break;
+            }
+
+            _context9.next = 24;
+            return get1155Token(contract, collection, id, owner);
+
+          case 24:
+            collectible = _context9.sent;
+
+          case 25:
+            return _context9.abrupt("return", collectible);
+
+          case 26:
           case "end":
             return _context9.stop();
         }
       }
     }, _callee9);
   }));
+  return _getCollectible.apply(this, arguments);
+}
+
+function generateOrderIdMessage(_x23, _x24, _x25, _x26, _x27, _x28) {
   return _generateOrderIdMessage.apply(this, arguments);
 }
 
-function checkNFTApproved(_x28, _x29) {
-  return _checkNFTApproved.apply(this, arguments);
-}
-
-function _checkNFTApproved() {
-  _checkNFTApproved = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(contractAddress, from) {
-    var ABI, contract, res;
+function _generateOrderIdMessage() {
+  _generateOrderIdMessage = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(tokenAddress, tokenId, value, priceToken, price, salt) {
+    var signer, orderStorage, order;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
           case 0:
-            ABI = bhc721;
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, provider);
+            signer = provider.getSigner();
+            orderStorage = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.orderStorageAddress, orderStorageABI, signer);
             _context10.next = 4;
-            return contract.isApprovedForAll(from, _addresses_constants__WEBPACK_IMPORTED_MODULE_1__.transferProxyAddress);
+            return orderStorage.generateMessage(tokenAddress, tokenId, value, priceToken, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), salt);
 
           case 4:
-            res = _context10.sent;
-            return _context10.abrupt("return", res);
+            order = _context10.sent;
+            return _context10.abrupt("return", (salt, order));
 
           case 6:
           case "end":
@@ -34007,47 +34027,45 @@ function _checkNFTApproved() {
       }
     }, _callee10);
   }));
+  return _generateOrderIdMessage.apply(this, arguments);
+}
+
+function checkNFTApproved(_x29, _x30) {
   return _checkNFTApproved.apply(this, arguments);
 }
 
-function checkTokensApproved(_x30, _x31) {
-  return _checkTokensApproved.apply(this, arguments);
-}
-
-function _checkTokensApproved() {
-  _checkTokensApproved = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(contractAddress, from) {
+function _checkNFTApproved() {
+  _checkNFTApproved = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11(contractAddress, from) {
     var ABI, contract, res;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
           case 0:
-            ABI = bep20ABI;
+            ABI = bhc721;
             contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, provider);
             _context11.next = 4;
-            return contract.allowance(from, _addresses_constants__WEBPACK_IMPORTED_MODULE_1__.erc20TransferProxyAddress);
+            return contract.isApprovedForAll(from, _addresses_constants__WEBPACK_IMPORTED_MODULE_1__.transferProxyAddress);
 
           case 4:
             res = _context11.sent;
-            console.log(Number(res) / Math.pow(10, 18));
-            return _context11.abrupt("return", Number(res) / Math.pow(10, 18));
+            return _context11.abrupt("return", res);
 
-          case 7:
+          case 6:
           case "end":
             return _context11.stop();
         }
       }
     }, _callee11);
   }));
+  return _checkNFTApproved.apply(this, arguments);
+}
+
+function checkTokensApproved(_x31, _x32) {
   return _checkTokensApproved.apply(this, arguments);
 }
 
-function checkTokensBalance(_x32, _x33) {
-  return _checkTokensBalance.apply(this, arguments);
-} //////Set functions/////////
-
-
-function _checkTokensBalance() {
-  _checkTokensBalance = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(contractAddress, from) {
+function _checkTokensApproved() {
+  _checkTokensApproved = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12(contractAddress, from) {
     var ABI, contract, res;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee12$(_context12) {
       while (1) {
@@ -34056,61 +34074,60 @@ function _checkTokensBalance() {
             ABI = bep20ABI;
             contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, provider);
             _context12.next = 4;
-            return contract.balanceOf(from);
+            return contract.allowance(from, _addresses_constants__WEBPACK_IMPORTED_MODULE_1__.erc20TransferProxyAddress);
 
           case 4:
             res = _context12.sent;
+            console.log(Number(res) / Math.pow(10, 18));
             return _context12.abrupt("return", Number(res) / Math.pow(10, 18));
 
-          case 6:
+          case 7:
           case "end":
             return _context12.stop();
         }
       }
     }, _callee12);
   }));
+  return _checkTokensApproved.apply(this, arguments);
+}
+
+function checkTokensBalance(_x33, _x34) {
   return _checkTokensBalance.apply(this, arguments);
-}
+} //////Set functions/////////
 
-function createASingle(_x34, _x35, _x36) {
-  return _createASingle.apply(this, arguments);
-}
 
-function _createASingle() {
-  _createASingle = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee13(url, royalty, collection) {
-    var signer, contract, tx;
+function _checkTokensBalance() {
+  _checkTokensBalance = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee13(contractAddress, from) {
+    var ABI, contract, res;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
-            signer = provider.getSigner();
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.minterAddress, minterABI, signer);
-            console.log(contract);
-            _context13.next = 5;
-            return contract.mint721(collection, url, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(royalty)), true, {
-              value: ethers__WEBPACK_IMPORTED_MODULE_7__.parseEther("0.25")
-            });
+            ABI = bep20ABI;
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, provider);
+            _context13.next = 4;
+            return contract.balanceOf(from);
 
-          case 5:
-            tx = _context13.sent;
-            return _context13.abrupt("return", tx);
+          case 4:
+            res = _context13.sent;
+            return _context13.abrupt("return", Number(res) / Math.pow(10, 18));
 
-          case 7:
+          case 6:
           case "end":
             return _context13.stop();
         }
       }
     }, _callee13);
   }));
+  return _checkTokensBalance.apply(this, arguments);
+}
+
+function createASingle(_x35, _x36, _x37) {
   return _createASingle.apply(this, arguments);
 }
 
-function createABatch(_x37, _x38, _x39, _x40) {
-  return _createABatch.apply(this, arguments);
-}
-
-function _createABatch() {
-  _createABatch = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee14(url, count, royalty, collection) {
+function _createASingle() {
+  _createASingle = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee14(url, royalty, collection) {
     var signer, contract, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee14$(_context14) {
       while (1) {
@@ -34120,7 +34137,7 @@ function _createABatch() {
             contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.minterAddress, minterABI, signer);
             console.log(contract);
             _context14.next = 5;
-            return contract.mint1155(collection, url, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(count)), ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(royalty)), true, {
+            return contract.mint721(collection, url, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(royalty)), true, {
               value: ethers__WEBPACK_IMPORTED_MODULE_7__.parseEther("0.25")
             });
 
@@ -34135,25 +34152,27 @@ function _createABatch() {
       }
     }, _callee14);
   }));
+  return _createASingle.apply(this, arguments);
+}
+
+function createABatch(_x38, _x39, _x40, _x41) {
   return _createABatch.apply(this, arguments);
 }
 
-function approveNFT(_x41) {
-  return _approveNFT.apply(this, arguments);
-}
-
-function _approveNFT() {
-  _approveNFT = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee15(contractAddress) {
-    var signer, ABI, contract, tx;
+function _createABatch() {
+  _createABatch = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee15(url, count, royalty, collection) {
+    var signer, contract, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee15$(_context15) {
       while (1) {
         switch (_context15.prev = _context15.next) {
           case 0:
             signer = provider.getSigner();
-            ABI = bhc721;
-            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, signer);
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.minterAddress, minterABI, signer);
+            console.log(contract);
             _context15.next = 5;
-            return contract.setApprovalForAll(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.transferProxyAddress, true);
+            return contract.mint1155(collection, url, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(count)), ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(Number(royalty)), true, {
+              value: ethers__WEBPACK_IMPORTED_MODULE_7__.parseEther("0.25")
+            });
 
           case 5:
             tx = _context15.sent;
@@ -34166,29 +34185,29 @@ function _approveNFT() {
       }
     }, _callee15);
   }));
+  return _createABatch.apply(this, arguments);
+}
+
+function approveNFT(_x42) {
   return _approveNFT.apply(this, arguments);
 }
 
-function approveTokens(_x42, _x43) {
-  return _approveTokens.apply(this, arguments);
-}
-
-function _approveTokens() {
-  _approveTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee16(contractAddress, price) {
+function _approveNFT() {
+  _approveNFT = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee16(contractAddress) {
     var signer, ABI, contract, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee16$(_context16) {
       while (1) {
         switch (_context16.prev = _context16.next) {
           case 0:
             signer = provider.getSigner();
-            ABI = bep20ABI;
+            ABI = bhc721;
             contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, signer);
             _context16.next = 5;
-            return contract.approve(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.erc20TransferProxyAddress, ethers__WEBPACK_IMPORTED_MODULE_7__.parseEther(price));
+            return contract.setApprovalForAll(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.transferProxyAddress, true);
 
           case 5:
             tx = _context16.sent;
-            return _context16.abrupt("return", tx.hash);
+            return _context16.abrupt("return", tx);
 
           case 7:
           case "end":
@@ -34197,40 +34216,74 @@ function _approveTokens() {
       }
     }, _callee16);
   }));
+  return _approveNFT.apply(this, arguments);
+}
+
+function approveTokens(_x43, _x44) {
   return _approveTokens.apply(this, arguments);
 }
 
-function buy(_x44, _x45, _x46, _x47, _x48, _x49, _x50, _x51, _x52, _x53) {
-  return _buy.apply(this, arguments);
-}
-
-function _buy() {
-  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee17(collection, is721, tokenId, total, value, buyWith, price, salt, owner, signature) {
-    var signer, exchange, sig, tx;
+function _approveTokens() {
+  _approveTokens = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee17(contractAddress, price) {
+    var signer, ABI, contract, tx;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee17$(_context17) {
       while (1) {
         switch (_context17.prev = _context17.next) {
           case 0:
             signer = provider.getSigner();
-            exchange = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.exchangeAddress, exchangeABI, signer);
-            sig = ethers__WEBPACK_IMPORTED_MODULE_4__.splitSignature(signature);
-            console.log([is721, collection, tokenId, total, value, buyWith, price, owner, salt, sig]);
-            _context17.next = 6;
-            return exchange.exchange([is721, collection, tokenId, 5, value, buyWith, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), owner, salt, sig.v, sig.r, sig.s], {
-              gasPrice: ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(30000000000),
-              gasLimit: ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(8500000)
-            });
+            ABI = bep20ABI;
+            contract = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(toAddress(contractAddress), ABI, signer);
+            _context17.next = 5;
+            return contract.approve(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.erc20TransferProxyAddress, ethers__WEBPACK_IMPORTED_MODULE_7__.parseEther(price));
 
-          case 6:
+          case 5:
             tx = _context17.sent;
             return _context17.abrupt("return", tx.hash);
 
-          case 8:
+          case 7:
           case "end":
             return _context17.stop();
         }
       }
     }, _callee17);
+  }));
+  return _approveTokens.apply(this, arguments);
+}
+
+function buy(_x45, _x46, _x47, _x48, _x49, _x50, _x51, _x52, _x53, _x54) {
+  return _buy.apply(this, arguments);
+}
+
+function _buy() {
+  _buy = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee18(collection, is721, tokenId, total, value, buyWith, price, salt, owner, signature) {
+    var _price, signer, exchange, sig, tx;
+
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee18$(_context18) {
+      while (1) {
+        switch (_context18.prev = _context18.next) {
+          case 0:
+            _price = Number(Number(price) * 1.125 * Math.pow(10, 18)).toString();
+            signer = provider.getSigner();
+            exchange = new ethers__WEBPACK_IMPORTED_MODULE_5__.Contract(_addresses_constants__WEBPACK_IMPORTED_MODULE_1__.exchangeAddress, exchangeABI, signer);
+            sig = ethers__WEBPACK_IMPORTED_MODULE_4__.splitSignature(signature);
+            console.log([is721, collection, tokenId, total, value, buyWith, price, owner, salt, sig]);
+            _context18.next = 7;
+            return exchange.exchange([is721, collection, tokenId, total, value, buyWith, ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(price).mul(ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(10).pow(18)), owner, salt, sig.v, sig.r, sig.s], {
+              gasPrice: ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(30000000000),
+              gasLimit: ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(8500000),
+              value: buyWith == toAddress("") ? ethers__WEBPACK_IMPORTED_MODULE_6__.BigNumber.from(_price) : "0"
+            });
+
+          case 7:
+            tx = _context18.sent;
+            return _context18.abrupt("return", tx.hash);
+
+          case 9:
+          case "end":
+            return _context18.stop();
+        }
+      }
+    }, _callee18);
   }));
   return _buy.apply(this, arguments);
 }
