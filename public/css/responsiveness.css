@@ -3,49 +3,39 @@
     height: 100vh;
     text-align: center !important;
   }
-
   .walletSection #first {
     order: 2;
   }
-
   .walletSection #second {
     order: 1;
   }
-
   .walletSection .hide-sm {
     display: none;
   }
-
   .walletSection .withContent {
     padding-right: 10px;
     padding-left: 10px;
   }
-
   .walletSection .content-title {
     padding-left: 0;
     font-size: 2rem;
   }
-
   .walletSection .btnGroup {
     padding-left: 0;
     padding-top: 20px;
   }
-
   .walletSection .imgPos1 {
     top: 36%;
     left: -13%;
   }
-
   .walletSection .imgPos2 {
     top: 12%;
     right: -13%;
   }
-
   .walletSection .imgPos3 {
     top: 12%;
     left: 19%;
   }
-
   .walletSection .imgPos4 {
     top: 36%;
     right: 19%;
@@ -64,7 +54,6 @@
     font-size: 20px !important;
     font-weight: bold;
   }
-
   .dropdown .current {
     font-weight: bold;
   }
@@ -96,22 +85,18 @@
     display: flex;
     overflow-y: scroll;
   }
-
   .filterListMobile .filterItemMobile {
     padding: 15px;
     display: flex;
     flex-direction: column;
     text-align: center;
   }
-
   .filterListMobile .filterItemMobile img {
     width: 80px;
   }
-
   .filterListMobile .filterItemMobile .profName {
     font-weight: 700;
   }
-
   .filterListMobile .filterItemMobile .prof {
     color: #545454;
     font-weight: bold;
@@ -122,37 +107,29 @@
   .main-content .items {
     padding: 10px 20px 0 20px !important;
   }
-
   .main-content .items .col-md-3 {
     padding: 15px 0 !important;
   }
-
   .main-content .items .specialContainer .content {
     padding: 10px 35px !important;
   }
-
   .main-content .items .specialContainer .content .legend {
     font-size: 15px;
   }
-
   .main-content .items .specialContainer .content .currency-amount {
     font-size: 18px !important;
   }
-
   .main-content .items .specialContainer .content .currency-label {
     font-size: 18px !important;
   }
-
   .main-content .items .specialContainer .content .viewBtn {
     font-size: 18px !important;
   }
-
   .main-content .top-sellers {
     background: #f1efef !important;
     position: relative !important;
     top: 0 !important;
   }
-
   .main-content .item-content {
     margin-left: 0 !important;
   }
@@ -169,9 +146,7 @@
     height: 68px;
   }
 
-  .imgSmall,
-  .imgNormal,
-  .imgLarge {
+  .imgSmall, .imgNormal, .imgLarge {
     background: white;
     width: 110px;
     height: 110px;
@@ -181,57 +156,45 @@
   .connect-wallet {
     text-align: left !important;
   }
-
   .connect-wallet .withContent {
     padding: 20px 60px !important;
   }
-
   .connect-wallet .withContent .pr-20 {
     padding-right: 0 !important;
   }
-
   .connect-wallet .withContent .pr-30 {
     padding-right: 0 !important;
   }
-
   .connect-wallet .withContent .mobile-padding-top {
     padding-top: 20px;
   }
-
   .connect-wallet .withContent .text-bold {
     font-weight: 600;
     color: #545454;
     padding-top: 10px;
   }
-
   .connect-wallet .withContent .mtext-title {
     padding-top: 15px;
     font-size: 18px;
   }
-
   .connect-wallet .withContent .pl-40 {
     padding-left: 0;
   }
-
   .connect-wallet .withBg {
     height: 200px;
   }
-
   .connect-wallet .imgPos1 {
     top: 36%;
     left: -13%;
   }
-
   .connect-wallet .imgPos2 {
     top: 12%;
     right: -13%;
   }
-
   .connect-wallet .imgPos3 {
     top: 12%;
     left: 19%;
   }
-
   .connect-wallet .imgPos4 {
     top: 36%;
     right: 19%;
@@ -240,7 +203,6 @@
   .walletconnect {
     padding-left: 0 !important;
   }
-
   .walletconnect #wallet_item {
     color: black !important;
     text-align: center;
@@ -252,13 +214,11 @@
     border: 1px solid white;
     box-shadow: 0 0 0 1px #FFC170, 0 0 0 6px white, 0 0 0 9px #FFC170;
   }
-
   .walletconnect #wallet_item img {
     height: 50px;
     margin: auto;
     display: block;
   }
-
   .walletconnect .outside {
     display: inline-block;
     position: relative;
@@ -269,7 +229,6 @@
     clip-path: polygon(0% var(--notchSize), var(--notchSize) 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0% calc(100% - var(--notchSize)));
     -webkit-clip-path: polygon(0% var(--notchSize), var(--notchSize) 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0% calc(100% - var(--notchSize)));
   }
-
   .walletconnect .inside {
     position: absolute;
     top: 1px;
@@ -281,7 +240,6 @@
     clip-path: polygon(0% var(--notchSize), var(--notchSize) 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0% calc(100% - var(--notchSize)));
     -webkit-clip-path: polygon(0% var(--notchSize), var(--notchSize) 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0% calc(100% - var(--notchSize)));
   }
-
   .walletconnect .inner {
     position: absolute;
     top: 1px;
@@ -295,18 +253,15 @@
     text-align: center;
     padding: 10px;
   }
-
   .walletconnect .inner .fa-plus {
     border-radius: 50%;
     padding: 6px;
     color: white;
     background: #FFC170;
   }
-
   .walletconnect .inner img {
     width: 30px;
   }
-
   .walletconnect .inner-outside {
     position: absolute;
     top: 3px;
@@ -322,38 +277,31 @@
   .show-collectible .end-content {
     padding-bottom: 100px;
   }
-
   .show-collectible .first-mobile {
     order: 1;
     padding: 30px 20px;
   }
-
   .show-collectible .first-mobile .inner-img .collectble-container .showImg {
     width: 100% !important;
   }
-
   .show-collectible .first-mobile .inner-img .imgHead {
     display: block;
     margin: 0 auto;
     width: 90%;
   }
-
   .show-collectible .first-mobile .inner-img .imgHead .imgHead-link {
     text-decoration: none;
     color: black;
     width: 100%;
     padding-right: 10px;
   }
-
   .show-collectible .first-mobile .inner-img .imgHead .imgHead-link:hover {
     text-decoration: none;
     color: #F88130;
   }
-
   .show-collectible .first-mobile .inner-img .imgHead .imgHead-link .expand {
     color: #F88130;
   }
-
   .show-collectible .first-mobile .showImgBg {
     z-index: -1;
     position: absolute;
@@ -361,7 +309,6 @@
     bottom: 15%;
     width: 400px;
   }
-
   .show-collectible .first-mobile .mobile-imgHead {
     display: block;
     position: absolute;
@@ -370,15 +317,12 @@
     width: 100%;
     left: 0;
   }
-
   .show-collectible .first-mobile .mobile-imgHead .mobile-show-link {
     width: 100%;
     text-decoration: none;
     line-height: 1 !important;
   }
-
-  .show-collectible .first-mobile .mobile-imgHead .mobile-show-link .fa-heart,
-  .show-collectible .first-mobile .mobile-imgHead .mobile-show-link .fa-arrows-alt {
+  .show-collectible .first-mobile .mobile-imgHead .mobile-show-link .fa-heart, .show-collectible .first-mobile .mobile-imgHead .mobile-show-link .fa-arrows-alt {
     font-size: 25px;
     color: #F88130;
     border-radius: 50%;
@@ -386,7 +330,6 @@
     background: white;
     padding: 7px 9px;
   }
-
   .show-collectible .first-mobile .mobile-imgHead .mobile-show-link .photoHead {
     margin-top: -13px;
     height: 40px;
@@ -395,11 +338,9 @@
     border-radius: 50%;
     padding: 5px;
   }
-
   .show-collectible .second-mobile {
     order: 2;
   }
-
   .show-collectible .second-mobile .collectibleTitle {
     text-align: left !important;
     padding: 15px 0;
@@ -409,46 +350,36 @@
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
-
   .show-collectible .second-mobile .collectibleTitle h3 {
     margin-bottom: 0;
   }
-
   .show-collectible .second-mobile .collectibleTitle h3 .inline-title {
     font-size: 1.5rem;
   }
-
   .show-collectible .second-mobile .collectibleTitle .titleIcon {
     margin-left: 0px !important;
     padding: 6px !important;
     font-size: 15px !important;
   }
-
   .show-collectible .second-mobile .priceTag {
     padding-top: 0;
   }
-
   .show-collectible .second-mobile .showCurrency {
     margin-left: 0;
   }
-
   .show-collectible .second-mobile .itemType {
     padding-left: 0;
     padding-top: 10px;
   }
-
   .show-collectible .second-mobile .itemDesc {
     padding: 0 0 0 10px;
   }
-
   .show-collectible .second-mobile .custom-dtab {
     display: flex;
   }
-
   .show-collectible .second-mobile .tabGroup {
     padding-left: 0;
   }
-
   .show-collectible .second-mobile .show-footer-btn {
     padding: 20px 0 0 0;
     position: fixed;
@@ -458,7 +389,6 @@
     width: 100%;
     z-index: 99999;
   }
-
   .show-collectible .second-mobile .show-footer-btn .buyBtn {
     margin: 0 auto;
     border-radius: 40px;
@@ -470,70 +400,55 @@
     padding: 15px;
     margin: 0 !important;
   }
-
   .create-tab .create-content .main-create {
     padding: 20px 5px;
   }
-
   .create-tab .create-content .main-create .col-md-6 {
     padding-top: 15px;
     margin: -3px 60px;
   }
-
   .create-tab .create-content .main-create .col-md-6 .col-content {
     padding: 40px 25px 10px 25px;
     padding: 20px 0;
   }
-
   .create-tab .create-content .main-create .col-md-6 #box img {
     width: 80%;
   }
-
   .create-tab .create-content .desc {
     padding: 15px 0;
   }
-
   .create-tab .create-content .desc-bottom {
     padding: 30px 10px;
   }
-
   .create-tab .create-content .solo-create {
     padding-left: 0;
     padding-bottom: 0;
   }
-
   .create-tab .create-content .solo-create .text-head {
     font-size: 2.5rem;
     padding-top: 15px;
   }
-
   .create-tab .create-content .solo-create .text-upload {
     padding-top: 20px;
   }
-
   .create-tab .create-content .solo-create .fileArea {
     padding: 20px 40px;
   }
-
   .create-tab .create-content .solo-create .text-content {
     padding-top: 20px;
     padding-bottom: 15px;
     font-size: 1.25rem;
   }
-
   .create-tab .create-content .solo-create .outside {
     width: 120px;
     height: 120px;
   }
-
   .create-tab .create-content .solo-create .outside .inner .fa-plus {
     margin-top: 10px;
   }
-
   .create-tab .create-content .solo-create .outside .inner img {
     margin-top: 10px;
   }
-
   .create-tab .create-content .solo-create .switch {
     margin-top: 13px;
   }
@@ -551,15 +466,12 @@
     white-space: nowrap;
     overflow: auto;
   }
-
   .all-collection .filter-collection .filter {
     display: inline-block;
   }
-
   .all-collection .collection-tab {
     padding: 50px 0;
   }
-
   .all-collection .collection-tab .w-30 {
     width: 100%;
   }
@@ -574,11 +486,9 @@
     width: 100%;
     border-radius: 15px 15px 0 0;
   }
-
   .custom-modal .modal-content.login-content {
     left: 0 !important;
   }
-
   .custom-modal .modal-body {
     padding: 1rem 0 0 0;
   }
@@ -597,25 +507,19 @@
     left: 0% !important;
     top: 18% !important;
   }
-
   .custom-modal .bid-content {
     left: 0% !important;
     top: 14% !important;
   }
-
   .custom-modal .report-content {
     left: 0% !important;
     top: 40% !important;
   }
-
   .custom-modal .preferences-content {
     left: 0% !important;
     top: 9% !important;
   }
-
-  .custom-modal .following-content,
-  .custom-modal .follower-content,
-  .custom-modal .cover-content {
+  .custom-modal .following-content, .custom-modal .follower-content, .custom-modal .cover-content {
     left: 0% !important;
     top: 60% !important;
   }
@@ -623,72 +527,51 @@
   .about-bhc {
     width: 100%;
   }
-
   .about-bhc .first-section {
     padding: 70px 40px;
   }
-
   .about-bhc .first-section .claim-section {
     margin: 0 -20px;
   }
-
   .about-bhc .first-section .claim-section div {
     text-align: center;
     flex-basis: 100%;
   }
-
   .about-bhc .first-section .claim-section div:not(:last-child) {
     padding-bottom: 10px;
   }
-
   .about-bhc .second-section h1 {
     padding: 0 0 30px 0;
   }
-
   .about-bhc .second-section .row {
     padding: 0 20px;
     margin-right: 0;
   }
-
-  .about-bhc .third-section .desc,
-  .about-bhc .fourth-section .desc {
+  .about-bhc .third-section .desc, .about-bhc .fourth-section .desc {
     padding-left: 40px;
     padding-right: 40px;
   }
-
-  .about-bhc .third-section .icon-group,
-  .about-bhc .fourth-section .icon-group {
+  .about-bhc .third-section .icon-group, .about-bhc .fourth-section .icon-group {
     padding: 30px;
   }
-
-  .about-bhc .third-section .icon-group div,
-  .about-bhc .fourth-section .icon-group div {
+  .about-bhc .third-section .icon-group div, .about-bhc .fourth-section .icon-group div {
     flex-basis: 50%;
   }
-
-  .about-bhc .third-section .learn-more,
-  .about-bhc .fourth-section .learn-more {
+  .about-bhc .third-section .learn-more, .about-bhc .fourth-section .learn-more {
     margin-top: 30px;
     margin-bottom: 50px;
   }
 
-  .fileArea .file-output,
-  .fileArea .file-output-video {
+  .fileArea .file-output, .fileArea .file-output-video {
     padding: 30px 0px;
   }
-
-  .fileArea .file-output .category-img-tag,
-  .fileArea .file-output-video .category-img-tag {
+  .fileArea .file-output .category-img-tag, .fileArea .file-output-video .category-img-tag {
     width: 100% !important;
   }
-
-  .fileArea .file-output video,
-  .fileArea .file-output-video video {
+  .fileArea .file-output video, .fileArea .file-output-video video {
     width: 100% !important;
   }
-
-  .fileArea .file-output .close-btn,
-  .fileArea .file-output-video .close-btn {
+  .fileArea .file-output .close-btn, .fileArea .file-output-video .close-btn {
     right: -9%;
   }
 
@@ -696,9 +579,7 @@
     height: 250px;
     max-height: 300px !important;
   }
-
-  .item-img img,
-  .item-img video {
+  .item-img img, .item-img video {
     max-height: 250px !important;
   }
 
@@ -733,11 +614,9 @@
   .faq-container {
     width: 80%;
   }
-
   .faq-container .heading .head-text {
     font-size: 2rem;
   }
-
   .faq-container .heading .head-img {
     height: 100px;
     padding-bottom: 10px;
@@ -748,7 +627,6 @@
     max-width: 100% !important;
     max-height: 60%;
   }
-
   .show-collectible .custom-lg-8 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
@@ -765,7 +643,6 @@
   .row-0 .nav-tabs {
     border: none;
     padding-left: 0 !important;
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     background: #ECECEC;
@@ -782,22 +659,18 @@
   .search-page {
     padding: 0 !important;
   }
-
   .search-page .col-md-3 {
     margin-top: 10px;
     margin-bottom: 10px;
   }
-
   .search-page .main-dashboard .outside-nft {
     height: 400px;
   }
 }
-
 @media only screen and (min-width: 900px) and (max-width: 1400px) {
   .showContent {
     height: calc(100vh - 73px);
   }
-
   .showContent .inner-img {
     position: absolute;
     left: 50%;
@@ -815,14 +688,12 @@
     padding: 5px 25px 15px 25px !important;
   }
 }
-
 @media only screen and (min-width: 1500px) {
   .main-content .main-row .col-lg-2 {
     flex: 0 0 21% !important;
     max-width: 21% !important;
     padding: 0 30px !important;
   }
-
   .main-content .main-row .col-lg-10 {
     margin-left: 21% !important;
     flex: 0 0 79% !important;
@@ -836,12 +707,10 @@
   .solo-create .row .col-md-8 {
     padding-left: 100px;
   }
-
   .solo-create .row .col-md-4 .preview-pane .preview .outside {
     width: 80%;
   }
 }
-
 @media only screen and (min-width: 1800px) {
   .custom-column-xl {
     flex: 0 0 16.66667% !important;

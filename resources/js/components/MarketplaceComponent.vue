@@ -175,7 +175,6 @@ export default {
     "show_collectible",
     "base_url",
     "asset_url",
-    "current_user",
   ],
   data() {
     return {
