@@ -29,20 +29,11 @@
 
 
 	@section('extra_scripts')
-		<script src="{{ asset('js/custom.js') }}"></script>
-		<!--script>
-			$(document).ready(function(){
+	<script src="{{ asset('js/custom.js') }}"></script>
+	
 
-				$('.wallet-link').click(function(){
-		            modalOpen($('#loginModal'), $(".login-content"));
-		        });
-		        $('.close-login-modal').click(function(){
-		            modalClose($('#loginModal'), $(".login-content"));
-		        });
 
-			});
-		</script-->
-
+		
 	@endsection
     
 
