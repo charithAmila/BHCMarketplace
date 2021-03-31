@@ -98,3 +98,5 @@ Route::post('getAllBids',[BidController::class, 'allBids']);
 Route::post('startBid',[BidController::class, 'startBid']);
 
 Route::post('endBid',[BidController::class, 'endBid']);
+
+Route::post('getBiddingStatus',[BidController::class, 'getBiddingStatus']);

@@ -5,7 +5,7 @@
         <li class="active"><a href="#home" class="tabLink">Details</a></li>
         <li><a href="#holder" class="tabLink">Holder</a></li>
         <li>
-          <a href="#past_transactions" class="tabLink">Past Transactions</a>
+          <a href="#past_transactions" class="tabLink">Bids</a>
         </li>
       </ul>
 
@@ -109,7 +109,7 @@
                 <a :href="user_profile + '/' + transac.user_profile">
                   <img
                     class="br-50"
-                    :src="asset_url + transac.user_image"
+                    :src=asset_url
                     width="50"
                   />
                 </a>
@@ -159,6 +159,8 @@
 </template>
 
 <script>
+import { getHighestBid, getBiddingStatus,getAllBids} from ".././../bidFunc";
+
 export default {
   props: [
     "creator",
@@ -166,13 +168,26 @@ export default {
     "owners",
     "transactions",
     "user_profile",
+    "collectible",
     "asset_url",
     "collection",
     "collection_image",
     "collection_url",
   ],
   data() {
-    return {};
+    return {
+
+     // asset_url :  "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png"
+
+    };
   },
+  async mounted() {
+    //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+    var allBids = await getAllBids(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+    var biddingStatus = await getBiddingStatus(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+    console.log(highestBid);
+    console.log(allBids);
+    console.log(biddingStatus);
+  }
 };
 </script>

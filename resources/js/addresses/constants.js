@@ -17,5 +17,7 @@ const ANKR_tokenAddress = "0xf307910a4c7bbc79691fd374889b36d8531b08e3"
 const BELL_tokenAddress = "0x8443f091997f06a61670b735ed92734f5628692f"
 /////////////////////////////////////////Exchanges////////////////////////////////////////////////
 const pancake_routerAddress = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
+const julswap_routerAddress = '0xbd67d157502A23309Db761c41965600c2Ec788b2'
 
-export { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, NFTStorageAddress, exchangeAddress, hpsAddress, bhcAddress, pancake_routerAddress, CAD_tokenAddress, ANKR_tokenAddress, BELL_tokenAddress, minterAddress, contractFactoryAddress }
+export { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, NFTStorageAddress, exchangeAddress, hpsAddress, bhcAddress, pancake_routerAddress, CAD_tokenAddress, ANKR_tokenAddress, BELL_tokenAddress, minterAddress, contractFactoryAddress,julswap_routerAddress}
+
