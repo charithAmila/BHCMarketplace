@@ -4,6 +4,7 @@ import {
     hps1155Address,
     hpsAddress,
     bhcAddress,
+    erc20TransferProxyAddress,
     pancake_routerAddress,
     CAD_tokenAddress,
     ANKR_tokenAddress,
@@ -11,7 +12,7 @@ import {
     julswap_routerAddress
 } from "../js/addresses/constants.js";
 import { ethers } from "ethers";
-import { toAddress, checkConnection } from "./etherFunc.js";
+import { toAddress, checkConnection, buy } from "./etherFunc.js";
 ///////////////////////////////////////////////////ABI//////////////////////////////////////////////////////////
 const bhc721 = require("../js/abis/bhc_721.json");
 const bhc1155 = require("../js/abis/bhc_1155.json");
@@ -2560,6 +2561,11 @@ async function getBNBBalance() {
     const balance = await provider.getBalance(address);
     return parseFloat(balance.toString()) / 10 ** 18;
 }
+////////////////////////////////////////////Get connected address///////////////////////////////////////////////////
+async function getConnectedAddress() {
+    var address = toAddress(checkConnection());
+    return address;
+}
 ///////////////////////////////////////////Get Token Address////////////////////////////////////////////////////////
 function getTokenAddress(bidding_token) {
     var token_address;
@@ -2582,7 +2588,7 @@ function getTokenAddress(bidding_token) {
     return token_address;
 }
 ///////////////////////////////////////////Get Token Price//////////////////////////////////////////////////////////
-async function getTokenPrice(bidding_token, amount) {
+async function getTokenPrice(bidding_token) {
     const contract = getTokenAddress(bidding_token);
     const price = await julswap_Read.getAmountsIn(
         ethers.BigNumber.from("1000000000000000000"),
@@ -2622,7 +2628,7 @@ async function endBidding(_owner, contract_address, token_id) {
     //const owner = await contract.ownerOf(token_id);
 
     var address = toAddress(checkConnection());
-    console.log(_owner);
+    console.log(address == _owner);
     if (address == _owner) {
         const signature = await signer.signMessage("Stop bidding for token");
         data.contract_address = contract_address;
@@ -2670,7 +2676,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
             if (WBNB_balance > amount * rate) {
                 console.log("WBNB");
                 const res = await WBNB_Write_Test.approve(
-                    exchange_Address,
+                    erc20TransferProxyAddress,
                     (amount * rate).toString()
                 );
                 const output = await res.wait();
@@ -2687,7 +2693,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
                 const out = await res.wait();
                 console.log(out);
                 const txResponse = await WBNB_Write_Test.approve(
-                    TEST_token,
+                    erc20TransferProxyAddress,
                     (amount * rate).toString()
                 );
                 const txReceipt = await txResponse.wait();
@@ -2742,6 +2748,33 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
         //}
     }
 }
+////////////////////////////////////////////Accept Bid///////////////////////////////////////////////////////////////
+async function acceptBid(
+    collection,
+    is721,
+    tokenId,
+    total,
+    value,
+    buyWith,
+    price,
+    salt,
+    owner,
+    signature
+) {
+    var res = await buy(
+        collection,
+        is721,
+        tokenId,
+        total,
+        value,
+        buyWith,
+        price,
+        salt,
+        owner,
+        signature
+    );
+    console.log(res);
+}
 ////////////////////////////////////////////Get Time Difference//////////////////////////////////////////////////////
 function timeDifference(date1, date2) {
     var difference = date1.getTime() - date2.getTime();
@@ -2776,7 +2809,6 @@ async function getAllBids(owner, contract_address, token_id) {
     data.owner = owner;
     data.token_id = token_id;
     var output = {};
-
     await axios.post("/getAllBids", data, {}).then(function(response) {
         output = response.data;
         // var now = new Date();
@@ -2790,22 +2822,25 @@ async function getAllBids(owner, contract_address, token_id) {
 async function getHighestBid(owner, contract_address, token_id) {
     var output = await getAllBids(owner, contract_address, token_id);
     var maxAmount = 0;
+    var output = {};
     var maxBidder;
     var maxBidToken;
     for (var i = 0; i < output.length; i++) {
-        var price = await getTokenPrice(
-            output[i].bidding_token,
-            output[i].bidding_token
-        );
+        var price = await getTokenPrice(output[i].bidding_token);
         if (price * output[i].bidding_amount > maxAmount * 10 ** 18) {
             maxAmount = price / 10 ** 18;
             maxBidder = output[i].user_id;
             maxBidToken = output[i].bidding_token;
         }
-    }
-    console.log(maxBidToken);
-    console.log(maxAmount);
-    console.log(maxBidder);
+    } //
+    /*output.maxBidToken = maxBidToken;
+    output.maxAmount = maxAmount;
+    output.maxBidder = maxBidder;*/
+
+    output.maxBidToken = "BNB";
+    output.maxAmount = "1";
+    output.maxBidder = "0x0c7117eCEFc947df6507D0fC47E8C80EbA62E7DC";
+    return output;
 }
 
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
@@ -2834,7 +2869,8 @@ export {
     getAllBids,
     endBidding,
     getHpsBalance,
-    getBNBBalance
+    getBNBBalance,
+    getConnectedAddress
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

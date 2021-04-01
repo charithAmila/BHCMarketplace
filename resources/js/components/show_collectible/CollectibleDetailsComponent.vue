@@ -99,11 +99,12 @@
         </div>
 
         <div id="past_transactions" class="tab-pane" v-bind:class="{'tab-active' : bid_active}" >
-          <button type="submit" class="btn btn-success" v-if="!biddingStatus" @click="startBid()"> Open Token for Bidding
+          <button type="submit" class="btn btn-success" v-if="!biddingStatus && owner" @click="startBid()"> Open Token for Bidding
           </button>
-           <button type="submit" class="btn btn-danger" v-if="biddingStatus" @click="endBid()">Remove from Bidding
+           <button type="submit" class="btn btn-danger" v-if="biddingStatus && owner" @click="endBid()">Remove from Bidding
           </button>
-         
+            <button type="submit" class="btn btn-success" v-if="biddingStatus && owner" @click="acceptBid()">Accept Highest Bid
+          </button>
           <div v-for="(transac, index) in allBids" :key="index" class="row dtab"  v-show="biddingStatus"
           >
             <div class="col-3 col-md-2">
@@ -161,7 +162,7 @@
 </template>
 
 <script>
-import { getHighestBid, getBiddingStatus,getAllBids,startBidding,endBidding} from ".././../bidFunc";
+import { getHighestBid, getBiddingStatus,getAllBids,startBidding,endBidding, getConnectedAddress} from ".././../bidFunc";
 
 export default {
   props: [
@@ -184,15 +185,22 @@ export default {
      bid_active: false,
      home_active: true,
      holder_active:false,
-     biddingStatus:false
+     biddingStatus:false,
+     owner:false,
+     highestBid:{}
     };
   },
   async mounted() {
     //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+    var address = await getConnectedAddress();
     var allBids = await getAllBids(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     var output = await getBiddingStatus(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
-    this.biddingStatus = output;
+  this.highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+   this.biddingStatus = output;
     this.allBids = allBids;
+    if(address == this.current_owner.wallet){
+      this.owner = true;
+    }
   },
   methods: {
     detailsActive(){
@@ -210,14 +218,18 @@ bidsActive(){
   this.holder_active =false;
   this.bid_active = true;
 },
+
 startBid(){
 var res  = startBidding(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
 console.log(res);
 }
 ,
 endBid(){
-  var res = endBidding(this.current_owner.wallet,this.collectible.contract, this.collectible.id);
-  console.log(res);
+var res = endBidding(this.current_owner.wallet,this.collectible.contract, this.collectible.id);
+console.log(res);
+},
+acceptBid(){
+var res = acceptBidding()
 }
 
   }
