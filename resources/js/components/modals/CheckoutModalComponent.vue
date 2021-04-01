@@ -62,7 +62,11 @@
                 >
               </div>
             </div>
-            <button class="form-submit" @click="approve" v-if="!approved">
+            <button
+              class="form-submit"
+              @click.prevent="approve"
+              v-if="!approved"
+            >
               Approve
             </button>
             <button
@@ -119,6 +123,7 @@ export default {
       this.price = this.singleNft.price;
       this.nft_id = this.singleNft.id;
       this.record_id = this.singleNft.record_id;
+      this.updateValues();
       if (this.currency != toAddress("")) {
         var allowance = await checkTokensApproved(
           this.currency,
@@ -133,13 +138,34 @@ export default {
         this.balance = await getBNBBalance(this.current_user);
         var allowance = this.balance;
       }
-
-      if (this.price * 1.025 <= allowance) {
+      console.log(allowance);
+      if (this.total_payment <= allowance) {
         this.approved = true;
+      } else {
+        this.approved = false;
       }
-      this.updateValues();
     },
-    quantity: function () {
+    quantity: async function () {
+      if (this.currency != toAddress("")) {
+        var allowance = await checkTokensApproved(
+          this.currency,
+          this.current_user
+        );
+        this.balance = await checkTokensBalance(
+          this.currency,
+          this.current_user
+        );
+        this.balance = this.balance.toFixed(3);
+      } else {
+        this.balance = await getBNBBalance(this.current_user);
+        var allowance = this.balance;
+      }
+      console.log(allowance);
+      if (this.total_payment <= allowance) {
+        this.approved = true;
+      } else {
+        this.approved = false;
+      }
       this.updateValues();
     },
   },
@@ -147,7 +173,7 @@ export default {
     updateValues() {
       this.payment = +(this.price * this.quantity);
       this.service_fee = +(this.payment * 0.025);
-      this.royalty_fee = (this.price * this.singleNft.royalties) / 100;
+      this.royalty_fee = (this.payment * this.singleNft.royalties) / 100;
       this.total_payment = +(
         this.payment +
         this.service_fee +
@@ -157,7 +183,7 @@ export default {
     async approve() {
       var hash = await approveTokens(
         this.currency,
-        `${Number(this.price * 1.025).toFixed(5)}`
+        `${Number(this.total_payment)}`
       );
       waitForTransaction(hash).then((stat) => {
         if (stat) {

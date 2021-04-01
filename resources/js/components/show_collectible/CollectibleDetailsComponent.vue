@@ -56,7 +56,7 @@
           <div class="row dtab">
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
-                <a :href="asset_url + 'collection/' + collection_url">
+                <a :href="asset_url + 'collection/' + collection.address">
                   <img class="br-50" :src="collection.icon" width="50" />
                 </a>
                 <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
@@ -65,7 +65,7 @@
             <div class="col-9 col-md-10">
               <label class="position">Collection</label>
               <label class="positionHolder"
-                ><a :href="asset_url + 'collection/' + collection_url">{{
+                ><a :href="asset_url + 'collection/' + collection.address">{{
                   collection.name
                 }}</a></label
               >
@@ -109,12 +109,14 @@
           >
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
+
                 <a :href="user_profile + '/' + transac.bidding_address">
                   <img
                     class="br-50"
                     :src=asset_url
                     width="50"
                   />
+
                 </a>
                 <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
               </div>
@@ -162,7 +164,9 @@
 </template>
 
 <script>
+
 import { getHighestBid, getBiddingStatus,getAllBids,startBidding,endBidding, getConnectedAddress} from ".././../bidFunc";
+
 
 export default {
   props: [
@@ -180,6 +184,7 @@ export default {
   data() {
     return {
 
+
      asset_url :  "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png",
      allBids:{},
      bid_active: false,
@@ -188,10 +193,27 @@ export default {
      biddingStatus:false,
      owner:false,
      highestBid:{}
+
     };
   },
   async mounted() {
     //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+
+    var allBids = await getAllBids(
+      this.current_owner.wallet,
+      this.collectible.contract,
+      this.collectible.id
+    );
+    var biddingStatus = await getBiddingStatus(
+      this.current_owner.wallet,
+      this.collectible.contract,
+      this.collectible.id
+    );
+    console.log(highestBid);
+    console.log(allBids);
+    console.log(biddingStatus);
+  },
+
     var address = await getConnectedAddress();
     var allBids = await getAllBids(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     var output = await getBiddingStatus(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
@@ -233,5 +255,6 @@ var res = acceptBidding()
 }
 
   }
+
 };
 </script>

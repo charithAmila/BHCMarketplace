@@ -29,10 +29,10 @@
               <img
                 v-if="collection.default == 1"
                 class="collection-logo"
-                :src="collection.image"
+                :src="collection.icon"
               />
-              <img v-else class="collection-logo" :src="collection.image" />
-              <h6>{{ collection.display_name }} {{ collection.symbol }}</h6>
+              <img v-else class="collection-logo" :src="collection.icon" />
+              <h6>{{ collection.name }} {{ collection.symbol }}</h6>
             </div>
           </div>
         </div>
