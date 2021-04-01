@@ -2822,25 +2822,31 @@ async function getAllBids(owner, contract_address, token_id) {
 async function getHighestBid(owner, contract_address, token_id) {
     var output = await getAllBids(owner, contract_address, token_id);
     var maxAmount = 0;
-    var output = {};
+    var res = {};
     var maxBidder;
     var maxBidToken;
+    var maxBidSig;
     for (var i = 0; i < output.length; i++) {
-        var price = await getTokenPrice(output[i].bidding_token);
+        // var price = await getTokenPrice(output[i].bidding_token);
+        var price = 10;
         if (price * output[i].bidding_amount > maxAmount * 10 ** 18) {
             maxAmount = price / 10 ** 18;
             maxBidder = output[i].user_id;
             maxBidToken = output[i].bidding_token;
+            maxBidSig = output[i].signature;
         }
     } //
-    /*output.maxBidToken = maxBidToken;
-    output.maxAmount = maxAmount;
-    output.maxBidder = maxBidder;*/
+    res.maxBidToken = maxBidToken;
+    res.maxAmount = maxAmount;
+    res.maxBidder = maxBidder;
+    res.maxBidSig = maxBidSig;
 
-    output.maxBidToken = "BNB";
-    output.maxAmount = "1";
-    output.maxBidder = "0x0c7117eCEFc947df6507D0fC47E8C80EbA62E7DC";
-    return output;
+    /*res.maxBidToken = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
+    res.maxAmount = "1";
+    res.maxBidder = output[0].user_id;
+    res.maxBidSig = output[0].signature;*/
+
+    return res;
 }
 
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
@@ -2870,7 +2876,8 @@ export {
     endBidding,
     getHpsBalance,
     getBNBBalance,
-    getConnectedAddress
+    getConnectedAddress,
+    acceptBid
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
