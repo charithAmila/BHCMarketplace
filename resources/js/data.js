@@ -1,4 +1,4 @@
-import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection } from './etherFunc';
+import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType } from './etherFunc';
 import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
 
 
@@ -108,7 +108,7 @@ async function getOwnedTokensData(owner, base_url) {
         var res = await axios.get(selectedToken.URI);
         var nft = res.data;
 
-        nft.copies = selectedToken.availableCopies;
+        nft.copies = nft.count;
         nft.ownedCopies = selectedToken.ownedCopies;
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
@@ -127,7 +127,7 @@ async function getOwnedTokensData(owner, base_url) {
         var res = await axios.get(selectedToken.URI);
         var nft = res.data
 
-        nft.copies = selectedToken.availableCopies;
+        nft.copies = nft.count;
         nft.ownedCopies = selectedToken.ownedCopies;
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
@@ -176,6 +176,7 @@ async function getOnSaleTokens(owner, base_url) {
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
             nft.collection = tokens[i].collection;
+            nft.copies = nft.count
             data.push(nft)
         } catch (e) {
             //console.log(e)
@@ -203,12 +204,13 @@ async function getTokensData(owner, base_url) {
 async function getTokenData(contract, owner, id) {
     var listed = false;
     //var res = await axios.get("/api/collections/" + contract);
-    var type = contract == hps721Address ? 721 : hps1155Address ? 1155 : null
-    var typeIn = type == 721 ? 1155 : 721
-    var isPrivate = contract == hps721Address ? true : hps1155Address ? true : false
-    try { var selectedToken = await getCollectible(contract, type, isPrivate, owner, id); }
-    catch (e) {
-        var selectedToken = await getCollectible(contract, typeIn, isPrivate, owner, id);
+    var isPrivate = contract != hps721Address ? true : contract != hps1155Address ? true : false
+    var type = await getCollectionType(contract);
+
+    if (type == 721) { var selectedToken = await getCollectible(contract, 721, isPrivate, owner, id); type = 721 }
+
+    else if (type == 1155) {
+        var selectedToken = await getCollectible(contract, 1155, isPrivate, owner, id); type = 1155
     }
     var colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
@@ -224,8 +226,9 @@ async function getTokenData(contract, owner, id) {
     data.file = data.image || data.file
     data.creator = owner;
     data.count = collectible.availableCopies*/
-    console.log(selectedToken)
+    //console.log(selectedToken)
     nft.count = nft.count || 1
+    nft.copies = nft.count || 1
     nft.ownedCopies = selectedToken.ownedCopies;
     nft.id = selectedToken.id;
     nft.contract = selectedToken.contract;

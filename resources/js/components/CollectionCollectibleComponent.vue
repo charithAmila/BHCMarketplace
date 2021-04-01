@@ -18,12 +18,13 @@
     </div>
 
     <collectible-component
+      v-if="loaded"
       :div_id="div_id"
       :collectible_asset="collectible_asset"
       :show_collectible="show_collectible"
       :current_user="current_user"
       :base_url="base_url"
-      :collectibles="collectionNft || collectibles"
+      :collectibles="collectibles"
       :page="page"
       :filter="filter"
     ></collectible-component>
@@ -45,7 +46,8 @@ export default {
   ],
   data() {
     return {
-      collectionNft: null,
+      collectionNft: [],
+      loaded: false,
     };
   },
   methods: {
@@ -65,6 +67,7 @@ export default {
   },
   mounted() {
     this.collectionNft = this.collectibles;
+    this.loaded = true;
   },
 };
 </script>
