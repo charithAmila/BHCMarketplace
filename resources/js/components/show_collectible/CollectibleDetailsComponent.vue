@@ -198,22 +198,6 @@ export default {
   },
   async mounted() {
     //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
-
-    var allBids = await getAllBids(
-      this.current_owner.wallet,
-      this.collectible.contract,
-      this.collectible.id
-    );
-    var biddingStatus = await getBiddingStatus(
-      this.current_owner.wallet,
-      this.collectible.contract,
-      this.collectible.id
-    );
-    console.log(highestBid);
-    console.log(allBids);
-    console.log(biddingStatus);
-  },
-
     var address = await getConnectedAddress();
     var allBids = await getAllBids(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     var output = await getBiddingStatus(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
