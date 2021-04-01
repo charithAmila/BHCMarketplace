@@ -186,7 +186,7 @@
       :page="current_page"
       :current_user="current_user"
     ></checkout-modal-component>
-    <put-on-sale-modal-component :singleNft="singleNft" :page="current_page">
+    <put-on-sale-modal-component v-if="loaded" :singleNft="singleNft" :page="current_page">
     </put-on-sale-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
@@ -224,6 +224,7 @@ export default {
       bidList: [],
       bidListNFT: "",
       checked: false,
+      loaded:false
       //collectible: this.collectibles[0],
     };
   },
@@ -238,6 +239,7 @@ export default {
     putOnSale(collectible) {
       const _this = this;
       _this.singleNft = collectible;
+      _this.loaded =true;
       _this.toggleModal("putOnSale");
     },
     async remove(collectible) {

@@ -1,4 +1,4 @@
-import { toAddress, getOwner, getSingles, getMultiples, getCollectible } from './etherFunc';
+import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection } from './etherFunc';
 import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
 
 
@@ -50,12 +50,21 @@ async function getCollections(type, me) {
     var collections = [];
 
     ///delete///
-    var t = tempCollectionData()
+    var colIpfs = await collectionURI(hps721Address);
+
+    var res = await axios.get(colIpfs);
+    var t = res.data;
+
     t.address = hps721Address
     type == 721 ? collections.push(t) : null;
-    var t = tempCollectionData()
+    var colIpfs = await collectionURI(hps1155Address);
+    var res = await axios.get(colIpfs);
+    var t = res.data;
     t.address = hps1155Address
     type == 1155 ? collections.push(t) : null;
+    var myCols = await getOwnedCollections(me, type);
+    console.log(myCols)
+    collections = [...collections, ...myCols]
     return collections;
 }
 
@@ -65,20 +74,22 @@ async function checkFollowing(user, address) {
 
 
 async function getTokens(owner) {
-    var cl721 = await getCollections(721, "");
-    var cl1155 = await getCollections(1155, "");
+    var cl721 = await getCollections(721, owner);
+    var cl1155 = await getCollections(1155, owner);
     var tokens721f = [];
     var tokens1155f = [];
     for (var i = 0; i < cl721.length; i++) {
 
         var contract = cl721[i].address
-        var singles = await getSingles(contract, owner);
+        var collection = cl721[i]
+        var singles = await getSingles(contract, owner, collection);
         tokens721f = [...tokens721f, ...singles];
     }
     for (var i = 0; i < cl1155.length; i++) {
 
         var contract = cl1155[i].address
-        var multiples = await getMultiples(contract, owner);
+        var collection = cl1155[i]
+        var multiples = await getMultiples(contract, owner, collection);
         tokens1155f = [...tokens1155f, ...multiples];
     }
 
@@ -102,7 +113,7 @@ async function getOwnedTokensData(owner, base_url) {
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
         nft.owner_id = selectedToken.tokenOwner;
-        nft.collection = tempCollectionData();
+        nft.collection = selectedToken.collection;
         nft.legend = nft.legend || "normal"
 
         ////remove/////
@@ -121,7 +132,7 @@ async function getOwnedTokensData(owner, base_url) {
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
         nft.owner_id = selectedToken.tokenOwner;
-        nft.collection = tempCollectionData();
+        nft.collection = selectedToken.collection;
         nft.legend = nft.legend || "normal"
 
         ////remove/////
@@ -164,10 +175,10 @@ async function getOnSaleTokens(owner, base_url) {
             nft.is_selling = 1;
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
-            nft.collection = tempCollectionData();
+            nft.collection = tokens[i].collection;
             data.push(nft)
         } catch (e) {
-            console.log(e)
+            //console.log(e)
         }
     }
     return data;
@@ -193,8 +204,12 @@ async function getTokenData(contract, owner, id) {
     var listed = false;
     //var res = await axios.get("/api/collections/" + contract);
     var type = contract == hps721Address ? 721 : hps1155Address ? 1155 : null
+    var typeIn = type == 721 ? 1155 : 721
     var isPrivate = contract == hps721Address ? true : hps1155Address ? true : false
-    var selectedToken = await getCollectible(contract, type, isPrivate, owner, id);
+    try { var selectedToken = await getCollectible(contract, type, isPrivate, owner, id); }
+    catch (e) {
+        var selectedToken = await getCollectible(contract, typeIn, isPrivate, owner, id);
+    }
     var colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
     /*data.current_owner = collectible.tokenOwner;
@@ -209,13 +224,13 @@ async function getTokenData(contract, owner, id) {
     data.file = data.image || data.file
     data.creator = owner;
     data.count = collectible.availableCopies*/
-
-    nft.copies = selectedToken.availableCopies;
+    console.log(selectedToken)
+    nft.count = nft.count || 1
     nft.ownedCopies = selectedToken.ownedCopies;
     nft.id = selectedToken.id;
     nft.contract = selectedToken.contract;
     nft.owner_id = selectedToken.tokenOwner;
-    nft.collection = tempCollectionData();
+    nft.collection = selectedToken.collection;
     nft.legend = nft.legend || "normal"
     nft.type = type;
 
@@ -226,10 +241,22 @@ async function getTokenData(contract, owner, id) {
     //nft.fileType = nft.fileType || "image";
     // nft.file = nft.image || nft.file
     //nft.creator = owner;
-    nft.count = selectedToken.availableCopies
 
     return nft;
 
+}
+
+async function collectiblesOfCollection(collection) {
+    var collects = await getCollection(collection);
+    var collectibles = [];
+    for (var i = 0; i < collects.length; i++) {
+        var id = collects[i].id;
+        var owner = collects[i].owner
+        var nft = await getTokenData(collection, owner, id)
+        collectibles.push(nft)
+    }
+    console.log(collectibles);
+    return collectibles;
 }
 
 async function getAllSales(current_user) {
@@ -247,6 +274,8 @@ async function getAllSales(current_user) {
                     tokens[i].current_owner,
                     tokens[i].token_id
                 )
+                nft.copies = nft.count
+                nft.collection = tokens[i].collection
                 nft.signed_to = tokens[i].signed_to;
                 nft.db_id = tokens[i].id;
                 nft.price = tokens[i].price;
@@ -287,4 +316,4 @@ async function removeSale(id) {
 }
 
 
-export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale }
+export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale, collectiblesOfCollection }
