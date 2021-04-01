@@ -16,7 +16,7 @@ class LikesController extends Controller
     public function index()
     {
         $likes = Likes::all();
-        return $likes;
+        return response()->json(['likes' => $likes]);
     }
 
     /**
@@ -24,9 +24,14 @@ class LikesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function unlike(Request $request)
     {
-        //
+        Likes::where([
+            ['address', '=', $request->address],
+            ['contract', '=', $request->contract],
+            ['token_id', '=', $request->token_id]
+        ])->update(['liked' => false]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -37,6 +42,7 @@ class LikesController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             "address" => "required",
             "contract" => "required",
@@ -44,18 +50,36 @@ class LikesController extends Controller
             "sign" => "required"
         ]);
 
-        $checker = new CheckSign;
-        $message = "I would like to like token : " . $request->contract . $request->token_id;
-        $granted = $checker->checkSign($message, $request->sign, $request->address);
-        if ($granted) {
-            $like = Likes::create([
-                "address" => $request->address,
-                "contract" => $request->contract,
-                "token_id" => $request->token_id,
-            ]);
-            return response()->json(['success' => true]);
+        $liked = Likes::where(
+            [
+                ['address', '=', $request->address],
+                ['contract', '=', $request->contract],
+                ['token_id', '=', $request->token_id]
+            ]
+        )->first();
+        if (
+            $liked === null
+        ) {
+            $checker = new CheckSign;
+            $message = "I would like to like token : " . $request->contract . $request->token_id;
+            $granted = $checker->checkSign($message, $request->sign, $request->address);
+            if ($granted) {
+                Likes::create([
+                    "address" => $request->address,
+                    "contract" => $request->contract,
+                    "token_id" => $request->token_id,
+                ]);
+                return response()->json(['success' => true]);
+            } else {
+                return abort(403);
+            }
         } else {
-            return abort(403);
+            Likes::where([
+                ['address', '=', $request->address],
+                ['contract', '=', $request->contract],
+                ['token_id', '=', $request->token_id]
+            ])->update(['liked' => true]);
+            return response()->json(['success' => true]);
         }
     }
 

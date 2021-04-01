@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :id="div_id" class="row">
+    <div :id="div_id" class="row grid-conatainer">
       <div
         v-for="(collectible, index) in collectibles"
         :key="index"
@@ -15,7 +15,7 @@
                     <div class="legend">
                       <div :class="collectible.legend">
                         <i :class="collectible.icon"></i>
-                        {{ capitalizeFirstLetter(collectible.legend) }}
+                        {{ collectible.legend }}
                       </div>
                     </div>
 
@@ -96,6 +96,7 @@
                       /-->
                     </div>
                     <a
+                      type="button"
                       :id="collectible.slug"
                       class="sale"
                       @click="putOnSale(collectible)"
@@ -186,7 +187,7 @@
       :page="current_page"
       :current_user="current_user"
     ></checkout-modal-component>
-    <put-on-sale-modal-component :singleNft="singleNft" :page="current_page">
+    <put-on-sale-modal-component v-if="loaded" :singleNft="singleNft" :page="current_page">
     </put-on-sale-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
@@ -224,6 +225,7 @@ export default {
       bidList: [],
       bidListNFT: "",
       checked: false,
+      loaded:false
       //collectible: this.collectibles[0],
     };
   },
@@ -238,6 +240,7 @@ export default {
     putOnSale(collectible) {
       const _this = this;
       _this.singleNft = collectible;
+      _this.loaded =true;
       _this.toggleModal("putOnSale");
     },
     async remove(collectible) {
@@ -316,5 +319,13 @@ export default {
 <style>
 .item-description {
   font-size: 16px;
+}
+
+.grid-conatainer{
+    display: grid;
+    grid-template-columns: repeat(auto-fill,250px);
+    grid-gap: 30px;
+    margin-top: 50px;
+
 }
 </style>
