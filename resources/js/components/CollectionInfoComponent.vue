@@ -4,7 +4,7 @@
       <div class="collection-photo">
         <img :src="collectionPhoto" />
       </div>
-      <h1 class="collection-name">{{ collection.display_name }}</h1>
+      <h1 class="collection-name">{{ collection.name }}</h1>
 
       <div class="action-container">
         <a class="btn btn-social share-link" href="javascript:void(0)">
@@ -21,7 +21,7 @@
               <a
                 href="javascript:void(0)"
                 data-sharer="twitter"
-                :data-title="collection.display_name + ' collection'"
+                :data-title="collection.name + ' collection'"
                 :data-url="asset_url + 'collection/' + collection.short_url"
               >
                 <i class="fa fa-twitter s-btn"></i>
@@ -32,7 +32,7 @@
               <a
                 href="javascript:void(0)"
                 data-sharer="facebook"
-                :data-title="collection.display_name + ' collection'"
+                :data-title="collection.name + ' collection'"
                 :data-url="asset_url + 'collection/' + collection.short_url"
               >
                 <i class="fa fa-facebook s-btn"></i>
@@ -43,7 +43,7 @@
               <a
                 href="javascript:void(0)"
                 data-sharer="telegram"
-                :data-title="collection.display_name + ' collection'"
+                :data-title="collection.name + ' collection'"
                 :data-url="asset_url + 'collection/' + collection.short_url"
               >
                 <i class="fab fa-telegram-plane s-btn"></i>
@@ -54,7 +54,7 @@
               <a
                 href="javascript:void(0)"
                 data-sharer="email"
-                :data-title="collection.display_name + ' collection'"
+                :data-title="collection.name + ' collection'"
                 :data-url="asset_url + 'collection/' + collection.short_url"
                 data-subject="Hey! Check out that URL"
               >
@@ -93,10 +93,7 @@ export default {
   },
   computed: {
     collectionPhoto: function () {
-      if (this.collection.image == "default/logo.png") {
-        return this.asset_url + "collections/" + this.collection.image;
-      }
-      return this.collection.image;
+      return this.collection.icon;
     },
   },
   methods: {
