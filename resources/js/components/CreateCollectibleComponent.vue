@@ -154,17 +154,22 @@
                     Category
                   </h6>
                   <div>
-                    <select class="form-control to-check" v-model="category" id="category-drop" name="category_id">
-                        <option value="">-- Please select category --</option>
-                        <option
-                          v-for="category in categories"
-                          :key="category.id"
-                          class="special"
-                          :value="category.category"
-                        >
-                          {{ category.category }}
-                        </option>
-                   </select>
+                    <select
+                      class="form-control to-check"
+                      v-model="category"
+                      id="category-drop"
+                      name="category_id"
+                    >
+                      <option value="">-- Please select category --</option>
+                      <option
+                        v-for="category in categories"
+                        :key="category.id"
+                        class="special"
+                        :value="category.category"
+                      >
+                        {{ category.category }}
+                      </option>
+                    </select>
                   </div>
                   <p class="this-error text-danger"></p>
                   <span
@@ -177,7 +182,12 @@
                     Legend
                   </h6>
                   <div>
-                    <select class="form-control to-check" v-model="legend" id="legend-drop" name="legend_id">
+                    <select
+                      class="form-control to-check"
+                      v-model="legend"
+                      id="legend-drop"
+                      name="legend_id"
+                    >
                       <option value="">-- Please select legend --</option>
                       <option
                         v-for="legend in legends"
@@ -503,9 +513,9 @@ export default {
           _this.current_user = toAddress(acc);
           clearInterval(connectionInterval);
           if (_this.type == "solo") {
-            _this.setCollections = await getCollections(721, acc);
+            _this.setCollections = await getCollections(721, acc, false);
           } else if (_this.type == "multiple") {
-            _this.setCollections = await getCollections(1155, acc);
+            _this.setCollections = await getCollections(1155, acc, false);
           }
         }
       }, 300);
@@ -670,7 +680,6 @@ export default {
       const _this = this;
       _this.selectedContract = _selectedContract;
     },
-    
   },
 
   async mounted() {
