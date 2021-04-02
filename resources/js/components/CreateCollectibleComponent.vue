@@ -154,10 +154,22 @@
                     Category
                   </h6>
                   <div>
-                    <category-component
-                      @clicked="onClickCat"
-                      :categories="categories"
-                    ></category-component>
+                    <select
+                      class="form-control to-check"
+                      v-model="category"
+                      id="category-drop"
+                      name="category_id"
+                    >
+                      <option value="">-- Please select category --</option>
+                      <option
+                        v-for="category in categories"
+                        :key="category.id"
+                        class="special"
+                        :value="category.category"
+                      >
+                        {{ category.category }}
+                      </option>
+                    </select>
                   </div>
                   <p class="this-error text-danger"></p>
                   <span
@@ -170,10 +182,22 @@
                     Legend
                   </h6>
                   <div>
-                    <legend-component
-                      @clicked="onClickLegend"
-                      :legends="legends"
-                    ></legend-component>
+                    <select
+                      class="form-control to-check"
+                      v-model="legend"
+                      id="legend-drop"
+                      name="legend_id"
+                    >
+                      <option value="">-- Please select legend --</option>
+                      <option
+                        v-for="legend in legends"
+                        :key="legend.id"
+                        class="special"
+                        :value="legend.legend"
+                      >
+                        {{ legend.legend }}
+                      </option>
+                    </select>
                   </div>
                   <p class="this-error text-danger"></p>
                   <span
@@ -394,6 +418,7 @@
                         <img
                           v-bind:src="uploadedImage"
                           class="category-img-tag"
+                          alt=""
                         />
                       </div>
                       <div
@@ -488,9 +513,9 @@ export default {
           _this.current_user = toAddress(acc);
           clearInterval(connectionInterval);
           if (_this.type == "solo") {
-            _this.setCollections = await getCollections(721, acc);
+            _this.setCollections = await getCollections(721, acc, false);
           } else if (_this.type == "multiple") {
-            _this.setCollections = await getCollections(1155, acc);
+            _this.setCollections = await getCollections(1155, acc, false);
           }
         }
       }, 300);
@@ -654,15 +679,6 @@ export default {
     onClickCard(_selectedContract) {
       const _this = this;
       _this.selectedContract = _selectedContract;
-    },
-    onClickCat(_selectedCat) {
-      const _this = this;
-      _this.category = _selectedCat;
-    },
-    onClickLegend(_selectedlegend) {
-      const _this = this;
-      _this.legend = _selectedlegend;
-      console.log(_this.legend);
     },
   },
 

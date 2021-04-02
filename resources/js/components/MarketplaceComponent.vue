@@ -5,14 +5,18 @@
         <button
           data-filter-id="all"
           class="filter-btn active"
-          @click="filterNft('all')"
+          @click="filterNftAll()"
         >
           All
         </button>
-        <button data-filter-id="1" class="filter-btn" @click="filterNft(1)">
+        <button data-filter-id="1" class="filter-btn" @click="getFilterdArts()">
           Arts
         </button>
-        <button data-filter-id="2" class="filter-btn" @click="filterNft(2)">
+        <button
+          data-filter-id="2"
+          class="filter-btn"
+          @click="getFilterdMemes()"
+        >
           Memes
         </button>
       </div>
@@ -20,8 +24,9 @@
         <a class="sorter sortDesk" href="javascript:void(0)">
           <img
             class="imgFilter"
-            :src="asset_url + '/images/filter.png'"
+            :src="asset_url + 'images/filter.png'"
             width="25"
+            alt=""
           />
           Sort & Filter
         </a>
@@ -31,6 +36,7 @@
             class="imgFilter"
             :src="asset_url + '/images/filter.png'"
             width="25"
+            alt=""
           />
         </a>
 
@@ -46,7 +52,9 @@
                 @click="sortNft('updated_at', 'desc')"
               >
                 <div class="row">
-                  <div class="col-md-9">Recently added</div>
+                  <div class="col-md-9" @click="sortedItems()">
+                    Recently added
+                  </div>
                   <div class="col-md-3 checkLabel">
                     <i class="fa fa-check"></i>
                   </div>
@@ -155,7 +163,13 @@
         :show_collectible="show_collectible"
         :current_user="current_user"
         :base_url="base_url"
-        :collectibles="collectibles"
+        :collectibles="
+          isSortedRecent
+            ? new_array_collectibles
+            : isAll
+            ? collectibles
+            : collectible
+        "
         :page="'marketplace'"
       ></collectible-component>
     </div>
@@ -170,21 +184,20 @@ export default {
   components: {
     Collectible,
   },
-  props: [
-    "collectible_asset",
-    "show_collectible",
-    "base_url",
-    "asset_url",
-  ],
+  props: ["collectible_asset", "show_collectible", "base_url", "asset_url"],
   data() {
     return {
       collectibles: [],
+      collectible: [],
       category: "all",
       sortBy: "updated_at",
       order: "desc",
       div_id: "nft-container",
       notifications: [],
       current_user: "",
+      isAll: true,
+      new_array_collectibles: [],
+      isSortedRecent: false,
     };
   },
   methods: {
@@ -202,6 +215,73 @@ export default {
         }
       }, 300);
     },
+    getFilterdArts() {
+      if (
+        this.new_array_collectibles === undefined ||
+        this.new_array_collectibles.length == 0
+      ) {
+        //
+      } else {
+        if (this.isSortedRecent) {
+          //
+        } else {
+          this.collectibles = [...this.new_array_collectibles];
+        }
+      }
+      this.isSortedRecent = false;
+      this.collectible = this.collectibles.filter(function (hero) {
+        return hero.category == 1;
+      });
+      this.isAll = false;
+    },
+    getFilterdMemes() {
+      if (
+        this.new_array_collectibles === undefined ||
+        this.new_array_collectibles.length == 0
+      ) {
+        //
+      } else {
+        this.isSortedRecent = false;
+        this.collectibles = [...this.new_array_collectibles];
+      }
+      this.isSortedRecent = false;
+      this.collectible = this.collectibles.filter(function (hero) {
+        return hero.category == "test cat 1 ";
+      });
+      this.isAll = false;
+    },
+    filterNftAll() {
+      if (
+        this.new_array_collectibles === undefined ||
+        this.new_array_collectibles.length == 0
+      ) {
+        //
+      } else {
+        this.isSortedRecent = false;
+        this.collectibles = [...this.new_array_collectibles];
+      }
+      this.isAll = true;
+    },
+    sortedItems: function () {
+      if (
+        this.new_array_collectibles === undefined ||
+        this.new_array_collectibles.length == 0
+      ) {
+        //
+      } else {
+        this.isSortedRecent = false;
+        this.collectibles = [...this.new_array_collectibles];
+      }
+      if (!this.isAll) {
+        var collectible_array = this.collectible;
+      } else {
+        var collectible_array = this.collectibles;
+      }
+      this.isSortedRecent = true;
+      this.new_array_collectibles = collectible_array.sort(function (a, b) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+    },
     getCollectible() {
       const _this = this;
       getAllSales(_this.current_user)
@@ -214,7 +294,7 @@ export default {
     },
     filterNft(clickedCategory) {
       this.category = clickedCategory;
-      this.fetchFilterNft();
+      // this.fetchFilterNft();
     },
     sortNft(column, columnOrder) {
       this.sortBy = column;

@@ -191,7 +191,7 @@
           :collection="set_collectible.collection"
           :collection_image="set_collectible.collection_image"
           :collection_url="set_collectible.collection_url"
-          :collectible = "collectible"
+          :collectible="collectible"
         ></collectible-details-component>
 
         <div class="row m-20 text-center end-content">
@@ -283,22 +283,52 @@
             class="buyBtn d-none d-md-block"
             @click="fetchSingleNft('checkout')"
           >
-            Buy {{ set_collectible.price }}
+            Buy 1 for {{ set_collectible.price }}
+            {{ set_collectible.currencyName }}
           </button>
 
           <p class="text-gray text-center d-none d-md-block">
-            Service fee 1.5% {{ set_collectible.price }} =
-            <span class="text-dark-gray">$137.228</span>
+            Service fee 2.5% =
+            <span class="text-dark-gray"
+              >{{ service_fee }} {{ set_collectible.currencyName }}</span
+            >
+          </p>
+          <p class="text-gray text-center d-none d-md-block">
+            Total to be paid for 1 collectible =
+            <span class="text-dark-gray"
+              >{{ singleNft.price + service_fee }}
+              {{ set_collectible.currencyName }}</span
+            >
+          </p>
+          <p class="text-gray text-center d-none d-md-block">
+            Original Creator will get {{ singleNft.royalties }}% of the total
+            sale
+            <!--span class="text-dark-gray">{{ service_fee }} {{ set_collectible.currencyName }}</span-->
           </p>
 
           <div class="show-footer-btn d-block d-md-none">
             <button class="buyBtn" @click="fetchSingleNft('checkout')">
               Buy 1 for {{ set_collectible.price }}
+              {{ set_collectible.currencyName }}
             </button>
 
             <p class="text-gray text-center">
-              Service fee 1.5% {{ set_collectible.price }} =
-              <span class="text-dark-gray">$137.228</span>
+              Service fee 2.5% =
+              <span class="text-dark-gray"
+                >{{ service_fee }} {{ set_collectible.currencyName }}</span
+              >
+            </p>
+            <p class="text-gray text-center d-none d-md-block">
+              Total to be paid for 1 collectible =
+              <span class="text-dark-gray"
+                >{{ singleNft.price + service_fee }}
+                {{ set_collectible.currencyName }}</span
+              >
+            </p>
+            <p class="text-gray text-center d-none d-md-block">
+              Original Creator will get {{ singleNft.royalties }}% of the total
+              sale
+              <!--span class="text-dark-gray">{{ service_fee }} {{ set_collectible.currencyName }}</span-->
             </p>
           </div>
         </div>
@@ -321,12 +351,13 @@
         <div class="inner-img">
           <div class="mobile-imgHead d-block d-md-none">
             <a
-              v-if="current_user != current_owner.user_id"
+              v-if="current_user != current_owner.wallet"
               :data-nft-slug="set_collectible.nft_slug"
               :data-record-id="set_collectible.record_id"
               :class="is_liked == true ? 'nft-liked' : ''"
               class="like-btn m-imgHead-link"
               href="javascript:void(0)"
+              @click="addLike()"
             >
               <i class="fa fa-heart nft-option"></i>
             </a>
@@ -354,12 +385,13 @@
 
             <div class="show-nft-option imgHead d-none d-md-block">
               <a
-                v-if="current_user != current_owner.user_id"
+                v-if="current_user != current_owner.wallet"
                 :data-nft-slug="set_collectible.nft_slug"
                 :data-record-id="set_collectible.record_id"
                 :class="is_liked == true ? 'nft-liked' : ''"
                 class="like-btn imgHead-link"
                 href="javascript:void(0)"
+                @click="addLike()"
               >
                 <i class="fa fa-heart nft-option"></i>
               </a>
@@ -374,19 +406,21 @@
         <img
           class="showImgBg d-none d-md-block"
           :src="asset_url + 'images/right.png'"
+          alt=""
         />
       </div>
     </div>
 
     <checkout-modal-component
+      v-if="current_user != null"
       :singleNft="singleNft"
       :page="'showcollectible'"
+      :current_user="current_user"
     ></checkout-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
       :page="'showcollectible'"
     ></bid-modal-component>
-   
   </div>
 </template>
 
@@ -396,6 +430,10 @@ import CollectibleDetails from "./show_collectible/CollectibleDetailsComponent.v
 import BidModal from "./modals/BidModalComponent.vue";
 import CheckoutModal from "./modals/CheckoutModalComponent.vue";
 import { getUserDetails } from "./../data";
+
+import { checkConnection, toAddress } from "./../etherFunc";
+
+import { LikeController } from "../mediaFunc";
 
 export default {
   components: {
@@ -407,11 +445,9 @@ export default {
     "collectible",
     "transactions",
     "onWishList",
-    "is_liked",
     "asset_url",
     "auth_check",
     "user_profile",
-    "current_user",
     "base_url",
   ],
   data() {
@@ -424,6 +460,10 @@ export default {
       set_transactions: [],
       current_url: "",
       loaded: false,
+      current_user: null,
+      service_fee: 0,
+      royaltyFee: 0,
+      is_liked: false,
     };
   },
   watch: {
@@ -434,6 +474,24 @@ export default {
     },
   },
   methods: {
+    checkConnection() {
+      const _this = this;
+      var interval = setInterval(function () {
+        var acc = checkConnection();
+        if (acc != toAddress("")) {
+          _this.current_user = acc;
+          clearInterval(interval);
+        }
+      }, 300);
+    },
+    async getOwnersDetails() {
+      const _this = this;
+      for (var i = 0; i < _this.collectible.owners.length; i++) {
+        var details = await getUserDetails(_this.collectible.owners[i].owner);
+        details.ownedCopies = Number(_this.collectible.owners[i].ownedCopies);
+        _this.owners.push(details);
+      }
+    },
     toggleDropdown(ct) {
       console.log(ct);
       var container;
@@ -458,18 +516,9 @@ export default {
         modalOpen($("#" + clicked + "Modal"), $("." + clicked + "-content"));
       }
       this.singleNft = this.collectible;
-      this.singleNft.total = this.fetchTotal(this.collectible.price);
-      this.singleNft.currency = this.fetchCurrency(this.collectible.price);
-      this.singleNft.max = this.fetchTotalCopies(this.collectible.available);
-    },
-    fetchTotal(price) {
-      return parseFloat(price.split(" ")[0]).toFixed(2);
-    },
-    fetchCurrency(price) {
-      return price.split(" ")[1];
-    },
-    fetchTotalCopies(copies) {
-      return copies.split(" ")[0];
+      this.singleNft.total = this.singleNft.price;
+      this.singleNft.currency = this.singleNft.currency;
+      this.singleNft.max = this.singleNft.available;
     },
     updateData() {
       axios
@@ -492,16 +541,73 @@ export default {
       $("input.linkToCopy").select();
       document.execCommand("copy");
     },
+    async addLike() {
+      if (this.is_liked) {
+        this.unlike();
+      } else {
+        var contract = this.collectible.contract;
+        var id = this.collectible.id;
+        var output = await LikeController(contract, id);
+        if (output.success) {
+          this.is_liked = true;
+        }
+      }
+    },
+    unlike() {
+      var data = {};
+      var contract = this.collectible.contract;
+      var id = this.collectible.id;
+      var _this = this;
+      data.contract = contract;
+      data.token_id = id;
+      data.address = connected_account.toLowerCase();
+      axios
+        .post("/unlike", data, {})
+        .then(function (response) {
+          if (response.data.success) {
+            _this.is_liked = false;
+          }
+        })
+        .catch(function (error) {});
+    },
+    checkLike() {
+      var contract = this.collectible.contract;
+      var id = this.collectible.id;
+      var _this = this;
+      axios.get("/like").then((res) => {
+        var valObj = res.data.likes.filter(function (elem) {
+          if (
+            elem.token_id == id &&
+            elem.contract == contract &&
+            elem.address == connected_account &&
+            elem.liked == true
+          )
+            return elem.token_id;
+        });
+        if (valObj.length > 0) {
+          _this.is_liked = true;
+        }
+      });
+    },
   },
   async mounted() {
     this.loaded = false;
     this.set_collectible = this.collectible;
+    this.singleNft = this.collectible;
     this.set_transactions = this.transactions;
     this.creator = await getUserDetails(this.collectible.creator);
     this.current_owner = await getUserDetails(this.collectible.owner_id);
-    //this.owners = this.collectible.owners
 
+    await this.getOwnersDetails();
     this.loaded = true;
+
+    this.checkConnection();
+    this.service_fee = (this.collectible.price * 2.5) / 100;
+    this.royaltyFee =
+      (this.collectible.price * this.collectible.royalties) / 100;
+
+    this.checkLike();
+
   },
 };
 </script>

@@ -2,17 +2,18 @@
 
 use App\Events\PlaceBid;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\IndexController;
-use App\Http\Controllers\CollectibleController;
-use App\Http\Controllers\CollectionController;
-use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\LikeController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\SearchController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\LikesController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\Api\BidController;
+use App\Http\Controllers\CollectibleController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CollectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,7 @@ Route::get('/connect', [WalletController::class, 'index'])->name('connect.wallet
 Route::get('/wallet/fetch', [WalletController::class, 'fetch'])->name('wallet.fetch');
 
 Route::middleware('signed')->prefix('/connect/{user_id}')->group(function () {
-    Route::get('/', [WalletController::class, 'customLogin'])->name('custom.login');
+	Route::get('/', [WalletController::class, 'customLogin'])->name('custom.login');
 });
 Route::get('/profile/{slug}', [UserController::class, 'index'])->name('user.profile');
 Route::get('/user/data', [UserController::class, 'getAuthenticated']);
@@ -69,11 +70,11 @@ Route::get('/collection/{collection_slug}', [CollectionController::class, 'show'
 Route::get('/collection/{collection_slug}/{filter}', [CollectionController::class, 'filterCollection']);
 Route::post('/collection', [CollectionController::class, 'store'])->name('create.collection');
 
-Route::post('/wishlist', [LikeController::class, 'wishlist']);
+Route::post('/wishlist', [LikesController::class, 'wishlist']);
 
 
 
-Route::get('/logout', function(){
+Route::get('/logout', function () {
 	Auth::logout();
 	return redirect()->back();
 })->name('disconnect');
@@ -91,12 +92,24 @@ Route::post('/report', [ReportController::class, 'report']);
 
 Route::get('/notifications', [NotificationController::class, 'userNotifications']);
 
-Route::post('bid',[BidController::class, 'store']);
+Route::post('bid', [BidController::class, 'store']);
 
-Route::post('getAllBids',[BidController::class, 'allBids']);
+Route::post('getAllBids', [BidController::class, 'allBids']);
 
-Route::post('startBid',[BidController::class, 'startBid']);
+Route::post('startBid', [BidController::class, 'startBid']);
 
-Route::post('endBid',[BidController::class, 'endBid']);
+Route::post('endBid', [BidController::class, 'endBid']);
 
-Route::post('getBiddingStatus',[BidController::class, 'getBiddingStatus']);
+Route::post('getBiddingStatus', [BidController::class, 'getBiddingStatus']);
+
+Route::post('like', [LikesController::class, 'store']);
+
+Route::get('like', [LikesController::class, 'index'])->name('likes');
+
+Route::post('unlike', [LikesController::class, 'unlike'])->name('unlike');
+
+Route::post('follow', [FollowController::class, 'follow']);
+
+Route::post('unfollow', [FollowController::class, 'unfollow']);
+
+Route::get('followers', [FollowController::class, 'index'])->name('followers');

@@ -91,21 +91,19 @@
           <div v-for="(owner, index) in owners" :key="index" class="row dtab">
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
-                <a :href="user_profile + '/' + owner.user_profile">
-                  <img
-                    class="br-50"
-                    :src="asset_url + owner.asset_url"
-                    width="50"
-                  />
+                <a :href="user_profile + '/' + owner.wallet">
+                  <img class="br-50" :src="owner.display_photo" width="50" />
                 </a>
                 <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
               </div>
             </div>
             <div class="col-9 col-md-10">
-              <label class="position">Holder</label>
+              <label class="position"
+                >{{ owner.ownedCopies }} of {{ collectible.copies }}</label
+              >
               <label class="positionHolder"
-                ><a :href="user_profile + '/' + owner.user_profile">{{
-                  owner.user_name
+                ><a :href="user_profile + '/' + owner.wallet">{{
+                  owner.name
                 }}</a></label
               >
             </div>

@@ -24,7 +24,7 @@
       :csrf_token="csrf_token"
     ></update-cover-modal-component>
 
-    <footer-component :base_url="csrf_token"></footer-component>
+    <footer-component :base_url="base_url"></footer-component>
   </div>
 </template>
 
