@@ -153,8 +153,8 @@
 
                <div class="col-9 col-md-10">
               <label class="position"
-                >{{ this.highestBid.maxAmount }} {{ this.highestBid.maxBidToken}}
-                <span class="positionHolder">{{ this.highestBid.maxAmount}}</span>
+                >
+                <span class="positionHolder">{{ this.highestBid.maxAmount/10**18}}</span> {{ this.highestBid.maxBidToken}}
                 on {{ this.highestBid.maxBidTime.slice(0, 10) }} by
                 <a :href="user_profile + '/' + this.highestBid.maxBidder"
                   ><span class="positionHolder">{{
@@ -183,8 +183,8 @@
             </div>
             <div class="col-9 col-md-10">
               <label class="position"
-                >{{ transac.bidding_amount }} {{ transac.bidding_token }}
-                <span class="positionHolder">{{ transac.bidding_amount }}</span>
+                > 
+                <span class="positionHolder">{{ transac.bidding_amount }}</span> {{ transac.bidding_token }}
                 on {{ transac.created_at.slice(0, 10) }} by
                 <a :href="user_profile + '/' + transac.bidding_address"
                   ><span class="positionHolder">{{
@@ -295,7 +295,7 @@ async loadData(){
      if(res ==1){
  this.biddingStatus = true;
      }
-     
+     this.loadData();
       
     },
    async endBid() {
@@ -307,7 +307,7 @@ async loadData(){
     if(res ==1){
   this.biddingStatus = false;
     }
-    
+    this.loadData();
      
     },
 
