@@ -23,7 +23,8 @@ const factoryABI = require("./abis/factory.json");
 
 if (typeof window.ethereum == "undefined") {
     alert("no provider fround");
-    window.provider = new ethers.getDefaultProvider();
+    //window.provider = new ethers.getDefaultProvider();
+    window.provider = null;
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
 }
@@ -148,39 +149,44 @@ async function getOwnersOf(collectionAddess, tokenId) {
     const ERC1155Interface = "0x0e89341c";
     const ERC721Interface = "0x80ac58cd";
 
+
     var filters = {}
     var owners = [];
 
-    var contract = new ethers.Contract(toAddress(collectionAddess), bhc721, provider);
-    var is721 = await contract.supportsInterface(ERC721Interface)
-    var is1155 = await contract.supportsInterface(ERC1155Interface)
+    var contract = new ethers.Contract(
+        toAddress(collectionAddess),
+        bhc721,
+        provider
+    );
+    var is721 = await contract.supportsInterface(ERC721Interface);
+    var is1155 = await contract.supportsInterface(ERC1155Interface);
     if (is721) {
         var owner = await contract.ownerOf(tokenId);
-        owners.push({ "owner": owner, ownedCopies: 1 })
-
-    }
-    else {
-        contract = new ethers.Contract(toAddress(collectionAddess), bhc1155, provider)
-        var evts = await contract.queryFilter("TransferSingle", 0, "latest")
-        var ownerById = {}
+        owners.push({ owner: owner, ownedCopies: 1 });
+    } else {
+        contract = new ethers.Contract(
+            toAddress(collectionAddess),
+            bhc1155,
+            provider
+        );
+        var evts = await contract.queryFilter("TransferSingle", 0, "latest");
+        var ownerById = {};
         for (var i = 0; i < evts.length; i++) {
             if (Number(evts[i].args.id) == tokenId) {
                 var owner = evts[i].args.to;
-                var copies = await contract.balanceOf(owner, evts[i].args.id)
-                var tk = { "owner": owner, ownedCopies: copies }
-                var obj = owners.filter(function (element) {
-                    if (
-                        element.owner == owner) return true;
-                })
+                var copies = await contract.balanceOf(owner, evts[i].args.id);
+                var tk = { owner: owner, ownedCopies: copies };
+                var obj = owners.filter(function(element) {
+                    if (element.owner == owner) return true;
+                });
                 if (obj.length == 0) {
-                    owners.push(tk)
+                    owners.push(tk);
                 }
             }
         }
-
-
     }
-    console.log(owners)
+
+    console.log(owners);
 
     return owners;
 }
@@ -198,6 +204,7 @@ async function getOwnedCollections(me, type, forDetails) {
         while (true) {
             var col = null;
             var ABI;
+
             type == 721
                 ? (col = await contract.ERC721contracts(num))
                 : (col = await contract.ERC1155contracts(num));
@@ -207,6 +214,7 @@ async function getOwnedCollections(me, type, forDetails) {
 
             console.log(col)
             if (toAddress(owner) == toAddress(me) || forDetails) {
+
 
 
                 var uri = await colCon.contract_URI();
@@ -398,10 +406,12 @@ async function createASingle(url, royalty, collection) {
         collection,
         url,
         BigNumber.from(Number(royalty)),
-        false,
-        {
+
+        true, {
             gasPrice: BigNumber.from(30000000000),
-            gasLimit: BigNumber.from(8500000)
+            gasLimit: BigNumber.from(8500000),
+            value: ethers.utils.parseEther("0.25")
+
         }
     );
     return tx;
@@ -416,8 +426,9 @@ async function createABatch(url, count, royalty, collection) {
         url,
         BigNumber.from(Number(count)),
         BigNumber.from(Number(royalty)),
-        true,
-        {
+
+        true, {
+
             value: ethers.utils.parseEther("0.25"),
             gasPrice: BigNumber.from(30000000000),
             gasLimit: BigNumber.from(8500000)
@@ -434,16 +445,19 @@ async function createCollection(type, uri, isBNB) {
         var tx = await contract.generate721(
             contractFactoryAddress,
             uri,
+
             isBNB,
             { value: ethers.utils.parseEther("0.25") }
+
         );
     } else {
         var tx = await contract.generate1155(
             contractFactoryAddress,
             "https://ipfs.io/ipfs/",
             uri,
-            isBNB,
-            {
+
+            isBNB, {
+
                 value: ethers.utils.parseEther("0.25"),
                 gasPrice: BigNumber.from(30000000000),
                 gasLimit: BigNumber.from(8500000)
@@ -522,8 +536,10 @@ async function buy(
             sig.v,
             sig.r,
             sig.s
+
         ],
         {
+
             gasPrice: BigNumber.from(30000000000),
             gasLimit: BigNumber.from(8500000),
             value: buyWith == toAddress("") ? BigNumber.from(_price) : "0"
@@ -558,4 +574,6 @@ export {
     getCollection,
     getCollectionType,
     getOwnersOf
+
 };
+

@@ -30,8 +30,14 @@
                 v-if="collection.default == 1"
                 class="collection-logo"
                 :src="collection.icon"
+                alt=""
               />
-              <img v-else class="collection-logo" :src="collection.icon" />
+              <img
+                v-else
+                class="collection-logo"
+                :src="collection.icon"
+                alt=""
+              />
               <h6>{{ collection.name }} {{ collection.symbol }}</h6>
             </div>
           </div>

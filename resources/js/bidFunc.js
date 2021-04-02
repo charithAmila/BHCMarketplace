@@ -101,8 +101,10 @@ async function getTokenPrice(bidding_token) {
 
     const contract = getTokenAddress(bidding_token);
     const price = await julswap_Read.getAmountsIn(
+
         ethers.BigNumber.from("1000000000000000000"),
         [WBNB_tokenAddress, contract]
+
     );
     return parseInt(price[0].toString());
 }
@@ -326,14 +328,14 @@ function timeDifference(date1, date2) {
 
     console.log(
         "difference = " +
-            daysDifference +
-            " day/s " +
-            hoursDifference +
-            " hour/s " +
-            minutesDifference +
-            " minute/s " +
-            secondsDifference +
-            " second/s "
+        daysDifference +
+        " day/s " +
+        hoursDifference +
+        " hour/s " +
+        minutesDifference +
+        " minute/s " +
+        secondsDifference +
+        " second/s "
     );
 }
 ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
