@@ -89,7 +89,7 @@
         ></collectible-component>
 
         <following-modal-component
-          :following="following"
+          :following="followings"
           :asset_url="asset_url"
         ></following-modal-component>
 
@@ -125,6 +125,8 @@ import Collectible from "./CollectibleComponent.vue";
 import Following from "./modals/FollowingModalComponent.vue";
 import Follower from "./modals/FollowerModalComponent.vue";
 import { getTokensData } from "./../data.js";
+import { getUserDetails } from "../data";
+import { log } from "util";
 export default {
   components: {
     Collectible,
@@ -148,8 +150,11 @@ export default {
       collectibles: [],
       filter: "on-sale",
       following: [],
-      followers: [],
       loading: false,
+      followers: [],
+      followings: [],
+      output_array: [],
+      output_array_followings: [],
     };
   },
   methods: {
@@ -170,19 +175,53 @@ export default {
       this.getCollectible();
     },
     getFollowing() {
-      axios.get("/user-follow/" + this.user_slug + "/following").then((res) => {
-        this.following = res.data.user_follow;
-      });
       modalOpen($("#following-modal"), $(".following-content"));
     },
     getFollower() {
-      axios.get("/user-follow/" + this.user_slug + "/follower").then((res) => {
-        this.followers = res.data.user_follow;
-      });
       modalOpen($("#follower-modal"), $(".follower-content"));
+    },
+    async getFollowers() {
+      var user_id = this.user_id;
+      var _this = this;
+      var res = await axios.get("/followers");
+      _this.output_array = res.data.followers.filter(function (elem) {
+        if (elem.user_id == user_id) {
+          return elem.user_id;
+        }
+      });
+    },
+    async getFollowings() {
+      var user_id = this.user_id;
+      const new_user_id = user_id.toLowerCase();
+      var _this = this;
+      var res = await axios.get("/followers");
+      _this.output_array_followings = res.data.followers.filter(function (
+        elem
+      ) {
+        if (elem.follower_id == new_user_id) {
+          return elem.follower_id;
+        }
+      });
+    },
+    async asignFollowers() {
+      var _this = this;
+      for (var i = 0; i < this.output_array.length; i++) {
+        var resu = await getUserDetails(this.output_array[i].follower_id);
+        _this.followers.push(resu);
+      }
+
+      for (var j = 0; j < this.output_array_followings.length; j++) {
+        var resul = await getUserDetails(
+          this.output_array_followings[j].user_id
+        );
+        _this.followings.push(resul);
+      }
     },
   },
   async mounted() {
+    await this.getFollowers();
+    await this.getFollowings();
+    await this.asignFollowers();
     await this.getCollectible();
   },
 };
