@@ -126,6 +126,45 @@ async function getCollectionType(collectionAddress) {
     return is721 ? 721 : is1155 ? 1155 : null;
 }
 
+async function getOwnersOf(collectionAddess, tokenId) {
+    const ERC1155Interface = "0x0e89341c";
+    const ERC721Interface = "0x80ac58cd";
+    var filters = {}
+    var owners = [];
+
+    var contract = new ethers.Contract(toAddress(collectionAddess), bhc721, provider);
+    var is721 = await contract.supportsInterface(ERC721Interface)
+    var is1155 = await contract.supportsInterface(ERC1155Interface)
+    if (is721) {
+        var owner = await contract.ownerOf(tokenId);
+        owners.push({ "owner": owner, ownedCopies: 1 })
+
+    }
+    else {
+        contract = new ethers.Contract(toAddress(collectionAddess), bhc1155, provider)
+        var evts = await contract.queryFilter("TransferSingle", 0, "latest")
+        var ownerById = {}
+        for (var i = 0; i < evts.length; i++) {
+            if (Number(evts[i].args.id) == tokenId) {
+                var owner = evts[i].args.to;
+                var copies = await contract.balanceOf(owner, evts[i].args.id)
+                var tk = { "owner": owner, ownedCopies: copies }
+                var obj = owners.filter(function (element) {
+                    if (
+                        element.owner == owner) return true;
+                })
+                if (obj.length == 0) {
+                    owners.push(tk)
+                }
+            }
+        }
+
+
+    }
+    console.log(owners)
+    return owners;
+}
+
 async function getOwnedCollections(me, type) {
     var collections = [];
     const address = toAddress(me);
@@ -427,6 +466,7 @@ export {
     collectionURI,
     getOwnedCollections,
     getCollection,
-    getCollectionType
+    getCollectionType,
+    getOwnersOf
 
 };

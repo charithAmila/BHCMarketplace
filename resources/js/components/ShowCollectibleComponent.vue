@@ -191,7 +191,7 @@
           :collection="set_collectible.collection"
           :collection_image="set_collectible.collection_image"
           :collection_url="set_collectible.collection_url"
-          :collectible = "collectible"
+          :collectible="collectible"
         ></collectible-details-component>
 
         <div class="row m-20 text-center end-content">
@@ -386,7 +386,6 @@
       :singleNft="singleNft"
       :page="'showcollectible'"
     ></bid-modal-component>
-   
   </div>
 </template>
 
@@ -434,6 +433,14 @@ export default {
     },
   },
   methods: {
+    async getOwnersDetails() {
+      const _this = this;
+      for (var i = 0; i < _this.collectible.owners.length; i++) {
+        var details = await getUserDetails(_this.collectible.owners[i].owner);
+        details.ownedCopies = Number(_this.collectible.owners[i].ownedCopies);
+        _this.owners.push(details);
+      }
+    },
     toggleDropdown(ct) {
       console.log(ct);
       var container;
@@ -499,8 +506,7 @@ export default {
     this.set_transactions = this.transactions;
     this.creator = await getUserDetails(this.collectible.creator);
     this.current_owner = await getUserDetails(this.collectible.owner_id);
-    //this.owners = this.collectible.owners
-
+    await this.getOwnersDetails();
     this.loaded = true;
   },
 };
