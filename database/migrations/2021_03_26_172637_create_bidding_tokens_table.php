@@ -16,6 +16,7 @@ class CreateBiddingTokensTable extends Migration
         Schema::create('bidding_tokens', function (Blueprint $table) {
             $table->id();
             $table->string('contract_address');
+            $table->string('owner');
             $table->integer('token_id');
             $table->boolean('status');
             $table->timestamps();
