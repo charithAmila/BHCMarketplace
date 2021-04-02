@@ -2829,8 +2829,8 @@ async function getHighestBid(owner, contract_address, token_id) {
     for (var i = 0; i < output.length; i++) {
         // var price = await getTokenPrice(output[i].bidding_token);
         var price = 10;
-        if (price * output[i].bidding_amount > maxAmount * 10 ** 18) {
-            maxAmount = price / 10 ** 18;
+        if (price * output[i].bidding_amount > maxAmount) {
+            maxAmount = price;
             maxBidder = output[i].user_id;
             maxBidToken = output[i].bidding_token;
             maxBidSig = output[i].signature;

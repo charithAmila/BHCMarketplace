@@ -235,6 +235,7 @@ console.log(res);
 },
 
 acceptBidding(){
+  console.log(this.highestBid.maxAmount);
 var res = acceptBid(this.collectible.contract, this.collectible.type == 721 ? true : false,this.collectible.id,this.highestBid.maxBidder,1,this.highestBid.maxBidToken, `${this.highestBid.maxAmount}`,'Place a Bid', this.owner==true?this.address:'',this.highestBid.maxBidSig);
 console.log(res);
 }
