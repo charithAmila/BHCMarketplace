@@ -282,7 +282,7 @@ export default {
       const _this = this;
       var interval = setInterval(async function () {
         var acc = checkConnection();
-        if (acc) {
+        if (acc != toAddress("")) {
           _this.auth_check = true;
           _this.current_user.wallet = acc;
           _this.selectedAddress = acc;
