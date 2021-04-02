@@ -66,8 +66,8 @@
           <div class="row dtab">
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
-                <a :href="asset_url + 'collection/' + collection.address">
-                  <img class="br-50" :src="collection.icon" width="50" />
+                <a :href="asset_url + 'collection/'">
+                  <img class="br-50" :src="st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg" width="50" />
                 </a>
                 <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
               </div>
@@ -75,8 +75,8 @@
             <div class="col-9 col-md-10">
               <label class="position">Collection</label>
               <label class="positionHolder"
-                ><a :href="asset_url + 'collection/' + collection.address">{{
-                  collection.name
+                ><a :href="asset_url + 'collection/' + Address">{{
+                
                 }}</a></label
               >
             </div>
@@ -141,6 +141,26 @@
           >
             Accept Highest Bid
           </button>
+          <div class="col-3 col-md-2">
+            <div class="inlineDiv">
+                <a :href="user_profile + '/' + transac.bidding_address">
+                  <img class="br-50" :src="asset_url" width="50" />
+                </a>
+                <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
+              </div>
+          </div>
+          <div class="col-9 col-md-10">
+              <label class="position"
+                >{{ transac.bidding_amount }} {{ transac.bidding_token }}
+                <span class="positionHolder">{{ transac.bidding_amount }}</span>
+                on {{ transac.created_at.slice(0, 10) }} by
+                <a :href="user_profile + '/' + transac.bidding_address"
+                  ><span class="positionHolder">{{
+                    transac.bidding_address
+                  }}</span></a
+                >
+              </label>
+            </div>
           <div
             v-for="(transac, index) in allBids"
             :key="index"
@@ -158,7 +178,7 @@
             <div class="col-9 col-md-10">
               <label class="position"
                 >{{ transac.bidding_amount }} {{ transac.bidding_token }}
-                <span class="positionHolder">{{ bidding_amount }}</span>
+                <span class="positionHolder">{{ transac.bidding_amount }}</span>
                 on {{ transac.created_at.slice(0, 10) }} by
                 <a :href="user_profile + '/' + transac.bidding_address"
                   ><span class="positionHolder">{{
@@ -166,30 +186,6 @@
                   }}</span></a
                 >
               </label>
-
-              <!--label v-if="transac.action == 'Offered'" class="position"
-                >{{ transac.action }}
-                <span class="positionHolder">{{ transac.price }}</span> for
-                {{ transac.quantity }} edition {{ transac.sub_context
-                }}{{ transac.time_ago }} by
-                <a :href="user_profile + '/' + transac.user_profile"
-                  ><span class="positionHolder">{{
-                    transac.user_name
-                  }}</span></a
-                >
-              </label-->
-
-              <!--label v-if="transac.action == 'Put on sale for'" class="position"
-                >{{ transac.action }}
-                <span class="positionHolder">{{ transac.price }}</span>
-                {{ transac.time_ago }} by
-                <a :href="user_profile + '/' + transac.user_profile"
-                  ><span class="positionHolder">{{
-                    transac.user_name
-                  }}</span></a
-                >
-              </label>
-            </div-->
             </div>
           </div>
         </div>
@@ -208,7 +204,7 @@ import {
   getConnectedAddress,
   acceptBid,
 } from ".././../bidFunc";
-
+import { toAddress, checkConnection} from ".././../etherFunc";
 export default {
   props: [
     "creator",
@@ -293,17 +289,18 @@ export default {
       console.log(res);
     },
 
-    acceptBidding() {
-      var res = acceptBid(
+    async acceptBidding() {
+      console.log(this.collectible.contract);
+      var res = await acceptBid(
         this.collectible.contract,
         this.collectible.type == 721 ? true : false,
         this.collectible.id,
-        this.highestBid.maxBidder,
+        toAddress(this.highestBid.maxBidder),
         1,
-        this.highestBid.maxBidToken,
+       "0xE19DD2fa7d332E593aaf2BBe4386844469e51937",
         `${this.highestBid.maxAmount}`,
         "Place a Bid",
-        this.owner == true ? this.address : "",
+        this.owner == true ? toAddress(this.address) : "",
         this.highestBid.maxBidSig
       );
       console.log(res);
