@@ -165,7 +165,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
     return owners;
 }
 
-async function getOwnedCollections(me, type) {
+async function getOwnedCollections(me, type, forDetails) {
     var collections = [];
     const address = toAddress(me);
     const contract = new ethers.Contract(contractFactoryAddress, factoryABI, provider);
@@ -177,17 +177,17 @@ async function getOwnedCollections(me, type) {
             type == 721 ? col = await contract.ERC721contracts(num) : col = await contract.ERC1155contracts(num);
             type == 721 ? ABI = bhc721 : ABI = bhc1155;
             var colCon = new ethers.Contract(col, ABI, provider);
-            //var owner = await colCon.owner();
+            var owner = await colCon.owner();
             console.log(col)
-            //if (toAddress(owner) == toAddress(me)) {
+            if (toAddress(owner) == toAddress(me) || forDetails) {
 
-            var uri = await colCon.contract_URI();
+                var uri = await colCon.contract_URI();
 
-            var res = await axios.get(uri);
-            var collection = res.data;
-            collection.address = col;
-            collections.push(collection);
-            //}
+                var res = await axios.get(uri);
+                var collection = res.data;
+                collection.address = col;
+                collections.push(collection);
+            }
             num = num + 1;
         }
 

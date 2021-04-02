@@ -41,11 +41,11 @@ async function getUserDetails(addressString) {
         user.name = response.data.name;
         user.bio = response.data.description;
         user.short_url = response.data.short_url;
-    } catch (e) {}
+    } catch (e) { }
     return user;
 }
 
-async function getCollections(type, me) {
+async function getCollections(type, me, forDetails) {
     var collections = [];
 
     ///delete///
@@ -63,7 +63,7 @@ async function getCollections(type, me) {
     t.address = hps1155Address
 
     type == 1155 ? collections.push(t) : null;
-    var myCols = await getOwnedCollections(me, type);
+    var myCols = await getOwnedCollections(me, type, forDetails);
     console.log(myCols)
     collections = [...collections, ...myCols]
     return collections;
@@ -74,8 +74,8 @@ async function checkFollowing(user, address) {
 }
 
 async function getTokens(owner) {
-    var cl721 = await getCollections(721, owner);
-    var cl1155 = await getCollections(1155, owner);
+    var cl721 = await getCollections(721, owner, true);
+    var cl1155 = await getCollections(1155, owner, true);
     var tokens721f = [];
     var tokens1155f = [];
     for (var i = 0; i < cl721.length; i++) {
