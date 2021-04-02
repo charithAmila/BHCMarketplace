@@ -8,7 +8,7 @@ const erc20TransferProxyAddress = "0x9e78C6e0410Cc33A0864D0AC6C9ff7dABAF709cb"
 const orderStorageAddress = "0x11e86459339BA4023333157A84B4B973E1971B2b"
 const exchangeAddress = /*"0x9F78B200a35faA51e762A61873e259890540D719"*/ "0xe30dc2cAF90b7388de459042232DdAE94c65cbE0"
 const NFTStorageAddress = "0xE6767c6d8a2b4B4Af1c1F27000dD88aBcD0EA37e"
-const contractFactoryAddress = "0x88e548BA301D11f96335449f60F1bCeBac907f40"
+const contractFactoryAddress = "0x9a88C3378C0bB7F469be98bC60d1D3f778a326EF"
 /////////////////////////////////////////Token address////////////////////////////////////////////
 const hpsAddress = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937"
 const bhcAddress = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876"

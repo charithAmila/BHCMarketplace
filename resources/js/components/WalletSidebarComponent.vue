@@ -37,7 +37,6 @@
 
 
 <script>
-
 export default {
   data() {
     return {
@@ -45,9 +44,7 @@ export default {
     };
   },
   props: ["url_previous", "asset_url"],
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     connectMetamsk: async function () {
       const _this = this;
@@ -58,49 +55,48 @@ export default {
     },
     walletConnect: async function () {
       const connector = new WalletConnect({
-  bridge: "https://bridge.walletconnect.org", // Required
-  qrcodeModal: QRCodeModal,
-});
+        bridge: "https://bridge.walletconnect.org", // Required
+        qrcodeModal: QRCodeModal,
+      });
 
-// Check if connection is already established
-if (!connector.connected) {
-  // create new session
-  connector.createSession();
-}
+      // Check if connection is already established
+      if (!connector.connected) {
+        // create new session
+        connector.createSession();
+      }
 
-// Subscribe to connection events
-connector.on("connect", (error, payload) => {
-  if (error) {
-    throw error;
-  }
+      // Subscribe to connection events
+      connector.on("connect", (error, payload) => {
+        if (error) {
+          throw error;
+        }
 
-  // Get provided accounts and chainId
-  const { accounts, chainId } = payload.params[0];
-});
+        // Get provided accounts and chainId
+        const { accounts, chainId } = payload.params[0];
+        console.log(payload);
+      });
 
-connector.on("session_update", (error, payload) => {
-  if (error) {
-    throw error;
-  }
+      connector.on("session_update", (error, payload) => {
+        if (error) {
+          throw error;
+        }
 
-  // Get updated accounts and chainId
-  const { accounts, chainId } = payload.params[0];
-});
+        // Get updated accounts and chainId
+        const { accounts, chainId } = payload.params[0];
+      });
 
-connector.on("disconnect", (error, payload) => {
-  if (error) {
-    throw error;
-  }
+      connector.on("disconnect", (error, payload) => {
+        if (error) {
+          throw error;
+        }
 
-  // Delete connector
-});
+        // Delete connector
+      });
     },
-    
   },
 };
 </script>
 <style>
-
 .walletconnect #wallet_item_connect {
   color: black !important;
   text-align: center;
@@ -111,7 +107,7 @@ connector.on("disconnect", (error, payload) => {
   background: white;
   color: white;
   border: 1px solid white;
-  box-shadow: 0 0 0 1px #FFC170, 0 0 0 6px white, 0 0 0 9px #FFC170;
+  box-shadow: 0 0 0 1px #ffc170, 0 0 0 6px white, 0 0 0 9px #ffc170;
 }
 
 .walletconnect #wallet_item_connect img {
@@ -124,23 +120,21 @@ connector.on("disconnect", (error, payload) => {
   cursor: pointer;
 }
 
+.walletconnect #wallet_item_connect {
+  color: black !important;
+  text-align: center;
+  padding: 25px 0;
+  border-radius: 10px;
+  width: 100%;
+  height: 150px;
+  background: white;
+  border: 1px solid white;
+  box-shadow: 0 0 0 1px #ffc170, 0 0 0 6px white, 0 0 0 9px #ffc170;
+}
 
-  .walletconnect #wallet_item_connect {
-    color: black !important;
-    text-align: center;
-    padding: 25px 0;
-    border-radius: 10px;
-    width: 100%;
-    height: 150px;
-    background: white;
-    border: 1px solid white;
-    box-shadow: 0 0 0 1px #FFC170, 0 0 0 6px white, 0 0 0 9px #FFC170;
-  }
-
-  .walletconnect #wallet_item_connect img {
-    height: 50px;
-    margin: auto;
-    display: block;
-  }
-
+.walletconnect #wallet_item_connect img {
+  height: 50px;
+  margin: auto;
+  display: block;
+}
 </style>
