@@ -20,11 +20,16 @@ const orderStorageABI = require("../js/abis/order_storage.json");
 //const pancake_ABI = require("../js/abis/pancake.json")
 const ERC721_Website_ABI = require("../js/abis/bhc_721.json");
 /////////////////////////////////////////////////Provider, Signer//////////////////////////////////////////////
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
+if (typeof window.ethereum == "undefined") {
+    alert("no provider fround");
+    //window.provider = new ethers.getDefaultProvider();
+    window.provider = null;
+} else {
+    window.provider = new ethers.providers.Web3Provider(window.ethereum);
+}
+const signer = null; //provider.getSigner();
 //////////////////////////////////////////////Supported Tokens///////////////////////////////////////////////////
-const token_ABI = [
-    {
+const token_ABI = [{
         inputs: [],
         payable: false,
         stateMutability: "nonpayable",
@@ -32,8 +37,7 @@ const token_ABI = [
     },
     {
         anonymous: false,
-        inputs: [
-            {
+        inputs: [{
                 indexed: true,
                 internalType: "address",
                 name: "owner",
@@ -57,8 +61,7 @@ const token_ABI = [
     },
     {
         anonymous: false,
-        inputs: [
-            {
+        inputs: [{
                 indexed: true,
                 internalType: "address",
                 name: "previousOwner",
@@ -76,8 +79,7 @@ const token_ABI = [
     },
     {
         anonymous: false,
-        inputs: [
-            {
+        inputs: [{
                 indexed: true,
                 internalType: "address",
                 name: "from",
@@ -282,8 +284,7 @@ const exchange_Address = ethers.utils.getAddress(
     "0x0c7117eCEFc947df6507D0fC47E8C80EbA62E7DC"
 );
 //////////////////////////////////////////////Pancake Router//////////////////////////////////////////////////////
-const pancake_ABI = [
-    {
+const pancake_ABI = [{
         inputs: [
             { internalType: "address", name: "_factory", type: "address" },
             { internalType: "address", name: "_WETH", type: "address" }
@@ -684,8 +685,7 @@ const pancake_router = ethers.utils.getAddress(pancake_routerAddress);
 const pancake_Read = new ethers.Contract(pancake_router, pancake_ABI, provider);
 const pancake_Write = new ethers.Contract(pancake_router, pancake_ABI, signer);
 /////////////////////////////////////////////Julswap Router///////////////////////////////////////////////////////
-const julswap_ABI = [
-    {
+const julswap_ABI = [{
         inputs: [
             { internalType: "address", name: "_factory", type: "address" },
             { internalType: "address", name: "_WETH", type: "address" }
@@ -1086,8 +1086,7 @@ const julswap_router = ethers.utils.getAddress(julswap_routerAddress);
 const julswap_Read = new ethers.Contract(julswap_router, julswap_ABI, provider);
 const julswap_Write = new ethers.Contract(julswap_router, julswap_ABI, signer);
 //////////////////////////////////////////////WBNB Contract///////////////////////////////////////////////////////
-const WBNB_ABI = [
-    {
+const WBNB_ABI = [{
         constant: true,
         inputs: [],
         name: "name",
@@ -1261,8 +1260,7 @@ const ERC721_Website_Write = new ethers.Contract(
 const ERC721_Private = ethers.utils.getAddress(
     "0x68c16A0f5F00FBDe01BDf820834C7ae70D1b0Fe2"
 );
-const ERC721_Private_ABI = [
-    {
+const ERC721_Private_ABI = [{
         inputs: [
             { internalType: "address", name: "_factory", type: "address" },
             { internalType: "address", name: "_WETH", type: "address" }
@@ -1671,8 +1669,7 @@ const ERC721_Private_Write = new ethers.Contract(
 );
 ////////////////////////////////////////////ERC 1155 Website////////////////////////////////////////////////////////
 const ERC1155_Website = ethers.utils.getAddress(hps1155Address);
-const ERC1155_Website_ABI = [
-    {
+const ERC1155_Website_ABI = [{
         inputs: [
             { internalType: "address", name: "_factory", type: "address" },
             { internalType: "address", name: "_WETH", type: "address" }
@@ -2083,8 +2080,7 @@ const ERC1155_Website_Write = new ethers.Contract(
 const ERC1155_Private = ethers.utils.getAddress(
     "0x259980030BB3722Fab50125EFff59E805d820F83"
 );
-const ERC1155_Private_ABI = [
-    {
+const ERC1155_Private_ABI = [{
         inputs: [
             { internalType: "address", name: "_factory", type: "address" },
             { internalType: "address", name: "_WETH", type: "address" }
@@ -2591,8 +2587,7 @@ function getTokenAddress(bidding_token) {
 async function getTokenPrice(bidding_token) {
     const contract = getTokenAddress(bidding_token);
     const price = await julswap_Read.getAmountsIn(
-        ethers.BigNumber.from("1000000000000000000"),
-        [WBNB_token, contract]
+        ethers.BigNumber.from("1000000000000000000"), [WBNB_token, contract]
     );
     return parseInt(price[0].toString());
 }
@@ -2792,14 +2787,14 @@ function timeDifference(date1, date2) {
 
     console.log(
         "difference = " +
-            daysDifference +
-            " day/s " +
-            hoursDifference +
-            " hour/s " +
-            minutesDifference +
-            " minute/s " +
-            secondsDifference +
-            " second/s "
+        daysDifference +
+        " day/s " +
+        hoursDifference +
+        " hour/s " +
+        minutesDifference +
+        " minute/s " +
+        secondsDifference +
+        " second/s "
     );
 }
 ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
