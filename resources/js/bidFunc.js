@@ -183,9 +183,6 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
         (amount * 10 ** 18).toString(),
         salt
     );
-
-    console.log(orderId);
-
     var status = await getBiddingStatus(owner, contract_address, token_id);
     if (status == 0) {
         return "Not open for bidding";
@@ -200,6 +197,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
     data.bidding_token = bidding_token;
     data.bidding_amount = amount;
     data.message = orderId;
+    data.salt = salt;
 
     amount = parseFloat(amount) * 10 ** 18;
     let rate = 1.025;
@@ -364,29 +362,39 @@ async function getHighestBid(owner, contract_address, token_id) {
     var maxBidToken;
     var maxBidSig;
     var maxBidTime;
-    for (var i = 0; i < output.length; i++) {
-        // var price = await getTokenPrice(output[i].bidding_token);
-        var price = 10;
-        if (price * output[i].bidding_amount > maxAmount) {
-            maxAmount = output[i].bidding_amount;
-            maxBidder = output[i].bidding_address;
-            maxBidToken = output[i].bidding_token;
-            maxBidSig = output[i].signature;
-            maxBidTime = output[i].created_at;
+    var maxBidMessage;
+    var maxBidSalt;
+    if (output != []) {
+        for (var i = 0; i < output.length; i++) {
+            // var price = await getTokenPrice(output[i].bidding_token);
+            var price = 10;
+            if (price * output[i].bidding_amount > maxAmount) {
+                maxAmount = output[i].bidding_amount;
+                maxBidder = output[i].bidding_address;
+                maxBidToken = output[i].bidding_token;
+                maxBidSig = output[i].signature;
+                maxBidTime = output[i].created_at;
+                maxBidMessage = output[i].message;
+                maxBidSalt = output[i].salt;
+            }
         }
-    }
-    res.proPic = await (await getUserDetails(maxBidder)).display_photo;
-    res.maxBidToken = maxBidToken;
-    res.maxAmount = maxAmount * 10 ** 18;
-    res.maxBidder = maxBidder;
-    res.maxBidSig = maxBidSig;
-    res.maxBidTime = maxBidTime;
 
-    /*res.maxBidToken = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
+        res.proPic = await (await getUserDetails(maxBidder)).display_photo;
+        res.maxBidToken = maxBidToken;
+        res.maxAmount = maxAmount * 10 ** 18;
+        res.maxBidder = maxBidder;
+        res.maxBidSig = maxBidSig;
+        res.maxBidTime = maxBidTime;
+        res.maxBidMessage = maxBidMessage;
+        res.maxBidSalt = maxBidSalt;
+
+        /*res.maxBidToken = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
     res.maxAmount = "1";
     res.maxBidder = output[0].user_id;
     res.maxBidSig = output[0].signature;*/
-    return res;
+        return res;
+    }
+    return false;
 }
 
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////

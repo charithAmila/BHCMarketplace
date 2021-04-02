@@ -52,10 +52,10 @@ class BidController extends Controller
             'bidding_token' => 'required',
             'bidding_amount' => 'required',
             'signature' => 'required',
-            'message'=> 'required'
+            'message'=> 'required',
+            'salt' => 'required'
         ]);
         $checker = new CheckSign;
-        $message = "Place a Bid";
         $granted = $checker->checkSign($request->message, $request->signature, $request->bidding_address);
         $bid = new Bid;
         $bid->owner = $request->owner;
@@ -66,6 +66,7 @@ class BidController extends Controller
         $bid->bidding_amount = $request->bidding_amount;
         $bid->signature = $request->signature;
         $bid->message = $request->message;
+        $bid->salt = $request->salt;
         if ($granted) {
             $bid->save();
             return true;

@@ -111,6 +111,7 @@
         </div>
 
         <div
+          v-if = "highestBid!=false"
           id="past_transactions"
           class="tab-pane"
           v-bind:class="{ 'tab-active': bid_active }"
@@ -234,7 +235,12 @@ export default {
       holder_active: false,
       biddingStatus: false,
       owner: false,
-      highestBid: {},
+      highestBid: {
+        "maxBidder":'',
+        "maxBidAmount":'',
+        "maxBidder":'',
+        "maxBidTime":''
+      },
       address: {},
     };
   },
@@ -312,16 +318,15 @@ async loadData(){
     },
 
     async acceptBidding() {
-      console.log(this.collectible.contract);
       var res = await acceptBid(
         this.collectible.contract,
         this.collectible.type == 721 ? true : false,
-        this.collectible.id,
-        toAddress(this.highestBid.maxBidder),
-        1,
-       "0xE19DD2fa7d332E593aaf2BBe4386844469e51937",
-        `${this.highestBid.maxAmount}`,
-        "Place a Bid",
+        this.collectible.id,toString(),
+        '1',
+        '1',
+        this.collectible.contract,
+       this.highestBid.maxAmount.toString(),
+        this.highestBid.maxBidSalt,
         this.owner == true ? toAddress(this.address) : "",
         this.highestBid.maxBidSig
       );
