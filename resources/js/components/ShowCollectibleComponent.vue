@@ -283,22 +283,52 @@
             class="buyBtn d-none d-md-block"
             @click="fetchSingleNft('checkout')"
           >
-            Buy {{ set_collectible.price }}
+            Buy 1 for {{ set_collectible.price }}
+            {{ set_collectible.currencyName }}
           </button>
 
           <p class="text-gray text-center d-none d-md-block">
-            Service fee 1.5% {{ set_collectible.price }} =
-            <span class="text-dark-gray">$137.228</span>
+            Service fee 2.5% =
+            <span class="text-dark-gray"
+              >{{ service_fee }} {{ set_collectible.currencyName }}</span
+            >
+          </p>
+          <p class="text-gray text-center d-none d-md-block">
+            Total to be paid for 1 collectible =
+            <span class="text-dark-gray"
+              >{{ singleNft.price + service_fee }}
+              {{ set_collectible.currencyName }}</span
+            >
+          </p>
+          <p class="text-gray text-center d-none d-md-block">
+            Original Creator will get {{ singleNft.royalties }}% of the total
+            sale
+            <!--span class="text-dark-gray">{{ service_fee }} {{ set_collectible.currencyName }}</span-->
           </p>
 
           <div class="show-footer-btn d-block d-md-none">
             <button class="buyBtn" @click="fetchSingleNft('checkout')">
               Buy 1 for {{ set_collectible.price }}
+              {{ set_collectible.currencyName }}
             </button>
 
             <p class="text-gray text-center">
-              Service fee 1.5% {{ set_collectible.price }} =
-              <span class="text-dark-gray">$137.228</span>
+              Service fee 2.5% =
+              <span class="text-dark-gray"
+                >{{ service_fee }} {{ set_collectible.currencyName }}</span
+              >
+            </p>
+            <p class="text-gray text-center d-none d-md-block">
+              Total to be paid for 1 collectible =
+              <span class="text-dark-gray"
+                >{{ singleNft.price + service_fee }}
+                {{ set_collectible.currencyName }}</span
+              >
+            </p>
+            <p class="text-gray text-center d-none d-md-block">
+              Original Creator will get {{ singleNft.royalties }}% of the total
+              sale
+              <!--span class="text-dark-gray">{{ service_fee }} {{ set_collectible.currencyName }}</span-->
             </p>
           </div>
         </div>
@@ -379,8 +409,10 @@
     </div>
 
     <checkout-modal-component
+      v-if="current_user != null"
       :singleNft="singleNft"
       :page="'showcollectible'"
+      :current_user="current_user"
     ></checkout-modal-component>
     <bid-modal-component
       :singleNft="singleNft"
@@ -395,7 +427,7 @@ import CollectibleDetails from "./show_collectible/CollectibleDetailsComponent.v
 import BidModal from "./modals/BidModalComponent.vue";
 import CheckoutModal from "./modals/CheckoutModalComponent.vue";
 import { getUserDetails } from "./../data";
-
+import { checkConnection, toAddress } from "./../etherFunc";
 export default {
   components: {
     CollectibleDetails,
@@ -410,7 +442,6 @@ export default {
     "asset_url",
     "auth_check",
     "user_profile",
-    "current_user",
     "base_url",
   ],
   data() {
@@ -423,6 +454,9 @@ export default {
       set_transactions: [],
       current_url: "",
       loaded: false,
+      current_user: null,
+      service_fee: 0,
+      royaltyFee: 0,
     };
   },
   watch: {
@@ -433,6 +467,16 @@ export default {
     },
   },
   methods: {
+    checkConnection() {
+      const _this = this;
+      var interval = setInterval(function () {
+        var acc = checkConnection();
+        if (acc != toAddress("")) {
+          _this.current_user = acc;
+          clearInterval(interval);
+        }
+      }, 300);
+    },
     async getOwnersDetails() {
       const _this = this;
       for (var i = 0; i < _this.collectible.owners.length; i++) {
@@ -465,18 +509,9 @@ export default {
         modalOpen($("#" + clicked + "Modal"), $("." + clicked + "-content"));
       }
       this.singleNft = this.collectible;
-      this.singleNft.total = this.fetchTotal(this.collectible.price);
-      this.singleNft.currency = this.fetchCurrency(this.collectible.price);
-      this.singleNft.max = this.fetchTotalCopies(this.collectible.available);
-    },
-    fetchTotal(price) {
-      return parseFloat(price.split(" ")[0]).toFixed(2);
-    },
-    fetchCurrency(price) {
-      return price.split(" ")[1];
-    },
-    fetchTotalCopies(copies) {
-      return copies.split(" ")[0];
+      this.singleNft.total = this.singleNft.price;
+      this.singleNft.currency = this.singleNft.currency;
+      this.singleNft.max = this.singleNft.available;
     },
     updateData() {
       axios
@@ -503,11 +538,17 @@ export default {
   async mounted() {
     this.loaded = false;
     this.set_collectible = this.collectible;
+    this.singleNft = this.collectible;
     this.set_transactions = this.transactions;
     this.creator = await getUserDetails(this.collectible.creator);
     this.current_owner = await getUserDetails(this.collectible.owner_id);
+
     await this.getOwnersDetails();
     this.loaded = true;
+    this.checkConnection();
+    this.service_fee = (this.collectible.price * 2.5) / 100;
+    this.royaltyFee =
+      (this.collectible.price * this.collectible.royalties) / 100;
   },
 };
 </script>

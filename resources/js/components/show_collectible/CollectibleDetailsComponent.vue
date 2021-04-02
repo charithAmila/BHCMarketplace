@@ -98,7 +98,9 @@
               </div>
             </div>
             <div class="col-9 col-md-10">
-              <label class="position">Holder</label>
+              <label class="position"
+                >{{ owner.ownedCopies }} of {{ collectible.copies }}</label
+              >
               <label class="positionHolder"
                 ><a :href="user_profile + '/' + owner.wallet">{{
                   owner.name
@@ -220,7 +222,6 @@ export default {
   ],
   data() {
     return {
-
       //asset_url :  "https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png",
       allBids: {},
       bid_active: false,

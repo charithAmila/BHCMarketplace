@@ -20,9 +20,12 @@ class SalesController extends Controller
         $token_id = $request->token_id;
         if ($request->has(["current_owner", "collection", "token_id"])) {
             if ($sales = Sales::where("collection", $collection)->where('current_owner', $current_owner)->where("token_id", $token_id)->doesntExist()) {
-                return response(false);
+                return response()->json(["on_sale" => false]);
+            } else {
+                $sales = Sales::where("collection", $collection)->where('current_owner', $current_owner)->where("token_id", $token_id)->firstOrFail();
+                $sales->on_sale = true;
+                return $sales;
             }
-            return response(true);
         }
         $sales = Sales::all();
         return $sales;

@@ -37,7 +37,9 @@
                 :value="singleNft.price"
               />
               <span class="link-url-end"
-                ><span id="checkout-currency">{{ singleNft.currency }}</span>
+                ><span id="checkout-currency">{{
+                  singleNft.currencyName
+                }}</span>
                 <i class="fa fa-angle-down"></i>
                 <i class="fa fa-lock" aria-hidden="true"></i
               ></span>
@@ -46,19 +48,19 @@
               <div class="purchase-info">
                 <label class="text-details">Your balance</label>
                 <label class="text-value"
-                  >{{ balance }} {{ singleNft.currency }}</label
+                  >{{ balance }} {{ singleNft.currencyName }}</label
                 >
               </div>
               <div class="purchase-info">
                 <label class="text-details">Service fee</label>
                 <label class="text-value"
-                  >{{ service_fee }} {{ singleNft.currency }}</label
+                  >{{ service_fee }} {{ singleNft.currencyName }}</label
                 >
               </div>
               <div class="purchase-info">
                 <label class="text-details">You will pay</label>
                 <label class="text-value"
-                  >{{ total_payment }} {{ singleNft.currency }}</label
+                  >{{ total_payment }} {{ singleNft.currencyName }}</label
                 >
               </div>
             </div>
@@ -113,9 +115,37 @@ export default {
       approved: false,
     };
   },
+  async mounted() {
+    this.singleNft.currencyName == "HPS"
+      ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
+      : this.singleNft.currency == "BHC"
+      ? (this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876")
+      : (this.currency = toAddress(""));
+    this.price = this.singleNft.price;
+    this.nft_id = this.singleNft.id;
+    this.record_id = this.singleNft.record_id;
+    this.updateValues();
+    if (this.currency != toAddress("")) {
+      var allowance = await checkTokensApproved(
+        this.currency,
+        this.current_user
+      );
+      this.balance = await checkTokensBalance(this.currency, this.current_user);
+      this.balance = this.balance.toFixed(3);
+    } else {
+      this.balance = await getBNBBalance(this.current_user);
+      var allowance = this.balance;
+    }
+    console.log(allowance);
+    if (this.total_payment <= allowance) {
+      this.approved = true;
+    } else {
+      this.approved = false;
+    }
+  },
   watch: {
     singleNft: async function () {
-      this.singleNft.currency == "HPS"
+      this.singleNft.currencyName == "HPS"
         ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
         : this.singleNft.currency == "BHC"
         ? (this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876")
@@ -174,11 +204,7 @@ export default {
       this.payment = +(this.price * this.quantity);
       this.service_fee = +(this.payment * 0.025);
       this.royalty_fee = (this.payment * this.singleNft.royalties) / 100;
-      this.total_payment = +(
-        this.payment +
-        this.service_fee +
-        this.royalty_fee
-      );
+      this.total_payment = +(this.payment + this.service_fee);
     },
     async approve() {
       var hash = await approveTokens(

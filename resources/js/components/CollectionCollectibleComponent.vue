@@ -50,6 +50,9 @@ export default {
       loaded: false,
     };
   },
+  watch: {
+    current_user() {},
+  },
   methods: {
     filterCollection(filter) {
       /*axios

@@ -207,6 +207,7 @@ export default {
       }
     },
     async sign() {
+      _this.salt = Math.random().toString(36).substring(7);
       const _this = this;
       var salt,
         orderId = await generateOrderIdMessage(
@@ -219,14 +220,13 @@ export default {
             ? bhcAddress
             : toAddress(""),
           _this.price,
-          "dhgjdfh"
+          _this.salt
         );
       var sig = await signMessage(orderId);
 
       _this.s = sig;
       _this.signed = true;
       _this.progress = "Put Order";
-      _this.salt = "dhgjdfh";
       _this.orderId = orderId;
     },
     async approveNFT() {

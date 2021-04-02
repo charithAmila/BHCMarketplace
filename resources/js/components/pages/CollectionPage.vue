@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getCollection } from "./../../etherFunc";
+import { getCollection, checkConnection, toAddress } from "./../../etherFunc";
 import { collectiblesOfCollection } from "./../../data";
 export default {
   props: [
@@ -41,7 +41,20 @@ export default {
       loaded: false,
     };
   },
+  methods: {
+    checkConnection() {
+      const _this = this;
+      var interval = setInterval(function () {
+        var acc = checkConnection();
+        if (acc != toAddress("")) {
+          _this.current_user = acc;
+          clearInterval(interval);
+        }
+      }, 300);
+    },
+  },
   async mounted() {
+    this.checkConnection();
     this.collectibles = await collectiblesOfCollection(this.collection);
     this.collectionData = this.collectibles[0].collection;
     this.loaded = true;

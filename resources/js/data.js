@@ -118,8 +118,19 @@ async function getOwnedTokensData(owner, base_url) {
 
         ////remove/////
         nft.isp = 1
-        nft.is_selling = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
-        listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
+        var salesData = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
+        //nft.fileType = nft.fileType || "image";
+
+        if (salesData.on_sale) {
+            nft.price = salesData.price
+            nft.is_selling = true
+            nft.currency = salesData.currency
+            nft.currency == hpsAddress ? nft.currencyName = "HPS" : nft.currency == bhcAddress ? nft.currencyName = "BHC" : nft.currencyName = "BNB"
+            nft.signed_to = salesData.signed_to;
+            nft.db_id = salesData.id;
+            nft.signature = salesData.signature;
+            nft.salt = salesData.salt
+        }
         data.push(nft);
     }
     for (var i = 0; i < tokens1155.length; i++) {
@@ -137,10 +148,19 @@ async function getOwnedTokensData(owner, base_url) {
 
         ////remove/////
         nft.isp = 1
-        //nft.is_selling = 1
-        listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price;
-        //nft.fileType = "image";
-        //nft.file = nft.image
+        var salesData = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
+        //nft.fileType = nft.fileType || "image";
+
+        if (salesData.on_sale) {
+            nft.price = salesData.price
+            nft.is_selling = true
+            nft.currency = salesData.currency
+            nft.currency == hpsAddress ? nft.currencyName = "HPS" : nft.currency == bhcAddress ? nft.currencyName = "BHC" : nft.currencyName = "BNB"
+            nft.signed_to = salesData.signed_to;
+            nft.db_id = salesData.id;
+            nft.signature = salesData.signature;
+            nft.salt = salesData.salt
+        }
         data.push(nft);
     }
     return data;
@@ -239,9 +259,19 @@ async function getTokenData(contract, owner, id) {
 
     ////remove/////
     nft.isp = 1
-    nft.is_selling = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
-    listed ? nft.price = nft.instant_sale_price : nft.price = nft.instant_sale_price
+    var salesData = await checkSelling(selectedToken.contract, selectedToken.tokenOwner, selectedToken.id)
     //nft.fileType = nft.fileType || "image";
+
+    if (salesData.on_sale) {
+        nft.price = salesData.price
+        nft.is_selling = true
+        nft.currency = salesData.currency
+        nft.currency == hpsAddress ? nft.currencyName = "HPS" : nft.currency == bhcAddress ? nft.currencyName = "BHC" : nft.currencyName = "BNB"
+        nft.signed_to = salesData.signed_to;
+        nft.db_id = salesData.id;
+        nft.signature = salesData.signature;
+        nft.salt = salesData.salt
+    }
     // nft.file = nft.image || nft.file
     //nft.creator = owner;
 
@@ -286,7 +316,8 @@ async function getAllSales(current_user) {
                 nft.is_selling = 1;
                 nft.signature = tokens[i].signature;
                 nft.salt = tokens[i].salt
-                nft.currency = tokens[i].currency == hpsAddress ? "HPS" : tokens[i].currency == bhcAddress ? "BHC" : "BNB";
+                nft.currency = tokens[i].currency
+                nft.currencyName = tokens[i].currency == hpsAddress ? "HPS" : tokens[i].currency == bhcAddress ? "BHC" : "BNB";
                 data.push(nft)
             } catch (e) { }
         }
@@ -296,9 +327,7 @@ async function getAllSales(current_user) {
 }
 
 async function checkSelling(collection, owner, id) {
-    var res = await axios.get(`/api/sales?collection=${collection}&current_owner=${owner}&token_id=${id}`
-    )
-
+    var res = await axios.get(`/api/sales?collection=${collection}&current_owner=${owner}&token_id=${id}`)
 
     return res.data;
 }
