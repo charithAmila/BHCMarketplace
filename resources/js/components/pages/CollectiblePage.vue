@@ -22,7 +22,7 @@
 </template>
 <script>
 import { getTokenData } from "./../../data";
-import { checkConnection } from "./../../etherFunc";
+import { checkConnection, getOwnersOf } from "./../../etherFunc";
 export default {
   props: ["asset_url", "user_profile", "base_url", "contract", "owner", "id"],
   data() {
@@ -34,6 +34,7 @@ export default {
       transactions: [],
       loaded: false,
       current_user: "",
+      owners: [],
     };
   },
   methods: {
@@ -44,7 +45,13 @@ export default {
         _this.owner,
         Number(_this.id)
       );
+
       return data;
+    },
+    getOwners: async function () {
+      const _this = this;
+      var _owners = await getOwnersOf(_this.contract, _this.id);
+      _this.collectible.owners = _owners;
     },
     authCheck: function () {
       const _this = this;
@@ -54,6 +61,7 @@ export default {
   },
   async mounted() {
     this.collectible = await this.getCollectible();
+    await this.getOwners();
     this.authCheck();
     this.loaded = true;
   },

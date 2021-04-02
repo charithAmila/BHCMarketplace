@@ -436,6 +436,7 @@
       :store_route="store_route"
       :asset_url="asset_url"
       :csrf_token="csrf_token"
+      :type="colType"
     ></create-collection-modal-component>
   </div>
 </template>
@@ -443,6 +444,7 @@
 
 <script>
 import { tempCollectionData, getCollections, getTokensData } from "../data.js";
+
 import {
   createASingle,
   selectedAddress,
@@ -450,6 +452,7 @@ import {
   createABatch,
   waitForTransaction,
   toAddress,
+  checkConnection,
 } from "./../etherFunc.js";
 export default {
   props: [
@@ -488,9 +491,25 @@ export default {
       copies: 0,
       imgselectok: false,
       uploadPercentageimg: 0,
+      colType: this.type == "solo" ? 721 : 1155,
     };
   },
   methods: {
+    checkConnection: function () {
+      const _this = this;
+      var connectionInterval = setInterval(async function () {
+        var acc = checkConnection();
+        if (acc) {
+          _this.current_user = toAddress(acc);
+          clearInterval(connectionInterval);
+          if (_this.type == "solo") {
+            _this.setCollections = await getCollections(721, acc);
+          } else if (_this.type == "multiple") {
+            _this.setCollections = await getCollections(1155, acc);
+          }
+        }
+      }, 300);
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
@@ -595,6 +614,7 @@ export default {
         properties: _this.properties,
         instant_sale_price: _this.price,
         instant_sale_token: _this.token,
+        count: 1,
       };
       _this.type == "multiple" ? (data.count = _this.copies) : null;
 
@@ -654,11 +674,7 @@ export default {
   },
 
   async mounted() {
-    if (this.type == "solo") {
-      this.setCollections = await getCollections(721, "");
-    } else if (this.type == "multiple") {
-      this.setCollections = await getCollections(1155, "");
-    }
+    this.checkConnection();
   },
 };
 </script>

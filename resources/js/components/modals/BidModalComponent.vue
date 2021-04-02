@@ -17,11 +17,11 @@
 
 						<div class="currency-drop d-none">
 							<div class="drop-group">
-								<a href="javascript:void(0)" id="HPS" class="currency-item">HPS</a>
+								<a href="javascript:void(0)" id="HPS" class="currency-item" @click ="setHPS()">HPS</a>
 								<i class="fa fa-check currency-check"></i>
 							</div>
 							<div class="drop-group">
-								<a href="javascript:void(0)" id="BNB" class="currency-item">BNB</a>
+								<a href="javascript:void(0)" id="BNB" class="currency-item" @click="setBNB()">BNB</a>
 								<i class="fa fa-check currency-check opacity-0"></i>
 							</div>
 						</div>
@@ -57,7 +57,7 @@
 <script>
 
 
-import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance } from ".././../bidFunc";
+import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance,getBNBBalance } from ".././../bidFunc";
 
 import $ from 'jquery'
 
@@ -67,33 +67,58 @@ export default {
 	data () {
 		return{
 			bid_input: 0,
-			balance: 0,
+			HPS_balance: 0,
+			BNB_Balance:0,
 			service_fee: 0,
 			total_payment: 0,
 			payment: 0,
 			currency: '',
 			nft_id: 0,
-			record_id: 0
+			record_id: 0,
+			selected_token:0
+			
 		}
 	},
 	async mounted() {
-		let balance = await getHpsBalance()
-		this.balance = balance
-		console.log(this.balance)
+		 this.HPS_Balance = await getHpsBalance()
+		this.BNB_Balance = await getBNBBalance()
+	 
+	
+	},
+
+	computed:{
+			balance(){
+		
+			if(this.selected_token ==1){
+				return this.BNB_Balance;
+			}
+			else{ 
+				return this.HPS_Balance;
+			}
+		},
+
 	},
 
 	watch: {
+		
+
 		singleNft: function() {
 			this.nft_id = this.singleNft.id
 			this.record_id = this.singleNft.record_id
 		},
 		bid_input: function() {
-			this.payment = +(this.bid_input)
+			this.payment = this.bid_input
 			this.service_fee = +(this.payment * 0.025)
 		    this.total_payment = +(this.payment + +this.service_fee)
 		}
 	},
 	methods: {
+		setBNB(){
+			this.selected_token = 1;
+		},
+		setHPS(){
+			this.selected_token = 0;
+		},
 		async placeBid() {
 			this.currency = $('#selectedCurrency').text()
 

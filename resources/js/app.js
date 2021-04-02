@@ -166,7 +166,7 @@ Vue.component(
 Vue.component(
     "collectible-details-component",
     require("./components/show_collectible/CollectibleDetailsComponent.vue")
-    .default
+        .default
 );
 Vue.component(
     "show-fullscreen-component",
@@ -221,6 +221,12 @@ Vue.component(
 Vue.component(
     "create-steps-modal-component",
     require("./components/modals/CreateStepsModalComponent.vue").default
+);
+
+
+Vue.component(
+    "collection-page",
+    require("./components/pages/CollectionPage.vue").default
 );
 /*
 import WalletConnectProvider from "@walletconnect/web3-provider";

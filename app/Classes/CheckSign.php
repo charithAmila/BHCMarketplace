@@ -12,7 +12,7 @@ class CheckSign
     {
         $eth_sig_util = new EthSigRecover;
         $signed = $eth_sig_util->personal_ecRecover($message, $signature);
-        if (strtolower($address) == $signed) {
+        if (strtolower($address) == strtolower($signed)) {
             return true;
         }
         return abort(403);
