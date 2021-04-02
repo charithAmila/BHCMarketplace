@@ -9,7 +9,6 @@
         :asset_url="asset_url"
         :auth_check="is_auth"
         :user_profile="user_profile"
-        :current_user="current_user"
         :base_url="base_url"
       ></show-collectible-component>
 
