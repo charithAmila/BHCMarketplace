@@ -207,21 +207,21 @@ export default {
       }
     },
     async sign() {
-      _this.salt = Math.random().toString(36).substring(7);
       const _this = this;
-      var salt,
-        orderId = await generateOrderIdMessage(
-          _this.singleNft.contract,
-          _this.singleNft.id,
-          _this.singleNft.ownedCopies,
-          _this.currency == 1
-            ? hpsAddress
-            : _this.currency == 2
-            ? bhcAddress
-            : toAddress(""),
-          _this.price,
-          _this.salt
-        );
+      _this.salt = Math.random().toString(36).substring(7);
+
+      var orderId = await generateOrderIdMessage(
+        _this.singleNft.contract,
+        _this.singleNft.id,
+        _this.singleNft.ownedCopies,
+        _this.currency == 1
+          ? hpsAddress
+          : _this.currency == 2
+          ? bhcAddress
+          : toAddress(""),
+        _this.price,
+        _this.salt
+      );
       var sig = await signMessage(orderId);
 
       _this.s = sig;

@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\BidController;
 use App\Http\Controllers\CollectibleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CollectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,11 +65,11 @@ Route::post('/follower/{short_url}', [UserController::class, 'follower']);
 Route::get('/user-follow/{short_url}/{filter}', [UserController::class, 'getFollowing']);
 
 
-/*
+
 Route::get('/collection/{collection_slug}', [CollectionController::class, 'show']);
 Route::get('/collection/{collection_slug}/{filter}', [CollectionController::class, 'filterCollection']);
 Route::post('/collection', [CollectionController::class, 'store'])->name('create.collection');
-*/
+
 Route::post('/wishlist', [LikesController::class, 'wishlist']);
 
 
