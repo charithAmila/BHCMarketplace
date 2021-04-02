@@ -111,6 +111,7 @@
         </div>
 
         <div
+          v-if = "highestBid!=false"
           id="past_transactions"
           class="tab-pane"
           v-bind:class="{ 'tab-active': bid_active }"
@@ -153,8 +154,8 @@
 
                <div class="col-9 col-md-10">
               <label class="position"
-                >{{ this.highestBid.maxAmount }} {{ this.highestBid.maxBidToken}}
-                <span class="positionHolder">{{ this.highestBid.maxAmount}}</span>
+                >
+                <span class="positionHolder">{{ this.highestBid.maxAmount/10**18}}</span> {{ this.highestBid.maxBidToken}}
                 on {{ this.highestBid.maxBidTime.slice(0, 10) }} by
                 <a :href="user_profile + '/' + this.highestBid.maxBidder"
                   ><span class="positionHolder">{{
@@ -183,8 +184,8 @@
             </div>
             <div class="col-9 col-md-10">
               <label class="position"
-                >{{ transac.bidding_amount }} {{ transac.bidding_token }}
-                <span class="positionHolder">{{ transac.bidding_amount }}</span>
+                > 
+                <span class="positionHolder">{{ transac.bidding_amount }}</span> {{ transac.bidding_token }}
                 on {{ transac.created_at.slice(0, 10) }} by
                 <a :href="user_profile + '/' + transac.bidding_address"
                   ><span class="positionHolder">{{
@@ -234,7 +235,12 @@ export default {
       holder_active: false,
       biddingStatus: false,
       owner: false,
-      highestBid: {},
+      highestBid: {
+        "maxBidder":'',
+        "maxBidAmount":'',
+        "maxBidder":'',
+        "maxBidTime":''
+      },
       address: {},
     };
   },
@@ -295,7 +301,7 @@ async loadData(){
      if(res ==1){
  this.biddingStatus = true;
      }
-     
+     this.loadData();
       
     },
    async endBid() {
@@ -307,21 +313,20 @@ async loadData(){
     if(res ==1){
   this.biddingStatus = false;
     }
-    
+    this.loadData();
      
     },
 
     async acceptBidding() {
-      console.log(this.collectible.contract);
       var res = await acceptBid(
         this.collectible.contract,
         this.collectible.type == 721 ? true : false,
-        this.collectible.id,
-        toAddress(this.highestBid.maxBidder),
-        1,
-       "0xE19DD2fa7d332E593aaf2BBe4386844469e51937",
-        `${this.highestBid.maxAmount}`,
-        "Place a Bid",
+        this.collectible.id,toString(),
+        '1',
+        '1',
+        this.collectible.contract,
+       this.highestBid.maxAmount.toString(),
+        this.highestBid.maxBidSalt,
         this.owner == true ? toAddress(this.address) : "",
         this.highestBid.maxBidSig
       );
