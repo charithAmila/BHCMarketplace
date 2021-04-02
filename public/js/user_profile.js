@@ -1,18 +1,16 @@
-$(document).ready(function(){
-			
-	$('.close-following-modal').click(function(){
-        modalClose($('#following-modal'), $(".following-content"));
-	});
+$(document).ready(function() {
+    $(".close-following-modal").click(function() {
+        modalClose($("#following-modal"), $(".following-content"));
+    });
 
+    $(".follower").click(function() {
+        modalOpen($("#follower-modal"), $(".follower-content"));
+    });
+    $(".close-follower-modal").click(function() {
+        modalClose($("#follower-modal"), $(".follower-content"));
+    });
 
-	$('.follower').click(function(){
-        modalOpen($('#follower-modal'), $(".follower-content"));
-	});
-	$('.close-follower-modal').click(function(){
-        modalClose($('#follower-modal'), $(".follower-content"));
-	});
-
-	/*$('.edit-cover').click(function(){
+    /*$('.edit-cover').click(function(){
 		modalOpen($('#update-cover'), $(".cover-content"));
 	});
 
@@ -20,57 +18,65 @@ $(document).ready(function(){
 		modalOpen($('#update-cover'), $(".cover-content"));
 	});*/
 
-	$('.close-cover-modal').click(function(){
-        modalClose($('#update-cover'), $(".cover-content"));
-	});
-
-	$('.share-link').click(function(){
-		toggleDropdown($(".share-drop"), "d-block");
-	});
-
-  $(document).on('submit', '#update-preferences', function(){
-      var current = $('.user-logo').attr('src');
-      $('#current-display-photo').attr('src', current);
-  });
-
-	$(document).click(function(event) {
-      if ($(event.target).closest('.share-link').length === 0 && $(event.target).closest('.share-drop').length === 0 && $('.share-drop').hasClass('d-block')) {
-         toggleDropdown($(".share-drop"), "d-block");
-      }
-      if ($(event.target).closest('.options-link').length === 0 && $(event.target).closest('.options').length === 0 && $('.options').hasClass('d-block')) {
-      	toggleDropdown($(".options"), "d-block");
-      }
-      event.stopPropagation();
+    $(".close-cover-modal").click(function() {
+        modalClose($("#update-cover"), $(".cover-content"));
     });
 
-	$('.options-link').click(function(){
-		toggleDropdown($(".options"), "d-block");
-	});
-
-	$('.report-page').click(function(){
-		$('.report-description').text('Describe why you think this user violates the rules of the site');
-        modalOpen($('#reportModal'), $(".report-content"));
-    });
-    
-    $('.close-report-modal').click(function(){
-        modalClose($('#reportModal'), $(".report-content"));
+    $(".share-link").click(function() {
+        toggleDropdown($(".share-drop"), "d-block");
     });
 
-
-    $(document).on('click', '.report', function(){
-    	$('.report-description').text('Describe why you think this item should be removed from marketplace');
-        modalOpen($('#reportModal'), $(".report-content"));
-    });
-    $('.close-report-modal').click(function(){
-        modalClose($('#reportModal'), $(".report-content"));
+    $(document).on("submit", "#update-preferences", function() {
+        var current = $(".user-logo").attr("src");
+        $("#current-display-photo").attr("src", current);
     });
 
-
-    $('.profile-preferences').click(function(){
-    	//showPreferencesModal();
+    $(document).click(function(event) {
+        if (
+            $(event.target).closest(".share-link").length === 0 &&
+            $(event.target).closest(".share-drop").length === 0 &&
+            $(".share-drop").hasClass("d-block")
+        ) {
+            toggleDropdown($(".share-drop"), "d-block");
+        }
+        if (
+            $(event.target).closest(".options-link").length === 0 &&
+            $(event.target).closest(".options").length === 0 &&
+            $(".options").hasClass("d-block")
+        ) {
+            toggleDropdown($(".options"), "d-block");
+        }
+        event.stopPropagation();
     });
 
+    $(".options-link").click(function() {
+        toggleDropdown($(".options"), "d-block");
+    });
 
+    $(".report-page").click(function() {
+        $(".report-description").text(
+            "Describe why you think this user violates the rules of the site"
+        );
+        modalOpen($("#reportModal"), $(".report-content"));
+    });
+
+    $(".close-report-modal").click(function() {
+        modalClose($("#reportModal"), $(".report-content"));
+    });
+
+    $(document).on("click", ".report", function() {
+        $(".report-description").text(
+            "Describe why you think this item should be removed from marketplace"
+        );
+        modalOpen($("#reportModal"), $(".report-content"));
+    });
+    $(".close-report-modal").click(function() {
+        modalClose($("#reportModal"), $(".report-content"));
+    });
+
+    $(".profile-preferences").click(function() {
+        //showPreferencesModal();
+    });
 
     /*$('#dp-option').click(function(){
     	$(this).addClass('custom-click');
@@ -83,17 +89,16 @@ $(document).ready(function(){
         }, 200);
     });*/
 
-    $('#current-display-photo').hover(function(){
-    	$('#dp-option').removeClass('scale-out');
-    	$('#dp-option').addClass('scale-in');
-
+    $("#current-display-photo").hover(function() {
+        $("#dp-option").removeClass("scale-out");
+        $("#dp-option").addClass("scale-in");
     });
 
-    $(document).on('mouseleave', '#dp-option', function(){
-    	$('#dp-option').addClass('scale-out');
+    $(document).on("mouseleave", "#dp-option", function() {
+        $("#dp-option").addClass("scale-out");
     });
 
-
+    /*
     $(document).on('click', '.btn-follow', function(){
     	var container = $(this);
     	$.ajaxSetup({
@@ -115,7 +120,7 @@ $(document).ready(function(){
           },
         });
     });
-
+*/
     /*$(document).on("change", "#user-cover", function() {
     	$.ajaxSetup({
             headers: {
@@ -167,5 +172,4 @@ $(document).ready(function(){
           },
         });
 	});*/
-
 });

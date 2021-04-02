@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LikesController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\WalletController;
@@ -105,3 +106,9 @@ Route::post('like', [LikesController::class, 'store']);
 Route::get('like', [LikesController::class, 'index'])->name('likes');
 
 Route::post('unlike', [LikesController::class, 'unlike'])->name('unlike');
+
+Route::post('follow', [FollowController::class, 'follow']);
+
+Route::post('unfollow', [FollowController::class, 'unfollow']);
+
+Route::get('followers', [FollowController::class, 'index'])->name('followers');
