@@ -50,7 +50,10 @@ export default {
         var acc = checkConnection();
         if (acc && acc != toAddress("")) {
           _this.selectedAddress = acc;
-          _this.account = acc.substring(0, 10) + "...";
+          // _this.account = acc.substring(0, 10) + "...";
+          var strshortfront = acc.slice(0, 6);
+          var strshortend = acc.slice(-4);
+          _this.account = strshortfront + "..." + strshortend;
           _this.connected = true;
           _this.profile_route = _this.profile_route + acc;
           clearInterval(interval);

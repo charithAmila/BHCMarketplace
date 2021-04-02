@@ -351,12 +351,13 @@
         <div class="inner-img">
           <div class="mobile-imgHead d-block d-md-none">
             <a
-              v-if="current_user != current_owner.user_id"
+              v-if="current_user != current_owner.wallet"
               :data-nft-slug="set_collectible.nft_slug"
               :data-record-id="set_collectible.record_id"
               :class="is_liked == true ? 'nft-liked' : ''"
               class="like-btn m-imgHead-link"
               href="javascript:void(0)"
+              @click="addLike()"
             >
               <i class="fa fa-heart nft-option"></i>
             </a>
@@ -384,12 +385,13 @@
 
             <div class="show-nft-option imgHead d-none d-md-block">
               <a
-                v-if="current_user != current_owner.user_id"
+                v-if="current_user != current_owner.wallet"
                 :data-nft-slug="set_collectible.nft_slug"
                 :data-record-id="set_collectible.record_id"
                 :class="is_liked == true ? 'nft-liked' : ''"
                 class="like-btn imgHead-link"
                 href="javascript:void(0)"
+                @click="addLike()"
               >
                 <i class="fa fa-heart nft-option"></i>
               </a>
@@ -404,6 +406,7 @@
         <img
           class="showImgBg d-none d-md-block"
           :src="asset_url + 'images/right.png'"
+          alt=""
         />
       </div>
     </div>
@@ -427,7 +430,11 @@ import CollectibleDetails from "./show_collectible/CollectibleDetailsComponent.v
 import BidModal from "./modals/BidModalComponent.vue";
 import CheckoutModal from "./modals/CheckoutModalComponent.vue";
 import { getUserDetails } from "./../data";
+
 import { checkConnection, toAddress } from "./../etherFunc";
+
+import { LikeController } from "../mediaFunc";
+
 export default {
   components: {
     CollectibleDetails,
@@ -438,7 +445,6 @@ export default {
     "collectible",
     "transactions",
     "onWishList",
-    "is_liked",
     "asset_url",
     "auth_check",
     "user_profile",
@@ -457,6 +463,7 @@ export default {
       current_user: null,
       service_fee: 0,
       royaltyFee: 0,
+      is_liked: false,
     };
   },
   watch: {
@@ -534,6 +541,54 @@ export default {
       $("input.linkToCopy").select();
       document.execCommand("copy");
     },
+    async addLike() {
+      if (this.is_liked) {
+        this.unlike();
+      } else {
+        var contract = this.collectible.contract;
+        var id = this.collectible.id;
+        var output = await LikeController(contract, id);
+        if (output.success) {
+          this.is_liked = true;
+        }
+      }
+    },
+    unlike() {
+      var data = {};
+      var contract = this.collectible.contract;
+      var id = this.collectible.id;
+      var _this = this;
+      data.contract = contract;
+      data.token_id = id;
+      data.address = connected_account.toLowerCase();
+      axios
+        .post("/unlike", data, {})
+        .then(function (response) {
+          if (response.data.success) {
+            _this.is_liked = false;
+          }
+        })
+        .catch(function (error) {});
+    },
+    checkLike() {
+      var contract = this.collectible.contract;
+      var id = this.collectible.id;
+      var _this = this;
+      axios.get("/like").then((res) => {
+        var valObj = res.data.likes.filter(function (elem) {
+          if (
+            elem.token_id == id &&
+            elem.contract == contract &&
+            elem.address == connected_account &&
+            elem.liked == true
+          )
+            return elem.token_id;
+        });
+        if (valObj.length > 0) {
+          _this.is_liked = true;
+        }
+      });
+    },
   },
   async mounted() {
     this.loaded = false;
@@ -545,10 +600,14 @@ export default {
 
     await this.getOwnersDetails();
     this.loaded = true;
+
     this.checkConnection();
     this.service_fee = (this.collectible.price * 2.5) / 100;
     this.royaltyFee =
       (this.collectible.price * this.collectible.royalties) / 100;
+
+    this.checkLike();
+
   },
 };
 </script>

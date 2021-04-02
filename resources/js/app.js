@@ -236,6 +236,8 @@ window.WalletConnect_Provider = new WalletConnectProvider({
 });
 */
 
+window.moment = require("moment");
+
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 

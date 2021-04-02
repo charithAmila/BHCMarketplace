@@ -47,6 +47,7 @@
               :class="following == false ? '' : 'd-none'"
               :data-user-url="user.short_url"
               href="javascript:void(0)"
+              @click="addFollow()"
               >Follow</a
             >
 
@@ -57,7 +58,8 @@
               :class="following == true ? '' : 'd-none'"
               :data-user-url="user.short_url"
               href="javascript:void(0)"
-              >Following</a
+              @click="addFollow()"
+              >Unfollow</a
             >
 
             <a class="btn btn-social share-link" href="javascript:void(0)">
@@ -165,11 +167,12 @@
 <script>
 import { ethers } from "ethers";
 import { toAddress, checkConnection } from "./../etherFunc";
+import { FollowController } from "../mediaFunc";
+
 export default {
   props: [
     //'auth_id',
     "user_id",
-    "following",
     "asset_url",
     "csrf_token",
     "user",
@@ -178,7 +181,7 @@ export default {
   data() {
     return {
       auth_id: "",
-
+      following: false,
       userData: {},
       userPhoto: "",
     };
@@ -247,12 +250,57 @@ export default {
         })
         .then(function (error) {});
     },
-    follow() {},
-    sign() {},
+    unfollow() {
+      var data = {};
+      var user_id = this.user_id;
+      var follower_id = connected_account;
+      var _this = this;
+      data.user_id = user_id;
+      data.follower_id = follower_id;
+      axios
+        .post("/unfollow", data, {})
+        .then(function (response) {
+          if (response.data.success) {
+            _this.following = false;
+          }
+        })
+        .catch(function (error) {});
+    },
+    async addFollow() {
+      if (this.following) {
+        this.unfollow();
+      } else {
+        var user_id = this.user_id;
+        var follower_id = connected_account;
+        var output = await FollowController(user_id, follower_id);
+        if (output.success) {
+          this.following = true;
+        }
+      }
+    },
+    checkFollow() {
+      var user_id = this.user_id;
+      var follower_id = connected_account;
+      var _this = this;
+      axios.get("/followers").then((res) => {
+        var valObj = res.data.followers.filter(function (elem) {
+          if (
+            elem.user_id == user_id &&
+            elem.follower_id == follower_id &&
+            elem.followed == true
+          )
+            return elem.user_id;
+        });
+        if (valObj.length > 0) {
+          _this.following = true;
+        }
+      });
+    },
   },
-  mounted() {
+  async mounted() {
     this.checkConnection();
     this.getUserData();
+    this.checkFollow();
   },
 };
 </script>
