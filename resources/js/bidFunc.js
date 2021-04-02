@@ -11,6 +11,7 @@ import {
     BELL_tokenAddress,
     julswap_routerAddress
 } from "../js/addresses/constants.js";
+import { getUserDetails } from "./data.js";
 import { ethers } from "ethers";
 import { toAddress, checkConnection, buy } from "./etherFunc.js";
 ///////////////////////////////////////////////////ABI//////////////////////////////////////////////////////////
@@ -2599,6 +2600,7 @@ async function getTokenPrice(bidding_token) {
 ///////////////////////////////////////////Start Bidding////////////////////////////////////////////////////////////
 async function startBidding(_owner, contract_address, token_id) {
     let data = {};
+    var res = {};
     data.contract_address = contract_address;
     data.token_id = token_id;
     data.bidding_status = true;
@@ -2613,9 +2615,10 @@ async function startBidding(_owner, contract_address, token_id) {
         await axios
             .post("/startBid", data, {})
             .then(function(response) {
-                console.log(response.data);
+                res = response.data;
             })
             .catch(function(error) {});
+        return res;
     } else {
         return "Not owner";
     }
@@ -2811,11 +2814,12 @@ async function getAllBids(owner, contract_address, token_id) {
     var output = {};
     await axios.post("/getAllBids", data, {}).then(function(response) {
         output = response.data;
-        // var now = new Date();
-        // var date1 = now.getTime();
-        // console.log(date1);
-        ///timeDifference(date1, response.data[0].created_at);
     });
+    for (var i = 0; i < output.length; i++) {
+        output[i].proPic = await (
+            await getUserDetails(output[i].bidding_address)
+        ).display_photo;
+    }
     return output;
 }
 ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
@@ -2826,20 +2830,24 @@ async function getHighestBid(owner, contract_address, token_id) {
     var maxBidder;
     var maxBidToken;
     var maxBidSig;
+    var maxBidTime;
     for (var i = 0; i < output.length; i++) {
         // var price = await getTokenPrice(output[i].bidding_token);
         var price = 10;
         if (price * output[i].bidding_amount > maxAmount) {
-            maxAmount = price;
+            maxAmount = output[i].bidding_amount;
             maxBidder = output[i].bidding_address;
             maxBidToken = output[i].bidding_token;
             maxBidSig = output[i].signature;
+            maxBidTime = output[i].created_at;
         }
-    } //
+    }
+    res.proPic = await (await getUserDetails(maxBidder)).display_photo;
     res.maxBidToken = maxBidToken;
-    res.maxAmount = maxAmount;
+    res.maxAmount = maxAmount * 10 ** 18;
     res.maxBidder = maxBidder;
     res.maxBidSig = maxBidSig;
+    res.maxBidTime = maxBidTime;
 
     /*res.maxBidToken = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
     res.maxAmount = "1";
