@@ -1,6 +1,7 @@
 
-import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType } from './etherFunc';
+import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType, getOwnersOf, getCreated } from './etherFunc';
 import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
+import axios from 'axios';
 
 
 ////////get///////////////////
@@ -110,7 +111,7 @@ async function getOwnedTokensData(owner, base_url) {
         var res = await axios.get(selectedToken.URI);
         var nft = res.data;
 
-        nft.copies = nft.count;
+        nft.copies = 1;
         nft.ownedCopies = selectedToken.ownedCopies;
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
@@ -175,11 +176,33 @@ async function getOwnedTokensData(owner, base_url) {
 
 async function getLikedTokens(owner, base_url) {
     var data = [];
+    var liked = await axios.get("/like");
+    var likes = liked.data.likes.filter(function (like) {
+        if (toAddress(like.address) == toAddress(owner)) return true;
+    });
+    for (var i = 0; i < likes.length; i++) {
+        var owners = await getOwnersOf(likes[i].contract, likes[i].token_id)
+        for (var j = 0; j < owners.length; j++) {
+            var token = await getTokenData(likes[i].contract, owners[j].owner, likes[i].token_id)
+            data.push(token)
+        }
+    }
     return data;
 }
 
 async function getCreatedTokens(owner, base_url) {
     var data = [];
+    var tokens = await getCreated(owner);
+    for (var i = 0; i < tokens.length; i++) {
+        var owners = await getOwnersOf(tokens[i].contract, tokens[i].token_id)
+        for (var j = 0; j < owners.length; j++) {
+            try {
+                var token = await getTokenData(tokens[i].contract, owners[j].owner, tokens[i].token_id)
+                data.push(token)
+            } catch (e) { }
+
+        }
+    }
     return data;
 }
 
@@ -216,14 +239,14 @@ async function getOnSaleTokens(owner, base_url) {
 
 async function getTokensData(owner, base_url) {
     var ownedTokens = await getOwnedTokensData(owner, base_url);
-    var likedTokens = await getLikedTokens(owner, base_url);
-    var createdTokens = await getCreatedTokens(owner, base_url);
+    //var likedTokens = await getLikedTokens(owner, base_url);
+    //var createdTokens = await getCreatedTokens(owner, base_url);
     var onSaleTokens = await getOnSaleTokens(owner, base_url);
 
     var data = {
         "on-sale": onSaleTokens,
-        liked: likedTokens,
-        created: createdTokens,
+        liked: [], //likedTokens,
+        created: [], //createdTokens,
         collectibles: ownedTokens
     };
     //console.log(data)
@@ -300,8 +323,14 @@ async function collectiblesOfCollection(collection) {
     for (var i = 0; i < collects.length; i++) {
         var id = collects[i].id;
         var owner = collects[i].owner
-        var nft = await getTokenData(collection, owner, id)
-        collectibles.push(nft)
+        try {
+            var nft = await getTokenData(collection, owner, id)
+            collectibles.push(nft)
+        }
+        catch (e) {
+
+        }
+
     }
     console.log(collectibles);
     return collectibles;
@@ -372,5 +401,5 @@ async function removeSale(id) {
 
 
 
-export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale, collectiblesOfCollection }
+export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale, collectiblesOfCollection, getOnSaleTokens, getLikedTokens, getCreatedTokens }
 

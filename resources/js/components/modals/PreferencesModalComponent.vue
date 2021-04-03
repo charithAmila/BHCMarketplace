@@ -313,13 +313,12 @@ export default {
     nameCheck() {
       let shorturl = $("#short_url-profile").val();
 
-
-                if(shorturl.length==0){
-                    this.nameerror = null;
-                }
-                this.nameerror =false
-       this.shorturls.forEach(i=>{
-         if(i==shorturl && shorturl!=this.url_previous){
+      if (shorturl.length == 0) {
+        this.nameerror = null;
+      }
+      this.nameerror = false;
+      this.shorturls.forEach((i) => {
+        if (i == shorturl && shorturl != this.url_previous) {
           this.nameerror = true;
         }
       });

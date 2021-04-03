@@ -165,9 +165,10 @@
           </div>
         </div>
         <div class="priceTag">
-          <label class="showCurrency">{{
-            set_collectible.price || set_collectible.instant_sale_price
-          }}</label>
+          <label class="showCurrency"
+            >{{ set_collectible.price }}
+            {{ set_collectible.currencyName }}</label
+          >
           <!-- <label class="showCurrencyPlain">$135.20</label> -->
         </div>
         <h5 class="itemType">
@@ -607,7 +608,6 @@ export default {
       (this.collectible.price * this.collectible.royalties) / 100;
 
     this.checkLike();
-
   },
 };
 </script>
