@@ -111,7 +111,6 @@
         </div>
 
         <div
-          v-if = "highestBid!=false"
           id="past_transactions"
           class="tab-pane"
           v-bind:class="{ 'tab-active': bid_active }"
@@ -135,14 +134,14 @@
           <button
             type="submit"
             class="btn btn-success"
-            v-if="biddingStatus && owner"
+            v-if="biddingStatus && owner && haveBids"
             @click="acceptBidding()"
           >
             Accept Highest Bid
           </button>
           <br><br>
           <h5   v-show="biddingStatus">Highest Bid</h5>
-          <div class="row"   v-show="biddingStatus">
+          <div class="row"   v-show="biddingStatus && haveBids">
           <div class="col-3 col-md-2">
               <div class="inlineDiv">
                 <a :href="user_profile + '/' + this.highestBid.maxBidder">
@@ -234,12 +233,14 @@ export default {
       home_active: true,
       holder_active: false,
       biddingStatus: false,
+      haveBids:false,
       owner: false,
       highestBid: {
-        "maxBidder":'',
-        "maxBidAmount":'',
-        "maxBidder":'',
-        "maxBidTime":''
+        maxBidder:'',
+        maxBidAmount:0,
+        maxBidder:'',
+        maxBidTime:'',
+        maxBidToken:''
       },
       address: {},
     };
@@ -263,16 +264,24 @@ async loadData(){
       this.collectible.contract,
       this.collectible.id
     );
-    this.highestBid = await getHighestBid(
+    var res =  await getHighestBid(
       this.current_owner.wallet,
       this.collectible.contract,
       this.collectible.id
     );
+    if(res!=false){
+      this.highestBid = res;
+      this.haveBids = true;
+    }
+    else{
+      this.haveBids = false;
+    }
     this.biddingStatus = output;
     this.allBids = allBids;
     if (this.address == this.current_owner.wallet) {
       this.owner = true;
     }
+    console.log(res)
 },
 
     detailsActive() {
