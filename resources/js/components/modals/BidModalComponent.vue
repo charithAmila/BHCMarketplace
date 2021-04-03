@@ -57,14 +57,9 @@
 <script>
 
 
-import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance,getBNBBalance } from ".././../bidFunc";
-import {generateOrderIdMessage} from ".././../etherFunc";
-import $ from 'jquery'
-import { log } from 'util';
-
 export default {
 
-	props: [ 'singleNft', 'page'],
+	props: [ 'singleNft', 'page','bidOpen'],
 	data () {
 		return{
 			bid_input: 0,
@@ -76,7 +71,8 @@ export default {
 			currency: '',
 			nft_id: 0,
 			record_id: 0,
-			selected_token:0
+			selected_token:0,
+			open: true
 			
 		}
 	},
@@ -85,8 +81,6 @@ export default {
 		this.BNB_Balance = await getBNBBalance()
 		console.log("HPS")
 		console.log(this.HPS_Balance)
-	 
-	
 	},
 
 	computed:{
@@ -123,8 +117,10 @@ export default {
 			this.selected_token = 0;
 		},
 		async placeBid() {
+			modalClose($('#bidListModal'), $(".bidList-content"));
 			this.currency = $('#selectedCurrency').text()
 			let res = await bid(this.singleNft.owner_id,this.singleNft.contract,this.singleNft.id,this.currency,this.payment);
+			this.open= false;
 		}
 	}
 }

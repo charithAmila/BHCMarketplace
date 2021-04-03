@@ -45,8 +45,7 @@
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
-                  >Place a bid</a
-                >
+                  >Place a bid</a>
                 <a
                   class="report"
                   href="javascript:void(0)"
@@ -464,6 +463,7 @@ export default {
       service_fee: 0,
       royaltyFee: 0,
       is_liked: false,
+
     };
   },
   watch: {
