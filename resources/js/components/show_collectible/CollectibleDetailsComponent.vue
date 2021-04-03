@@ -139,8 +139,8 @@
           >
             Accept Highest Bid
           </button>
-          <br><br>
-          <h5   v-show="biddingStatus">Highest Bid</h5>
+       
+          <h5   v-if="biddingStatus && haveBids">Highest Bid</h5>
           <div class="row"   v-show="biddingStatus && haveBids">
           <div class="col-3 col-md-2">
               <div class="inlineDiv">
@@ -166,7 +166,8 @@
             </div>
             </div>
             <br><br>
-          <h5>All Bids</h5>
+          <h5 v-if="biddingStatus && haveBids">All Bids</h5>
+          <h5 v-if="!biddingStatus">Not available for Bidding</h5>
           <div
             v-for="(transac, index) in allBids"
             :key="index"
