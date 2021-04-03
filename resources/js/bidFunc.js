@@ -366,7 +366,8 @@ async function getHighestBid(owner, contract_address, token_id) {
     var maxBidTime;
     var maxBidMessage;
     var maxBidSalt;
-    if (output != []) {
+  
+    if(output.length!=0){
         for (var i = 0; i < output.length; i++) {
             // var price = await getTokenPrice(output[i].bidding_token);
             var price = 10;
@@ -394,9 +395,10 @@ async function getHighestBid(owner, contract_address, token_id) {
     res.maxAmount = "1";
     res.maxBidder = output[0].user_id;
     res.maxBidSig = output[0].signature;*/
-        return res;
-    }
-    return false;
+        return res;   }
+        else{
+            return false;
+        }
 }
 
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
