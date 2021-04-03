@@ -1,9 +1,9 @@
 //////////////////////////////////////////Token Contracts//////////////////////////////////////////
 
-const hps721Address = "0xC8026213ea46f2eCB15069f0d6182c5C0920085D";
+const hps721Address = "0xC8026213ea46f2eCB15069f0d6182c5C0920085D"
 //const hps721Address = "0x99c67837E2695E2707fc3ed5cF630fcad111a1D7"
+const hps1155Address = "0x3C09A031925fBEcaA533F1C7C40ae6b3ab6CF236"
 
-const hps1155Address = "0x3C09A031925fBEcaA533F1C7C40ae6b3ab6CF236";
 //////////////////////////////////////////Utility Contracts///////////////////////////////////////
 const transferProxyAddress = "0xb757e85c4869C3c96DbD79cd8022d089FC58aee3";
 const erc20TransferProxyAddress = "0x9e78C6e0410Cc33A0864D0AC6C9ff7dABAF709cb";
