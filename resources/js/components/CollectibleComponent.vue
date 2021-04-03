@@ -51,12 +51,12 @@
                       >Buy now</a
                     >
                     <a
+                      v-if = "collectible.biddingStatus"
                       :id="collectible.slug"
                       class="place-bid"
                       href="javascript:void(0)"
                       @click="fetchSingleNft(collectible, 'bid')"
-                      >Place a bid</a
-                    >
+                      >Place a bid</a>
                     <a
                       :id="collectible.slug"
                       class="report"
@@ -196,6 +196,7 @@
     <bid-modal-component
       :singleNft="singleNft"
       :page="current_page"
+      :bidOpen ="open"
     ></bid-modal-component>
     <report-modal-component :singleNft="singleNft"></report-modal-component>
     <bid-list-modal-component
@@ -229,7 +230,10 @@ export default {
       bidList: [],
       bidListNFT: "",
       checked: false,
-      loaded: false,
+
+      loaded:false,
+      open:false
+
       //collectible: this.collectibles[0],
     };
   },
@@ -255,6 +259,9 @@ export default {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
     fetchSingleNft(collectible, clicked) {
+      if(clicked=='bid') {
+        this.open= true;
+      }
       if (this.current_user == 0) {
         window.location.href = this.base_url + "/connect";
       } else {

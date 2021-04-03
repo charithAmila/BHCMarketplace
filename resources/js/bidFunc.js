@@ -429,6 +429,23 @@ async function getBiddingStatus(owner, contract_address, token_id) {
     });
     return output;
 }
+
+///////////////////////////////////////////Get Bidding Status All ////////////////////////////////////////////////
+async function getBiddingStatusAll(collectibles) {
+    for (collectible in collectibles) {
+        var data = {};
+        data.contract_address = collectible.contract;
+        data.owner = collectible.owner_id;
+        data.token_id = collectible.id;
+        var output = {};
+        await axios
+            .post("/getBiddingStatus", data, {})
+            .then(function(response) {
+                collectible.bidding_status = response.data;
+            });
+        return collectibles;
+    }
+}
 /////////////////////////////////////////////Finish Bidding///////////////////////////////////////////////////////
 async function finishBidding(token_id) {}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -439,6 +456,7 @@ export {
     startBidding,
     getHighestBid,
     getBiddingStatus,
+    getBiddingStatusAll,
     getAllBids,
     endBidding,
     getHpsBalance,
