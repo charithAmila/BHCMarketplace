@@ -24,7 +24,7 @@
                   <p id="sizeInvalid" class="text-danger d-none">
                     File too Big, please select a file less than 50mb
                   </p>
-                  <p id="fileInvalid" class="text-danger d-none">
+                  <p v-if="isError.invalid_file" class="text-danger">
                     Invalid file format
                   </p>
                   <p id="fileLabel">
@@ -49,13 +49,15 @@
                   max="100"
                   :value.prop="uploadPercentageimg"
                 ></progress>
-                <p class="this-error text-danger"></p>
+                <p v-if="isError.file" class="this-error text-danger">
+                  {{ error_message }}
+                </p>
                 <span
                   id="nft-validation"
                   class="custom-error text-danger"
                 ></span>
                 <div class="file-output d-none">
-                  <img src="" class="category-img-tag" />
+                  <img src="" class="category-img-tag" alt="" />
                   <span class="close-btn"><i class="fa fa-times"></i></span>
                 </div>
                 <div class="file-output-video d-none">
@@ -97,7 +99,6 @@
                   placeholder="Digital key, code to redeem or link to a file"
                 />
               </div>
-              <p class="this-error text-danger"></p>
               <span
                 id="aop_link-validation"
                 class="custom-error text-danger"
@@ -108,13 +109,62 @@
             </div>
 
             <h6 class="content-title text-content">Select Collection</h6>
+            <div id="collection-group">
+              <a href="javascript:void(0)" class="generateBtn generateBtn">
+                <div class="outside">
+                  <div class="inside">
+                    <div class="inner-outside">
+                      <div class="inner generate_collection">
+                        <i class="fa fa-plus"></i>
+                        <h6>Generate collection</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
 
+              <a
+                v-for="(collection, index) in setCollections"
+                :key="index"
+                :id="collection.id"
+                href="javascript:void(0)"
+                class="g_select"
+                :class="index == 0 ? 'active-btn' : 'inactive-btn'"
+                @click="onClickCollection(collection.address)"
+              >
+                <div class="outside">
+                  <div class="inside">
+                    <div class="inner-outside">
+                      <div class="inner">
+                        <img
+                          v-if="collection.default == 1"
+                          class="collection-logo"
+                          :src="collection.icon"
+                          alt=""
+                        />
+                        <img
+                          v-else
+                          class="collection-logo"
+                          :src="collection.icon"
+                          alt=""
+                        />
+                        <h6>{{ collection.name }} {{ collection.symbol }}</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <p v-if="isError.collection" class="this-error text-danger">
+               Please select a collection
+            </p>
+            <!--
             <generate-collection-component
               :collections="setCollections"
               :asset_url="asset_url"
               @clicked="onClickCard"
             ></generate-collection-component>
-
+-->
             <div class="form-group mt-8">
               <div>
                 <h6 class="content-title text-content mb-0">Name</h6>
@@ -126,7 +176,9 @@
                   v-model="name"
                 />
               </div>
-              <p class="this-error text-danger"></p>
+              <p v-if="isError.name" class="this-error text-danger">
+                {{ error_message }}
+              </p>
               <span
                 id="name-validation"
                 class="custom-error text-danger"
@@ -171,7 +223,9 @@
                       </option>
                     </select>
                   </div>
-                  <p class="this-error text-danger"></p>
+                  <p v-if="isError.category" class="this-error text-danger">
+                    {{ error_message }}
+                  </p>
                   <span
                     id="legend-validation"
                     class="custom-error text-danger"
@@ -199,7 +253,9 @@
                       </option>
                     </select>
                   </div>
-                  <p class="this-error text-danger"></p>
+                  <p v-if="isError.legend" class="this-error text-danger">
+                    {{ error_message }}
+                  </p>
                   <span
                     id="category-validation"
                     class="custom-error text-danger"
@@ -304,7 +360,7 @@
               </div>
             </div>
 
-            <div v-if="putOnSale" class="form-group row instant-sale">
+            <div v-if="putOnSale" class="form-group row">
               <div class="col-9 col-md-10">
                 <h6 class="content-title text-content mb-0">
                   Instant sale price
@@ -338,30 +394,26 @@
                   v-model="price"
                 />
                 <span id="BHC" class="link-url-end sale-price-btn"
-                  >BHC <i class="fa fa-angle-down"></i
+                  >BNB <i class="fa fa-angle-down"></i
                 ></span>
                 <div class="sale-price-drop d-none">
                   <div class="drop-group">
-                    <a href="javascript:void(0)" id="BHC" class="currency-item"
-                      >BHC</a
+                    <a href="javascript:void(0)" id="BNB" @click="setSaleCurrency('BNB')" class="currency-item"
+                      >BNB</a
                     >
                     <i class="fa fa-check currency-check"></i>
                   </div>
                   <div class="drop-group">
-                    <a href="javascript:void(0)" id="HPS" class="currency-item"
+                    <a href="javascript:void(0)" id="HPS" @click="setSaleCurrency('HPS')" class="currency-item"
                       >HPS</a
-                    >
-                    <i class="fa fa-check currency-check opacity-0"></i>
-                  </div>
-                  <div class="drop-group">
-                    <a href="javascript:void(0)" id="BNB" class="currency-item"
-                      >BNB</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
                   </div>
                 </div>
               </div>
-              <p class="this-error text-danger pl-15"></p>
+              <p v-if="isError.sale_price" class="this-error text-danger">
+                {{ error_message }}
+              </p>
               <span
                 id="price-validation"
                 class="custom-error text-danger pl-15"
@@ -477,6 +529,17 @@ export default {
   ],
   data() {
     return {
+      isError: {
+        name: false,
+        file: false,
+        description: false,
+        category: false,
+        legend: false,
+        collection: false,
+        sale_price: false,
+        invalid_file: false,
+        imgselectok: false,
+      },
       name: "",
       description: "",
       category: "",
@@ -502,9 +565,19 @@ export default {
       imgselectok: false,
       uploadPercentageimg: 0,
       colType: this.type == "solo" ? 721 : 1155,
+      error_message: "This field is required",
+      sale_currency: "BNB"
     };
   },
   methods: {
+    setSaleCurrency(currency){
+      this.sale_currency = currency;
+    },
+    onClickCollection(address) {
+      
+      this.selectedContract = address;
+      console.log(address);
+    },
     checkConnection: function () {
       const _this = this;
       var connectionInterval = setInterval(async function () {
@@ -557,124 +630,183 @@ export default {
 
       //we gather a local file for this example, but any valid readStream source will work here.
       if (evt.target.files.length > 0) {
-        _this.fileType = evt.target.files[0].type.split("/")[0];
-        var url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-        data.append("file", evt.target.files[0]);
+        if (
+          evt.target.files[0]["type"] === "image/jpeg" ||
+          evt.target.files[0]["type"] === "image/jpg" ||
+          evt.target.files[0]["type"] === "image/png" ||
+          evt.target.files[0]["type"] === "image/gif" ||
+          evt.target.files[0]["type"] === "image/webp" ||
+          evt.target.files[0]["type"] === "video/mp4" ||
+          evt.target.files[0]["type"] === "audio/mp3"
+        ) {
+          this.isError.invalid_file = false;
+          _this.fileType = evt.target.files[0].type.split("/")[0];
+          var url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+          data.append("file", evt.target.files[0]);
 
-        //pinataOptions are optional
-        const pinataOptions = JSON.stringify({
-          cidVersion: 0,
-          customPinPolicy: {
-            regions: [
-              {
-                id: "FRA1",
-                desiredReplicationCount: 1,
-              },
-              {
-                id: "NYC1",
-                desiredReplicationCount: 2,
-              },
-            ],
-          },
-        });
-        data.append("pinataOptions", pinataOptions);
-
-        _this.process = "Uploading Image...";
-
-        await axios
-          .post(url, data, {
-            onUploadProgress: function (uploadEvent) {
-              _this.imgselectok = true;
-              _this.uploadPercentageimg = Math.round(
-                (uploadEvent.loaded / uploadEvent.total) * 100
-              );
+          //pinataOptions are optional
+          const pinataOptions = JSON.stringify({
+            cidVersion: 0,
+            customPinPolicy: {
+              regions: [
+                {
+                  id: "FRA1",
+                  desiredReplicationCount: 1,
+                },
+                {
+                  id: "NYC1",
+                  desiredReplicationCount: 2,
+                },
+              ],
             },
-            maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
-            headers: {
-              "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-              Authorization: `Bearer ${_this.j}`,
-            },
-          })
-          .then(async function (response) {
-            //_this.userPhoto = 'https://ipfs.io/ipfs/'+response.data.IpfsHash;
-            _this.uploadedImage =
-              "https://ipfs.io/ipfs/" + response.data.IpfsHash;
-          })
-          .catch(function (error) {
-            //handle error here
           });
+          data.append("pinataOptions", pinataOptions);
+
+          _this.process = "Uploading Image...";
+
+          await axios
+            .post(url, data, {
+              onUploadProgress: function (uploadEvent) {
+                _this.imgselectok = true;
+                _this.uploadPercentageimg = Math.round(
+                  (uploadEvent.loaded / uploadEvent.total) * 100
+                );
+              },
+              maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
+              headers: {
+                "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+                Authorization: `Bearer ${_this.j}`,
+              },
+            })
+            .then(async function (response) {
+              //_this.userPhoto = 'https://ipfs.io/ipfs/'+response.data.IpfsHash;
+              _this.uploadedImage =
+                "https://ipfs.io/ipfs/" + response.data.IpfsHash;
+            })
+            .catch(function (error) {
+              //handle error here
+            });
+          _this.process = "Uploaded";
+          _this.processing = false;
+        } else {
+          this.isError.invalid_file = true;
+          _this.process = "Upload";
+        }
       }
-      _this.process = "Uploaded";
-      _this.processing = false;
     },
     async createCollectible() {
-      const _this = this;
-      console.log(this.selectedContract);
-      _this.fProcessing = true;
-      _this.fProcess = "Generating Hash";
-      var data = {
-        creator: toAddress(window.ethereum.selectedAddress),
-        name: _this.name,
-        file: _this.uploadedImage,
-        fileType: _this.fileType,
-        description: _this.description,
-        category: _this.category,
-        legend: _this.legend,
-        royalties: _this.royalties,
-        properties: _this.properties,
-        instant_sale_price: _this.price,
-        instant_sale_token: _this.token,
-        count: 1,
-      };
-      _this.type == "multiple" ? (data.count = _this.copies) : null;
+      if (
+        !this.name ||
+        !this.imgselectok ||
+        !this.legend ||
+        !this.category ||
+        !this.collections
+      ) {
+        if (!this.name) {
+          this.isError.name = true;
+        } else {
+          this.isError.name = false;
+        }
+        if (!this.imgselectok) {
+          this.isError.imgselectok = true;
+        } else {
+          this.isError.imgselectok = false;
+        }
+        if (!this.category) {
+          this.isError.category = true;
+        } else {
+          this.isError.category = false;
+        }
+        if (!this.legend) {
+          this.isError.legend = true;
+        } else {
+          this.isError.legend = false;
+        }
+        if (this.selectedContract == "") {
+          this.isError.collection = true;
+        } else {
+          this.isError.collection = false;
+        }
+      } else {
+        if (instantSale && Number(this.price) == 0) {
+          this.isError.sale_price = true;
+        } else {
+          this.isError.imgselectok = false;
+          this.isError.category = false;
+          this.isError.legend = false;
+          this.isError.collection = false;
+          this.isError.sale_price = false;
+          this.isError.name = false;
+          const _this = this;
+          console.log(this.selectedContract);
+          _this.fProcessing = true;
+          _this.fProcess = "Generating Hash";
+          var data = {
+            creator: toAddress(window.ethereum.selectedAddress),
+            name: _this.name,
+            file: _this.uploadedImage,
+            fileType: _this.fileType,
+            description: _this.description,
+            category: _this.category,
+            legend: _this.legend,
+            royalties: _this.royalties,
+            properties: _this.properties,
+            instant_sale_price: _this.price,
+            instant_sale_token: _this.token,
+            count: 1,
+            sale_currency: _this.sale_currency
+          };
+          _this.type == "multiple" ? (data.count = _this.copies) : null;
 
-      var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
-      await axios
-        .post(url, data, {
-          headers: {
-            Authorization: `Bearer ${_this.j}`,
-          },
-        })
-        .then(function (response) {
-          _this.fProcess = "Generating Token";
-          _this.type == "solo"
-            ? createASingle(
-                "https://ipfs.io/ipfs/" + response.data.IpfsHash,
-                _this.royalties,
-                _this.selectedContract
-              ).then((res) => {
-                console.log(res);
-                waitForTransaction(res.hash).then((data) => {
-                  if (data) {
-                    _this.fProcess = "Token minted";
-                    _this.fProcessing = false;
-                  }
-                  window.location.href = `/profile/${toAddress(
-                    window.ethereum.selectedAddress
-                  )}`;
-                });
-              })
-            : createABatch(
-                "https://ipfs.io/ipfs/" + response.data.IpfsHash,
-                _this.copies,
-                _this.royalties,
-                _this.selectedContract
-              ).then((res) => {
-                console.log(res);
-                waitForTransaction(res.hash).then((data) => {
-                  if (data) {
-                    _this.fProcess = "Token minted";
-                    _this.fProcessing = false;
-                  }
-                  window.location.href = `/profile/${toAddress(
-                    window.ethereum.selectedAddress
-                  )}`;
-                });
-              });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+          var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+          await axios
+            .post(url, data, {
+              headers: {
+                Authorization: `Bearer ${_this.j}`,
+              },
+            })
+            .then(function (response) {
+              _this.fProcess = "Generating Token";
+              _this.type == "solo"
+                ? createASingle(
+                    "https://ipfs.io/ipfs/" + response.data.IpfsHash,
+                    _this.royalties,
+                    _this.selectedContract
+                  ).then((res) => {
+                    console.log(res);
+                    waitForTransaction(res.hash).then((data) => {
+                      if (data) {
+                        _this.fProcess = "Token minted";
+                        _this.fProcessing = false;
+                      }
+                      window.location.href = `/profile/${toAddress(
+                        window.ethereum.selectedAddress
+                      )}`;
+                    });
+                  })
+                : createABatch(
+                    "https://ipfs.io/ipfs/" + response.data.IpfsHash,
+                    _this.copies,
+                    _this.royalties,
+                    _this.selectedContract
+                  ).then((res) => {
+                    console.log(res);
+                    waitForTransaction(res.hash).then((data) => {
+                      if (data) {
+                        _this.fProcess = "Token minted";
+                        _this.fProcessing = false;
+                      }
+                      window.location.href = `/profile/${toAddress(
+                        window.ethereum.selectedAddress
+                      )}`;
+                    });
+                  });
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      }
     },
     onClickCard(_selectedContract) {
       const _this = this;

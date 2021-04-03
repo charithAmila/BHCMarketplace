@@ -58,8 +58,9 @@
 
 
 import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance,getBNBBalance } from ".././../bidFunc";
-
+import {generateOrderIdMessage} from ".././../etherFunc";
 import $ from 'jquery'
+import { log } from 'util';
 
 export default {
 
@@ -82,6 +83,8 @@ export default {
 	async mounted() {
 		 this.HPS_Balance = await getHpsBalance()
 		this.BNB_Balance = await getBNBBalance()
+		console.log("HPS")
+		console.log(this.HPS_Balance)
 	 
 	
 	},
@@ -121,36 +124,7 @@ export default {
 		},
 		async placeBid() {
 			this.currency = $('#selectedCurrency').text()
-
 			let res = await bid(this.singleNft.owner_id,this.singleNft.contract,this.singleNft.id,this.currency,this.payment);
-			console.log(res);
-
-			/*axios.post('/create/transaction', {
-			    type: 'bid',
-			    nft_id: this.nft_id,
-			    price: this.payment,
-			    currency: this.currency,
-			    record_id: this.record_id,
-			}).then((res) => {
-				$('.toast-message').text(res.data.message);
-				$('#bidForm').trigger("reset");
-	            setTimeout(function() {
-                    launch_toast();
-                }, 500);
-				modalClose($('#bidModal'), $(".bid-content"));
-				this.service_fee = 0
-				this.total_payment = 0
-				this.payment = 0
-				this.bid_input = 0
-
-				if (this.page == 'showcollectible') {
-					this.$parent.updateData()
-				}
-			})
-			.catch((error) => {
-                alert("error")
-            })*/
-
 		}
 	}
 }

@@ -134,11 +134,39 @@
           <button
             type="submit"
             class="btn btn-success"
-            v-if="biddingStatus && owner"
+            v-if="biddingStatus && owner && haveBids"
             @click="acceptBidding()"
           >
             Accept Highest Bid
           </button>
+          <br><br>
+          <h5   v-show="biddingStatus">Highest Bid</h5>
+          <div class="row"   v-show="biddingStatus && haveBids">
+          <div class="col-3 col-md-2">
+              <div class="inlineDiv">
+                <a :href="user_profile + '/' + this.highestBid.maxBidder">
+                  <img class="br-50" :src="highestBid.proPic" width="50" />
+                </a>
+                <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
+              </div>
+            </div>
+
+               <div class="col-9 col-md-10">
+              <label class="position"
+                >
+                <span class="positionHolder">{{ this.highestBid.maxAmount/10**18}}</span> {{ this.highestBid.maxBidToken}}
+                on {{ this.highestBid.maxBidTime.slice(0, 10) }} by
+                <a :href="user_profile + '/' + this.highestBid.maxBidder"
+                  ><span class="positionHolder">{{
+                    this.highestBid.maxBidder
+                  }}</span></a
+                >
+              </label>
+
+            </div>
+            </div>
+            <br><br>
+          <h5>All Bids</h5>
           <div
             v-for="(transac, index) in allBids"
             :key="index"
@@ -148,15 +176,15 @@
             <div class="col-3 col-md-2">
               <div class="inlineDiv">
                 <a :href="user_profile + '/' + transac.bidding_address">
-                  <img class="br-50" :src="asset_url" width="50" />
+                  <img class="br-50" :src="transac.proPic" width="50" />
                 </a>
                 <i class="fa fa-check-circle imgCheck" aria-hidden="true"></i>
               </div>
             </div>
             <div class="col-9 col-md-10">
               <label class="position"
-                >{{ transac.bidding_amount }} {{ transac.bidding_token }}
-                <span class="positionHolder">{{ bidding_amount }}</span>
+                > 
+                <span class="positionHolder">{{ transac.bidding_amount }}</span> {{ transac.bidding_token }}
                 on {{ transac.created_at.slice(0, 10) }} by
                 <a :href="user_profile + '/' + transac.bidding_address"
                   ><span class="positionHolder">{{
@@ -165,29 +193,6 @@
                 >
               </label>
 
-              <!--label v-if="transac.action == 'Offered'" class="position"
-                >{{ transac.action }}
-                <span class="positionHolder">{{ transac.price }}</span> for
-                {{ transac.quantity }} edition {{ transac.sub_context
-                }}{{ transac.time_ago }} by
-                <a :href="user_profile + '/' + transac.user_profile"
-                  ><span class="positionHolder">{{
-                    transac.user_name
-                  }}</span></a
-                >
-              </label-->
-
-              <!--label v-if="transac.action == 'Put on sale for'" class="position"
-                >{{ transac.action }}
-                <span class="positionHolder">{{ transac.price }}</span>
-                {{ transac.time_ago }} by
-                <a :href="user_profile + '/' + transac.user_profile"
-                  ><span class="positionHolder">{{
-                    transac.user_name
-                  }}</span></a
-                >
-              </label>
-            </div-->
             </div>
           </div>
         </div>
@@ -206,7 +211,7 @@ import {
   getConnectedAddress,
   acceptBid,
 } from ".././../bidFunc";
-
+import { toAddress, checkConnection} from ".././../etherFunc";
 export default {
   props: [
     "creator",
@@ -228,12 +233,25 @@ export default {
       home_active: true,
       holder_active: false,
       biddingStatus: false,
+      haveBids:false,
       owner: false,
-      highestBid: {},
+      highestBid: {
+        maxBidder:'',
+        maxBidAmount:0,
+        maxBidder:'',
+        maxBidTime:'',
+        maxBidToken:''
+      },
       address: {},
     };
   },
   async mounted() {
+      this.loadData();
+  },
+  methods: {
+
+async loadData(){
+
     //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     this.address = await getConnectedAddress();
     var allBids = await getAllBids(
@@ -246,18 +264,26 @@ export default {
       this.collectible.contract,
       this.collectible.id
     );
-    this.highestBid = await getHighestBid(
+    var res =  await getHighestBid(
       this.current_owner.wallet,
       this.collectible.contract,
       this.collectible.id
     );
+    if(res!=false){
+      this.highestBid = res;
+      this.haveBids = true;
+    }
+    else{
+      this.haveBids = false;
+    }
     this.biddingStatus = output;
     this.allBids = allBids;
     if (this.address == this.current_owner.wallet) {
       this.owner = true;
     }
-  },
-  methods: {
+    console.log(res)
+},
+
     detailsActive() {
       this.home_active = true;
       this.holder_active = false;
@@ -274,34 +300,43 @@ export default {
       this.bid_active = true;
     },
 
-    startBid() {
-      var res = startBidding(
+    async startBid() {
+      var res = await startBidding(
         this.current_owner.wallet,
         this.collectible.contract,
         this.collectible.id
       );
-      console.log(res);
+  
+     if(res ==1){
+ this.biddingStatus = true;
+     }
+     this.loadData();
+      
     },
-    endBid() {
-      var res = endBidding(
+   async endBid() {
+      var res = await endBidding(
         this.current_owner.wallet,
         this.collectible.contract,
         this.collectible.id
       );
-      console.log(res);
+    if(res ==1){
+  this.biddingStatus = false;
+    }
+    this.loadData();
+     
     },
 
-    acceptBidding() {
-      var res = acceptBid(
+    async acceptBidding() {
+      var res = await acceptBid(
         this.collectible.contract,
         this.collectible.type == 721 ? true : false,
-        this.collectible.id,
-        this.highestBid.maxBidder,
-        1,
-        this.highestBid.maxBidToken,
-        `${this.highestBid.maxAmount}`,
-        "Place a Bid",
-        this.owner == true ? this.address : "",
+        this.collectible.id,toString(),
+        '1',
+        '1',
+        this.collectible.contract,
+       this.highestBid.maxAmount.toString(),
+        this.highestBid.maxBidSalt,
+        this.owner == true ? toAddress(this.address) : "",
         this.highestBid.maxBidSig
       );
       console.log(res);

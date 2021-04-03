@@ -23,6 +23,8 @@ class CreateBidsTable extends Migration
             $table->string('bidding_token');
             $table->float('bidding_amount');
             $table->string('signature');
+            $table->string('message');
+            $table->string('salt');
         });
     }
 

@@ -6,12 +6,14 @@
 
 require("./bootstrap");
 import { ethers } from "ethers";
+import Web3Modal from "web3modal";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 import Vue from "vue";
 window.ethers = ethers;
+window.Web3Modal = Web3Modal;
 
 window.Vue = require("vue").default;
-
+Vue.component("wc-component", require("./components/wcComponent.vue"));
 Vue.component(
     "example-component",
     require("./components/ExampleComponent.vue").default
@@ -166,7 +168,7 @@ Vue.component(
 Vue.component(
     "collectible-details-component",
     require("./components/show_collectible/CollectibleDetailsComponent.vue")
-        .default
+    .default
 );
 Vue.component(
     "show-fullscreen-component",
@@ -223,7 +225,6 @@ Vue.component(
     require("./components/modals/CreateStepsModalComponent.vue").default
 );
 
-
 Vue.component(
     "collection-page",
     require("./components/pages/CollectionPage.vue").default
@@ -237,12 +238,6 @@ window.WalletConnect_Provider = new WalletConnectProvider({
 */
 
 window.moment = require("moment");
-
-import WalletConnect from "@walletconnect/client";
-import QRCodeModal from "@walletconnect/qrcode-modal";
-
-window.WalletConnect = WalletConnect;
-window.QRCodeModal = QRCodeModal;
 
 const app = new Vue({
     el: "#main-app"

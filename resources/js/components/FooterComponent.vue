@@ -53,8 +53,6 @@
 		    <p>&#169; 2020 Billion, Inc.</p>
 		  </div>
 		</section>
-
-		{{highestBid}}
 	</div>
 	
 </template>
