@@ -51,6 +51,7 @@
                       >Buy now</a
                     >
                     <a
+                      v-if = "collectible.biddingStatus"
                       :id="collectible.slug"
                       class="place-bid"
                       href="javascript:void(0)"

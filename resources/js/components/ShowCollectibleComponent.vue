@@ -12,7 +12,7 @@
             <div class="collectibleTitle col-option">
               <h3 class="inlineDiv inline-btn">
                 <a
-                  v-if="current_user != current_owner"
+                  v-if="current_user != current_owner.wallet"
                   id="options-btn"
                   class="show-drop"
                   href="javascript:void(0)"
@@ -42,6 +42,7 @@
                   >Buy now</a
                 >
                 <a
+                v-if="singleNft.biddingStatus"
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
