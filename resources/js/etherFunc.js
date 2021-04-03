@@ -106,7 +106,7 @@ async function getCollection(collectionAddess) {
             var tokenId = Number(evts[i].args.id);
             var owner = evts[i].args.to;
             var tk = { id: tokenId, owner: owner };
-            var obj = owners.filter(function(element) {
+            var obj = owners.filter(function (element) {
                 if (element.id == tokenId && element.owner == owner)
                     return true;
             });
@@ -180,7 +180,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
                 var owner = evts[i].args.to;
                 var copies = await contract.balanceOf(owner, evts[i].args.id);
                 var tk = { owner: owner, ownedCopies: copies };
-                var obj = owners.filter(function(element) {
+                var obj = owners.filter(function (element) {
                     if (element.owner == owner) return true;
                 });
                 if (obj.length == 0) {
@@ -230,7 +230,7 @@ async function getOwnedCollections(me, type, forDetails) {
             }
             num = num + 1;
         }
-    } catch (e) {}
+    } catch (e) { }
     return collections;
 }
 
@@ -351,12 +351,12 @@ async function generateOrderIdMessage(
     salt
 ) {
     const signer = provider.getSigner();
-    const orderStorage = new ethers.Contract(
-        orderStorageAddress,
-        orderStorageABI,
+    const exchange = new ethers.Contract(
+        exchangeAddress,
+        exchangeABI,
         signer
     );
-    const order = await orderStorage.generateMessage(
+    const order = await exchange.generateMessage(
         tokenAddress,
         tokenId,
         value,
@@ -423,10 +423,10 @@ async function createABatch(url, count, royalty, collection) {
 
         true, {
 
-            value: ethers.utils.parseEther("0.25"),
-            gasPrice: BigNumber.from(30000000000),
-            gasLimit: BigNumber.from(8500000)
-        }
+        value: ethers.utils.parseEther("0.25"),
+        gasPrice: BigNumber.from(30000000000),
+        gasLimit: BigNumber.from(8500000)
+    }
     );
 
     return tx;
@@ -452,10 +452,10 @@ async function createCollection(type, uri, isBNB) {
 
             isBNB, {
 
-                value: ethers.utils.parseEther("0.25"),
-                gasPrice: BigNumber.from(30000000000),
-                gasLimit: BigNumber.from(8500000)
-            }
+            value: ethers.utils.parseEther("0.25"),
+            gasPrice: BigNumber.from(30000000000),
+            gasLimit: BigNumber.from(8500000)
+        }
         );
     }
     return tx;
