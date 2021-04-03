@@ -54,8 +54,9 @@ export default {
         window.location.href = _this.url_previous;
       });
     },
-    walletConnect: async function () {
-    },
+    walletConnect(){
+      
+    }
   },
 };
 </script>

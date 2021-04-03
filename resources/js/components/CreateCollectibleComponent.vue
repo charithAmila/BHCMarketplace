@@ -130,7 +130,7 @@
                 href="javascript:void(0)"
                 class="g_select"
                 :class="index == 0 ? 'active-btn' : 'inactive-btn'"
-                @click="onClick(collection.address)"
+                @click="onClickCollection(collection.address)"
               >
                 <div class="outside">
                   <div class="inside">
@@ -156,7 +156,7 @@
               </a>
             </div>
             <p v-if="isError.collection" class="this-error text-danger">
-              {{ error_message }}
+               Please select a collection
             </p>
             <!--
             <generate-collection-component
@@ -394,24 +394,18 @@
                   v-model="price"
                 />
                 <span id="BHC" class="link-url-end sale-price-btn"
-                  >BHC <i class="fa fa-angle-down"></i
+                  >BNB <i class="fa fa-angle-down"></i
                 ></span>
                 <div class="sale-price-drop d-none">
                   <div class="drop-group">
-                    <a href="javascript:void(0)" id="BHC" class="currency-item"
-                      >BHC</a
+                    <a href="javascript:void(0)" id="BNB" @click="setSaleCurrency('BNB')" class="currency-item"
+                      >BNB</a
                     >
                     <i class="fa fa-check currency-check"></i>
                   </div>
                   <div class="drop-group">
-                    <a href="javascript:void(0)" id="HPS" class="currency-item"
+                    <a href="javascript:void(0)" id="HPS" @click="setSaleCurrency('HPS')" class="currency-item"
                       >HPS</a
-                    >
-                    <i class="fa fa-check currency-check opacity-0"></i>
-                  </div>
-                  <div class="drop-group">
-                    <a href="javascript:void(0)" id="BNB" class="currency-item"
-                      >BNB</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
                   </div>
@@ -572,12 +566,17 @@ export default {
       uploadPercentageimg: 0,
       colType: this.type == "solo" ? 721 : 1155,
       error_message: "This field is required",
+      sale_currency: "BNB"
     };
   },
   methods: {
-    onClick(address) {
-      console.log(address);
+    setSaleCurrency(currency){
+      this.sale_currency = currency;
+    },
+    onClickCollection(address) {
+      
       this.selectedContract = address;
+      console.log(address);
     },
     checkConnection: function () {
       const _this = this;
@@ -723,10 +722,10 @@ export default {
         } else {
           this.isError.legend = false;
         }
-        if (!this.collections) {
-          this.isError.collections = true;
+        if (this.selectedContract == "") {
+          this.isError.collection = true;
         } else {
-          this.isError.collections = false;
+          this.isError.collection = false;
         }
       } else {
         if (instantSale && Number(this.price) == 0) {
@@ -735,7 +734,7 @@ export default {
           this.isError.imgselectok = false;
           this.isError.category = false;
           this.isError.legend = false;
-          this.isError.collections = false;
+          this.isError.collection = false;
           this.isError.sale_price = false;
           this.isError.name = false;
           const _this = this;
@@ -755,6 +754,7 @@ export default {
             instant_sale_price: _this.price,
             instant_sale_token: _this.token,
             count: 1,
+            sale_currency: _this.sale_currency
           };
           _this.type == "multiple" ? (data.count = _this.copies) : null;
 
