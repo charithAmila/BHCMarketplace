@@ -44,7 +44,7 @@ async function getUserDetails(addressString) {
         user.name = response.data.name;
         user.bio = response.data.description;
         user.short_url = response.data.short_url;
-    } catch (e) {}
+    } catch (e) { }
     return user;
 }
 
@@ -132,11 +132,12 @@ async function getOwnedTokensData(owner, base_url) {
             nft.price = salesData.price;
             nft.is_selling = true;
             nft.currency = salesData.currency;
-            nft.currency == hpsAddress
-                ? (nft.currencyName = "HPS")
-                : nft.currency == bhcAddress
-                ? (nft.currencyName = "BHC")
-                : (nft.currencyName = "BNB");
+            nft.currency == hpsAddress ?
+                (nft.currencyName = "HPS") :
+                nft.currency == bhcAddress ?
+                    (nft.currencyName = "BHC") :
+                    (nft.currencyName = "BNB");
+
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
             nft.signature = salesData.signature;
@@ -171,11 +172,12 @@ async function getOwnedTokensData(owner, base_url) {
             nft.price = salesData.price;
             nft.is_selling = true;
             nft.currency = salesData.currency;
-            nft.currency == hpsAddress
-                ? (nft.currencyName = "HPS")
-                : nft.currency == bhcAddress
-                ? (nft.currencyName = "BHC")
-                : (nft.currencyName = "BNB");
+            nft.currency == hpsAddress ?
+                (nft.currencyName = "HPS") :
+                nft.currency == bhcAddress ?
+                    (nft.currencyName = "BHC") :
+                    (nft.currencyName = "BNB");
+
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
             nft.signature = salesData.signature;
@@ -269,11 +271,13 @@ async function getTokenData(contract, owner, id) {
     //var res = await axios.get("/api/collections/" + contract);
     var biddingStatus = await getBiddingStatus(owner, contract, id);
     var isPrivate =
-        contract != hps721Address
-            ? true
-            : contract != hps1155Address
-            ? true
-            : false;
+
+        contract != hps721Address ?
+            true :
+            contract != hps1155Address ?
+                true :
+                false;
+
     var type = await getCollectionType(contract);
 
     if (type == 721) {
@@ -338,11 +342,12 @@ async function getTokenData(contract, owner, id) {
         nft.price = salesData.price;
         nft.is_selling = true;
         nft.currency = salesData.currency;
-        nft.currency == hpsAddress
-            ? (nft.currencyName = "HPS")
-            : nft.currency == bhcAddress
-            ? (nft.currencyName = "BHC")
-            : (nft.currencyName = "BNB");
+        nft.currency == hpsAddress ?
+            (nft.currencyName = "HPS") :
+            nft.currency == bhcAddress ?
+                (nft.currencyName = "BHC") :
+                (nft.currencyName = "BNB");
+
         nft.signed_to = salesData.signed_to;
         nft.db_id = salesData.id;
         nft.signature = salesData.signature;
@@ -365,7 +370,7 @@ async function collectiblesOfCollection(collection) {
             collectibles.push(nft)
         }
         catch (e) {
-
+            console.log(e)
         }
     }
     console.log(collectibles);
@@ -402,13 +407,14 @@ async function getAllSales(current_user) {
                 nft.salt = tokens[i].salt;
                 nft.currency = tokens[i].currency;
                 nft.currencyName =
-                    tokens[i].currency == hpsAddress
-                        ? "HPS"
-                        : tokens[i].currency == bhcAddress
-                        ? "BHC"
-                        : "BNB";
+                    tokens[i].currency == hpsAddress ?
+                        "HPS" :
+                        tokens[i].currency == bhcAddress ?
+                            "BHC" :
+                            "BNB";
+
                 data.push(nft);
-            } catch (e) {}
+            } catch (e) { }
         }
     }
 
