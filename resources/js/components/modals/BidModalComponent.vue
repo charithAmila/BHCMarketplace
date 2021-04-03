@@ -60,6 +60,7 @@
 import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance,getBNBBalance } from ".././../bidFunc";
 import {generateOrderIdMessage} from ".././../etherFunc";
 import $ from 'jquery'
+import { log } from 'util';
 
 export default {
 
@@ -82,6 +83,8 @@ export default {
 	async mounted() {
 		 this.HPS_Balance = await getHpsBalance()
 		this.BNB_Balance = await getBNBBalance()
+		console.log("HPS")
+		console.log(this.HPS_Balance)
 	 
 	
 	},

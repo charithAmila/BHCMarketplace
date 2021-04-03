@@ -10,7 +10,8 @@ import {
     CAD_tokenAddress,
     ANKR_tokenAddress,
     BELL_tokenAddress,
-    julswap_routerAddress
+    julswap_routerAddress,
+    exchangeAddress
 } from "../js/addresses/constants.js";
 import { getUserDetails } from "./data.js";
 import { ethers } from "ethers";
@@ -54,7 +55,7 @@ async function getHpsBalance() {
     var address = toAddress(checkConnection());
     const hpsContract = new ethers.Contract(hpsAddress, token_ABI, provider);
     const balance = await hpsContract.balanceOf(address);
-    return balance / 10 ** 18;
+    return parseFloat(balance.toString()) / 10 ** 18;
 }
 ////////////////////////////////////////////Get User from User Id///////////////////////////////////////////////////
 async function getBNBBalance() {
@@ -101,10 +102,8 @@ async function getTokenPrice(bidding_token) {
 
     const contract = getTokenAddress(bidding_token);
     const price = await julswap_Read.getAmountsIn(
-
         ethers.BigNumber.from("1000000000000000000"),
         [WBNB_tokenAddress, contract]
-
     );
     return parseInt(price[0].toString());
 }
@@ -257,17 +256,21 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
     }
     //***********************************Token Payment*********************************//
     else {
-        let token_contract = getTokenContract(bidding_token);
-        const balance = await token_contract.balanceOf(address);
+        console.log("HPS");
+        const signer = provider.getSigner();
+        const hpsContract = new ethers.Contract(hpsAddress, token_ABI, signer);
+        //let token_contract = getTokenContract(bidding_token);
+        const balance = await hpsContract.balanceOf(address);
         var address = address.toString().toLowerCase();
         if (balance > amount * 1.2) {
-            const txResponse = await token_contract.approve(
-                TEST_token,
+            console.log("Enough HPS");
+            const txResponse = await hpsContract.approve(
+                exchangeAddress,
                 (amount * 1.2).toString()
             );
             const txReceipt = await txResponse.wait();
             if (txReceipt["status"] == 1) {
-                const signature = await signer.signMessage();
+                const signature = await signer.signMessage(orderId);
                 data.signature = signature;
                 await axios
                     .post("/bid", data, {})
@@ -328,14 +331,14 @@ function timeDifference(date1, date2) {
 
     console.log(
         "difference = " +
-        daysDifference +
-        " day/s " +
-        hoursDifference +
-        " hour/s " +
-        minutesDifference +
-        " minute/s " +
-        secondsDifference +
-        " second/s "
+            daysDifference +
+            " day/s " +
+            hoursDifference +
+            " hour/s " +
+            minutesDifference +
+            " minute/s " +
+            secondsDifference +
+            " second/s "
     );
 }
 ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
@@ -366,19 +369,31 @@ async function getHighestBid(owner, contract_address, token_id) {
     var maxBidTime;
     var maxBidMessage;
     var maxBidSalt;
-  
-    if(output.length!=0){
+
+    if (output.length != 0) {
         for (var i = 0; i < output.length; i++) {
             // var price = await getTokenPrice(output[i].bidding_token);
-            var price = 10;
-            if (price * output[i].bidding_amount > maxAmount) {
-                maxAmount = output[i].bidding_amount;
-                maxBidder = output[i].bidding_address;
-                maxBidToken = output[i].bidding_token;
-                maxBidSig = output[i].signature;
-                maxBidTime = output[i].created_at;
-                maxBidMessage = output[i].message;
-                maxBidSalt = output[i].salt;
+            var hpsprice = 0.001;
+            if (output[i].bidding_token == "HPS") {
+                if (hpsprice * output[i].bidding_amount > maxAmount) {
+                    maxAmount = output[i].bidding_amount;
+                    maxBidder = output[i].bidding_address;
+                    maxBidToken = output[i].bidding_token;
+                    maxBidSig = output[i].signature;
+                    maxBidTime = output[i].created_at;
+                    maxBidMessage = output[i].message;
+                    maxBidSalt = output[i].salt;
+                }
+            } else {
+                if (1 * output[i].bidding_amount > maxAmount) {
+                    maxAmount = output[i].bidding_amount;
+                    maxBidder = output[i].bidding_address;
+                    maxBidToken = output[i].bidding_token;
+                    maxBidSig = output[i].signature;
+                    maxBidTime = output[i].created_at;
+                    maxBidMessage = output[i].message;
+                    maxBidSalt = output[i].salt;
+                }
             }
         }
 
@@ -395,10 +410,10 @@ async function getHighestBid(owner, contract_address, token_id) {
     res.maxAmount = "1";
     res.maxBidder = output[0].user_id;
     res.maxBidSig = output[0].signature;*/
-        return res;   }
-        else{
-            return false;
-        }
+        return res;
+    } else {
+        return false;
+    }
 }
 
 ///////////////////////////////////////////Get Bidding Status//////////////////////////////////////////////////////
