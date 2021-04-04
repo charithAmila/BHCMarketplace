@@ -526,14 +526,20 @@
 
             <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
               <button type="button" class="submitBtn">
-                <span v-html="isApproving ? text.approveText : 'Approve HPS'"></span>
-                </button>
+                <span
+                  v-html="isApproving ? text.approveText : 'Approve HPS'"
+                ></span>
+              </button>
             </div>
-            
+
             <div class="col-md-12 create-cmodel-elements">
-              <button type="button" class="submitBtn">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="createCollectible"
+              >
                 <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
-                </button>
+              </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
               <button type="button" class="submitBtn">
@@ -542,15 +548,17 @@
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
               <button type="button" class="submitBtn">
-                <span v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"></span>
+                <span
+                  v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"
+                ></span>
               </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
               <button type="button" class="submitBtn">
                 <span v-html="isSaling ? text.saleText : 'Put on Sale'"></span>
-                </button>
+              </button>
             </div>
-        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -571,6 +579,7 @@ import {
   checkConnection,
   approveNFT,
   approveTokens,
+  getMinted,
 } from "./../etherFunc.js";
 export default {
   props: [
@@ -635,15 +644,19 @@ export default {
       isSigning: false,
       isApprovingNft: false,
       isSaling: false,
-      text:{
-        approveText: "Approving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
-        mintText: "Minting token... <img src='/images/loading.gif' alt='' width='7%' />",
-        signText: "Signing... <img src='/images/loading.gif' alt='' width='7%' />",
-        approvenftText: "Approving NFT... <img src='/images/loading.gif' alt='' width='7%' />",
-        saleText: "Publishing sale... <img src='/images/loading.gif' alt='' width='7%' />"
-      }
-
-
+      text: {
+        approveText:
+          "Approving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
+        mintText:
+          "Minting token... <img src='/images/loading.gif' alt='' width='7%' />",
+        signText:
+          "Signing... <img src='/images/loading.gif' alt='' width='7%' />",
+        approvenftText:
+          "Approving NFT... <img src='/images/loading.gif' alt='' width='7%' />",
+        saleText:
+          "Publishing sale... <img src='/images/loading.gif' alt='' width='7%' />",
+      },
+      tokenData: {},
     };
   },
   methods: {
@@ -917,8 +930,8 @@ export default {
     async createCollectible() {
       const _this = this;
       console.log(this.selectedContract);
-      _this.fProcessing = true;
-      _this.fProcess = "Generating Hash";
+      //_this.fProcessing = true;
+      //_this.fProcess = "Generating Hash";
       var data = {
         creator: toAddress(window.ethereum.selectedAddress),
         name: _this.name,
@@ -936,7 +949,7 @@ export default {
         icon: _this.legend.icon,
       };
       _this.type == "multiple" ? (data.count = _this.copies) : null;
-
+      _this.isMinting = true;
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
       await axios
         .post(url, data, {
@@ -955,13 +968,13 @@ export default {
               ).then((res) => {
                 console.log(res);
                 waitForTransaction(res.hash).then((data) => {
-                  if (data) {
-                    _this.fProcess = "Token minted";
-                    _this.fProcessing = false;
+                  if (data.status) {
+                    _this.isMinting = false;
+                    _this.tokenData = getMinted(data.logs[1]);
                   }
-                  window.location.href = `/profile/${toAddress(
+                  /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
-                  )}`;
+                  )}`;*/
                 });
               })
             : createABatch(
@@ -972,14 +985,14 @@ export default {
                 !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
-                waitForTransaction(res.hash).then((data) => {
-                  if (data) {
-                    _this.fProcess = "Token minted";
-                    _this.fProcessing = false;
+                waitForTransaction(res.hash).then(async function (data) {
+                  if (data.status) {
+                    _this.isMinting = false;
+                    _this.tokenData = getMinted(data);
                   }
-                  window.location.href = `/profile/${toAddress(
+                  /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
-                  )}`;
+                  )}`;*/
                 });
               });
         })

@@ -232,7 +232,7 @@ export default {
     async approveNFT() {
       var tx = await approveNFT(this.singleNft.contract);
       waitForTransaction(tx.hash).then((data) => {
-        if (data) {
+        if (data.status) {
           this.approved = true;
         }
       });

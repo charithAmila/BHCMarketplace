@@ -211,8 +211,8 @@ export default {
         this.currency,
         `${Number(this.total_payment)}`
       );
-      waitForTransaction(hash).then((stat) => {
-        if (stat) {
+      waitForTransaction(hash).then((data) => {
+        if (data.status) {
           this.approved = true;
         }
       });
@@ -232,8 +232,8 @@ export default {
         collectible.signature
       )
         .then(async function (hash) {
-          var status = await waitForTransaction(hash);
-          if (status) {
+          var data = await waitForTransaction(hash);
+          if (data.status) {
             $(".toast-message").text("Purchased");
             $("#purchaseForm").trigger("reset");
             setTimeout(function () {
