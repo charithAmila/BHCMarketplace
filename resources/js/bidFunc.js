@@ -73,11 +73,11 @@ async function getConnectedAddress() {
 function getTokenAddress(bidding_token) {
     var token_address;
     switch (bidding_token) {
-        case "CAD":
+        case "HPS":
             token_address = hpsAddress;
             break;
-        case "ANKR":
-            token_address = ANKR_token;
+        case "BHC":
+            token_address = bhcAddress;
             break;
         case "BELL":
             token_address = BELL_token;
