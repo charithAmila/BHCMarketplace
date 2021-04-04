@@ -131,6 +131,7 @@
                   <img
                     v-if="collectible.fileType == 'image'"
                     :src="collectible.file"
+                    alt=""
                   />
                   <video
                     v-if="collectible.fileType == 'video'"
@@ -231,8 +232,10 @@ export default {
       bidListNFT: "",
       checked: false,
 
+
       loaded:false,
       open:false
+
 
       //collectible: this.collectibles[0],
     };

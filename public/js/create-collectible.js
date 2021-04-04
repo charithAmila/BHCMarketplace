@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    $(".close-collectible-modal").click(function() {
+        $("#create-collectible-modal").removeClass("d-block");
+    });
     // Collection MODAL
     $(".generate_collection").click(function() {
         $("#collectionModal").addClass("d-block");
