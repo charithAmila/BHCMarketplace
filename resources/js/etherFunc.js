@@ -402,16 +402,16 @@ async function checkTokensBalance(contractAddress, from) {
 
 //////Set functions/////////
 
-async function createASingle(url, royalty, collection) {
+async function createASingle(url, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract)
-    var tx = await contract.mint721(collection, url, BigNumber.from(Number(royalty)), false, { value: ethers.utils.parseEther("0.25"), gasLimit: BigNumber.from("3000000") })//, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
+    var tx = await contract.mint721(collection, url, BigNumber.from(Number(royalty)), isBNB, { value: isBNB ? ethers.utils.parseEther("0.025") : ethers.utils.parseEther("0"), gasLimit: BigNumber.from("3000000") })//, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
 
     return tx;
 }
 
-async function createABatch(url, count, royalty, collection) {
+async function createABatch(url, count, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
@@ -421,11 +421,10 @@ async function createABatch(url, count, royalty, collection) {
         BigNumber.from(Number(count)),
         BigNumber.from(Number(royalty)),
 
-        true, {
+        isBNB, {
 
-        value: ethers.utils.parseEther("0.25"),
-        gasPrice: BigNumber.from(30000000000),
-        gasLimit: BigNumber.from(8500000)
+        value: isBNB ? ethers.utils.parseEther("0.025") : ethers.utils.parseEther("0"),
+        gasLimit: BigNumber.from(3000000)
     }
     );
 
@@ -441,7 +440,11 @@ async function createCollection(type, uri, isBNB) {
             uri,
 
             isBNB,
-            { value: ethers.utils.parseEther("0.25") }
+            {
+
+                value: isBNB ? ethers.utils.parseEther("0.025") : ethers.utils.parseEther("0"),
+                gasLimit: BigNumber.from(3000000)
+            }
 
         );
     } else {
@@ -452,9 +455,8 @@ async function createCollection(type, uri, isBNB) {
 
             isBNB, {
 
-            value: ethers.utils.parseEther("0.25"),
-            gasPrice: BigNumber.from(30000000000),
-            gasLimit: BigNumber.from(8500000)
+            value: isBNB ? ethers.utils.parseEther("0.025") : ethers.utils.parseEther("0"),
+            gasLimit: BigNumber.from(3000000)
         }
         );
     }
@@ -534,8 +536,7 @@ async function buy(
         ],
         {
 
-            gasPrice: BigNumber.from(30000000000),
-            gasLimit: BigNumber.from(8500000),
+            gasLimit: BigNumber.from(3000000),
             value: buyWith == toAddress("") ? BigNumber.from(_price) : "0"
         }
     );
