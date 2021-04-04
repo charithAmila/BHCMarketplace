@@ -120,8 +120,15 @@
                 <option value="hps">HPS</option>
               </select>
             </div>
-            <button v-if="pay_with_hps" class="form-submit" type="button">
-              <span v-html="isApproving ? text.approveText : 'Approve HPS'"></span>
+            <button
+              v-if="pay_with_hps"
+              class="form-submit"
+              type="button"
+              @click="approve"
+            >
+              <span
+                v-html="isApproving ? text.approveText : 'Approve HPS'"
+              ></span>
             </button>
 
             <button
@@ -131,9 +138,12 @@
               type="button"
               @click="generateCollection"
             >
-              <span v-html="isGenerating ? text.generateText : 'Generate Collection'"></span>
+              <span
+                v-html="
+                  isGenerating ? text.generateText : 'Generate Collection'
+                "
+              ></span>
             </button>
-            
           </div>
         </form>
       </div>
@@ -144,7 +154,13 @@
 
 <script>
 import $ from "jquery";
-import { createCollection, waitForTransaction } from "./../../etherFunc.js";
+import {
+  createCollection,
+  waitForTransaction,
+  approveTokens,
+  getFees,
+} from "./../../etherFunc.js";
+import { hpsAddress } from "./../../addresses/constants";
 
 export default {
   props: ["store_route", "asset_url", "csrf_token", "type"],
@@ -163,10 +179,12 @@ export default {
       pay_with_hps: false,
       isApproving: false,
       isGenerating: false,
-      text:{
-        approveText: "Appproving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
-        generateText: "Generating collection... <img src='/images/loading.gif' alt='' width='7%' />",
-      }
+      text: {
+        approveText:
+          "Appproving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
+        generateText:
+          "Generating collection... <img src='/images/loading.gif' alt='' width='7%' />",
+      },
     };
   },
   methods: {
@@ -175,7 +193,7 @@ export default {
         $("#collectionModal").removeClass("d-block");
       }, 3000);
     },
-    setPaywith(){
+    setPaywith() {
       if (this.payWith == "hps") {
         this.pay_with_hps = true;
       } else {
@@ -187,6 +205,26 @@ export default {
       await axios.get("/api/keygen").then((res) => {
         _this.j = res.data.JWT;
       });
+    },
+    async approve() {
+      try {
+        this.isApproving = true;
+        var fee = await getFees();
+        var hash = await approveTokens(hpsAddress, `${fee}`);
+        waitForTransaction(hash).then((data, error) => {
+          if (error) {
+            error.code == 4001 ? alert("Rejected approving HPS") : null;
+          } else if (data.status) {
+            this.isApproving = false;
+          } else {
+            alert("Try again!");
+          }
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("user rejected approving");
+        }
+      }
     },
     async generateCollection() {
       const FormData = require("form-data");
@@ -231,6 +269,7 @@ export default {
         data.append("pinataOptions", pinataOptions);
         _this.process = "Uploading Image...";
         _this.processing = true;
+        _this.isGenerating = true;
         await axios
           .post(url, data, {
             maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
@@ -265,20 +304,25 @@ export default {
           var tx = await createCollection(
             _this.type,
             "https://ipfs.io/ipfs/" + response.data.IpfsHash,
-            true
+            !_this.pay_with_hps
           );
+          console.log(tx);
           _this.processing = true;
-          waitForTransaction(tx.hash).then((data) => {
+          waitForTransaction(tx).then((data) => {
             if (data.status) {
               _this.$parent.checkConnection();
               $("#collectionModal").removeClass("d-block");
               _this.processing = true;
               _this.process = "Generate Collection";
+            } else {
+              alert("Try again");
             }
           });
         })
         .catch(function (error) {
-          console.log(error);
+          if (error.code == 4001) {
+            alert("User rejected!");
+          }
         });
     },
     generateCollectionOld() {
