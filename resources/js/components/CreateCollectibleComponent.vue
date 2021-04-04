@@ -536,51 +536,32 @@
             </div>
 
             <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
-              <button type="button" class="submitBtn">Approve HPS</button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
               <button type="button" class="submitBtn">
-                Approving HPS...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
-              </button>
+                <span v-html="isApproving ? text.approveText : 'Approve HPS'"></span>
+                </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements">
-              <button type="button" class="submitBtn">Mint Token</button>
-            </div>
+            
             <div class="col-md-12 create-cmodel-elements">
               <button type="button" class="submitBtn">
-                Minting token...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
-              </button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">Sign</button>
+                <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
+                </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
               <button type="button" class="submitBtn">
-                Signing...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+                <span v-html="isSigning ? text.signText : 'Sign'"></span>
               </button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">Approve NFT</button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
               <button type="button" class="submitBtn">
-                Approving NFT...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+                <span v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"></span>
               </button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">Puton Sale</button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
               <button type="button" class="submitBtn">
-                Publishing Sale...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
-              </button>
+                <span v-html="isSaling ? text.saleText : 'Put on Sale'"></span>
+                </button>
             </div>
-          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -658,6 +639,20 @@ export default {
       pay_with: "bnb",
       pay_with_hps: false,
       isProcessing: true,
+      isApproving: false,
+      isMinting: false,
+      isSigning: false,
+      isApprovingNft: false,
+      isSaling: false,
+      text:{
+        approveText: "Approving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
+        mintText: "Minting token... <img src='/images/loading.gif' alt='' width='7%' />",
+        signText: "Signing... <img src='/images/loading.gif' alt='' width='7%' />",
+        approvenftText: "Approving NFT... <img src='/images/loading.gif' alt='' width='7%' />",
+        saleText: "Publishing sale... <img src='/images/loading.gif' alt='' width='7%' />"
+      }
+
+
     };
   },
   methods: {

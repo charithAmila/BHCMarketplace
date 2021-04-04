@@ -109,6 +109,17 @@
                 class="custom-error text-danger"
               ></span>
             </div>
+            <div class="col-md-12 create-cmodel-elements">
+              <label>Pay With</label>
+              <select
+                class="form-controll"
+                v-model="payWith"
+                @change="setPaywith()"
+              >
+                <option value="bnb">BNB</option>
+                <option value="hps">HPS</option>
+              </select>
+            </div>
             <button
               v-if="!processing"
               id="collection-submit"
@@ -155,6 +166,7 @@ export default {
       process: "Create Collection",
       processing: false,
       collectionGenerated: false,
+      pay_with: "bnb"
     };
   },
   methods: {
@@ -162,6 +174,9 @@ export default {
       setTimeout(function () {
         $("#collectionModal").removeClass("d-block");
       }, 3000);
+    },
+    setPaywith(){
+
     },
     async aqquireKeys() {
       const _this = this;
