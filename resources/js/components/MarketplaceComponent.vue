@@ -171,6 +171,7 @@
             : collectible
         "
         :page="'marketplace'"
+        :isLoading="loading_collectibles"
       ></collectible-component>
     </div>
   </div>
@@ -198,6 +199,7 @@ export default {
       isAll: true,
       new_array_collectibles: [],
       isSortedRecent: false,
+      loading_collectibles: true,
     };
   },
   methods: {
@@ -284,9 +286,11 @@ export default {
     },
     getCollectible() {
       const _this = this;
+      this.loading_collectibles = true;
       getAllSales(_this.current_user)
         .then((data) => {
           _this.collectibles = data;
+          this.loading_collectibles = false;
         })
         .catch((error) => {
           console.log(error);
