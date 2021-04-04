@@ -1,25 +1,15 @@
-import { BigNumber, ethers } from "ethers";
-import {
-    hps721Address,
-    hps1155Address,
-    transferProxyAddress,
-    erc20TransferProxyAddress,
-    orderStorageAddress,
-    exchangeAddress,
-    hpsAddress,
-    bhcAddress,
-    minterAddress,
-    contractFactoryAddress
-} from "./addresses/constants";
+import { BigNumber, ethers } from 'ethers';
+import { hps721Address, hps1155Address, transferProxyAddress, erc20TransferProxyAddress, orderStorageAddress, exchangeAddress, hpsAddress, bhcAddress, minterAddress, contractFactoryAddress, NFTStorageAddress } from "./addresses/constants"
 //console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
 /////////abis///////////////////
-const bhc721 = require("../js/abis/bhc_721.json");
-const bhc1155 = require("../js/abis/bhc_1155.json");
-const orderStorageABI = require("../js/abis/order_storage.json");
-const exchangeABI = require("../js/abis/new_exchange.json");
-const bep20ABI = require("./abis/bep20.json");
-const minterABI = require("./abis/minter.json");
-const factoryABI = require("./abis/factory.json");
+const bhc721 = require('../js/abis/bhc_721.json')
+const bhc1155 = require('../js/abis/bhc_1155.json')
+const nftStorageABI = require("../js/abis/nft_storage.json")
+const exchangeABI = require("../js/abis/new_exchange.json")
+const bep20ABI = require("./abis/bep20.json")
+const minterABI = require("./abis/minter.json")
+const factoryABI = require("./abis/factory.json")
+
 
 if (typeof window.ethereum == "undefined") {
     alert("no provider fround");
@@ -116,7 +106,7 @@ async function getCollection(collectionAddess) {
             var tokenId = Number(evts[i].args.id);
             var owner = evts[i].args.to;
             var tk = { id: tokenId, owner: owner };
-            var obj = owners.filter(function(element) {
+            var obj = owners.filter(function (element) {
                 if (element.id == tokenId && element.owner == owner)
                     return true;
             });
@@ -129,19 +119,33 @@ async function getCollection(collectionAddess) {
     return owners;
 }
 
+async function getCreated(owner) {
+    const tokens = [];
+
+    const nftStorage = new ethers.Contract(NFTStorageAddress, nftStorageABI, provider)
+    var evts = await nftStorage.queryFilter("NFTAdded", 0, "latest")
+
+    for (var i = 0; i < evts.length; i++) {
+        var event = evts[i];
+        var creator = toAddress(event.args._creator)
+        if (owner == creator) {
+            var type = getCollectionType(event.args._collection)
+            tokens.push({ "contract": event.args._collection, "token_id": Number(event.args._id) })
+        }
+    }
+    console.log(tokens)
+    return tokens;
+}
+
 async function getCollectionType(collectionAddress) {
     const ERC1155Interface = "0x0e89341c";
     const ERC721Interface = "0x80ac58cd";
     var filters = {};
     var owners = [];
-    var contract = new ethers.Contract(
-        toAddress(collectionAddress),
-        bhc721,
-        provider
-    );
-    var is721 = await contract.supportsInterface(ERC721Interface);
-    var is1155 = await contract.supportsInterface(ERC1155Interface);
-    console.log([collectionAddress, is721]);
+    var contract = new ethers.Contract(toAddress(collectionAddress), bhc721, provider);
+    var is721 = await contract.supportsInterface(ERC721Interface)
+    var is1155 = await contract.supportsInterface(ERC1155Interface)
+
     return is721 ? 721 : is1155 ? 1155 : null;
 }
 
@@ -176,7 +180,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
                 var owner = evts[i].args.to;
                 var copies = await contract.balanceOf(owner, evts[i].args.id);
                 var tk = { owner: owner, ownedCopies: copies };
-                var obj = owners.filter(function(element) {
+                var obj = owners.filter(function (element) {
                     if (element.owner == owner) return true;
                 });
                 if (obj.length == 0) {
@@ -226,7 +230,7 @@ async function getOwnedCollections(me, type, forDetails) {
             }
             num = num + 1;
         }
-    } catch (e) {}
+    } catch (e) { }
     return collections;
 }
 
@@ -347,12 +351,12 @@ async function generateOrderIdMessage(
     salt
 ) {
     const signer = provider.getSigner();
-    const orderStorage = new ethers.Contract(
-        orderStorageAddress,
-        orderStorageABI,
+    const exchange = new ethers.Contract(
+        exchangeAddress,
+        exchangeABI,
         signer
     );
-    const order = await orderStorage.generateMessage(
+    const order = await exchange.generateMessage(
         tokenAddress,
         tokenId,
         value,
@@ -401,19 +405,9 @@ async function checkTokensBalance(contractAddress, from) {
 async function createASingle(url, royalty, collection) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
-    console.log(contract);
-    var tx = await contract.mint721(
-        collection,
-        url,
-        BigNumber.from(Number(royalty)),
+    console.log(contract)
+    var tx = await contract.mint721(collection, url, BigNumber.from(Number(royalty)), false, { value: ethers.utils.parseEther("0.25"), gasLimit: BigNumber.from("3000000") })//, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
 
-        true, {
-            gasPrice: BigNumber.from(30000000000),
-            gasLimit: BigNumber.from(8500000),
-            value: ethers.utils.parseEther("0.25")
-
-        }
-    );
     return tx;
 }
 
@@ -429,10 +423,10 @@ async function createABatch(url, count, royalty, collection) {
 
         true, {
 
-            value: ethers.utils.parseEther("0.25"),
-            gasPrice: BigNumber.from(30000000000),
-            gasLimit: BigNumber.from(8500000)
-        }
+        value: ethers.utils.parseEther("0.25"),
+        gasPrice: BigNumber.from(30000000000),
+        gasLimit: BigNumber.from(8500000)
+    }
     );
 
     return tx;
@@ -458,10 +452,10 @@ async function createCollection(type, uri, isBNB) {
 
             isBNB, {
 
-                value: ethers.utils.parseEther("0.25"),
-                gasPrice: BigNumber.from(30000000000),
-                gasLimit: BigNumber.from(8500000)
-            }
+            value: ethers.utils.parseEther("0.25"),
+            gasPrice: BigNumber.from(30000000000),
+            gasLimit: BigNumber.from(8500000)
+        }
         );
     }
     return tx;
@@ -573,7 +567,8 @@ export {
     getOwnedCollections,
     getCollection,
     getCollectionType,
-    getOwnersOf
+    getOwnersOf,
+    getCreated
 
 };
 

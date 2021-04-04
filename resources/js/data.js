@@ -1,27 +1,16 @@
-import {
-    toAddress,
-    getOwner,
-    getSingles,
-    getMultiples,
-    getCollectible,
-    collectionURI,
-    getOwnedCollections,
-    getCollection,
-    getCollectionType
-} from "./etherFunc";
-import {
-    hps721Address,
-    hps1155Address,
-    hpsAddress,
-    bhcAddress
-} from "./addresses/constants";
+import { getBiddingStatus } from "./bidFunc.js";
+import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType, getOwnersOf, getCreated } from './etherFunc';
+import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
+import axios from 'axios';
 
 ////////get///////////////////
 function tempUserData(addressString) {
     var address = toAddress(addressString);
     return {
-        cover_photo: "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg",
-        display_photo: "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+        cover_photo:
+            "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg",
+        display_photo:
+            "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
         name: "Empty User",
         bio: "Empty Bio",
         wallet: address,
@@ -32,7 +21,8 @@ function tempUserData(addressString) {
 function tempCollectionData() {
     //var address = toAddress(addressString);
     return {
-        icon: "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+        icon:
+            "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
         name: "Empty Name",
         Symbol: "Empty Symbol",
         description: "Empty Description",
@@ -54,7 +44,7 @@ async function getUserDetails(addressString) {
         user.name = response.data.name;
         user.bio = response.data.description;
         user.short_url = response.data.short_url;
-    } catch (e) {}
+    } catch (e) { }
     return user;
 }
 
@@ -120,7 +110,7 @@ async function getOwnedTokensData(owner, base_url) {
         var res = await axios.get(selectedToken.URI);
         var nft = res.data;
 
-        nft.copies = nft.count;
+        nft.copies = 1;
         nft.ownedCopies = selectedToken.ownedCopies;
         nft.id = selectedToken.id;
         nft.contract = selectedToken.contract;
@@ -145,8 +135,9 @@ async function getOwnedTokensData(owner, base_url) {
             nft.currency == hpsAddress ?
                 (nft.currencyName = "HPS") :
                 nft.currency == bhcAddress ?
-                (nft.currencyName = "BHC") :
-                (nft.currencyName = "BNB");
+                    (nft.currencyName = "BHC") :
+                    (nft.currencyName = "BNB");
+
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
             nft.signature = salesData.signature;
@@ -184,8 +175,9 @@ async function getOwnedTokensData(owner, base_url) {
             nft.currency == hpsAddress ?
                 (nft.currencyName = "HPS") :
                 nft.currency == bhcAddress ?
-                (nft.currencyName = "BHC") :
-                (nft.currencyName = "BNB");
+                    (nft.currencyName = "BHC") :
+                    (nft.currencyName = "BNB");
+
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
             nft.signature = salesData.signature;
@@ -198,11 +190,33 @@ async function getOwnedTokensData(owner, base_url) {
 
 async function getLikedTokens(owner, base_url) {
     var data = [];
+    var liked = await axios.get("/like");
+    var likes = liked.data.likes.filter(function (like) {
+        if (toAddress(like.address) == toAddress(owner)) return true;
+    });
+    for (var i = 0; i < likes.length; i++) {
+        var owners = await getOwnersOf(likes[i].contract, likes[i].token_id)
+        for (var j = 0; j < owners.length; j++) {
+            var token = await getTokenData(likes[i].contract, owners[j].owner, likes[i].token_id)
+            data.push(token)
+        }
+    }
     return data;
 }
 
 async function getCreatedTokens(owner, base_url) {
     var data = [];
+    var tokens = await getCreated(owner);
+    for (var i = 0; i < tokens.length; i++) {
+        var owners = await getOwnersOf(tokens[i].contract, tokens[i].token_id)
+        for (var j = 0; j < owners.length; j++) {
+            try {
+                var token = await getTokenData(tokens[i].contract, owners[j].owner, tokens[i].token_id)
+                data.push(token)
+            } catch (e) { }
+
+        }
+    }
     return data;
 }
 
@@ -238,14 +252,14 @@ async function getOnSaleTokens(owner, base_url) {
 
 async function getTokensData(owner, base_url) {
     var ownedTokens = await getOwnedTokensData(owner, base_url);
-    var likedTokens = await getLikedTokens(owner, base_url);
-    var createdTokens = await getCreatedTokens(owner, base_url);
+    //var likedTokens = await getLikedTokens(owner, base_url);
+    //var createdTokens = await getCreatedTokens(owner, base_url);
     var onSaleTokens = await getOnSaleTokens(owner, base_url);
 
     var data = {
         "on-sale": onSaleTokens,
-        liked: likedTokens,
-        created: createdTokens,
+        liked: [], //likedTokens,
+        created: [], //createdTokens,
         collectibles: ownedTokens
     };
     //console.log(data)
@@ -255,13 +269,15 @@ async function getTokensData(owner, base_url) {
 async function getTokenData(contract, owner, id) {
     var listed = false;
     //var res = await axios.get("/api/collections/" + contract);
-
+    var biddingStatus = await getBiddingStatus(owner, contract, id);
     var isPrivate =
+
         contract != hps721Address ?
-        true :
-        contract != hps1155Address ?
-        true :
-        false;
+            true :
+            contract != hps1155Address ?
+                true :
+                false;
+
     var type = await getCollectionType(contract);
 
     if (type == 721) {
@@ -299,6 +315,7 @@ async function getTokenData(contract, owner, id) {
     data.creator = owner;
     data.count = collectible.availableCopies*/
     //console.log(selectedToken)
+    nft.biddingStatus = biddingStatus;
     nft.count = nft.count || 1;
     nft.copies = nft.count || 1;
     nft.ownedCopies = selectedToken.ownedCopies;
@@ -328,8 +345,9 @@ async function getTokenData(contract, owner, id) {
         nft.currency == hpsAddress ?
             (nft.currencyName = "HPS") :
             nft.currency == bhcAddress ?
-            (nft.currencyName = "BHC") :
-            (nft.currencyName = "BNB");
+                (nft.currencyName = "BHC") :
+                (nft.currencyName = "BNB");
+
         nft.signed_to = salesData.signed_to;
         nft.db_id = salesData.id;
         nft.signature = salesData.signature;
@@ -346,12 +364,14 @@ async function collectiblesOfCollection(collection) {
     var collectibles = [];
     for (var i = 0; i < collects.length; i++) {
         var id = collects[i].id;
-        var owner = collects[i].owner;
-
+        var owner = collects[i].owner
         try {
-            var nft = await getTokenData(collection, owner, id);
-            collectibles.push(nft);
-        } catch (e) {}
+            var nft = await getTokenData(collection, owner, id)
+            collectibles.push(nft)
+        }
+        catch (e) {
+            console.log(e)
+        }
     }
     console.log(collectibles);
     return collectibles;
@@ -388,12 +408,13 @@ async function getAllSales(current_user) {
                 nft.currency = tokens[i].currency;
                 nft.currencyName =
                     tokens[i].currency == hpsAddress ?
-                    "HPS" :
-                    tokens[i].currency == bhcAddress ?
-                    "BHC" :
-                    "BNB";
+                        "HPS" :
+                        tokens[i].currency == bhcAddress ?
+                            "BHC" :
+                            "BNB";
+
                 data.push(nft);
-            } catch (e) {}
+            } catch (e) { }
         }
     }
 
@@ -422,18 +443,5 @@ async function removeSale(id) {
     window.location.reload();
 }
 
-export {
-    getUserDetails,
-    checkFollowing,
-    tempUserData,
-    getCollections,
-    tempCollectionData,
-    getTokens,
-    getTokensData,
-    getTokenData,
-    addSale,
-    updateUserDetails,
-    getAllSales,
-    removeSale,
-    collectiblesOfCollection
-};
+export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale, collectiblesOfCollection, getOnSaleTokens, getLikedTokens, getCreatedTokens }
+

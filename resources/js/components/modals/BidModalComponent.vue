@@ -1,4 +1,4 @@
- <template>
+<template>
  	<div id="bidModal" class="custom-modal d-none">
 	  <div class="modal-content bid-content">
 	    <div class="modal-head">
@@ -56,10 +56,9 @@
 
 <script>
 
-
 import { bid , startBidding, getHighestBid, getBiddingStatus,getAllBids,endBidding, getHpsBalance,getBNBBalance } from ".././../bidFunc";
 import {generateOrderIdMessage} from ".././../etherFunc";
-import $ from 'jquery'
+import { log } from 'util';
 
 export default {
 
@@ -75,13 +74,17 @@ export default {
 			currency: '',
 			nft_id: 0,
 			record_id: 0,
-			selected_token:0
+			selected_token:0,
+		
 			
 		}
 	},
 	async mounted() {
 		 this.HPS_Balance = await getHpsBalance()
 		this.BNB_Balance = await getBNBBalance()
+		console.log("HPS")
+		console.log(this.HPS_Balance)
+
 	 
 	
 	},
@@ -122,6 +125,7 @@ export default {
 		async placeBid() {
 			this.currency = $('#selectedCurrency').text()
 			let res = await bid(this.singleNft.owner_id,this.singleNft.contract,this.singleNft.id,this.currency,this.payment);
+			window.location.reload();
 		}
 	}
 }
