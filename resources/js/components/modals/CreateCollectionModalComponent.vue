@@ -268,8 +268,8 @@ export default {
             true
           );
           _this.processing = true;
-          waitForTransaction(tx.hash).then((status) => {
-            if (status) {
+          waitForTransaction(tx.hash).then((data) => {
+            if (data.status) {
               _this.$parent.checkConnection();
               $("#collectionModal").removeClass("d-block");
               _this.processing = true;

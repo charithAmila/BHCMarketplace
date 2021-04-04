@@ -55,8 +55,7 @@ function splitSign(signature) {
 
 async function waitForTransaction(tx) {
     var res = await provider.waitForTransaction(tx);
-    console.log(res);
-    return res.status;
+    return res;
 }
 
 async function collectionURI(contractAddress) {
@@ -361,7 +360,7 @@ async function generateOrderIdMessage(
         tokenId,
         value,
         priceToken,
-        BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+        ethers.utils.parseEther(`${price}`),
         salt
     );
     return salt, order;
@@ -398,6 +397,15 @@ async function checkTokensBalance(contractAddress, from) {
     );
     const res = await contract.balanceOf(from);
     return Number(res) / 10 ** 18;
+}
+
+function getMinted(log) {
+    const contract = new ethers.utils.Interface(nftStorageABI)
+    var data = contract.parseLog(log)
+    var collection = data.args[1];
+    var tokenId = data.args[2];
+    return { collection: collection, tokenId: tokenId }
+
 }
 
 //////Set functions/////////
@@ -502,7 +510,6 @@ async function buy(
     owner,
     signature
 ) {
-    var _price = Number(Number(price) * 1.125 * 10 ** 18).toString();
     const signer = provider.getSigner();
     const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
     const sig = ethers.utils.splitSignature(signature);
@@ -526,7 +533,7 @@ async function buy(
             total,
             value,
             buyWith,
-            BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+            ethers.utils.parseEther(`${price}`),
             owner,
             salt,
             sig.v,
@@ -537,7 +544,7 @@ async function buy(
         {
 
             gasLimit: BigNumber.from(3000000),
-            value: buyWith == toAddress("") ? BigNumber.from(_price) : "0"
+            value: buyWith == toAddress("") ? ethers.utils.parseEther(`${price}`) : "0"
         }
     );
     return tx.hash;
@@ -569,7 +576,8 @@ export {
     getCollection,
     getCollectionType,
     getOwnersOf,
-    getCreated
+    getCreated,
+    getMinted
 
 };
 
