@@ -121,7 +121,7 @@
               </select>
             </div>
             <button
-              v-if="pay_with_hps"
+              v-if="pay_with_hps && !isApproved"
               class="form-submit"
               type="button"
               @click="approve"
@@ -132,7 +132,6 @@
             </button>
 
             <button
-              v-if="!processing"
               id="collection-submit"
               class="form-submit"
               type="button"
@@ -178,6 +177,7 @@ export default {
       payWith: "bnb",
       pay_with_hps: false,
       isApproving: false,
+      isApproved: false,
       isGenerating: false,
       text: {
         approveText:
@@ -215,15 +215,17 @@ export default {
           if (error) {
             error.code == 4001 ? alert("Rejected approving HPS") : null;
           } else if (data.status) {
-            this.isApproving = false;
+            this.isApproved = true;
           } else {
             alert("Try again!");
           }
+          this.isApproving = false;
         });
       } catch (error) {
         if (error.code == 4001) {
           alert("user rejected approving");
         }
+        this.isApproving = false;
       }
     },
     async generateCollection() {
@@ -232,7 +234,7 @@ export default {
       const _this = this;
       var details = {};
       var url;
-
+      _this.isGenerating = true;
       await _this.aqquireKeys();
 
       //we gather a local file for this example, but any valid readStream source will work here.
@@ -306,7 +308,6 @@ export default {
             "https://ipfs.io/ipfs/" + response.data.IpfsHash,
             !_this.pay_with_hps
           );
-          console.log(tx);
           _this.processing = true;
           waitForTransaction(tx).then((data) => {
             if (data.status) {
@@ -317,12 +318,14 @@ export default {
             } else {
               alert("Try again");
             }
+            _this.isGenerating = false;
           });
         })
         .catch(function (error) {
           if (error.code == 4001) {
             alert("User rejected!");
           }
+          _this.isGenerating = false;
         });
     },
     generateCollectionOld() {
