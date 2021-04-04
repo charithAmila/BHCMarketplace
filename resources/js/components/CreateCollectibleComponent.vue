@@ -523,7 +523,10 @@
               </select>
             </div>
 
-            <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="pay_with_hps && !isApproved"
+            >
               <button type="button" class="submitBtn" @click="approve">
                 <span
                   v-html="isApproving ? text.approveText : 'Approve HPS'"
@@ -531,7 +534,7 @@
               </button>
             </div>
 
-            <div class="col-md-12 create-cmodel-elements">
+            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted">
               <button
                 type="button"
                 class="submitBtn"
@@ -540,12 +543,18 @@
                 <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="putOnSale && !isSigned"
+            >
               <button type="button" class="submitBtn" @click="sign">
                 <span v-html="isSigning ? text.signText : 'Sign'"></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="putOnSale && !isNftApproved"
+            >
               <button type="button" class="submitBtn" @click="approveNFT">
                 <span
                   v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"
@@ -645,9 +654,13 @@ export default {
       pay_with_hps: false,
       isProcessing: true,
       isApproving: false,
+      isApproved: false,
       isMinting: false,
+      isMinted: false,
       isSigning: false,
+      isSigned: false,
       isApprovingNft: false,
+      isNftApproved: false,
       isSelling: false,
       text: {
         approveText:
@@ -837,16 +850,18 @@ export default {
         var tx = await approveNFT(this.tokenData.collection);
         waitForTransaction(tx.hash).then((data) => {
           if (data.status) {
+            this.isNftApproved = true;
           } else {
             alert("Try again!");
           }
+          this.isApprovingNft = false;
         });
       } catch (error) {
         if (error.code == 4001) {
           alert("User rejected approving NFT");
         }
+        this.isApprovingNft = false;
       }
-      this.isApprovingNft = false;
     },
     async approve() {
       this.isApproving = true;
@@ -855,16 +870,18 @@ export default {
         var hash = await approveTokens(hpsAddress, `${fee}`);
         waitForTransaction(hash).then((data) => {
           if (data.status) {
+            this.isApproved = true;
           } else {
             alert("Try again!");
           }
+          this.isApproving = false;
         });
       } catch (error) {
         if (error.code == 4001) {
           alert("User rejected approving HPS");
         }
+        this.isApproving = false;
       }
-      this.isApproving = false;
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
@@ -997,11 +1014,14 @@ export default {
                 console.log(res);
                 waitForTransaction(res.hash).then(async function (data) {
                   if (data.status) {
-                    _this.isMinting = false;
-                    _this.tokenData = await getMinted(data.logs[1]);
+                    _this.isMinted = true;
+                    _this.tokenData = await getMinted(
+                      data.logs[_this.pay_with_hps ? 5 : 1]
+                    );
                   } else {
                     alert("Try again!");
                   }
+                  _this.isMinting = false;
 
                   /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
@@ -1018,11 +1038,14 @@ export default {
                 console.log(res);
                 waitForTransaction(res.hash).then(async function (data) {
                   if (data.status) {
-                    _this.isMinting = false;
-                    _this.tokenData = await getMinted(data.logs[1]);
+                    _this.isMinted = true;
+                    _this.tokenData = await getMinted(
+                      data.logs[_this.pay_with_hps ? 5 : 1]
+                    );
                   } else {
                     alert("Try again!");
                   }
+                  _this.isMinting = false;
                   /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
                   )}`;*/
@@ -1033,12 +1056,14 @@ export default {
           if (error.code == 4001) {
             alert("User rejected minting token");
           }
+          _this.isMinting = false;
         });
     },
     async sign() {
+      this.isSigning = true;
       try {
         const _this = this;
-        _this.salt = Math.random().toString(36).substring(7);
+        this.salt = Math.random().toString(36).substring(7);
 
         var orderId = await generateOrderIdMessage(
           _this.tokenData.collection,
@@ -1054,12 +1079,17 @@ export default {
         );
         var sig = await signMessage(orderId);
 
-        _this.s = sig;
-        _this.orderId = orderId;
+        if (sig) {
+          this.s = sig;
+          this.orderId = orderId;
+          this.isSigned = true;
+          this.isSigning = false;
+        }
       } catch (error) {
         if (error.code == 4001) {
           alert("User denied signing the order!");
         }
+        this.isSigning = false;
       }
     },
 
