@@ -120,6 +120,10 @@
                 <option value="hps">HPS</option>
               </select>
             </div>
+            <button v-if="pay_with_hps" class="form-submit" type="button">
+              <span v-html="isApproving ? text.approveText : 'Approve HPS'"></span>
+            </button>
+
             <button
               v-if="!processing"
               id="collection-submit"
@@ -127,20 +131,9 @@
               type="button"
               @click="generateCollection"
             >
-              {{ process }}
+              <span v-html="isGenerating ? text.generateText : 'Generate Collection'"></span>
             </button>
-            <button
-              v-if="processing"
-              id="collection-submit"
-              class="form-submit"
-              type="button"
-              disabled="disabled"
-            >
-              {{ process }}
-              <span v-if="processing"
-                ><img src="/images/loading.gif" alt="" width="10%"
-              /></span>
-            </button>
+            
           </div>
         </form>
       </div>
@@ -166,7 +159,14 @@ export default {
       process: "Create Collection",
       processing: false,
       collectionGenerated: false,
-      pay_with: "bnb"
+      payWith: "bnb",
+      pay_with_hps: false,
+      isApproving: false,
+      isGenerating: false,
+      text:{
+        approveText: "Appproving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
+        generateText: "Generating collection... <img src='/images/loading.gif' alt='' width='7%' />",
+      }
     };
   },
   methods: {
@@ -176,7 +176,11 @@ export default {
       }, 3000);
     },
     setPaywith(){
-
+      if (this.payWith == "hps") {
+        this.pay_with_hps = true;
+      } else {
+        this.pay_with_hps = false;
+      }
     },
     async aqquireKeys() {
       const _this = this;
