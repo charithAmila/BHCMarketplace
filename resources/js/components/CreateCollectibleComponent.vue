@@ -376,7 +376,6 @@
                   sold</small
                 >
               </div>
-              
             </div>
 
             <div v-if="putOnSale" class="form-group row price-tag d-block">
@@ -525,7 +524,7 @@
             </div>
 
             <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
-              <button type="button" class="submitBtn">
+              <button type="button" class="submitBtn" @click="approve">
                 <span
                   v-html="isApproving ? text.approveText : 'Approve HPS'"
                 ></span>
@@ -542,20 +541,20 @@
               </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">
+              <button type="button" class="submitBtn" @click="sign">
                 <span v-html="isSigning ? text.signText : 'Sign'"></span>
               </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">
+              <button type="button" class="submitBtn" @click="approveNFT">
                 <span
                   v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"
                 ></span>
               </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">
-                <span v-html="isSaling ? text.saleText : 'Put on Sale'"></span>
+              <button type="button" class="submitBtn" @click="placeOrder">
+                <span v-html="isSelling ? text.saleText : 'Put on Sale'"></span>
               </button>
             </div>
           </div>
@@ -580,7 +579,12 @@ import {
   approveNFT,
   approveTokens,
   getMinted,
+  getFees,
+  signMessage,
+  generateOrderIdMessage,
 } from "./../etherFunc.js";
+import { hpsAddress, bhcAddress } from "./../addresses/constants";
+import { addSale } from "./../data.js";
 export default {
   props: [
     "collections",
@@ -594,6 +598,7 @@ export default {
   ],
   data() {
     return {
+      current_user: "",
       isError: {
         name: false,
         file: false,
@@ -618,12 +623,12 @@ export default {
       myCollection: [],
       setCollections: [],
       signed: false,
+      process: "Upload File",
+      processing: false,
       s: "",
       j: "",
-      processing: false,
-      process: "Upload File",
-      fProcessing: false,
-      fProcess: "Generate Item",
+      salt: "",
+      orderId: "",
       uploadedImage: "",
       fileType: "image",
       selectedContract: "",
@@ -643,7 +648,7 @@ export default {
       isMinting: false,
       isSigning: false,
       isApprovingNft: false,
-      isSaling: false,
+      isSelling: false,
       text: {
         approveText:
           "Approving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
@@ -736,8 +741,7 @@ export default {
           !this.legend ||
           !this.category ||
           this.selectedContract == "" ||
-          this.copies == 0 
-
+          this.copies == 0
         ) {
           if (!this.name) {
             this.isError.name = true;
@@ -827,6 +831,41 @@ export default {
         }
       }, 300);
     },
+    async approveNFT() {
+      try {
+        this.isApprovingNft = true;
+        var tx = await approveNFT(this.tokenData.collection);
+        waitForTransaction(tx.hash).then((data) => {
+          if (data.status) {
+          } else {
+            alert("Try again!");
+          }
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected approving NFT");
+        }
+      }
+      this.isApprovingNft = false;
+    },
+    async approve() {
+      this.isApproving = true;
+      try {
+        var fee = await getFees();
+        var hash = await approveTokens(hpsAddress, `${fee}`);
+        waitForTransaction(hash).then((data) => {
+          if (data.status) {
+          } else {
+            alert("Try again!");
+          }
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected approving HPS");
+        }
+      }
+      this.isApproving = false;
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
@@ -838,14 +877,6 @@ export default {
       await axios.get("/api/keygen").then((res) => {
         _this.j = res.data.JWT;
       });
-    },
-    async sign() {
-      const _this = this;
-      var sig = await signMessage(`I agree to update my profile.`);
-      if (sig) {
-        _this.s = sig;
-        _this.signed = true;
-      }
     },
     addFile: async function (evt) {
       const FormData = require("form-data");
@@ -929,9 +960,6 @@ export default {
     },
     async createCollectible() {
       const _this = this;
-      console.log(this.selectedContract);
-      //_this.fProcessing = true;
-      //_this.fProcess = "Generating Hash";
       var data = {
         creator: toAddress(window.ethereum.selectedAddress),
         name: _this.name,
@@ -967,11 +995,14 @@ export default {
                 !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
-                waitForTransaction(res.hash).then((data) => {
+                waitForTransaction(res.hash).then(async function (data) {
                   if (data.status) {
                     _this.isMinting = false;
-                    _this.tokenData = getMinted(data.logs[1]);
+                    _this.tokenData = await getMinted(data.logs[1]);
+                  } else {
+                    alert("Try again!");
                   }
+
                   /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
                   )}`;*/
@@ -988,7 +1019,9 @@ export default {
                 waitForTransaction(res.hash).then(async function (data) {
                   if (data.status) {
                     _this.isMinting = false;
-                    _this.tokenData = getMinted(data);
+                    _this.tokenData = await getMinted(data.logs[1]);
+                  } else {
+                    alert("Try again!");
                   }
                   /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
@@ -997,8 +1030,62 @@ export default {
               });
         })
         .catch(function (error) {
-          console.log(error);
+          if (error.code == 4001) {
+            alert("User rejected minting token");
+          }
         });
+    },
+    async sign() {
+      try {
+        const _this = this;
+        _this.salt = Math.random().toString(36).substring(7);
+
+        var orderId = await generateOrderIdMessage(
+          _this.tokenData.collection,
+          _this.tokenData.tokenId,
+          _this.copies > 0 ? _this.copies : 1,
+          _this.sale_currency == "BNB"
+            ? toAddress("")
+            : _this.sale_currency == "BHC"
+            ? bhcAddress
+            : hpsAddress,
+          _this.price,
+          _this.salt
+        );
+        var sig = await signMessage(orderId);
+
+        _this.s = sig;
+        _this.orderId = orderId;
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User denied signing the order!");
+        }
+      }
+    },
+
+    async placeOrder() {
+      const _this = this;
+      _this.isSelling = true;
+      var data = {
+        collection: _this.tokenData.collection,
+        current_owner: _this.current_user,
+        token_id: _this.tokenData.tokenId,
+        signed_to: Number(_this.copies > 0 ? _this.copies : 1),
+        price: Number(_this.price),
+        is_instant: _this.putOnSale,
+        currency:
+          _this.sale_currency == "BNB"
+            ? toAddress("")
+            : _this.sale_currency == "BHC"
+            ? bhcAddress
+            : hpsAddress,
+        signature: _this.s,
+        order_id: _this.orderId,
+        salt: _this.salt,
+      };
+      addSale(data).then((data) => {
+        this.isSelling = false;
+      });
     },
     onClickCard(_selectedContract) {
       const _this = this;
