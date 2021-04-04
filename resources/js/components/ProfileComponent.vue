@@ -42,7 +42,7 @@
         >
       </div>
       <div class="collection-tab">
-        <div id="preloader" class="row d-none">
+        <div id="preloader" class="row grid-conatainer" v-if="loading">
           <div
             v-for="index in 12"
             :key="index"
@@ -106,9 +106,6 @@
             marketplace</span
           >
           <a class="browse" :href="marketplace_url">Browse marketplace</a>
-        </div>
-        <div v-if="loading" class="no-item-found w-30">
-          <span class="collection-title">Items are loading....</span>
         </div>
       </div>
     </div>

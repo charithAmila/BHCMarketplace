@@ -49,7 +49,7 @@
                   max="100"
                   :value.prop="uploadPercentageimg"
                 ></progress>
-                <p v-if="isError.file" class="this-error text-danger">
+                <p v-if="isError.imgselectok" class="this-error text-danger">
                   {{ error_message }}
                 </p>
                 <span
@@ -109,6 +109,10 @@
             </div>
 
             <h6 class="content-title text-content">Select Collection</h6>
+            <p style="color: #f88130" v-if="loading_collections">
+              Loading your collections please wait...
+              <span><img src="/images/loading.gif" alt="" width="3%" /></span>
+            </p>
             <div id="collection-group">
               <a href="javascript:void(0)" class="generateBtn generateBtn">
                 <div class="outside">
@@ -129,8 +133,8 @@
                 :id="collection.id"
                 href="javascript:void(0)"
                 class="g_select"
-                :class="index == 0 ? 'active-btn' : 'inactive-btn'"
-                @click="onClickCollection(collection.address)"
+                :class="index == clicked_index ? 'active-btn' : 'inactive-btn'"
+                @click="onClickCollection(collection.address, index)"
               >
                 <div class="outside">
                   <div class="inside">
@@ -156,7 +160,7 @@
               </a>
             </div>
             <p v-if="isError.collection" class="this-error text-danger">
-               Please select a collection
+              Please select a collection
             </p>
             <!--
             <generate-collection-component
@@ -247,7 +251,7 @@
                         v-for="legend in legends"
                         :key="legend.id"
                         class="special"
-                        :value="legend.legend"
+                        :value="legend"
                       >
                         {{ legend.legend }}
                       </option>
@@ -304,7 +308,9 @@
                       v-model="copies"
                     />
                   </div>
-                  <p class="this-error text-danger"></p>
+                  <p v-if="isError.copies" class="this-error text-danger">
+                    {{ error_message }}
+                  </p>
                   <span
                     id="copies-validation"
                     class="custom-error text-danger"
@@ -398,13 +404,21 @@
                 ></span>
                 <div class="sale-price-drop d-none">
                   <div class="drop-group">
-                    <a href="javascript:void(0)" id="BNB" @click="setSaleCurrency('BNB')" class="currency-item"
+                    <a
+                      href="javascript:void(0)"
+                      id="BNB"
+                      @click="setSaleCurrency('BNB')"
+                      class="currency-item"
                       >BNB</a
                     >
                     <i class="fa fa-check currency-check"></i>
                   </div>
                   <div class="drop-group">
-                    <a href="javascript:void(0)" id="HPS" @click="setSaleCurrency('HPS')" class="currency-item"
+                    <a
+                      href="javascript:void(0)"
+                      id="HPS"
+                      @click="setSaleCurrency('HPS')"
+                      class="currency-item"
                       >HPS</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
@@ -421,7 +435,7 @@
             </div>
 
             <div class="form-group row">
-              <div class="error-msg col-12 col-md-12 d-none">
+              <div class="error-msg col-12 col-md-12" v-if="errors_have">
                 <p class="text-danger sum-error">
                   Something wrong. Please fix the errors in fields above and try
                   again.
@@ -433,10 +447,11 @@
                   class="submitBtn"
                   type="button"
                   name=""
-                  v-model="fProcess"
-                  @click="createCollectible()"
+                  value="Generate Item"
+                  @click="generateModelPopup()"
                 />
               </div>
+
               <div class="col-2 col-md-2"></div>
               <div class="col-4 col-md-4 p-0">
                 <label class="boldFade">disregard update</label>
@@ -500,6 +515,75 @@
       :csrf_token="csrf_token"
       :type="colType"
     ></create-collection-modal-component>
+    <div id="create-collectible-modal" class="custom-modal">
+      <div class="modal-content follower-content">
+        <div class="modal-head">
+          <h4>Create Collectible</h4>
+          <span class="close-collectible-modal">&times;</span>
+        </div>
+        <div id="followingBody" class="modal-body">
+          <div class="row">
+            <div class="col-md-12 create-cmodel-elements">
+              <label>Pay With</label>
+              <select
+                class="form-controll"
+                v-model="pay_with"
+                @change="setPaywith()"
+              >
+                <option value="bnb">BNB</option>
+                <option value="hps">HPS</option>
+              </select>
+            </div>
+
+            <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
+              <button type="button" class="submitBtn">Approve HPS</button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
+              <button type="button" class="submitBtn">
+                Approving HPS...
+                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+              </button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements">
+              <button type="button" class="submitBtn">Mint Token</button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements">
+              <button type="button" class="submitBtn">
+                Minting token...
+                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+              </button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+              <button type="button" class="submitBtn">Sign</button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+              <button type="button" class="submitBtn">
+                Signing...
+                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+              </button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+              <button type="button" class="submitBtn">Approve NFT</button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+              <button type="button" class="submitBtn">
+                Approving NFT...
+                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+              </button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+              <button type="button" class="submitBtn">Puton Sale</button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+              <button type="button" class="submitBtn">
+                Publishing Sale...
+                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -539,6 +623,7 @@ export default {
         sale_price: false,
         invalid_file: false,
         imgselectok: false,
+        copies: false,
       },
       name: "",
       description: "",
@@ -566,17 +651,162 @@ export default {
       uploadPercentageimg: 0,
       colType: this.type == "solo" ? 721 : 1155,
       error_message: "This field is required",
-      sale_currency: "BNB"
+      sale_currency: "BNB",
+      clicked_index: null,
+      errors_have: false,
+      loading_collections: false,
+      pay_with: "bnb",
+      pay_with_hps: false,
+      isProcessing: true,
     };
   },
   methods: {
-    setSaleCurrency(currency){
+    setPaywith() {
+      if (this.pay_with == "hps") {
+        this.pay_with_hps = true;
+      } else {
+        this.pay_with_hps = false;
+      }
+    },
+    generateModelPopup() {
+      if (this.type == "solo") {
+        if (
+          !this.name ||
+          !this.imgselectok ||
+          !this.legend ||
+          !this.category ||
+          this.selectedContract == ""
+        ) {
+          if (!this.name) {
+            this.isError.name = true;
+          } else {
+            this.isError.name = false;
+          }
+          if (!this.imgselectok) {
+            this.isError.imgselectok = true;
+          } else {
+            this.isError.imgselectok = false;
+          }
+          if (!this.category) {
+            this.isError.category = true;
+          } else {
+            this.isError.category = false;
+          }
+          if (!this.legend) {
+            this.isError.legend = true;
+          } else {
+            this.isError.legend = false;
+          }
+          if (this.selectedContract == "") {
+            this.isError.collection = true;
+          } else {
+            this.isError.collection = false;
+          }
+          this.errors_have = true;
+        } else {
+          this.errors_have = false;
+          if (this.putOnSale) {
+            if (this.instantSale && Number(this.price) == 0) {
+              this.isError.sale_price = true;
+              this.errors_have = true;
+            } else {
+              this.isError.imgselectok = false;
+              this.isError.category = false;
+              this.isError.legend = false;
+              this.isError.collection = false;
+              this.isError.sale_price = false;
+              this.isError.name = false;
+              this.errors_have = false;
+              $("#create-collectible-modal").addClass("d-block");
+            }
+          } else {
+            this.isError.imgselectok = false;
+            this.isError.category = false;
+            this.isError.legend = false;
+            this.isError.collection = false;
+            this.isError.sale_price = false;
+            this.isError.name = false;
+            this.errors_have = false;
+            $("#create-collectible-modal").addClass("d-block");
+          }
+        }
+      } else {
+        if (
+          !this.name ||
+          !this.imgselectok ||
+          !this.legend ||
+          !this.category ||
+          this.selectedContract == "" ||
+          this.copies == 0
+        ) {
+          if (!this.name) {
+            this.isError.name = true;
+          } else {
+            this.isError.name = false;
+          }
+          if (!this.imgselectok) {
+            this.isError.imgselectok = true;
+          } else {
+            this.isError.imgselectok = false;
+          }
+          if (!this.category) {
+            this.isError.category = true;
+          } else {
+            this.isError.category = false;
+          }
+          if (!this.legend) {
+            this.isError.legend = true;
+          } else {
+            this.isError.legend = false;
+          }
+          if (this.selectedContract == "") {
+            this.isError.collection = true;
+          } else {
+            this.isError.collection = false;
+          }
+          if (this.copies == 0) {
+            this.isError.copies = true;
+          } else {
+            this.isError.copies = false;
+          }
+          this.errors_have = true;
+        } else {
+          this.errors_have = false;
+          if (this.putOnSale) {
+            if (this.instantSale && Number(this.price) == 0) {
+              this.isError.sale_price = true;
+              this.errors_have = true;
+            } else {
+              this.isError.imgselectok = false;
+              this.isError.category = false;
+              this.isError.legend = false;
+              this.isError.collection = false;
+              this.isError.sale_price = false;
+              this.isError.name = false;
+              this.isError.copies = false;
+              this.errors_have = false;
+              $("#create-collectible-modal").addClass("d-block");
+            }
+          } else {
+            this.isError.imgselectok = false;
+            this.isError.category = false;
+            this.isError.legend = false;
+            this.isError.collection = false;
+            this.isError.sale_price = false;
+            this.isError.name = false;
+            this.isError.copies = false;
+            this.errors_have = false;
+            $("#create-collectible-modal").addClass("d-block");
+          }
+        }
+      }
+    },
+    setSaleCurrency(currency) {
       this.sale_currency = currency;
     },
-    onClickCollection(address) {
-      
+    onClickCollection(address, index) {
       this.selectedContract = address;
-      console.log(address);
+      this.clicked_index = index;
     },
     checkConnection: function () {
       const _this = this;
@@ -586,9 +816,13 @@ export default {
           _this.current_user = toAddress(acc);
           clearInterval(connectionInterval);
           if (_this.type == "solo") {
+            _this.loading_collections = true;
             _this.setCollections = await getCollections(721, acc, false);
+            _this.loading_collections = false;
           } else if (_this.type == "multiple") {
+            _this.loading_collections = true;
             _this.setCollections = await getCollections(1155, acc, false);
+            _this.loading_collections = false;
           }
         }
       }, 300);
@@ -598,10 +832,6 @@ export default {
     },
     updateCollection(passedCollection) {
       this.setCollections = passedCollection;
-    },
-    getCollections() {
-      const _this = this;
-      _this.myCollection = getCollections();
     },
     async aqquireKeys() {
       const _this = this;
@@ -637,7 +867,7 @@ export default {
           evt.target.files[0]["type"] === "image/gif" ||
           evt.target.files[0]["type"] === "image/webp" ||
           evt.target.files[0]["type"] === "video/mp4" ||
-          evt.target.files[0]["type"] === "audio/mp3"
+          evt.target.files[0]["type"] === "audio/mpeg"
         ) {
           this.isError.invalid_file = false;
           _this.fileType = evt.target.files[0].type.split("/")[0];
@@ -662,7 +892,7 @@ export default {
           });
           data.append("pinataOptions", pinataOptions);
 
-          _this.process = "Uploading Image...";
+          _this.process = "Uploading File...";
 
           await axios
             .post(url, data, {
@@ -690,123 +920,83 @@ export default {
           _this.processing = false;
         } else {
           this.isError.invalid_file = true;
+          console.log(evt.target.files[0]["type"]);
           _this.process = "Upload";
         }
+      } else {
+        console.log(evt.target.files[0]["type"]);
       }
     },
     async createCollectible() {
-      if (
-        !this.name ||
-        !this.imgselectok ||
-        !this.legend ||
-        !this.category ||
-        !this.collections
-      ) {
-        if (!this.name) {
-          this.isError.name = true;
-        } else {
-          this.isError.name = false;
-        }
-        if (!this.imgselectok) {
-          this.isError.imgselectok = true;
-        } else {
-          this.isError.imgselectok = false;
-        }
-        if (!this.category) {
-          this.isError.category = true;
-        } else {
-          this.isError.category = false;
-        }
-        if (!this.legend) {
-          this.isError.legend = true;
-        } else {
-          this.isError.legend = false;
-        }
-        if (this.selectedContract == "") {
-          this.isError.collection = true;
-        } else {
-          this.isError.collection = false;
-        }
-      } else {
-        if (instantSale && Number(this.price) == 0) {
-          this.isError.sale_price = true;
-        } else {
-          this.isError.imgselectok = false;
-          this.isError.category = false;
-          this.isError.legend = false;
-          this.isError.collection = false;
-          this.isError.sale_price = false;
-          this.isError.name = false;
-          const _this = this;
-          console.log(this.selectedContract);
-          _this.fProcessing = true;
-          _this.fProcess = "Generating Hash";
-          var data = {
-            creator: toAddress(window.ethereum.selectedAddress),
-            name: _this.name,
-            file: _this.uploadedImage,
-            fileType: _this.fileType,
-            description: _this.description,
-            category: _this.category,
-            legend: _this.legend,
-            royalties: _this.royalties,
-            properties: _this.properties,
-            instant_sale_price: _this.price,
-            instant_sale_token: _this.token,
-            count: 1,
-            sale_currency: _this.sale_currency
-          };
-          _this.type == "multiple" ? (data.count = _this.copies) : null;
+      const _this = this;
+      console.log(this.selectedContract);
+      _this.fProcessing = true;
+      _this.fProcess = "Generating Hash";
+      var data = {
+        creator: toAddress(window.ethereum.selectedAddress),
+        name: _this.name,
+        file: _this.uploadedImage,
+        fileType: _this.fileType,
+        description: _this.description,
+        category: _this.category,
+        legend: _this.legend.legend,
+        royalties: _this.royalties,
+        properties: _this.properties,
+        instant_sale_price: _this.price,
+        instant_sale_token: _this.token,
+        count: 1,
+        sale_currency: _this.sale_currency,
+        icon: _this.legend.icon,
+      };
+      _this.type == "multiple" ? (data.count = _this.copies) : null;
 
-          var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
-          await axios
-            .post(url, data, {
-              headers: {
-                Authorization: `Bearer ${_this.j}`,
-              },
-            })
-            .then(function (response) {
-              _this.fProcess = "Generating Token";
-              _this.type == "solo"
-                ? createASingle(
-                    "https://ipfs.io/ipfs/" + response.data.IpfsHash,
-                    _this.royalties,
-                    _this.selectedContract
-                  ).then((res) => {
-                    console.log(res);
-                    waitForTransaction(res.hash).then((data) => {
-                      if (data) {
-                        _this.fProcess = "Token minted";
-                        _this.fProcessing = false;
-                      }
-                      window.location.href = `/profile/${toAddress(
-                        window.ethereum.selectedAddress
-                      )}`;
-                    });
-                  })
-                : createABatch(
-                    "https://ipfs.io/ipfs/" + response.data.IpfsHash,
-                    _this.copies,
-                    _this.royalties,
-                    _this.selectedContract
-                  ).then((res) => {
-                    console.log(res);
-                    waitForTransaction(res.hash).then((data) => {
-                      if (data) {
-                        _this.fProcess = "Token minted";
-                        _this.fProcessing = false;
-                      }
-                      window.location.href = `/profile/${toAddress(
-                        window.ethereum.selectedAddress
-                      )}`;
-                    });
-                  });
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        }
-      }
+      var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+      await axios
+        .post(url, data, {
+          headers: {
+            Authorization: `Bearer ${_this.j}`,
+          },
+        })
+        .then(function (response) {
+          _this.fProcess = "Generating Token";
+          _this.type == "solo"
+            ? createASingle(
+                "https://ipfs.io/ipfs/" + response.data.IpfsHash,
+                _this.royalties,
+                _this.selectedContract
+              ).then((res) => {
+                console.log(res);
+                waitForTransaction(res.hash).then((data) => {
+                  if (data) {
+                    _this.fProcess = "Token minted";
+                    _this.fProcessing = false;
+                  }
+                  window.location.href = `/profile/${toAddress(
+                    window.ethereum.selectedAddress
+                  )}`;
+                });
+              })
+            : createABatch(
+                "https://ipfs.io/ipfs/" + response.data.IpfsHash,
+                _this.copies,
+                _this.royalties,
+                _this.selectedContract
+              ).then((res) => {
+                console.log(res);
+                waitForTransaction(res.hash).then((data) => {
+                  if (data) {
+                    _this.fProcess = "Token minted";
+                    _this.fProcessing = false;
+                  }
+                  window.location.href = `/profile/${toAddress(
+                    window.ethereum.selectedAddress
+                  )}`;
+                });
+              });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     onClickCard(_selectedContract) {
       const _this = this;
@@ -819,3 +1009,14 @@ export default {
   },
 };
 </script>
+<style>
+.create-cmodel-elements {
+  margin-bottom: 5px;
+}
+.form-controll {
+  display: block;
+  width: 100%;
+  border: 1px solid #f88130;
+  border-radius: 3px;
+}
+</style>

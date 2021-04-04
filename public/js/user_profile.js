@@ -9,6 +9,9 @@ $(document).ready(function() {
     $(".close-follower-modal").click(function() {
         modalClose($("#follower-modal"), $(".follower-content"));
     });
+    $(".close-collectible-modal").click(function() {
+        modalClose($("#create-collectible-modal"), $(".follower-content"));
+    });
 
     /*$('.edit-cover').click(function(){
 		modalOpen($('#update-cover'), $(".cover-content"));

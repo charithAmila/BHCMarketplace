@@ -1,5 +1,40 @@
 <template>
   <div>
+    <div class="items">
+      <div id="preloader" class="row grid-conatainer" v-if="isLoading">
+        <div
+          class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
+          v-for="i in 24"
+          v-bind:key="i"
+        >
+          <div class="outside-nft border-on-profile">
+            <div class="inside-nft">
+              <div class="inner-outside-nft">
+                <div class="inner-nft">
+                  <div class="item-main">
+                    <div class="item-head">
+                      <div class="preloader-img"></div>
+                    </div>
+                  </div>
+
+                  <div class="item-img"></div>
+
+                  <div class="display-flex -mt-15">
+                    <div class="preloader-content"></div>
+                  </div>
+                  <div class="text-center currency-label">
+                    <div class="preloader-content"></div>
+                  </div>
+                  <div class="preloader-half">
+                    <div class="preloader-content"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div :id="div_id" class="row grid-conatainer">
       <div
         v-for="(collectible, index) in collectibles"
@@ -131,6 +166,7 @@
                   <img
                     v-if="collectible.fileType == 'image'"
                     :src="collectible.file"
+                    alt=""
                   />
                   <video
                     v-if="collectible.fileType == 'video'"
@@ -222,6 +258,7 @@ export default {
     "collectibles",
     "page",
     "filter",
+    "isLoading",
   ],
   data() {
     return {
@@ -231,8 +268,10 @@ export default {
       bidListNFT: "",
       checked: false,
 
+
       loaded:false,
       open:false
+
 
       //collectible: this.collectibles[0],
     };

@@ -6,8 +6,7 @@
         <span class="close-custom-modal">&times;</span>
       </div>
       <div class="modal-body">
-        <form id="create-collection" method="POST" :action="store_route">
-          <input type="hidden" name="_token" :value="csrf_token" />
+        <form id="create-collection">
           <div class="row">
             <div class="collection-container col-5 col-md-5">
               <img
@@ -15,6 +14,7 @@
                 class="collection-logo"
                 :src="asset_url + 'images/avatar2.png'"
                 alt="collection-logo"
+                accept="image/x-png,image/gif,image/jpeg,image/png,image/jpg"
               />
             </div>
             <div class="col-label col-7 col-md-7">
@@ -110,12 +110,25 @@
               ></span>
             </div>
             <button
+              v-if="!processing"
               id="collection-submit"
               class="form-submit"
               type="button"
               @click="generateCollection"
             >
-              Create collection
+              {{ process }}
+            </button>
+            <button
+              v-if="processing"
+              id="collection-submit"
+              class="form-submit"
+              type="button"
+              disabled="disabled"
+            >
+              {{ process }}
+              <span v-if="processing"
+                ><img src="/images/loading.gif" alt="" width="10%"
+              /></span>
             </button>
           </div>
         </form>
@@ -139,25 +152,22 @@ export default {
       icon: "",
       j: "",
       s: "",
-      signed: false,
-      process: "",
+      process: "Create Collection",
       processing: false,
+      collectionGenerated: false,
     };
   },
   methods: {
+    closeModel() {
+      setTimeout(function () {
+        $("#collectionModal").removeClass("d-block");
+      }, 3000);
+    },
     async aqquireKeys() {
       const _this = this;
       await axios.get("/api/keygen").then((res) => {
         _this.j = res.data.JWT;
       });
-    },
-    async sign() {
-      const _this = this;
-      var sig = await signMessage(`I agree to update my profile.`);
-      if (sig) {
-        _this.s = sig;
-        _this.signed = true;
-      }
     },
     async generateCollection() {
       const FormData = require("form-data");
@@ -201,6 +211,7 @@ export default {
         });
         data.append("pinataOptions", pinataOptions);
         _this.process = "Uploading Image...";
+        _this.processing = true;
         await axios
           .post(url, data, {
             maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
@@ -224,6 +235,7 @@ export default {
       details.icon = _this.icon;
       url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
       _this.process = "Updating data...";
+      _this.processing = true;
       await axios
         .post(url, details, {
           headers: {
@@ -236,19 +248,19 @@ export default {
             "https://ipfs.io/ipfs/" + response.data.IpfsHash,
             true
           );
+          _this.processing = true;
           waitForTransaction(tx.hash).then((status) => {
             if (status) {
-              _this.collectionGenerated = true;
+              _this.$parent.checkConnection();
+              $("#collectionModal").removeClass("d-block");
+              _this.processing = true;
+              _this.process = "Generate Collection";
             }
           });
         })
         .catch(function (error) {
           console.log(error);
         });
-      _this.process = "Update Preferences";
-      _this.processing = false;
-      _this.s = "";
-      _this.signed = false;
     },
     generateCollectionOld() {
       var formdata = new FormData();
