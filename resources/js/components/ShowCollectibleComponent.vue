@@ -12,7 +12,7 @@
             <div class="collectibleTitle col-option">
               <h3 class="inlineDiv inline-btn">
                 <a
-                  v-if="current_user != current_owner"
+                  v-if="current_user != current_owner.wallet"
                   id="options-btn"
                   class="show-drop"
                   href="javascript:void(0)"
@@ -42,11 +42,11 @@
                   >Buy now</a
                 >
                 <a
+                v-if="singleNft.biddingStatus"
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
-                  >Place a bid</a
-                >
+                  >Place a bid</a>
                 <a
                   class="report"
                   href="javascript:void(0)"
@@ -165,9 +165,10 @@
           </div>
         </div>
         <div class="priceTag">
-          <label class="showCurrency">{{
-            set_collectible.price || set_collectible.instant_sale_price
-          }}</label>
+          <label class="showCurrency"
+            >{{ set_collectible.price }}
+            {{ set_collectible.currencyName }}</label
+          >
           <!-- <label class="showCurrencyPlain">$135.20</label> -->
         </div>
         <h5 class="itemType">
@@ -464,6 +465,7 @@ export default {
       service_fee: 0,
       royaltyFee: 0,
       is_liked: false,
+
     };
   },
   watch: {
@@ -607,7 +609,6 @@ export default {
       (this.collectible.price * this.collectible.royalties) / 100;
 
     this.checkLike();
-
   },
 };
 </script>

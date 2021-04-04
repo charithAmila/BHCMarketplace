@@ -24,7 +24,7 @@
       :show_collectible="show_collectible"
       :current_user="current_user"
       :base_url="base_url"
-      :collectibles="collectibles"
+      :collectibles="collectionNft"
       :page="page"
       :filter="filter"
     ></collectible-component>
@@ -52,24 +52,25 @@ export default {
   },
   watch: {
     current_user() {},
+    collectibles() {
+      this.filterCollection("on-sale");
+    },
   },
   methods: {
     filterCollection(filter) {
-      /*axios
-        .get("/collection/" + this.collection.short_url + "/" + filter)
-        .then((res) => {
-          console.log(res.data.collectibles);
-          this.collectionNft = res.data.collectibles;
-        })
-        .catch((error) => {
-          alert("error");
+      var filtered;
+      if (filter == "on-sale") {
+        filtered = this.collectibles.filter(function (elem) {
+          if (elem.is_selling) return true;
         });
-
-		}*/
+      } else {
+        filtered = this.collectibles;
+      }
+      this.collectionNft = filtered;
     },
   },
   mounted() {
-    this.collectionNft = this.collectibles;
+    this.filterCollection("on-sale");
     this.loaded = true;
   },
 };

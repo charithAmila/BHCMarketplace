@@ -82,7 +82,7 @@
           :show_collectible="show_collectible"
           :current_user="current_user"
           :base_url="base_url"
-          :collectibles="collectibles"
+          :collectibles="showing"
           :page="'profile'"
           :filter="filter"
           :user_id="user_id"
@@ -98,10 +98,7 @@
           :asset_url="asset_url"
         ></follower-modal-component>
 
-        <div
-          v-if="collectibles.length == 0 && !loading"
-          class="no-item-found w-30"
-        >
+        <div v-if="showing.length == 0 && !loading" class="no-item-found w-30">
           <span class="sad-face">:(</span>
           <span class="collection-title">No items found</span>
           <span class="collection-desc"
@@ -121,7 +118,12 @@ import $ from "jquery";
 import Collectible from "./CollectibleComponent.vue";
 import Following from "./modals/FollowingModalComponent.vue";
 import Follower from "./modals/FollowerModalComponent.vue";
-import { getTokensData } from "./../data.js";
+import {
+  getTokensData,
+  getOnSaleTokens,
+  getLikedTokens,
+  getCreatedTokens,
+} from "./../data.js";
 import { getUserDetails } from "../data";
 import { log } from "util";
 export default {
@@ -144,7 +146,13 @@ export default {
     return {
       div_id: "collectible-field",
       rowClass: true,
-      collectibles: [],
+      collectibles: {
+        "on-sale": [],
+        collectibles: [],
+        liked: [],
+        created: [],
+      },
+      showing: [],
       filter: "on-sale",
       following: [],
       loading: false,
@@ -158,15 +166,36 @@ export default {
     async getCollectible() {
       const _this = this;
       _this.loading = true;
-      _this.collectibles = [];
       var data = await getTokensData(_this.user_id, _this.base_url);
-      _this.collectibles = data[_this.filter];
+      _this.collectibles = data;
+      _this.collectibles.liked = [];
+      _this.collectibles.created = [];
+      _this.showing = _this.collectibles[_this.filter];
       _this.loading = false;
     },
     async filterProfileNft(selectedFilter) {
       const _this = this;
+      _this.loading = true;
       _this.filter = selectedFilter;
-      await _this.getCollectible();
+      _this.showing = _this.collectibles[selectedFilter];
+      if (selectedFilter == "on-sale") {
+        var onSale = await getOnSaleTokens(_this.user_id, _this.base_url);
+        _this.collectibles[selectedFilter] = onSale;
+      } else if (
+        selectedFilter == "liked" &&
+        _this.collectibles[selectedFilter].length == 0
+      ) {
+        var liked = await getLikedTokens(_this.user_id, _this.base_url);
+        _this.collectibles[selectedFilter] = liked;
+      } else if (
+        selectedFilter == "created" &&
+        _this.collectibles[selectedFilter].length == 0
+      ) {
+        var created = await getCreatedTokens(_this.user_id, _this.base_url);
+        _this.collectibles[selectedFilter] = created;
+      }
+      _this.showing = _this.collectibles[selectedFilter];
+      _this.loading = false;
     },
     refreshAfterUpdate() {
       this.getCollectible();

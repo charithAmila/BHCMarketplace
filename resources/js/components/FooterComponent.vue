@@ -22,7 +22,7 @@
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
 		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		        <button class="form-send" v-on:click="AllBids()">Let's go!</button>
+		        <button class="form-send" v-on:click="subscribe()">Let's go!</button>
 		      </div>
 		    </div>
 
@@ -75,39 +75,14 @@ return{
 },
 
 async mounted() {
-  //this.highestBid = await getHighestBid(1,1,1,1);
- //this.highestBidder = await getHighestBidder('18');
- //this.biddingStatus = await getBiddingStatus('18');
 
 },
 	methods: {
 
-	async startBid(){
-		let res = await startBidding('18');
-		console.log(res);
-	},
+	async subscribe(){
+		console.log("Subscribe");
+	},}
 	
-	async placeBid(){
-
-	let res = await bid(1,1,1,1,'18','HPS','2');
-	console.log(res);
-	
-	}
-,
-	async getMaxBid(){
-     let res = await getHighestBid(1,1,1,18);
-	},
-
-	async AllBids(){
-let res = await getAllBids('0x0c7117eCEFc947df6507D0fC47E8C80EbA62E7DC','0x41fFF2b6F20a6b7E9F27764f092264B30053D4d4',21)
-console.log(res);
-	},
-
-	async stopBid(){
-let res = await endBidding(1,1,1,1,18)
-	}
-
-	}
 
 }
 </script>
