@@ -334,7 +334,7 @@ async loadData(){
         this.collectible.id,toString(),
         '1',
         '1',
-        this.collectible.contract,
+        this.highestBid.bidding_token=='HPS'?"0xE19DD2fa7d332E593aaf2BBe4386844469e51937":"0xae13d989dac2f0debff460ac112a837c89baa7cd",
        this.highestBid.maxAmount.toString(),
         this.highestBid.maxBidSalt,
         this.owner == true ? toAddress(this.address) : "",
