@@ -599,6 +599,8 @@ import {
   waitForTransaction,
   toAddress,
   checkConnection,
+  approveNFT,
+  approveTokens,
 } from "./../etherFunc.js";
 export default {
   props: [
@@ -963,7 +965,8 @@ export default {
             ? createASingle(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.royalties,
-                _this.selectedContract
+                _this.selectedContract,
+                !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
                 waitForTransaction(res.hash).then((data) => {
@@ -980,7 +983,8 @@ export default {
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.copies,
                 _this.royalties,
-                _this.selectedContract
+                _this.selectedContract,
+                !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
                 waitForTransaction(res.hash).then((data) => {
