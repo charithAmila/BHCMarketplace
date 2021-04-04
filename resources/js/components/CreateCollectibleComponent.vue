@@ -376,17 +376,7 @@
                   sold</small
                 >
               </div>
-              <div v-if="putOnSale" class="col-3 col-md-2 pt-14">
-                <label class="switch">
-                  <input
-                    id="instantSale"
-                    name="isp"
-                    type="checkbox"
-                    v-model="instantSale"
-                  />
-                  <span class="slider round"></span>
-                </label>
-              </div>
+              
             </div>
 
             <div v-if="putOnSale" class="form-group row price-tag d-block">
@@ -396,7 +386,6 @@
                   type="number"
                   name="price"
                   placeholder="Enter price for 1 piece"
-                  :disabled="!instantSale"
                   v-model="price"
                 />
                 <span id="BHC" class="link-url-end sale-price-btn"
@@ -701,7 +690,7 @@ export default {
         } else {
           this.errors_have = false;
           if (this.putOnSale) {
-            if (this.instantSale && Number(this.price) == 0) {
+            if (Number(this.price) == 0) {
               this.isError.sale_price = true;
               this.errors_have = true;
             } else {
@@ -732,7 +721,8 @@ export default {
           !this.legend ||
           !this.category ||
           this.selectedContract == "" ||
-          this.copies == 0
+          this.copies == 0 
+
         ) {
           if (!this.name) {
             this.isError.name = true;
