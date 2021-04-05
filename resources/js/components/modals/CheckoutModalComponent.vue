@@ -80,10 +80,11 @@
             >
               Proceed to payment
             </button>
-            <label
-              class="text-details"
-              v-if="!enoughBalance || allowance < total_payment"
+            <label class="text-details" v-if="!enoughBalance"
               >Low Balance</label
+            >
+            <label class="text-details" v-if="allowance < total_payment"
+              >Low Allowance</label
             >
             <!--button class="cancel-btn" type="button">Cancel</button-->
           </form>
@@ -112,6 +113,7 @@ export default {
     return {
       quantity: 1,
       balance: 0,
+      allowance: 0,
       enoughBalance: false,
       service_fee: 0,
       royalty_fee: 0,
@@ -159,6 +161,7 @@ export default {
         this.balance = await getBNBBalance(this.current_user);
         var allowance = this.balance;
       }
+      this.allowance = allowance;
       console.log(allowance);
       if (this.total_payment <= allowance) {
         this.approved = true;
