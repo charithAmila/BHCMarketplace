@@ -363,7 +363,33 @@ async function generateOrderIdMessage(
         ethers.utils.parseEther(`${price}`),
         salt
     );
-    return salt, order;
+    return order;
+}
+
+async function checkOrder(
+    tokenAddress,
+    tokenId,
+    value,
+    priceToken,
+    price,
+    salt
+) {
+    const exchange = new ethers.Contract(
+        exchangeAddress,
+        exchangeABI,
+        provider
+    );
+    const nftStorage = new ethers.Contract(NFTStorageAddress, nftStorageABI, provider)
+    const orderKey = await exchange.generateKey(
+        tokenAddress,
+        tokenId,
+        value,
+        priceToken,
+        ethers.utils.parseEther(`${price}`),
+        salt
+    );
+    const order = await nftStorage.getOrder(orderKey)
+    return order;
 }
 
 async function checkNFTApproved(contractAddress, from) {
@@ -583,7 +609,8 @@ export {
     getOwnersOf,
     getCreated,
     getMinted,
-    getFees
+    getFees,
+    checkOrder
 
 };
 

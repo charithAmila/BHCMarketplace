@@ -1,5 +1,5 @@
 import { getBiddingStatus } from "./bidFunc.js";
-import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType, getOwnersOf, getCreated } from './etherFunc';
+import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType, getOwnersOf, getCreated, checkOrder } from './etherFunc';
 import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
 import axios from 'axios';
 
@@ -224,7 +224,7 @@ async function getOnSaleTokens(owner, base_url) {
     var data = [];
     var tokens721 = [];
     var tokens1155 = [];
-    var res = await axios.get("/api/sales/" + owner);
+    var res = await axios.get("/sales/" + owner);
     var tokens = res.data;
 
     for (var i = 0; i < tokens.length; i++) {
@@ -381,7 +381,7 @@ async function getAllSales(current_user) {
     var data = [];
     var tokens721 = [];
     var tokens1155 = [];
-    var res = await axios.get("/api/sales");
+    var res = await axios.get("/sales");
     var tokens = res.data;
 
     for (var i = 0; i < tokens.length; i++) {
@@ -423,7 +423,7 @@ async function getAllSales(current_user) {
 
 async function checkSelling(collection, owner, id) {
     var res = await axios.get(
-        `/api/sales?collection=${collection}&current_owner=${owner}&token_id=${id}`
+        `/sales?collection=${collection}&current_owner=${owner}&token_id=${id}`
     );
 
     return res.data;
@@ -435,12 +435,27 @@ async function updateUserDetails(addressString, data) {
     await axios.patch(`/api/profile/${address}`, data);
 }
 async function addSale(data) {
-    await axios.post(`/api/sales`, data);
+    await axios.post(`/sales`, data);
 }
 
-async function removeSale(id) {
-    await axios.delete(`/api/sales/${id}`);
-    window.location.reload();
+async function removeSale(tokenAddress,
+    tokenId,
+    value,
+    priceToken,
+    price,
+    salt,
+    id) {
+    var orderData = await checkOrder(tokenAddress,
+        tokenId,
+        value,
+        priceToken,
+        price,
+        salt)
+    console.log(orderData)
+    if (Number(orderData.total) == Number(orderData.sold)) {
+        await axios.delete(`/sales/${id}`);
+        window.location.reload();
+    }
 }
 
 export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale, collectiblesOfCollection, getOnSaleTokens, getLikedTokens, getCreatedTokens }
