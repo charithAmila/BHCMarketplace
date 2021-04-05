@@ -66,7 +66,7 @@ class SalesController extends Controller
         $granted = $checker->checkSign($message, $request->signature, $request->current_owner);
         if ($granted) {
             if (Sales::where("collection", $request->collection)->where("current_owner", $request->current_owner)->where("token_id", $request->token_id)->exists()) {
-                $id = Sales::where("collection", $request->collection)->where("current_owner", $request->current_owner)->where("token_id", $request->token_id)->get(id);
+                $id = Sales::where("collection", $request->collection)->where("current_owner", $request->current_owner)->where("token_id", $request->token_id)->get("id");
                 Sales::destroy($id);
             }
             $order = Sales::create([

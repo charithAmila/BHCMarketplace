@@ -14,6 +14,7 @@ use App\Http\Controllers\CollectibleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\SalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,3 +114,5 @@ Route::post('follow', [FollowController::class, 'follow']);
 Route::post('unfollow', [FollowController::class, 'unfollow']);
 
 Route::get('followers', [FollowController::class, 'index'])->name('followers');
+
+Route::resource('sales', SalesController::class);

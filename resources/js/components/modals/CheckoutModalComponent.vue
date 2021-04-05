@@ -48,13 +48,15 @@
               <div class="purchase-info">
                 <label class="text-details">Your balance</label>
                 <label class="text-value"
-                  >{{ balance }} {{ singleNft.currencyName }}</label
+                  >{{ Number(balance).toFixed(3) }}
+                  {{ singleNft.currencyName }}</label
                 >
               </div>
               <div class="purchase-info">
                 <label class="text-details">Service fee</label>
                 <label class="text-value"
-                  >{{ service_fee }} {{ singleNft.currencyName }}</label
+                  >{{ Number(service_fee).toFixed(3) }}
+                  {{ singleNft.currencyName }}</label
                 >
               </div>
               <div class="purchase-info">
@@ -67,17 +69,22 @@
             <button
               class="form-submit"
               @click.prevent="approve"
-              v-if="!approved"
+              v-if="!approved && enoughBalance"
             >
               Approve
             </button>
             <button
               class="form-submit"
               type="submit"
-              :disabled="Number(balance) < Number(total_payment)"
+              :disabled="!enoughBalance"
             >
               Proceed to payment
             </button>
+            <label
+              class="text-details"
+              v-if="!enoughBalance || allowance < total_payment"
+              >Low Balance</label
+            >
             <!--button class="cancel-btn" type="button">Cancel</button-->
           </form>
         </div>
@@ -98,12 +105,14 @@ import {
   toAddress,
   getBNBBalance,
 } from "./../../etherFunc";
+import { removeSale } from "../../data";
 export default {
   props: ["singleNft", "page", "current_user"],
   data() {
     return {
       quantity: 1,
       balance: 0,
+      enoughBalance: false,
       service_fee: 0,
       royalty_fee: 0,
       total_payment: 0,
@@ -116,35 +125,18 @@ export default {
     };
   },
   async mounted() {
-    this.singleNft.currencyName == "HPS"
-      ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
-      : this.singleNft.currency == "BHC"
-      ? (this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876")
-      : (this.currency = toAddress(""));
-    this.price = this.singleNft.price;
-    this.nft_id = this.singleNft.id;
-    this.record_id = this.singleNft.record_id;
-    this.updateValues();
-    if (this.currency != toAddress("")) {
-      var allowance = await checkTokensApproved(
-        this.currency,
-        this.current_user
-      );
-      this.balance = await checkTokensBalance(this.currency, this.current_user);
-      this.balance = this.balance.toFixed(3);
-    } else {
-      this.balance = await getBNBBalance(this.current_user);
-      var allowance = this.balance;
-    }
-    console.log(allowance);
-    if (this.total_payment <= allowance) {
-      this.approved = true;
-    } else {
-      this.approved = false;
-    }
+    this.checkEligibility();
   },
   watch: {
     singleNft: async function () {
+      this.checkEligibility();
+    },
+    quantity: async function () {
+      this.checkEligibility();
+    },
+  },
+  methods: {
+    async checkEligibility() {
       this.singleNft.currencyName == "HPS"
         ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
         : this.singleNft.currency == "BHC"
@@ -163,7 +155,6 @@ export default {
           this.currency,
           this.current_user
         );
-        this.balance = this.balance.toFixed(3);
       } else {
         this.balance = await getBNBBalance(this.current_user);
         var allowance = this.balance;
@@ -174,32 +165,12 @@ export default {
       } else {
         this.approved = false;
       }
-    },
-    quantity: async function () {
-      if (this.currency != toAddress("")) {
-        var allowance = await checkTokensApproved(
-          this.currency,
-          this.current_user
-        );
-        this.balance = await checkTokensBalance(
-          this.currency,
-          this.current_user
-        );
-        this.balance = this.balance.toFixed(3);
+      if (this.balance < this.total_payment) {
+        this.enoughBalance = false;
       } else {
-        this.balance = await getBNBBalance(this.current_user);
-        var allowance = this.balance;
+        this.enoughBalance = true;
       }
-      console.log(allowance);
-      if (this.total_payment <= allowance) {
-        this.approved = true;
-      } else {
-        this.approved = false;
-      }
-      this.updateValues();
     },
-  },
-  methods: {
     updateValues() {
       this.payment = +(this.price * this.quantity);
       this.service_fee = +(this.payment * 0.025);
@@ -219,14 +190,15 @@ export default {
     },
     purchase() {
       var collectible = this.singleNft;
+      const _this = this;
       buy(
         collectible.contract,
         collectible.type == 721 ? true : false,
         collectible.id,
         collectible.signed_to,
-        this.quantity,
-        this.currency,
-        `${this.price}`,
+        _this.quantity,
+        _this.currency,
+        `${_this.price}`,
         collectible.salt,
         collectible.owner_id,
         collectible.signature
@@ -234,26 +206,35 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
+            await removeSale(
+              collectible.contract,
+              collectible.id,
+              collectible.signed_to,
+              _this.currency,
+              `${_this.price}`,
+              collectible.salt,
+              collectible.db_id
+            );
             $(".toast-message").text("Purchased");
             $("#purchaseForm").trigger("reset");
             setTimeout(function () {
               launch_toast();
             }, 500);
             modalClose($("#checkoutModal"), $(".checkout-content"));
-            this.service_fee = 0;
-            this.total_payment = 0;
-            this.payment = 0;
-            this.bid_input = "";
-            this.quantity = 1;
+            _this.service_fee = 0;
+            _this.total_payment = 0;
+            _this.payment = 0;
+            _this.bid_input = "";
+            _this.quantity = 1;
 
-            if (this.page == "marketplace" || this.page == "profile") {
-              this.$parent.$parent.getCollectible();
+            if (_this.page == "marketplace" || _this.page == "profile") {
+              _this.$parent.$parent.getCollectible();
             }
-            if (this.page == "marketplace") {
-              this.$parent.$parent.$parent.updateTopUser();
+            if (_this.page == "marketplace") {
+              _this.$parent.$parent.$parent.updateTopUser();
             }
-            if (this.page == "showcollectible") {
-              this.$parent.updateData();
+            if (_this.page == "showcollectible") {
+              _this.$parent.updateData();
             }
           }
         })
