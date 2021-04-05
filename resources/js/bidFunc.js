@@ -19,7 +19,9 @@ import {
     toAddress,
     checkConnection,
     buy,
-    generateOrderIdMessage
+    generateOrderIdMessage,
+    approveNFT,
+    approveTokens
 } from "./etherFunc.js";
 ///////////////////////////////////////////////////ABI//////////////////////////////////////////////////////////
 const bhc721 = require("../js/abis/bhc_721.json");
@@ -28,6 +30,7 @@ const pancake_ABI = require("../js/abis/pancake.json");
 const token_ABI = require("../js/abis/bep20.json");
 const julswap_ABI = require("../js/abis/julswap.json");
 const WBNB_ABI = require("../js/abis/wbnb.json");
+const exchange_abi = require("../js/abis/new_exchange.json");
 //////////////////////////////////////////Get Token Contract////////////////////////////////////////////////////////
 function getTokenContract(bidding_token) {
     const signer = provider.getSigner();
@@ -130,6 +133,9 @@ async function startBidding(_owner, contract_address, token_id) {
     //const contract = ERC721_Website_Read;
     // const owner = await contract.ownerOf(token_id);
     var address = toAddress(checkConnection());
+    let txReceipt = await approveNFT(contract_address);
+    let txResponse = txReceipt.wait();
+    console.log(txResponse);
     if (address == _owner) {
         const signature = await signer.signMessage("Allow bidding for token");
         data.signature = signature;
@@ -184,7 +190,7 @@ async function approveBHC(_amount) {
     const balance = await hpsContract.balanceOf(address);
     var address = address.toString().toLowerCase();
     const txResponse = await hpsContract.approve(
-        exchangeAddress,
+        erc20TransferProxyAddress,
         (amount * rate).toString()
     );
     const txReceipt = await txResponse.wait();
@@ -252,8 +258,8 @@ async function signBid(
         contract_address,
         token_id,
         1,
-        contract_address,
-        (amount * 10 ** 18).toString(),
+        bidding_token,
+        amount.toString(),
         salt
     );
     const signer = provider.getSigner();
@@ -410,29 +416,51 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
 
 ////////////////////////////////////////////Accept Bid///////////////////////////////////////////////////////////////
 async function acceptBid(
-    collection,
     is721,
+    token,
     tokenId,
-    total,
-    value,
-    buyWith,
+    priceToken,
     price,
-    salt,
-    owner,
-    signature
+    winner,
+    signature,
+    salt
 ) {
-    var res = await buy(
-        collection,
+    const signer = provider.getSigner();
+    const exchange = new ethers.Contract(exchangeAddress, exchange_abi, signer);
+    const sig = ethers.utils.splitSignature(signature);
+    console.log([
         is721,
+        token,
         tokenId,
-        total,
-        value,
-        buyWith,
+        priceToken,
         price,
-        salt,
-        owner,
-        signature
+        winner,
+        signature,
+        salt
+    ]);
+    const tx = await exchange.endAuction(
+        [
+            is721,
+            toAddress(token),
+            tokenId,
+            toAddress(priceToken),
+            price.toString(),
+            toAddress(winner),
+            salt,
+            sig.v,
+            sig.r,
+            sig.s
+        ],
+        {
+            gasLimit: "3000000",
+            value:
+                priceToken == toAddress("")
+                    ? ethers.utils.parseEther(`${price}`)
+                    : "0"
+        }
     );
+
+    var res = tx.wait();
     console.log(res);
 }
 ////////////////////////////////////////////Get Time Difference//////////////////////////////////////////////////////
