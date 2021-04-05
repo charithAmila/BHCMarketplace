@@ -219,6 +219,8 @@ export default {
     },
     purchase() {
       var collectible = this.singleNft;
+      let success;
+      let message = "You have successfully purchased "+collectible.name+" for "+`${this.price}`+this.currency;
       buy(
         collectible.contract,
         collectible.type == 721 ? true : false,
@@ -234,6 +236,7 @@ export default {
         .then(async function (hash) {
           var status = await waitForTransaction(hash);
           if (status) {
+            success =true;
             $(".toast-message").text("Purchased");
             $("#purchaseForm").trigger("reset");
             setTimeout(function () {
@@ -255,6 +258,15 @@ export default {
             if (this.page == "showcollectible") {
               this.$parent.updateData();
             }
+              if(success){
+          data={};
+          data.message = message;
+          data.user_id = toAddress(window.ethereum.selectedAddress);
+          await axios.post('addNotification',data,{
+          }).then((res) => {
+            console.log(res.data);
+          });
+        }
           }
         })
         .catch((error) => {

@@ -90,7 +90,7 @@ Route::post('/accept/bid', [TransactionController::class, 'acceptBid']);
 
 Route::post('/report', [ReportController::class, 'report']);
 
-Route::get('/notifications', [NotificationController::class, 'userNotifications']);
+Route::post('/notifications', [NotificationController::class, 'getNotification']);
 
 Route::post('bid', [BidController::class, 'store']);
 
@@ -113,5 +113,7 @@ Route::post('follow', [FollowController::class, 'follow']);
 Route::post('unfollow', [FollowController::class, 'unfollow']);
 
 Route::post('addNotification', [NotificationController::class, 'addNotification']);
+
+Route::post('deleteNotification', [NotificationController::class, 'delete']);
 
 Route::get('followers', [FollowController::class, 'index'])->name('followers');

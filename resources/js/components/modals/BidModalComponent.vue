@@ -54,6 +54,12 @@
               </div>
             </div>
             <div class="purchase">
+              <div class="purchase-info" v-if="this.selected_token==1">
+                <label class="text-details">Your WBNB balance</label>
+                <label class="text-value"
+                  >{{ this.WBNB_Balance }} <span>WBNB</span></label
+                >
+              </div>
               <div class="purchase-info">
                 <label class="text-details">Your balance</label>
                 <label class="text-value"
@@ -73,13 +79,54 @@
                 >
               </div>
             </div>
-            <button
+            <!--button
               class="form-submit"
               type="button"
               @click="placeBid()"
             >
 			  <span>Place a bid</span>
+            </button-->
+
+             <button
+             v-if="notStarted && enoughWBNB && !isBHC"
+              class="form-submit"
+              type="button"
+              @click="!approved?approveWBNBFunc():''"
+            >
+			  <span v-html="approveWBNBText"></span>
             </button>
+
+
+             <button
+             v-if="notStarted && !enoughWBNB && !isBHC"
+              class="form-submit"
+              type="button"
+              @click="!approved?convertBNB():''"
+            >
+			  <span v-html="convertBNBText"></span>
+            </button>
+
+  <button
+             v-if="notStarted && isBHC"
+              class="form-submit"
+              type="button"
+              @click="!approved?approveBHCFunc():''"
+            >
+			  <span v-html="approveBHCText"></span>
+            </button>
+
+
+             <button
+             v-if="approved"
+              class="form-submit"
+              type="button"
+              @click="!signed?signBidFunc():''"
+            >
+			  <span v-html="signBidText"></span>
+            </button>
+
+
+           
 			<span style="color:red">{{error}}</span>
           </form>
         </div>
@@ -100,13 +147,14 @@ import {
   getBHCBalance,
   getBNBBalance,
   getWBNBBalance,
-  approveBHCFunc,signBidFunc
+  approveBHC,signBid,approveWBNB,convertBNBtoWBNB
 } from ".././../bidFunc";
 
 export default {
   props: ["singleNft", "page"],
   data() {
     return {
+      rate:2.5,
       bid_input: 0,
       selectedBalance:0,
       BHC_balance: 0,
@@ -117,11 +165,18 @@ export default {
       payment: 0,
       currency: "",
 	  error:"",
+    approved:false,
+    signed:false,
       nft_id: 0,
       record_id: 0,
       selected_token: 0,
+      notStarted:true,
       isApproving: false,
 	  isSigning: false,
+    approveWBNBText:"Approve WBNB",
+    approveBHCText:"Approve BHC",
+    signBidText:"Sign Order",
+    convertBNBText:"Convert BNB to WBNB",
 	  approvingText: "Approving BHC...  <img src='/images/loading.gif' alt='' width='7%' />",
 	  signText: "Signing...  <img src='/images/loading.gif' alt='' width='7%' />",
 		isApprovingWbnb: false,
@@ -141,6 +196,14 @@ export default {
   },
 
   computed: {
+    isBHC(){
+      if (this.selected_token == 0) {
+        return true
+      }
+      else{
+        return false
+      }
+    },
     balance() {
       if (this.selected_token == 1) {
         return this.BNB_Balance;
@@ -149,7 +212,7 @@ export default {
       }
     },
 	enoughWBNB(){
-		if(this.bid_input>this.WBNB_Balance){
+		if(this.total_payment>this.WBNB_Balance){
 				return false;
 		}
 		else{
@@ -158,7 +221,7 @@ export default {
 	},
 	enoughBNB()
 	{
-	if(this.bid_input>this.BNB_Balance){
+	if(this.total_payment>this.BNB_Balance){
 				return false;
 		}
 		else{
@@ -166,7 +229,7 @@ export default {
 		}
 	},
 	enoughBHC(){
-		if(this.bid_input>this.BHC_Balance){
+		if(this.total_payment>this.BHC_Balance){
 				return false;
 		}
 		else{
@@ -188,45 +251,90 @@ export default {
     },
   },
   methods: {
-   async approveBHC() {
 
+//////////////////!Approve WBNB////////////////////
+async approveWBNBFunc() {
+this.approveWBNBText = this.approvingWbnbText;
+let res = await approveWBNB(this.total_payment);
+if(res){
+this.approveWBNBText ="Approved WBNB";
+this.approved = true;
+}
+},
+//////////////////!Convert BNB////////////////////
+async convertBNB(){
+  if(this.enoughBNB){
+  this.convertBNBText = this.convertText;
+let res = await convertBNBtoWBNB(this.total_payment);
+if(res){
+  this.WBNB_Balance += this.payment;
+  this.convertBNBText = "Converted BNB to WBNB"
+}}
+else{
+  	this.error  = "Not enough Balance"
+}
+},
+//////////////////!Approve BHC////////////////////
+ async approveBHCFunc() {
+this.approveBHCText = this.approvingText;
 if(this.enoughBHC){
-this.error = "";
-this.isApproving = true;
-var res = await approveBHCFunc(this.payment)
+var res = await approveBHC(this.total_payment)
 if(res==1){
-  this.isApproving = false;
+  this.approveBHCText = "Approved BHC"
+  this.approved = true;
 }
 }else{
 	this.error  = "Not enough Balance"
 }
 
     },
-    
-async signBid(){
-  this.isSigning = true;
+//////////////////!Sign Bid////////////////////
+
+async signBidFunc(){
+  let pay_token;
+  this.signBidText = this.signText;
    this.currency = $("#selectedCurrency").text();
-  let res = await signBidFunc(
+   if(this.currency =='HPS'){
+     pay_token = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937"
+   }
+   else{
+     pay_token = "0xae13d989dac2f0debff460ac112a837c89baa7cd"
+   }
+  let res = await signBid(
         this.singleNft.owner_id,
         this.singleNft.contract,
         this.singleNft.id,
-        this.currency,
+        pay_token,
         this.payment
       );
-      if(res==1){
-        this.signing = false;
-
+      console.log(res);
+      if(res){
+         let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name;
+          let data={};
+          data.message = message;
+          data.user_id = window.ethereum.selectedAddress;
+          await axios.post('/addNotification',data,{
+          }).then((res) => {
+            console.log(res.data);
+          });
+        
+        this.signed= true;
+        this.signBidText = "Signed and Placed Order"
       }
-},
+    },
+
+//////////////////!Set BNB////////////////////
 
     setBNB() {
       this.selected_token = 1;
       this.selectedBalance = this.BNB_Balance;
     },
+//////////////////!Set BHC////////////////////
     setBHC() {
       this.selected_token = 0;
       this.selectedBalance = this.BHC_balance;
     },
+//////////////////!Place Bid////////////////////
     async placeBid() {
       this.currency = $("#selectedCurrency").text();
       let res = await bid(
@@ -236,7 +344,19 @@ async signBid(){
         this.currency,
         this.payment
       );
-     //window.location.reload();
+      console.log("Bidding result");
+      console.log(res);
+      let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name;
+      let success = true;
+       if(success){
+          let data={};
+          data.message = message;
+          data.user_id = window.ethereum.selectedAddress;
+          await axios.post('/addNotification',data,{
+          }).then((res) => {
+            console.log(res.data);
+          });
+        }
     },
   },
 };

@@ -167,7 +167,7 @@
             </div>
             <br><br>
           <h5 v-if="biddingStatus && haveBids">All Bids</h5>
-          <h5 v-if="!biddingStatus">Not available for Bidding</h5>
+          <!--h5 v-if="biddingStatus==0">Not available for Bidding</h5-->
           <div
             v-for="(transac, index) in allBids"
             :key="index"

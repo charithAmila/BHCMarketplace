@@ -930,7 +930,8 @@ export default {
       }
     },
     async createCollectible() {
-      let success = false;
+      let single_success = false;
+      let batch_success = false;
       const _this = this;
       console.log(this.selectedContract);
       _this.fProcessing = true;
@@ -976,6 +977,7 @@ export default {
                     
                     _this.fProcess = "Token minted";
                     _this.fProcessing = false;
+                  single_success = true;
                   }
                   window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
@@ -992,7 +994,7 @@ export default {
                 console.log(res);
                 waitForTransaction(res.hash).then((data) => {
                   if (data) {
-                    success = true;
+                    batch_success = true;
                     _this.fProcess = "Token minted";
                     _this.fProcessing = false;
                   }
@@ -1005,7 +1007,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-        if(success){
+        if(batch_success || single_success){
           data={};
           data.message = message;
           data.user_id = toAddress(window.ethereum.selectedAddress);
