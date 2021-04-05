@@ -930,6 +930,7 @@ export default {
       }
     },
     async createCollectible() {
+      let success = false;
       const _this = this;
       console.log(this.selectedContract);
       _this.fProcessing = true;
@@ -950,6 +951,7 @@ export default {
         sale_currency: _this.sale_currency,
         icon: _this.legend.icon,
       };
+      const message = "New collectible "+_this.name+ " was minted successfully";
       _this.type == "multiple" ? (data.count = _this.copies) : null;
 
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -971,6 +973,7 @@ export default {
                 console.log(res);
                 waitForTransaction(res.hash).then((data) => {
                   if (data) {
+                    
                     _this.fProcess = "Token minted";
                     _this.fProcessing = false;
                   }
@@ -989,6 +992,7 @@ export default {
                 console.log(res);
                 waitForTransaction(res.hash).then((data) => {
                   if (data) {
+                    success = true;
                     _this.fProcess = "Token minted";
                     _this.fProcessing = false;
                   }
@@ -1001,6 +1005,16 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+        if(success){
+          data={};
+          data.message = message;
+          data.user_id = toAddress(window.ethereum.selectedAddress);
+          await axios.post('addNotification',data,{
+          }).then((res) => {
+            console.log(res.data);
+          });
+        }
+
     },
     onClickCard(_selectedContract) {
       const _this = this;

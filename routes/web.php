@@ -112,4 +112,6 @@ Route::post('follow', [FollowController::class, 'follow']);
 
 Route::post('unfollow', [FollowController::class, 'unfollow']);
 
+Route::post('addNotification', [NotificationController::class, 'addNotification']);
+
 Route::get('followers', [FollowController::class, 'index'])->name('followers');

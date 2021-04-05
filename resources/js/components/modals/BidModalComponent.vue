@@ -13,7 +13,7 @@
         >
 
         <div class="form-section">
-          <form id="bidForm" autocomplete="off" @submit.prevent="placeBid()">
+          <form id="bidForm" autocomplete="off">
             <div class="form-divide">
               <label class="input-label">Your bid</label>
               <input
@@ -36,7 +36,7 @@
                     href="javascript:void(0)"
                     id="BHC"
                     class="currency-item"
-                    @click="setHPS()"
+                    @click="setBHC()"
                     >BHC</a
                   >
                   <i class="fa fa-check currency-check"></i>
@@ -57,7 +57,7 @@
               <div class="purchase-info">
                 <label class="text-details">Your balance</label>
                 <label class="text-value"
-                  >{{ balance }} <span class="changeDD">BHC</span></label
+                  >{{ this.selectedBalance }} <span class="changeDD">BHC</span></label
                 >
               </div>
               <div class="purchase-info">
@@ -74,32 +74,13 @@
               </div>
             </div>
             <button
-              v-if="selected_token == 0"
               class="form-submit"
               type="button"
-              @click="isApproving ? approveBHC() : ''"
+              @click="placeBid()"
             >
-			  <span v-html="isApproving ? approvingText : 'Approve BHC'"></span>
+			  <span>Place a bid</span>
             </button>
-			<button class="form-submit" v-if="selected_token == 0">
-				<span v-html="isSigning ? signText : 'Sign'"></span></button>
-				<button
-              v-if="ifWbnb && selected_token == 1"
-              class="form-submit"
-              type="button"
-              @click="isApprovingWbnb ? approveWbnb() : ''"
-            >
-			  <span v-html="isApprovingWbnb ? approvingWbnbText : 'Approve WBNB'"></span>
-            </button>
-			<button class="form-submit" v-if="ifWbnb && selected_token == 1">
-				<span v-html="isSigning ? signText : 'Sign'"></span></button>
-			<button class="form-submit" v-if="!ifWbnb && selected_token == 1">
-				<span v-html="isConverting ? convertText : 'Convert BNB to WBNB'"></span></button>	
-				<button class="form-submit" v-if="!ifWbnb && selected_token == 1">
-				<span v-html="isApprovingWbnb ? approvingWbnbText : 'Approve WBNB'"></span></button>
-            <button class="form-submit" v-if="!ifWbnb && selected_token == 1">
-				<span v-html="isSigning ? signText : 'Sign'"></span></button>
-			<button class="form-submit" type="submit">Place a bid</button>
+			<span style="color:red">{{error}}</span>
           </form>
         </div>
       </div>
@@ -116,23 +97,26 @@ import {
   getBiddingStatus,
   getAllBids,
   endBidding,
-  getHpsBalance,
+  getBHCBalance,
   getBNBBalance,
+  getWBNBBalance,
+  approveBHCFunc,signBidFunc
 } from ".././../bidFunc";
-import { generateOrderIdMessage } from ".././../etherFunc";
-import { log } from "util";
 
 export default {
   props: ["singleNft", "page"],
   data() {
     return {
       bid_input: 0,
-      HPS_balance: 0,
+      selectedBalance:0,
+      BHC_balance: 0,
       BNB_Balance: 0,
+	  WBNB_Balance:0,
       service_fee: 0,
       total_payment: 0,
       payment: 0,
       currency: "",
+	  error:"",
       nft_id: 0,
       record_id: 0,
       selected_token: 0,
@@ -141,7 +125,7 @@ export default {
 	  approvingText: "Approving BHC...  <img src='/images/loading.gif' alt='' width='7%' />",
 	  signText: "Signing...  <img src='/images/loading.gif' alt='' width='7%' />",
 		isApprovingWbnb: false,
-		ifWbnb: true,
+		ifWbnb: false,
 		approvingWbnbText: "Approving WBNB...  <img src='/images/loading.gif' alt='' width='7%' />",
 	isConverting: false,
 	convertText: "Converting BNB...  <img src='/images/loading.gif' alt='' width='7%' />",
@@ -149,10 +133,11 @@ export default {
 	};
   },
   async mounted() {
-    this.HPS_Balance = await getHpsBalance();
+    this.BHC_Balance = await getBHCBalance();
     this.BNB_Balance = await getBNBBalance();
-    console.log("HPS");
-    console.log(this.HPS_Balance);
+	this.WBNB_Balance = await getWBNBBalance();
+	this.selected_token = 0;
+	this.selectedBalance = this.BHC_Balance;
   },
 
   computed: {
@@ -160,9 +145,35 @@ export default {
       if (this.selected_token == 1) {
         return this.BNB_Balance;
       } else {
-        return this.HPS_Balance;
+        return this.BHC_Balance;
       }
     },
+	enoughWBNB(){
+		if(this.bid_input>this.WBNB_Balance){
+				return false;
+		}
+		else{
+			return true;
+		}
+	},
+	enoughBNB()
+	{
+	if(this.bid_input>this.BNB_Balance){
+				return false;
+		}
+		else{
+			return true;
+		}
+	},
+	enoughBHC(){
+		if(this.bid_input>this.BHC_Balance){
+				return false;
+		}
+		else{
+			return true;
+		}
+	}
+
   },
 
   watch: {
@@ -177,14 +188,44 @@ export default {
     },
   },
   methods: {
-    approveBHC() {
-      alert("is approve");
+   async approveBHC() {
+
+if(this.enoughBHC){
+this.error = "";
+this.isApproving = true;
+var res = await approveBHCFunc(this.payment)
+if(res==1){
+  this.isApproving = false;
+}
+}else{
+	this.error  = "Not enough Balance"
+}
+
     },
+    
+async signBid(){
+  this.isSigning = true;
+   this.currency = $("#selectedCurrency").text();
+  let res = await signBidFunc(
+        this.singleNft.owner_id,
+        this.singleNft.contract,
+        this.singleNft.id,
+        this.currency,
+        this.payment
+      );
+      if(res==1){
+        this.signing = false;
+
+      }
+},
+
     setBNB() {
       this.selected_token = 1;
+      this.selectedBalance = this.BNB_Balance;
     },
-    setHPS() {
+    setBHC() {
       this.selected_token = 0;
+      this.selectedBalance = this.BHC_balance;
     },
     async placeBid() {
       this.currency = $("#selectedCurrency").text();
@@ -195,7 +236,7 @@ export default {
         this.currency,
         this.payment
       );
-      window.location.reload();
+     //window.location.reload();
     },
   },
 };

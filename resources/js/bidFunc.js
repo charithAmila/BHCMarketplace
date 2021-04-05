@@ -50,18 +50,30 @@ function getTokenContract(bidding_token) {
     return token_contract;
 }
 ////////////////////////////////////////////Get HPS Balance////////////////////////////////////////////////////////
-async function getHpsBalance() {
+async function getBHCBalance() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = toAddress(checkConnection());
     const hpsContract = new ethers.Contract(hpsAddress, token_ABI, provider);
     const balance = await hpsContract.balanceOf(address);
     return parseFloat(balance.toString()) / 10 ** 18;
 }
-////////////////////////////////////////////Get User from User Id///////////////////////////////////////////////////
+////////////////////////////////////////////Get BNB Balance///////////////////////////////////////////////////////////
 async function getBNBBalance() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = toAddress(checkConnection());
     const balance = await provider.getBalance(address);
+    return parseFloat(balance.toString()) / 10 ** 18;
+}
+////////////////////////////////////////////Get WBNB Balance////////////////////////////////////////////////////////
+async function getWBNBBalance() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    var address = toAddress(checkConnection());
+    const WBNB_Contract = new ethers.Contract(
+        "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+        WBNB_ABI,
+        provider
+    );
+    const balance = await WBNB_Contract.balanceOf(address);
     return parseFloat(balance.toString()) / 10 ** 18;
 }
 ////////////////////////////////////////////Get connected address///////////////////////////////////////////////////
@@ -162,6 +174,66 @@ async function endBidding(_owner, contract_address, token_id) {
 }
 
 //////////////////////////////////////////////Bid////////////////////////////////////////////////////////////////////
+/*******************************************Apprrove BHC************************************************************/
+async function approveBHCFunc(_amount) {
+    let amount = parseFloat(_amount) * 10 ** 18;
+    let rate = 1.025;
+    const signer = provider.getSigner();
+    const hpsContract = new ethers.Contract(hpsAddress, token_ABI, signer);
+    var address = toAddress(checkConnection()); //Get collected wallet address
+    const balance = await hpsContract.balanceOf(address);
+    var address = address.toString().toLowerCase();
+    if (balance > amount * 1.2) {
+        console.log("Enough HPS");
+        const txResponse = await hpsContract.approve(
+            exchangeAddress,
+            (amount * rate).toString()
+        );
+        const txReceipt = await txResponse.wait();
+        return txReceipt.status;
+    }
+}
+/*****************************************Sign Bidding**************************************************************/
+async function signBidFunc(
+    owner,
+    contract_address,
+    token_id,
+    bidding_token,
+    amount
+) {
+    console.log("signBid");
+    let data = {};
+    data.owner = owner;
+    data.bidding_address = address;
+    data.contract_address = contract_address;
+    data.token_id = token_id;
+    data.bidding_token = bidding_token;
+    data.bidding_amount = amount;
+    data.message = orderId;
+    var address = toAddress(checkConnection());
+    const salt = Math.random()
+        .toString(36)
+        .substring(7);
+
+    let orderId = await generateOrderIdMessage(
+        contract_address,
+        token_id,
+        1,
+        contract_address,
+        (amount * 10 ** 18).toString(),
+        salt
+    );
+    const signature = await signer.signMessage(orderId);
+    data.salt = salt;
+    data.signature = signature;
+    await axios
+        .post("/bid", data, {})
+        .then(function(response) {
+            return response.data;
+        })
+        .catch(function(error) {});
+}
+/*******************************************************************************************************************/
 async function bid(owner, contract_address, token_id, bidding_token, amount) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -287,6 +359,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
         //}
     }
 }
+
 ////////////////////////////////////////////Accept Bid///////////////////////////////////////////////////////////////
 async function acceptBid(
     collection,
@@ -374,25 +447,47 @@ async function getHighestBid(owner, contract_address, token_id) {
         for (var i = 0; i < output.length; i++) {
             // var price = await getTokenPrice(output[i].bidding_token);
             var hpsprice = 0.001;
+
             if (output[i].bidding_token == "HPS") {
-                if (hpsprice * output[i].bidding_amount > maxAmount) {
-                    maxAmount = output[i].bidding_amount;
-                    maxBidder = output[i].bidding_address;
-                    maxBidToken = output[i].bidding_token;
-                    maxBidSig = output[i].signature;
-                    maxBidTime = output[i].created_at;
-                    maxBidMessage = output[i].message;
-                    maxBidSalt = output[i].salt;
+                const signer = provider.getSigner();
+                const hpsContract = new ethers.Contract(
+                    hpsAddress,
+                    token_ABI,
+                    signer
+                );
+                const balance = await hpsContract.balanceOf(
+                    output[i].bidding_address
+                );
+                if (balance > output[i].bidding_amount) {
+                    if (hpsprice * output[i].bidding_amount > maxAmount) {
+                        maxAmount = output[i].bidding_amount;
+                        maxBidder = output[i].bidding_address;
+                        maxBidToken = output[i].bidding_token;
+                        maxBidSig = output[i].signature;
+                        maxBidTime = output[i].created_at;
+                        maxBidMessage = output[i].message;
+                        maxBidSalt = output[i].salt;
+                    }
                 }
             } else {
-                if (1 * output[i].bidding_amount > maxAmount) {
-                    maxAmount = output[i].bidding_amount;
-                    maxBidder = output[i].bidding_address;
-                    maxBidToken = output[i].bidding_token;
-                    maxBidSig = output[i].signature;
-                    maxBidTime = output[i].created_at;
-                    maxBidMessage = output[i].message;
-                    maxBidSalt = output[i].salt;
+                const signer = provider.getSigner();
+                //const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
+                const WBNB_Write_Test = new ethers.Contract(
+                    "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+                    WBNB_ABI,
+                    signer
+                );
+                const WBNB_balance = await WBNB_Write_Test.balanceOf(address);
+                if (WBNB_balance > output[i].bidding_amount) {
+                    if (1 * output[i].bidding_amount > maxAmount) {
+                        maxAmount = output[i].bidding_amount;
+                        maxBidder = output[i].bidding_address;
+                        maxBidToken = output[i].bidding_token;
+                        maxBidSig = output[i].signature;
+                        maxBidTime = output[i].created_at;
+                        maxBidMessage = output[i].message;
+                        maxBidSalt = output[i].salt;
+                    }
                 }
             }
         }
@@ -407,9 +502,9 @@ async function getHighestBid(owner, contract_address, token_id) {
         res.maxBidSalt = maxBidSalt;
 
         /*res.maxBidToken = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
-    res.maxAmount = "1";
-    res.maxBidder = output[0].user_id;
-    res.maxBidSig = output[0].signature;*/
+        res.maxAmount = "1";
+        res.maxBidder = output[0].user_id;
+        res.maxBidSig = output[0].signature;*/
         return res;
     } else {
         return false;
@@ -459,10 +554,13 @@ export {
     getBiddingStatusAll,
     getAllBids,
     endBidding,
-    getHpsBalance,
+    getBHCBalance,
     getBNBBalance,
+    getWBNBBalance,
     getConnectedAddress,
-    acceptBid
+    acceptBid,
+    approveBHCFunc,
+    signBidFunc
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
