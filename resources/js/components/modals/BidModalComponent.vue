@@ -294,7 +294,8 @@ async signBidFunc(){
   let pay_token;
   this.signBidText = this.signText;
    this.currency = $("#selectedCurrency").text();
-   if(this.currency =='HPS'){
+console.log(this.selected_token==0);
+   if(this.selected_token==0){
      pay_token = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937"
    }
    else{

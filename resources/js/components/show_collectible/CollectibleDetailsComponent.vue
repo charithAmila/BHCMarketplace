@@ -328,17 +328,16 @@ async loadData(){
     },
 
     async acceptBidding() {
+
       var res = await acceptBid(
-        this.collectible.contract,
-        this.collectible.type == 721 ? true : false,
-        this.collectible.id,toString(),
-        '1',
-        '1',
-        this.highestBid.bidding_token=='HPS'?"0xE19DD2fa7d332E593aaf2BBe4386844469e51937":"0xae13d989dac2f0debff460ac112a837c89baa7cd",
-       this.highestBid.maxAmount.toString(),
-        this.highestBid.maxBidSalt,
-        this.owner == true ? toAddress(this.address) : "",
-        this.highestBid.maxBidSig
+     this.collectible.type== 721?true:false,
+     this.collectible.contract,
+     this.collectible.id,
+     this.highestBid.maxBidToken,
+     this.highestBid.maxAmount,
+     this.highestBid.maxBidder,
+     this.highestBid.maxBidSig,
+     this.highestBid.maxBidSalt
       );
       console.log(res);
     },
