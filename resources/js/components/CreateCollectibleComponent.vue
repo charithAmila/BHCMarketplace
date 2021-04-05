@@ -1018,6 +1018,11 @@ export default {
                     _this.tokenData = await getMinted(
                       data.logs[_this.pay_with_hps ? 5 : 1]
                     );
+                    if (!putOnSale) {
+                      window.location.href = `/profile/${toAddress(
+                        window.ethereum.selectedAddress
+                      )}`;
+                    }
                   } else {
                     alert("Try again!");
                   }
@@ -1042,13 +1047,15 @@ export default {
                     _this.tokenData = await getMinted(
                       data.logs[_this.pay_with_hps ? 5 : 1]
                     );
+                    if (!putOnSale) {
+                      window.location.href = `/profile/${toAddress(
+                        window.ethereum.selectedAddress
+                      )}`;
+                    }
                   } else {
                     alert("Try again!");
                   }
                   _this.isMinting = false;
-                  /*window.location.href = `/profile/${toAddress(
-                    window.ethereum.selectedAddress
-                  )}`;*/
                 });
               });
         })
@@ -1115,6 +1122,9 @@ export default {
       };
       addSale(data).then((data) => {
         this.isSelling = false;
+        window.location.href = `/profile/${toAddress(
+          window.ethereum.selectedAddress
+        )}`;
       });
     },
     onClickCard(_selectedContract) {
