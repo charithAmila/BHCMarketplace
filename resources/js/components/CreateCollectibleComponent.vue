@@ -1018,7 +1018,7 @@ export default {
                     _this.tokenData = await getMinted(
                       data.logs[_this.pay_with_hps ? 5 : 1]
                     );
-                    if (!putOnSale) {
+                    if (!_this.putOnSale) {
                       window.location.href = `/profile/${toAddress(
                         window.ethereum.selectedAddress
                       )}`;
@@ -1047,7 +1047,7 @@ export default {
                     _this.tokenData = await getMinted(
                       data.logs[_this.pay_with_hps ? 5 : 1]
                     );
-                    if (!putOnSale) {
+                    if (!_this.putOnSale) {
                       window.location.href = `/profile/${toAddress(
                         window.ethereum.selectedAddress
                       )}`;
