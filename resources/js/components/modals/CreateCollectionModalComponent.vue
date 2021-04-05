@@ -109,26 +109,39 @@
                 class="custom-error text-danger"
               ></span>
             </div>
+            <div class="col-md-12 create-cmodel-elements">
+              <label>Pay With</label>
+              <select
+                class="form-controll"
+                v-model="payWith"
+                @change="setPaywith()"
+              >
+                <option value="bnb">BNB</option>
+                <option value="hps">HPS</option>
+              </select>
+            </div>
             <button
-              v-if="!processing"
+              v-if="pay_with_hps && !isApproved"
+              class="form-submit"
+              type="button"
+              @click="approve"
+            >
+              <span
+                v-html="isApproving ? text.approveText : 'Approve HPS'"
+              ></span>
+            </button>
+
+            <button
               id="collection-submit"
               class="form-submit"
               type="button"
               @click="generateCollection"
             >
-              {{ process }}
-            </button>
-            <button
-              v-if="processing"
-              id="collection-submit"
-              class="form-submit"
-              type="button"
-              disabled="disabled"
-            >
-              {{ process }}
-              <span v-if="processing"
-                ><img src="/images/loading.gif" alt="" width="10%"
-              /></span>
+              <span
+                v-html="
+                  isGenerating ? text.generateText : 'Generate Collection'
+                "
+              ></span>
             </button>
           </div>
         </form>
@@ -140,7 +153,13 @@
 
 <script>
 import $ from "jquery";
-import { createCollection, waitForTransaction } from "./../../etherFunc.js";
+import {
+  createCollection,
+  waitForTransaction,
+  approveTokens,
+  getFees,
+} from "./../../etherFunc.js";
+import { hpsAddress } from "./../../addresses/constants";
 
 export default {
   props: ["store_route", "asset_url", "csrf_token", "type"],
@@ -155,6 +174,17 @@ export default {
       process: "Create Collection",
       processing: false,
       collectionGenerated: false,
+      payWith: "bnb",
+      pay_with_hps: false,
+      isApproving: false,
+      isApproved: false,
+      isGenerating: false,
+      text: {
+        approveText:
+          "Appproving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
+        generateText:
+          "Generating collection... <img src='/images/loading.gif' alt='' width='7%' />",
+      },
     };
   },
   methods: {
@@ -163,11 +193,40 @@ export default {
         $("#collectionModal").removeClass("d-block");
       }, 3000);
     },
+    setPaywith() {
+      if (this.payWith == "hps") {
+        this.pay_with_hps = true;
+      } else {
+        this.pay_with_hps = false;
+      }
+    },
     async aqquireKeys() {
       const _this = this;
       await axios.get("/api/keygen").then((res) => {
         _this.j = res.data.JWT;
       });
+    },
+    async approve() {
+      try {
+        this.isApproving = true;
+        var fee = await getFees();
+        var hash = await approveTokens(hpsAddress, `${fee}`);
+        waitForTransaction(hash).then((data, error) => {
+          if (error) {
+            error.code == 4001 ? alert("Rejected approving HPS") : null;
+          } else if (data.status) {
+            this.isApproved = true;
+          } else {
+            alert("Try again!");
+          }
+          this.isApproving = false;
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("user rejected approving");
+        }
+        this.isApproving = false;
+      }
     },
     async generateCollection() {
       const FormData = require("form-data");
@@ -175,7 +234,7 @@ export default {
       const _this = this;
       var details = {};
       var url;
-
+      _this.isGenerating = true;
       await _this.aqquireKeys();
 
       //we gather a local file for this example, but any valid readStream source will work here.
@@ -212,6 +271,7 @@ export default {
         data.append("pinataOptions", pinataOptions);
         _this.process = "Uploading Image...";
         _this.processing = true;
+        _this.isGenerating = true;
         await axios
           .post(url, data, {
             maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large files
@@ -246,20 +306,26 @@ export default {
           var tx = await createCollection(
             _this.type,
             "https://ipfs.io/ipfs/" + response.data.IpfsHash,
-            true
+            !_this.pay_with_hps
           );
           _this.processing = true;
-          waitForTransaction(tx.hash).then((status) => {
-            if (status) {
+          waitForTransaction(tx).then((data) => {
+            if (data.status) {
               _this.$parent.checkConnection();
               $("#collectionModal").removeClass("d-block");
               _this.processing = true;
               _this.process = "Generate Collection";
+            } else {
+              alert("Try again");
             }
+            _this.isGenerating = false;
           });
         })
         .catch(function (error) {
-          console.log(error);
+          if (error.code == 4001) {
+            alert("User rejected!");
+          }
+          _this.isGenerating = false;
         });
     },
     generateCollectionOld() {

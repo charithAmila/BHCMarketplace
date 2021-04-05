@@ -376,17 +376,6 @@
                   sold</small
                 >
               </div>
-              <div v-if="putOnSale" class="col-3 col-md-2 pt-14">
-                <label class="switch">
-                  <input
-                    id="instantSale"
-                    name="isp"
-                    type="checkbox"
-                    v-model="instantSale"
-                  />
-                  <span class="slider round"></span>
-                </label>
-              </div>
             </div>
 
             <div v-if="putOnSale" class="form-group row price-tag d-block">
@@ -396,7 +385,6 @@
                   type="number"
                   name="price"
                   placeholder="Enter price for 1 piece"
-                  :disabled="!instantSale"
                   v-model="price"
                 />
                 <span id="BHC" class="link-url-end sale-price-btn"
@@ -535,49 +523,47 @@
               </select>
             </div>
 
-            <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
-              <button type="button" class="submitBtn">Approve HPS</button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="pay_with_hps">
-              <button type="button" class="submitBtn">
-                Approving HPS...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="pay_with_hps && !isApproved"
+            >
+              <button type="button" class="submitBtn" @click="approve">
+                <span
+                  v-html="isApproving ? text.approveText : 'Approve HPS'"
+                ></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements">
-              <button type="button" class="submitBtn">Mint Token</button>
+
+            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="createCollectible"
+              >
+                <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
+              </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements">
-              <button type="button" class="submitBtn">
-                Minting token...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="putOnSale && !isSigned"
+            >
+              <button type="button" class="submitBtn" @click="sign">
+                <span v-html="isSigning ? text.signText : 'Sign'"></span>
+              </button>
+            </div>
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="putOnSale && !isNftApproved"
+            >
+              <button type="button" class="submitBtn" @click="approveNFT">
+                <span
+                  v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"
+                ></span>
               </button>
             </div>
             <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">Sign</button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">
-                Signing...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
-              </button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">Approve NFT</button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">
-                Approving NFT...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
-              </button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">Puton Sale</button>
-            </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
-              <button type="button" class="submitBtn">
-                Publishing Sale...
-                <span><img src="/images/loading.gif" alt="" width="7%" /></span>
+              <button type="button" class="submitBtn" @click="placeOrder">
+                <span v-html="isSelling ? text.saleText : 'Put on Sale'"></span>
               </button>
             </div>
           </div>
@@ -601,7 +587,13 @@ import {
   checkConnection,
   approveNFT,
   approveTokens,
+  getMinted,
+  getFees,
+  signMessage,
+  generateOrderIdMessage,
 } from "./../etherFunc.js";
+import { hpsAddress, bhcAddress } from "./../addresses/constants";
+import { addSale } from "./../data.js";
 export default {
   props: [
     "collections",
@@ -615,6 +607,7 @@ export default {
   ],
   data() {
     return {
+      current_user: "",
       isError: {
         name: false,
         file: false,
@@ -639,12 +632,12 @@ export default {
       myCollection: [],
       setCollections: [],
       signed: false,
+      process: "Upload File",
+      processing: false,
       s: "",
       j: "",
-      processing: false,
-      process: "Upload File",
-      fProcessing: false,
-      fProcess: "Generate Item",
+      salt: "",
+      orderId: "",
       uploadedImage: "",
       fileType: "image",
       selectedContract: "",
@@ -660,6 +653,28 @@ export default {
       pay_with: "bnb",
       pay_with_hps: false,
       isProcessing: true,
+      isApproving: false,
+      isApproved: false,
+      isMinting: false,
+      isMinted: false,
+      isSigning: false,
+      isSigned: false,
+      isApprovingNft: false,
+      isNftApproved: false,
+      isSelling: false,
+      text: {
+        approveText:
+          "Approving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
+        mintText:
+          "Minting token... <img src='/images/loading.gif' alt='' width='7%' />",
+        signText:
+          "Signing... <img src='/images/loading.gif' alt='' width='7%' />",
+        approvenftText:
+          "Approving NFT... <img src='/images/loading.gif' alt='' width='7%' />",
+        saleText:
+          "Publishing sale... <img src='/images/loading.gif' alt='' width='7%' />",
+      },
+      tokenData: {},
     };
   },
   methods: {
@@ -708,7 +723,7 @@ export default {
         } else {
           this.errors_have = false;
           if (this.putOnSale) {
-            if (this.instantSale && Number(this.price) == 0) {
+            if (Number(this.price) == 0) {
               this.isError.sale_price = true;
               this.errors_have = true;
             } else {
@@ -829,6 +844,45 @@ export default {
         }
       }, 300);
     },
+    async approveNFT() {
+      try {
+        this.isApprovingNft = true;
+        var tx = await approveNFT(this.tokenData.collection);
+        waitForTransaction(tx.hash).then((data) => {
+          if (data.status) {
+            this.isNftApproved = true;
+          } else {
+            alert("Try again!");
+          }
+          this.isApprovingNft = false;
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected approving NFT");
+        }
+        this.isApprovingNft = false;
+      }
+    },
+    async approve() {
+      this.isApproving = true;
+      try {
+        var fee = await getFees();
+        var hash = await approveTokens(hpsAddress, `${fee}`);
+        waitForTransaction(hash).then((data) => {
+          if (data.status) {
+            this.isApproved = true;
+          } else {
+            alert("Try again!");
+          }
+          this.isApproving = false;
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected approving HPS");
+        }
+        this.isApproving = false;
+      }
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
@@ -840,14 +894,6 @@ export default {
       await axios.get("/api/keygen").then((res) => {
         _this.j = res.data.JWT;
       });
-    },
-    async sign() {
-      const _this = this;
-      var sig = await signMessage(`I agree to update my profile.`);
-      if (sig) {
-        _this.s = sig;
-        _this.signed = true;
-      }
     },
     addFile: async function (evt) {
       const FormData = require("form-data");
@@ -933,9 +979,6 @@ export default {
       let single_success = false;
       let batch_success = false;
       const _this = this;
-      console.log(this.selectedContract);
-      _this.fProcessing = true;
-      _this.fProcess = "Generating Hash";
       var data = {
         creator: toAddress(window.ethereum.selectedAddress),
         name: _this.name,
@@ -954,7 +997,7 @@ export default {
       };
       const message = "New collectible "+_this.name+ " was minted successfully";
       _this.type == "multiple" ? (data.count = _this.copies) : null;
-
+      _this.isMinting = true;
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
       await axios
         .post(url, data, {
@@ -972,16 +1015,27 @@ export default {
                 !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
-                waitForTransaction(res.hash).then((data) => {
-                  if (data) {
-                    
-                    _this.fProcess = "Token minted";
-                    _this.fProcessing = false;
-                  single_success = true;
+
+                waitForTransaction(res.hash).then(async function (data) {
+                  if (data.status) {
+                    _this.isMinted = true;
+                    _this.tokenData = await getMinted(
+                      data.logs[_this.pay_with_hps ? 5 : 1]
+                    );
+                    if (!putOnSale) {
+                      window.location.href = `/profile/${toAddress(
+                        window.ethereum.selectedAddress
+                      )}`;
+                    }
+                  } else {
+                    alert("Try again!");
+
                   }
-                  window.location.href = `/profile/${toAddress(
+                  _this.isMinting = false;
+
+                  /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
-                  )}`;
+                  )}`;*/
                 });
               })
             : createABatch(
@@ -992,20 +1046,31 @@ export default {
                 !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
-                waitForTransaction(res.hash).then((data) => {
-                  if (data) {
-                    batch_success = true;
-                    _this.fProcess = "Token minted";
-                    _this.fProcessing = false;
+
+                waitForTransaction(res.hash).then(async function (data) {
+                  if (data.status) {
+                    _this.isMinted = true;
+                    _this.tokenData = await getMinted(
+                      data.logs[_this.pay_with_hps ? 5 : 1]
+                    );
+                    if (!putOnSale) {
+                      window.location.href = `/profile/${toAddress(
+                        window.ethereum.selectedAddress
+                      )}`;
+                    }
+                  } else {
+                    alert("Try again!");
+
                   }
-                  window.location.href = `/profile/${toAddress(
-                    window.ethereum.selectedAddress
-                  )}`;
+                  _this.isMinting = false;
                 });
               });
         })
         .catch(function (error) {
-          console.log(error);
+          if (error.code == 4001) {
+            alert("User rejected minting token");
+          }
+          _this.isMinting = false;
         });
         if(batch_success || single_success){
           data={};
@@ -1017,6 +1082,67 @@ export default {
           });
         }
 
+    },
+    async sign() {
+      this.isSigning = true;
+      try {
+        const _this = this;
+        this.salt = Math.random().toString(36).substring(7);
+
+        var orderId = await generateOrderIdMessage(
+          _this.tokenData.collection,
+          _this.tokenData.tokenId,
+          _this.copies > 0 ? _this.copies : 1,
+          _this.sale_currency == "BNB"
+            ? toAddress("")
+            : _this.sale_currency == "BHC"
+            ? bhcAddress
+            : hpsAddress,
+          _this.price,
+          _this.salt
+        );
+        var sig = await signMessage(orderId);
+
+        if (sig) {
+          this.s = sig;
+          this.orderId = orderId;
+          this.isSigned = true;
+          this.isSigning = false;
+        }
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User denied signing the order!");
+        }
+        this.isSigning = false;
+      }
+    },
+
+    async placeOrder() {
+      const _this = this;
+      _this.isSelling = true;
+      var data = {
+        collection: _this.tokenData.collection,
+        current_owner: _this.current_user,
+        token_id: _this.tokenData.tokenId,
+        signed_to: Number(_this.copies > 0 ? _this.copies : 1),
+        price: Number(_this.price),
+        is_instant: _this.putOnSale,
+        currency:
+          _this.sale_currency == "BNB"
+            ? toAddress("")
+            : _this.sale_currency == "BHC"
+            ? bhcAddress
+            : hpsAddress,
+        signature: _this.s,
+        order_id: _this.orderId,
+        salt: _this.salt,
+      };
+      addSale(data).then((data) => {
+        this.isSelling = false;
+        window.location.href = `/profile/${toAddress(
+          window.ethereum.selectedAddress
+        )}`;
+      });
     },
     onClickCard(_selectedContract) {
       const _this = this;

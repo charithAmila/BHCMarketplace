@@ -55,8 +55,7 @@ function splitSign(signature) {
 
 async function waitForTransaction(tx) {
     var res = await provider.waitForTransaction(tx);
-    console.log(res);
-    return res.status;
+    return res;
 }
 
 async function collectionURI(contractAddress) {
@@ -361,10 +360,36 @@ async function generateOrderIdMessage(
         tokenId,
         value,
         priceToken,
-        BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+        ethers.utils.parseEther(`${price}`),
         salt
     );
-    return salt, order;
+    return order;
+}
+
+async function checkOrder(
+    tokenAddress,
+    tokenId,
+    value,
+    priceToken,
+    price,
+    salt
+) {
+    const exchange = new ethers.Contract(
+        exchangeAddress,
+        exchangeABI,
+        provider
+    );
+    const nftStorage = new ethers.Contract(NFTStorageAddress, nftStorageABI, provider)
+    const orderKey = await exchange.generateKey(
+        tokenAddress,
+        tokenId,
+        value,
+        priceToken,
+        ethers.utils.parseEther(`${price}`),
+        salt
+    );
+    const order = await nftStorage.getOrder(orderKey)
+    return order;
 }
 
 async function checkNFTApproved(contractAddress, from) {
@@ -400,6 +425,21 @@ async function checkTokensBalance(contractAddress, from) {
     return Number(res) / 10 ** 18;
 }
 
+async function getMinted(log) {
+    const contract = new ethers.utils.Interface(nftStorageABI)
+    var data = await contract.parseLog(log)
+    var collection = data.args[1];
+    var tokenId = data.args[2];
+    return { collection: toAddress(collection), tokenId: Number(tokenId) }
+
+}
+
+async function getFees() {
+    const minter = new ethers.Contract(minterAddress, minterABI, provider);
+    const feeInHps = await minter.requiredFee();
+    return feeInHps / (10 ** 18)
+}
+
 //////Set functions/////////
 
 async function createASingle(url, royalty, collection, isBNB) {
@@ -407,7 +447,6 @@ async function createASingle(url, royalty, collection, isBNB) {
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract)
     var tx = await contract.mint721(collection, url, BigNumber.from(Number(royalty)), isBNB, { value: isBNB ? ethers.utils.parseEther("0.025") : ethers.utils.parseEther("0"), gasLimit: BigNumber.from("3000000") })//, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
-
     return tx;
 }
 
@@ -460,7 +499,7 @@ async function createCollection(type, uri, isBNB) {
         }
         );
     }
-    return tx;
+    return tx.hash;
 }
 
 async function approveNFT(contractAddress) {
@@ -502,7 +541,6 @@ async function buy(
     owner,
     signature
 ) {
-    var _price = Number(Number(price) * 1.125 * 10 ** 18).toString();
     const signer = provider.getSigner();
     const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
     const sig = ethers.utils.splitSignature(signature);
@@ -526,7 +564,7 @@ async function buy(
             total,
             value,
             buyWith,
-            BigNumber.from(price).mul(BigNumber.from(10).pow(18)),
+            ethers.utils.parseEther(`${price}`),
             owner,
             salt,
             sig.v,
@@ -537,7 +575,7 @@ async function buy(
         {
 
             gasLimit: BigNumber.from(3000000),
-            value: buyWith == toAddress("") ? BigNumber.from(_price) : "0"
+            value: buyWith == toAddress("") ? ethers.utils.parseEther(`${price}`) : "0"
         }
     );
     return tx.hash;
@@ -569,7 +607,10 @@ export {
     getCollection,
     getCollectionType,
     getOwnersOf,
-    getCreated
+    getCreated,
+    getMinted,
+    getFees,
+    checkOrder
 
 };
 
