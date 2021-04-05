@@ -976,6 +976,8 @@ export default {
       }
     },
     async createCollectible() {
+      let single_success = false;
+      let batch_success = false;
       const _this = this;
       var data = {
         creator: toAddress(window.ethereum.selectedAddress),
@@ -993,6 +995,7 @@ export default {
         sale_currency: _this.sale_currency,
         icon: _this.legend.icon,
       };
+      const message = "New collectible "+_this.name+ " was minted successfully";
       _this.type == "multiple" ? (data.count = _this.copies) : null;
       _this.isMinting = true;
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -1012,6 +1015,7 @@ export default {
                 !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
+
                 waitForTransaction(res.hash).then(async function (data) {
                   if (data.status) {
                     _this.isMinted = true;
@@ -1025,6 +1029,7 @@ export default {
                     }
                   } else {
                     alert("Try again!");
+
                   }
                   _this.isMinting = false;
 
@@ -1041,6 +1046,7 @@ export default {
                 !_this.pay_with_hps
               ).then((res) => {
                 console.log(res);
+
                 waitForTransaction(res.hash).then(async function (data) {
                   if (data.status) {
                     _this.isMinted = true;
@@ -1054,6 +1060,7 @@ export default {
                     }
                   } else {
                     alert("Try again!");
+
                   }
                   _this.isMinting = false;
                 });
@@ -1065,6 +1072,16 @@ export default {
           }
           _this.isMinting = false;
         });
+        if(batch_success || single_success){
+          data={};
+          data.message = message;
+          data.user_id = toAddress(window.ethereum.selectedAddress);
+          await axios.post('addNotification',data,{
+          }).then((res) => {
+            console.log(res.data);
+          });
+        }
+
     },
     async sign() {
       this.isSigning = true;

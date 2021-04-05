@@ -3,40 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transaction;
-use App\Models\User;
-
+use App\Models\Notification;
 use Auth;
 
 class NotificationController extends Controller
 {
-    public function userNotifications(){
-    	$userId = Auth::user()->id;
-
-    	$transactions = Transaction::join('records', 'transactions.record_id', '=', 'records.id')
-    								->where('records.owner_id', $userId)
-    								->where('transactions.type', '!=', 'bidding')
-    								->where('transactions.type', '!=', 'sell')
-    								->orderBy('transactions.created_at', 'desc');
-
-        $transactions = $transactions->get([
-                                    'transactions.nft_id',
-                                    'transactions.type',
-                                    'transactions.quantity',
-                                    'transactions.price',
-                                    'transactions.currency',
-                                    'transactions.sold',
-                                    'transactions.user_id',
-                                    'transactions.record_id',
-                                    'transactions.created_at',
-                                    'records.owner_id'
-                                ]);
-
-    	$user = new User;
-    	$notifications = $user->setNotificationData($transactions);
-
-        return response()->json([
-            'notifications' => $notifications,
+    public function addNotification(Request $request){
+         $request->validate([
+            'user_id' => 'required',
+            'message' => 'required',
         ]);
+        $notification = new Notification;
+        $notification->user_id = $request->user_id;
+        $notification->message = $request->message;
+    	$notification->save();
+    }
+
+    public function getNotification(Request $request){
+          $request->validate([
+            'user_id' => 'required',
+        ]);
+        $data = Notification::where(['user_id'=>$request->user_id])->get();
+        return $data;
+    }
+    public function delete(Request $request){
+        $request->validate([
+            'user_id' => 'required'
+        ]);
+
+    $data = Notification::where(['user_id'=>$request->user_id]);
+    $data->delete();
     }
 }
