@@ -48,7 +48,7 @@
                 <div class="item-main">
                   <div class="item-head">
                     <div class="legend">
-                      <div :class="(collectible.legend).toLowerCase()">
+                      <div :class="collectible.legend.toString().toLowerCase().trim()">
                         <i :class="collectible.icon"></i>
                         {{ collectible.legend }}
                       </div>
