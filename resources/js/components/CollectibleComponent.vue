@@ -18,7 +18,7 @@
                   </div>
 
                   <div class="item-img"></div>
-
+                
                   <div class="display-flex -mt-15">
                     <div class="preloader-content"></div>
                   </div>
@@ -48,7 +48,7 @@
                 <div class="item-main">
                   <div class="item-head">
                     <div class="legend">
-                      <div :class="collectible.legend">
+                      <div :class="(collectible.legend).toLowerCase()">
                         <i :class="collectible.icon"></i>
                         {{ collectible.legend }}
                       </div>
@@ -106,7 +106,7 @@
                     class="profile-action-menu-drop d-none"
                   >
                     <div v-if="collectible.isp == 1" class="input-group mb-3">
-                      <!--div class="input-group-prepend">
+                      <div class="input-group-prepend">
                         <div class="input-group-text">
                           <input
                             :id="'nft-' + collectible.slug"
@@ -128,7 +128,7 @@
                         aria-label="Text input with checkbox"
                         value="Put on sale"
                         @click="putOnSale(collectible)"
-                      /-->
+                      />
                     </div>
                     <a
                       type="button"
@@ -160,7 +160,7 @@
                   </div>
                 </div>
                 <div>
-                  {{ collectible.ownedCopies }} of {{ collectible.copies }}
+                  
                 </div>
                 <div class="item-img">
                   <img
@@ -178,12 +178,12 @@
                   </video>
                 </div>
 
-                <div class="display-flex d-none">
+                <div class="display-flex">
                   <div
                     v-if="collectible.isp == 1 && collectible.is_selling == 1"
                     class="text-center currency-amount"
                   >
-                    {{ collectible.price }}
+                    {{ collectible.price }}{{ collectible.currencyName }}
                   </div>
                   <div
                     v-if="collectible.isp == 0 || collectible.is_selling == 0"
@@ -192,9 +192,7 @@
                     Not for sale
                   </div>
 
-                  <span v-if="filter != 'created'" class="copies">{{
-                    collectible.copies
-                  }}</span>
+                  <span v-if="filter != 'created'" class="copies">{{ collectible.ownedCopies }} of {{ collectible.copies }}</span>
                 </div>
                 <div class="text-center currency-label">
                   {{ collectible.name }}

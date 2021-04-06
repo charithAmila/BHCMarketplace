@@ -5,6 +5,7 @@
         v-if="collectible.type == 'image'"
         class="nft-item"
         :src="asset_url + 'storage/collectibles/' + collectible.nft"
+        alt=""
       />
       <video
         v-if="collectible.type == 'video'"
@@ -41,5 +42,17 @@ import CollectibleDetailsComponent from './CollectibleDetailsComponent.vue';
 export default {
   components: { CollectibleDetailsComponent },
   props: ["collectible", "asset_url"],
+  mounted() {
+    $('.nft-expand').click(function () {
+        $('.custom-navbar').addClass('d-none');
+        $('.show-collectible').addClass('d-none');
+        $('.nft-fullscreen').removeClass('d-none');
+    });
+    $('.nft-shrink').click(function () {
+        $('.custom-navbar').removeClass('d-none');
+        $('.show-collectible').removeClass('d-none');
+        $('.nft-fullscreen').addClass('d-none');
+    });
+  }
 };
 </script>
