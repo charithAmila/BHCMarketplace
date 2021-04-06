@@ -377,7 +377,10 @@
               alt=""
             />
             <video
-              v-if="set_collectible.fileType == 'video' || 'audio'"
+              v-if="
+                set_collectible.fileType == 'video' ||
+                set_collectible.fileType == 'audio'
+              "
               class="showImg"
               autoplay
               loop
