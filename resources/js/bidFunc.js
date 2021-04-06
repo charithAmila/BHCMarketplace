@@ -460,8 +460,8 @@ async function acceptBid(
         }
     );
 
-    var res = tx.wait();
-    console.log(res);
+    var res = await tx.wait();
+    return res.status;
 }
 ////////////////////////////////////////////Get Time Difference//////////////////////////////////////////////////////
 function timeDifference(date1, date2) {

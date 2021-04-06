@@ -17,6 +17,9 @@ class MakeNotificationsTable extends Migration
             $table->id();
             $table->string('user_id');
             $table->string('message');
+            $table->float('buy_amount')->default(0);
+            $table->float('sell_amount')->default(0);
+            $table->float('bid_amount')->default(0);
             $table->timestamps();
         });
     }

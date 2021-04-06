@@ -308,12 +308,13 @@ console.log(this.selected_token==0);
         pay_token,
         this.payment
       );
-      console.log(res);
       if(res){
          let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name;
           let data={};
           data.message = message;
           data.user_id = window.ethereum.selectedAddress;
+          data.amount =this.payment;
+          data.noBuy= true;
           await axios.post('/addNotification',data,{
           }).then((res) => {
             console.log(res.data);
@@ -325,7 +326,6 @@ console.log(this.selected_token==0);
     },
 
 //////////////////!Set BNB////////////////////
-
     setBNB() {
       this.selected_token = 1;
       this.selectedBalance = this.BNB_Balance;

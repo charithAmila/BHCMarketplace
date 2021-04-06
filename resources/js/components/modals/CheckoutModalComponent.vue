@@ -195,8 +195,8 @@ export default {
       var collectible = this.singleNft;
 
       let success;
-      let message = "You have successfully purchased "+collectible.name+" for "+`${this.price}`+this.currency;
-
+      let message_buyer = "You have successfully purchased "+collectible.name+" for "+`${this.price}`+this.currency;
+      let message_seller = "The "+collectible.name+" has been bought for "+`${this.price}`+this.currency;
       const _this = this;
 
       buy(
@@ -248,8 +248,12 @@ export default {
             }
               if(success){
           data={};
-          data.message = message;
-          data.user_id = toAddress(window.ethereum.selectedAddress);
+          data.message_seller = message_seller;
+          data.message_buyer = message_buyer;
+          data.buyer_id = toAddress(window.ethereum.selectedAddress);
+          data.buy_amount= _this.price;
+          data.seller_id = collectible.owner_id;
+          data.bid = false;
           await axios.post('addNotification',data,{
           }).then((res) => {
             console.log(res.data);
