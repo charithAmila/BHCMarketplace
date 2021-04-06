@@ -42,11 +42,12 @@
                   >Buy now</a
                 >
                 <a
-                v-if="singleNft.biddingStatus"
+                  v-if="singleNft.biddingStatus"
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
-                  >Place a bid</a>
+                  >Place a bid</a
+                >
                 <a
                   class="report"
                   href="javascript:void(0)"
@@ -375,7 +376,7 @@
               alt=""
             />
             <video
-              v-if="set_collectible.fileType == 'video'"
+              v-if="set_collectible.fileType == 'video' || 'audio'"
               class="showImg"
               autoplay
               loop
@@ -398,7 +399,11 @@
                 <i class="fa fa-heart nft-option"></i>
               </a>
 
-              <a class="nft-expand imgHead-link" id="nft-expand" href="javascript:void(0)">
+              <a
+                class="nft-expand imgHead-link"
+                id="nft-expand"
+                href="javascript:void(0)"
+              >
                 <i class="fa fa-arrows-alt expand nft-option"></i>
               </a>
             </div>
@@ -466,7 +471,6 @@ export default {
       service_fee: 0,
       royaltyFee: 0,
       is_liked: false,
-
     };
   },
   watch: {

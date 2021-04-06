@@ -439,7 +439,7 @@
                   @click="generateModelPopup()"
                 />
               </div>
-              
+
               <div class="col-2 col-md-2"></div>
               <div class="col-4 col-md-4 p-0">
                 <label class="boldFade">disregard update</label>
@@ -477,7 +477,10 @@
                         />
                       </div>
                       <div
-                        v-if="fileType == 'video' && uploadedImage != ''"
+                        v-if="
+                          fileType == 'video' ||
+                          ('audio' && uploadedImage != '')
+                        "
                         class="video-container d-block"
                       >
                         <video controls autoplay loop muted>
@@ -534,16 +537,24 @@
               </button>
             </div>
 
-            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted && isApproved && pay_with_hps">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="!isMinted && isApproved && pay_with_hps"
+            >
               <button
                 type="button"
                 class="submitBtn"
                 @click="createCollectible"
               >
-                <span v-html="isMinting ? text.mintText : 'Mint Token for hps'"></span>
+                <span
+                  v-html="isMinting ? text.mintText : 'Mint Token for hps'"
+                ></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted && !pay_with_hps">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="!isMinted && !pay_with_hps"
+            >
               <button
                 type="button"
                 class="submitBtn"
@@ -570,7 +581,10 @@
                 ></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale && isNftApproved">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="putOnSale && isNftApproved"
+            >
               <button type="button" class="submitBtn" @click="placeOrder">
                 <span v-html="isSelling ? text.saleText : 'Put on Sale'"></span>
               </button>
@@ -687,7 +701,7 @@ export default {
     };
   },
   methods: {
-    popupModal(){
+    popupModal() {
       $("#create-collectible-modal").addClass("d-block");
     },
     setPaywith() {
@@ -1007,7 +1021,8 @@ export default {
         sale_currency: _this.sale_currency,
         icon: _this.legend.icon,
       };
-      const message = "New collectible "+_this.name+ " was minted successfully";
+      const message =
+        "New collectible " + _this.name + " was minted successfully";
       _this.type == "multiple" ? (data.count = _this.copies) : null;
       _this.isMinting = true;
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -1041,7 +1056,6 @@ export default {
                     }
                   } else {
                     alert("Try again!");
-
                   }
                   _this.isMinting = false;
 
@@ -1072,7 +1086,6 @@ export default {
                     }
                   } else {
                     alert("Try again!");
-
                   }
                   _this.isMinting = false;
                 });
@@ -1084,16 +1097,14 @@ export default {
           }
           _this.isMinting = false;
         });
-        if(batch_success || single_success){
-          data={};
-          data.message = message;
-          data.user_id = toAddress(window.ethereum.selectedAddress);
-          await axios.post('addNotification',data,{
-          }).then((res) => {
-            console.log(res.data);
-          });
-        }
-
+      if (batch_success || single_success) {
+        data = {};
+        data.message = message;
+        data.user_id = toAddress(window.ethereum.selectedAddress);
+        await axios.post("addNotification", data, {}).then((res) => {
+          console.log(res.data);
+        });
+      }
     },
     async sign() {
       this.isSigning = true;
