@@ -42,11 +42,12 @@
                   >Buy now</a
                 >
                 <a
-                v-if="singleNft.biddingStatus"
+                  v-if="singleNft.biddingStatus"
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
-                  >Place a bid</a>
+                  >Place a bid</a
+                >
                 <a
                   class="report"
                   href="javascript:void(0)"
@@ -165,10 +166,11 @@
           </div>
         </div>
         <div class="priceTag">
-          <label class="showCurrency"
+          <label class="showCurrency" v-if="set_collectible.is_selling == 1"
             >{{ set_collectible.price }}
             {{ set_collectible.currencyName }}</label
           >
+          <label class="showCurrency" v-else>Not for sale</label>
           <!-- <label class="showCurrencyPlain">$135.20</label> -->
         </div>
         <h5 class="itemType">
@@ -372,9 +374,13 @@
               v-if="set_collectible.fileType == 'image'"
               class="showImg"
               :src="set_collectible.file"
+              alt=""
             />
             <video
-              v-if="set_collectible.fileType == 'video'"
+              v-if="
+                set_collectible.fileType == 'video' ||
+                set_collectible.fileType == 'audio'
+              "
               class="showImg"
               autoplay
               loop
@@ -397,7 +403,11 @@
                 <i class="fa fa-heart nft-option"></i>
               </a>
 
-              <a class="nft-expand imgHead-link" href="javascript:void(0)">
+              <a
+                class="nft-expand imgHead-link"
+                id="nft-expand"
+                href="javascript:void(0)"
+              >
                 <i class="fa fa-arrows-alt expand nft-option"></i>
               </a>
             </div>
@@ -465,7 +475,6 @@ export default {
       service_fee: 0,
       royaltyFee: 0,
       is_liked: false,
-
     };
   },
   watch: {

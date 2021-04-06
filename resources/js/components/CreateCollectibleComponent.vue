@@ -477,7 +477,10 @@
                         />
                       </div>
                       <div
-                        v-if="fileType == 'video' && uploadedImage != ''"
+                        v-if="
+                          (fileType == 'video' || fileType == 'audio') &&
+                          uploadedImage != ''
+                        "
                         class="video-container d-block"
                       >
                         <video controls autoplay loop muted>
@@ -534,7 +537,24 @@
               </button>
             </div>
 
-            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="!isMinted && isApproved && pay_with_hps"
+            >
+              <button
+                type="button"
+                class="submitBtn"
+                @click="createCollectible"
+              >
+                <span
+                  v-html="isMinting ? text.mintText : 'Mint Token for hps'"
+                ></span>
+              </button>
+            </div>
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="!isMinted && !pay_with_hps"
+            >
               <button
                 type="button"
                 class="submitBtn"
@@ -545,7 +565,7 @@
             </div>
             <div
               class="col-md-12 create-cmodel-elements"
-              v-if="putOnSale && !isSigned"
+              v-if="putOnSale && !isSigned && isMinted"
             >
               <button type="button" class="submitBtn" @click="sign">
                 <span v-html="isSigning ? text.signText : 'Sign'"></span>
@@ -553,7 +573,7 @@
             </div>
             <div
               class="col-md-12 create-cmodel-elements"
-              v-if="putOnSale && !isNftApproved"
+              v-if="putOnSale && !isNftApproved && isSigned"
             >
               <button type="button" class="submitBtn" @click="approveNFT">
                 <span
@@ -561,7 +581,10 @@
                 ></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+            <div
+              class="col-md-12 create-cmodel-elements"
+              v-if="putOnSale && isNftApproved"
+            >
               <button type="button" class="submitBtn" @click="placeOrder">
                 <span v-html="isSelling ? text.saleText : 'Put on Sale'"></span>
               </button>
@@ -678,6 +701,9 @@ export default {
     };
   },
   methods: {
+    popupModal() {
+      $("#create-collectible-modal").addClass("d-block");
+    },
     setPaywith() {
       if (this.pay_with == "hps") {
         this.pay_with_hps = true;
@@ -995,7 +1021,8 @@ export default {
         sale_currency: _this.sale_currency,
         icon: _this.legend.icon,
       };
-      const message = "New collectible "+_this.name+ " was minted successfully";
+      const message =
+        "New collectible " + _this.name + " was minted successfully";
       _this.type == "multiple" ? (data.count = _this.copies) : null;
       _this.isMinting = true;
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -1005,66 +1032,69 @@ export default {
             Authorization: `Bearer ${_this.j}`,
           },
         })
-        .then(function (response) {
+        .then(async function (response) {
           _this.fProcess = "Generating Token";
-          _this.type == "solo"
-            ? createASingle(
+          try {
+            if (_this.type == "solo") {
+              var res = await createASingle(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.royalties,
                 _this.selectedContract,
                 !_this.pay_with_hps
-              ).then((res) => {
-                console.log(res);
+              );
 
-                waitForTransaction(res.hash).then(async function (data) {
-                  if (data.status) {
-                    _this.isMinted = true;
-                    _this.tokenData = await getMinted(
-                      data.logs[_this.pay_with_hps ? 5 : 1]
-                    );
-                    if (!_this.putOnSale) {
-                      window.location.href = `/profile/${toAddress(
-                        window.ethereum.selectedAddress
-                      )}`;
-                    }
-                  } else {
-                    alert("Try again!");
-
+              waitForTransaction(res.hash).then(async function (data) {
+                if (data.status) {
+                  _this.isMinted = true;
+                  _this.tokenData = await getMinted(
+                    data.logs[_this.pay_with_hps ? 5 : 1]
+                  );
+                  if (!_this.putOnSale) {
+                    window.location.href = `/profile/${toAddress(
+                      window.ethereum.selectedAddress
+                    )}`;
                   }
-                  _this.isMinting = false;
+                } else {
+                  alert("Try again!");
+                }
+                _this.isMinting = false;
 
-                  /*window.location.href = `/profile/${toAddress(
+                /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
                   )}`;*/
-                });
-              })
-            : createABatch(
+              });
+            } else {
+              var res = await createABatch(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.copies,
                 _this.royalties,
                 _this.selectedContract,
                 !_this.pay_with_hps
-              ).then((res) => {
-                console.log(res);
+              );
 
-                waitForTransaction(res.hash).then(async function (data) {
-                  if (data.status) {
-                    _this.isMinted = true;
-                    _this.tokenData = await getMinted(
-                      data.logs[_this.pay_with_hps ? 5 : 1]
-                    );
-                    if (!_this.putOnSale) {
-                      window.location.href = `/profile/${toAddress(
-                        window.ethereum.selectedAddress
-                      )}`;
-                    }
-                  } else {
-                    alert("Try again!");
-
+              waitForTransaction(res.hash).then(async function (data) {
+                if (data.status) {
+                  _this.isMinted = true;
+                  _this.tokenData = await getMinted(
+                    data.logs[_this.pay_with_hps ? 5 : 1]
+                  );
+                  if (!_this.putOnSale) {
+                    window.location.href = `/profile/${toAddress(
+                      window.ethereum.selectedAddress
+                    )}`;
                   }
-                  _this.isMinting = false;
-                });
+                } else {
+                  alert("Try again!");
+                }
+                _this.isMinting = false;
               });
+            }
+          } catch (error) {
+            if (error.code == 4001) {
+              alert("User rejected minting token");
+            }
+            _this.isMinting = false;
+          }
         })
         .catch(function (error) {
           if (error.code == 4001) {
@@ -1072,6 +1102,7 @@ export default {
           }
           _this.isMinting = false;
         });
+
         if(batch_success || single_success){
           data={};
           data.message= message;
@@ -1083,6 +1114,7 @@ export default {
             console.log(res.data);
           });
         }
+
 
     },
     async sign() {
