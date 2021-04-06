@@ -439,7 +439,7 @@
                   @click="generateModelPopup()"
                 />
               </div>
-
+              
               <div class="col-2 col-md-2"></div>
               <div class="col-4 col-md-4 p-0">
                 <label class="boldFade">disregard update</label>
@@ -534,7 +534,16 @@
               </button>
             </div>
 
-            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted">
+            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted && isApproved && pay_with_hps">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="createCollectible"
+              >
+                <span v-html="isMinting ? text.mintText : 'Mint Token for hps'"></span>
+              </button>
+            </div>
+            <div class="col-md-12 create-cmodel-elements" v-if="!isMinted && !pay_with_hps">
               <button
                 type="button"
                 class="submitBtn"
@@ -545,7 +554,7 @@
             </div>
             <div
               class="col-md-12 create-cmodel-elements"
-              v-if="putOnSale && !isSigned"
+              v-if="putOnSale && !isSigned && isMinted"
             >
               <button type="button" class="submitBtn" @click="sign">
                 <span v-html="isSigning ? text.signText : 'Sign'"></span>
@@ -553,7 +562,7 @@
             </div>
             <div
               class="col-md-12 create-cmodel-elements"
-              v-if="putOnSale && !isNftApproved"
+              v-if="putOnSale && !isNftApproved && isSigned"
             >
               <button type="button" class="submitBtn" @click="approveNFT">
                 <span
@@ -561,7 +570,7 @@
                 ></span>
               </button>
             </div>
-            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale">
+            <div class="col-md-12 create-cmodel-elements" v-if="putOnSale && isNftApproved">
               <button type="button" class="submitBtn" @click="placeOrder">
                 <span v-html="isSelling ? text.saleText : 'Put on Sale'"></span>
               </button>
@@ -678,6 +687,9 @@ export default {
     };
   },
   methods: {
+    popupModal(){
+      $("#create-collectible-modal").addClass("d-block");
+    },
     setPaywith() {
       if (this.pay_with == "hps") {
         this.pay_with_hps = true;
