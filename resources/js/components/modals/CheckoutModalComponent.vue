@@ -13,7 +13,11 @@
         >
 
         <div class="form-section">
-          <form autocomplete="off" id="purchaseForm" @submit.prevent="enoughBalance ? purchase() : '' ">
+          <form
+            autocomplete="off"
+            id="purchaseForm"
+            @submit.prevent="enoughBalance ? purchase() : ''"
+          >
             <div class="form-divide">
               <input
                 v-model.number="quantity"
@@ -163,7 +167,7 @@ export default {
       } else {
         this.balance = await getBNBBalance(this.current_user);
         var allowance = this.balance;
-        this.allowance = allowance ;
+        this.allowance = allowance;
       }
       this.allowance = allowance;
       console.log(allowance);
@@ -185,21 +189,32 @@ export default {
       this.total_payment = +(this.payment + this.service_fee);
     },
     async approve() {
-      var hash = await approveTokens(
-        this.currency,
-        `${Number(this.total_payment)}`
-      );
-      waitForTransaction(hash).then((data) => {
-        if (data.status) {
-          this.approved = true;
+      try {
+        var hash = await approveTokens(
+          this.currency,
+          `${Number(this.total_payment)}`
+        );
+        waitForTransaction(hash).then((data) => {
+          if (data.status) {
+            this.approved = true;
+          }
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected minting token");
         }
-      });
+      }
     },
     purchase() {
       var collectible = this.singleNft;
 
       let success;
-      let message = "You have successfully purchased "+collectible.name+" for "+`${this.price}`+this.currency;
+      let message =
+        "You have successfully purchased " +
+        collectible.name +
+        " for " +
+        `${this.price}` +
+        this.currency;
 
       const _this = this;
 
@@ -216,7 +231,6 @@ export default {
         collectible.signature
       )
         .then(async function (hash) {
-
           var data = await waitForTransaction(hash);
           if (data.status) {
             await removeSale(
@@ -250,19 +264,20 @@ export default {
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
             }
-              if(success){
-          data={};
-          data.message = message;
-          data.user_id = toAddress(window.ethereum.selectedAddress);
-          await axios.post('addNotification',data,{
-          }).then((res) => {
-            console.log(res.data);
-          });
-        }
+            if (success) {
+              data = {};
+              data.message = message;
+              data.user_id = toAddress(window.ethereum.selectedAddress);
+              await axios.post("addNotification", data, {}).then((res) => {
+                console.log(res.data);
+              });
+            }
           }
         })
         .catch((error) => {
-          console.log(error);
+          if (error.code == 4001) {
+            alert("User rejected minting token");
+          }
         });
     },
   },

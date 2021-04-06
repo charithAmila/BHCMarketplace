@@ -207,35 +207,47 @@ export default {
       }
     },
     async sign() {
-      const _this = this;
-      _this.salt = Math.random().toString(36).substring(7);
+      try {
+        const _this = this;
+        _this.salt = Math.random().toString(36).substring(7);
 
-      var orderId = await generateOrderIdMessage(
-        _this.singleNft.contract,
-        _this.singleNft.id,
-        _this.singleNft.ownedCopies,
-        _this.currency == 1
-          ? hpsAddress
-          : _this.currency == 2
-          ? bhcAddress
-          : toAddress(""),
-        _this.price,
-        _this.salt
-      );
-      var sig = await signMessage(orderId);
+        var orderId = await generateOrderIdMessage(
+          _this.singleNft.contract,
+          _this.singleNft.id,
+          _this.singleNft.ownedCopies,
+          _this.currency == 1
+            ? hpsAddress
+            : _this.currency == 2
+            ? bhcAddress
+            : toAddress(""),
+          _this.price,
+          _this.salt
+        );
+        var sig = await signMessage(orderId);
 
-      _this.s = sig;
-      _this.signed = true;
-      _this.progress = "Put Order";
-      _this.orderId = orderId;
+        _this.s = sig;
+        _this.signed = true;
+        _this.progress = "Put Order";
+        _this.orderId = orderId;
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected minting token");
+        }
+      }
     },
     async approveNFT() {
-      var tx = await approveNFT(this.singleNft.contract);
-      waitForTransaction(tx.hash).then((data) => {
-        if (data.status) {
-          this.approved = true;
+      try {
+        var tx = await approveNFT(this.singleNft.contract);
+        waitForTransaction(tx.hash).then((data) => {
+          if (data.status) {
+            this.approved = true;
+          }
+        });
+      } catch (error) {
+        if (error.code == 4001) {
+          alert("User rejected minting token");
         }
-      });
+      }
     },
     async placeOrder() {
       const _this = this;

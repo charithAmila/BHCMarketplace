@@ -1032,64 +1032,69 @@ export default {
             Authorization: `Bearer ${_this.j}`,
           },
         })
-        .then(function (response) {
+        .then(async function (response) {
           _this.fProcess = "Generating Token";
-          _this.type == "solo"
-            ? createASingle(
+          try {
+            if (_this.type == "solo") {
+              var res = await createASingle(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.royalties,
                 _this.selectedContract,
                 !_this.pay_with_hps
-              ).then((res) => {
-                console.log(res);
+              );
 
-                waitForTransaction(res.hash).then(async function (data) {
-                  if (data.status) {
-                    _this.isMinted = true;
-                    _this.tokenData = await getMinted(
-                      data.logs[_this.pay_with_hps ? 5 : 1]
-                    );
-                    if (!_this.putOnSale) {
-                      window.location.href = `/profile/${toAddress(
-                        window.ethereum.selectedAddress
-                      )}`;
-                    }
-                  } else {
-                    alert("Try again!");
+              waitForTransaction(res.hash).then(async function (data) {
+                if (data.status) {
+                  _this.isMinted = true;
+                  _this.tokenData = await getMinted(
+                    data.logs[_this.pay_with_hps ? 5 : 1]
+                  );
+                  if (!_this.putOnSale) {
+                    window.location.href = `/profile/${toAddress(
+                      window.ethereum.selectedAddress
+                    )}`;
                   }
-                  _this.isMinting = false;
+                } else {
+                  alert("Try again!");
+                }
+                _this.isMinting = false;
 
-                  /*window.location.href = `/profile/${toAddress(
+                /*window.location.href = `/profile/${toAddress(
                     window.ethereum.selectedAddress
                   )}`;*/
-                });
-              })
-            : createABatch(
+              });
+            } else {
+              var res = await createABatch(
                 "https://ipfs.io/ipfs/" + response.data.IpfsHash,
                 _this.copies,
                 _this.royalties,
                 _this.selectedContract,
                 !_this.pay_with_hps
-              ).then((res) => {
-                console.log(res);
+              );
 
-                waitForTransaction(res.hash).then(async function (data) {
-                  if (data.status) {
-                    _this.isMinted = true;
-                    _this.tokenData = await getMinted(
-                      data.logs[_this.pay_with_hps ? 5 : 1]
-                    );
-                    if (!_this.putOnSale) {
-                      window.location.href = `/profile/${toAddress(
-                        window.ethereum.selectedAddress
-                      )}`;
-                    }
-                  } else {
-                    alert("Try again!");
+              waitForTransaction(res.hash).then(async function (data) {
+                if (data.status) {
+                  _this.isMinted = true;
+                  _this.tokenData = await getMinted(
+                    data.logs[_this.pay_with_hps ? 5 : 1]
+                  );
+                  if (!_this.putOnSale) {
+                    window.location.href = `/profile/${toAddress(
+                      window.ethereum.selectedAddress
+                    )}`;
                   }
-                  _this.isMinting = false;
-                });
+                } else {
+                  alert("Try again!");
+                }
+                _this.isMinting = false;
               });
+            }
+          } catch (error) {
+            if (error.code == 4001) {
+              alert("User rejected minting token");
+            }
+            _this.isMinting = false;
+          }
         })
         .catch(function (error) {
           if (error.code == 4001) {
