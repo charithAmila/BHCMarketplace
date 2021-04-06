@@ -18,7 +18,7 @@
                   </div>
 
                   <div class="item-img"></div>
-                
+
                   <div class="display-flex -mt-15">
                     <div class="preloader-content"></div>
                   </div>
@@ -49,6 +49,7 @@
                   <div class="item-head">
                     <div class="legend">
                       <div :class="collectible.legend.toString().toLowerCase().trim()">
+
                         <i :class="collectible.icon"></i>
                         {{ collectible.legend }}
                       </div>
@@ -86,12 +87,13 @@
                       >Buy now</a
                     >
                     <a
-                      v-if = "collectible.biddingStatus"
+                      v-if="collectible.biddingStatus"
                       :id="collectible.slug"
                       class="place-bid"
                       href="javascript:void(0)"
                       @click="fetchSingleNft(collectible, 'bid')"
-                      >Place a bid</a>
+                      >Place a bid</a
+                    >
                     <a
                       :id="collectible.slug"
                       class="report"
@@ -159,9 +161,7 @@
                     </div>
                   </div>
                 </div>
-                <div>
-                  
-                </div>
+                <div></div>
                 <div class="item-img">
                   <img
                     v-if="collectible.fileType == 'image'"
@@ -169,7 +169,10 @@
                     alt=""
                   />
                   <video
-                    v-if="collectible.fileType == 'video'"
+                    v-if="
+                      collectible.fileType == 'video' ||
+                      collectible.fileType == 'audio'
+                    "
                     autoplay
                     loop
                     muted
@@ -185,14 +188,14 @@
                   >
                     {{ collectible.price }}{{ collectible.currencyName }}
                   </div>
-                  <div
-                    v-if="collectible.isp == 0 || collectible.is_selling == 0"
-                    class="text-center currency-amount"
-                  >
+                  <div v-else class="text-center currency-amount">
                     Not for sale
                   </div>
 
-                  <span v-if="filter != 'created'" class="copies">{{ collectible.ownedCopies }} of {{ collectible.copies }}</span>
+                  <span v-if="filter != 'created'" class="copies"
+                    >{{ collectible.ownedCopies }} of
+                    {{ collectible.copies }}</span
+                  >
                 </div>
                 <div class="text-center currency-label">
                   {{ collectible.name }}
@@ -230,7 +233,7 @@
     <bid-modal-component
       :singleNft="singleNft"
       :page="current_page"
-      :bidOpen ="open"
+      :bidOpen="open"
     ></bid-modal-component>
     <report-modal-component :singleNft="singleNft"></report-modal-component>
     <bid-list-modal-component
@@ -266,10 +269,8 @@ export default {
       bidListNFT: "",
       checked: false,
 
-
-      loaded:false,
-      open:false
-
+      loaded: false,
+      open: false,
 
       //collectible: this.collectibles[0],
     };
@@ -296,8 +297,8 @@ export default {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
     fetchSingleNft(collectible, clicked) {
-      if(clicked=='bid') {
-        this.open= true;
+      if (clicked == "bid") {
+        this.open = true;
       }
       if (this.current_user == 0) {
         window.location.href = this.base_url + "/connect";
