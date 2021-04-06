@@ -372,6 +372,7 @@
               v-if="set_collectible.fileType == 'image'"
               class="showImg"
               :src="set_collectible.file"
+              alt=""
             />
             <video
               v-if="set_collectible.fileType == 'video'"
@@ -397,7 +398,7 @@
                 <i class="fa fa-heart nft-option"></i>
               </a>
 
-              <a class="nft-expand imgHead-link" href="javascript:void(0)">
+              <a class="nft-expand imgHead-link" id="nft-expand" href="javascript:void(0)">
                 <i class="fa fa-arrows-alt expand nft-option"></i>
               </a>
             </div>

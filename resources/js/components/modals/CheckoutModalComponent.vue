@@ -13,7 +13,7 @@
         >
 
         <div class="form-section">
-          <form autocomplete="off" id="purchaseForm" @submit.prevent="purchase">
+          <form autocomplete="off" id="purchaseForm" @submit.prevent="enoughBalance ? purchase() : '' ">
             <div class="form-divide">
               <input
                 v-model.number="quantity"
@@ -80,6 +80,7 @@
             >
               Proceed to payment
             </button>
+
             <label class="text-details" v-if="!enoughBalance"
               >Low Balance</label
             >
@@ -124,6 +125,7 @@ export default {
       nft_id: 0,
       record_id: 0,
       approved: false,
+      allowance: 0,
     };
   },
   async mounted() {
@@ -157,9 +159,11 @@ export default {
           this.currency,
           this.current_user
         );
+        this.allowance = allowance;
       } else {
         this.balance = await getBNBBalance(this.current_user);
         var allowance = this.balance;
+        this.allowance = allowance ;
       }
       this.allowance = allowance;
       console.log(allowance);

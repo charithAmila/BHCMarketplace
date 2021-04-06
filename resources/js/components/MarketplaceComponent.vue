@@ -232,7 +232,7 @@ export default {
       }
       this.isSortedRecent = false;
       this.collectible = this.collectibles.filter(function (hero) {
-        return hero.category == 1;
+        return hero.category == "Arts";
       });
       this.isAll = false;
     },
@@ -248,7 +248,7 @@ export default {
       }
       this.isSortedRecent = false;
       this.collectible = this.collectibles.filter(function (hero) {
-        return hero.category == "test cat 1 ";
+        return hero.category == "Memes";
       });
       this.isAll = false;
     },
