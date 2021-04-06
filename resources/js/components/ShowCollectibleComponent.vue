@@ -166,10 +166,11 @@
           </div>
         </div>
         <div class="priceTag">
-          <label class="showCurrency"
+          <label class="showCurrency" v-if="set_collectible.is_selling == 1"
             >{{ set_collectible.price }}
             {{ set_collectible.currencyName }}</label
           >
+          <label class="showCurrency" v-else>Not for sale</label>
           <!-- <label class="showCurrencyPlain">$135.20</label> -->
         </div>
         <h5 class="itemType">

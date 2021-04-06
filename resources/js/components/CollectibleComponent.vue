@@ -187,10 +187,7 @@
                   >
                     {{ collectible.price }}{{ collectible.currencyName }}
                   </div>
-                  <div
-                    v-if="collectible.isp == 0 || collectible.is_selling == 0"
-                    class="text-center currency-amount"
-                  >
+                  <div v-else class="text-center currency-amount">
                     Not for sale
                   </div>
 
