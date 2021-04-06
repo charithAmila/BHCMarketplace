@@ -80,11 +80,12 @@
             >
               Proceed to payment
             </button>
-            <label
-              style="color: red"
-              class="text-details"
-              v-if="!enoughBalance || allowance < total_payment"
+
+            <label class="text-details" v-if="!enoughBalance"
               >Low Balance</label
+            >
+            <label class="text-details" v-if="allowance < total_payment"
+              >Low Allowance</label
             >
             <!--button class="cancel-btn" type="button">Cancel</button-->
           </form>
@@ -113,6 +114,7 @@ export default {
     return {
       quantity: 1,
       balance: 0,
+      allowance: 0,
       enoughBalance: false,
       service_fee: 0,
       royalty_fee: 0,
@@ -163,6 +165,7 @@ export default {
         var allowance = this.balance;
         this.allowance = allowance ;
       }
+      this.allowance = allowance;
       console.log(allowance);
       if (this.total_payment <= allowance) {
         this.approved = true;
@@ -194,7 +197,12 @@ export default {
     },
     purchase() {
       var collectible = this.singleNft;
+
+      let success;
+      let message = "You have successfully purchased "+collectible.name+" for "+`${this.price}`+this.currency;
+
       const _this = this;
+
       buy(
         collectible.contract,
         collectible.type == 721 ? true : false,
@@ -208,6 +216,7 @@ export default {
         collectible.signature
       )
         .then(async function (hash) {
+
           var data = await waitForTransaction(hash);
           if (data.status) {
             await removeSale(
@@ -219,6 +228,7 @@ export default {
               collectible.salt,
               collectible.db_id
             );
+
             $(".toast-message").text("Purchased");
             $("#purchaseForm").trigger("reset");
             setTimeout(function () {
@@ -240,6 +250,15 @@ export default {
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
             }
+              if(success){
+          data={};
+          data.message = message;
+          data.user_id = toAddress(window.ethereum.selectedAddress);
+          await axios.post('addNotification',data,{
+          }).then((res) => {
+            console.log(res.data);
+          });
+        }
           }
         })
         .catch((error) => {
