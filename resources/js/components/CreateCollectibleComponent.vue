@@ -478,8 +478,8 @@
                       </div>
                       <div
                         v-if="
-                          fileType == 'video' ||
-                          ('audio' && uploadedImage != '')
+                          (fileType == 'video' || fileType == 'audio') &&
+                          uploadedImage != ''
                         "
                         class="video-container d-block"
                       >
