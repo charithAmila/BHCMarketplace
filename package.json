@@ -59,6 +59,7 @@
         "single-spa-react": "^4.1.1",
         "single-spa-vue": "^2.2.0",
         "stream-browserify": "^3.0.0",
+        "sweetalert2": "^10.15.7",
         "typedarray-to-buffer": "^4.0.0",
         "use-wallet": "^0.8.1",
         "util": "^0.11.1",
