@@ -1,8 +1,64 @@
 import { getBiddingStatus } from "./bidFunc.js";
-import { toAddress, getOwner, getSingles, getMultiples, getCollectible, collectionURI, getOwnedCollections, getCollection, getCollectionType, getOwnersOf, getCreated, checkOrder } from './etherFunc';
-import { hps721Address, hps1155Address, hpsAddress, bhcAddress } from "./addresses/constants"
-import axios from 'axios';
+import {
+    toAddress,
+    getOwner,
+    getSingles,
+    getMultiples,
+    getCollectible,
+    collectionURI,
+    getOwnedCollections,
+    getCollection,
+    getCollectionType,
+    getOwnersOf,
+    getCreated,
+    checkOrder
+} from "./etherFunc";
+import {
+    hps721Address,
+    hps1155Address,
+    hpsAddress,
+    bhcAddress
+} from "./addresses/constants";
+import axios from "axios";
 
+//////////////getMaxUsers/////////
+
+async function getMaxBuyers() {
+    let res = {};
+    await axios.get("/getMaxBuyers").then(function(response) {
+        res = response.data;
+    });
+    console.log(res);
+    let output = {};
+    for (let i = 0; i < res.length; i++) {
+        let user = res[i].user_id;
+        output[user] = {};
+        output[user].buy_amount = 0;
+    }
+    for (let i = 0; i < res.length; i++) {
+        let user = res[i].user_id;
+        output[user].buy_amount += res[i].buy_amount;
+    }
+    return output;
+}
+/////////////////getMaxSellers//////
+async function getMaxSellers() {
+    let res = {};
+    await axios.get("/getMaxBuyers").then(function(response) {
+        res = response.data;
+    });
+    let output = {};
+    for (let i = 0; i < res.length; i++) {
+        let user = res[i].user_id;
+        output[user] = {};
+        output[user].sell_amount = 0;
+    }
+    for (let i = 0; i < res.length; i++) {
+        let user = res[i].user_id;
+        output[user].sell_amount += res[i].sell_amount;
+    }
+    return output;
+}
 ////////get///////////////////
 function tempUserData(addressString) {
     var address = toAddress(addressString);
@@ -44,7 +100,7 @@ async function getUserDetails(addressString) {
         user.name = response.data.name;
         user.bio = response.data.description;
         user.short_url = response.data.short_url;
-    } catch (e) { }
+    } catch (e) {}
     return user;
 }
 
@@ -132,11 +188,11 @@ async function getOwnedTokensData(owner, base_url) {
             nft.price = salesData.price;
             nft.is_selling = true;
             nft.currency = salesData.currency;
-            nft.currency == hpsAddress ?
-                (nft.currencyName = "HPS") :
-                nft.currency == bhcAddress ?
-                    (nft.currencyName = "BHC") :
-                    (nft.currencyName = "BNB");
+            nft.currency == hpsAddress
+                ? (nft.currencyName = "HPS")
+                : nft.currency == bhcAddress
+                ? (nft.currencyName = "BHC")
+                : (nft.currencyName = "BNB");
 
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
@@ -172,11 +228,11 @@ async function getOwnedTokensData(owner, base_url) {
             nft.price = salesData.price;
             nft.is_selling = true;
             nft.currency = salesData.currency;
-            nft.currency == hpsAddress ?
-                (nft.currencyName = "HPS") :
-                nft.currency == bhcAddress ?
-                    (nft.currencyName = "BHC") :
-                    (nft.currencyName = "BNB");
+            nft.currency == hpsAddress
+                ? (nft.currencyName = "HPS")
+                : nft.currency == bhcAddress
+                ? (nft.currencyName = "BHC")
+                : (nft.currencyName = "BNB");
 
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
@@ -191,14 +247,18 @@ async function getOwnedTokensData(owner, base_url) {
 async function getLikedTokens(owner, base_url) {
     var data = [];
     var liked = await axios.get("/like");
-    var likes = liked.data.likes.filter(function (like) {
+    var likes = liked.data.likes.filter(function(like) {
         if (toAddress(like.address) == toAddress(owner)) return true;
     });
     for (var i = 0; i < likes.length; i++) {
-        var owners = await getOwnersOf(likes[i].contract, likes[i].token_id)
+        var owners = await getOwnersOf(likes[i].contract, likes[i].token_id);
         for (var j = 0; j < owners.length; j++) {
-            var token = await getTokenData(likes[i].contract, owners[j].owner, likes[i].token_id)
-            data.push(token)
+            var token = await getTokenData(
+                likes[i].contract,
+                owners[j].owner,
+                likes[i].token_id
+            );
+            data.push(token);
         }
     }
     return data;
@@ -208,13 +268,16 @@ async function getCreatedTokens(owner, base_url) {
     var data = [];
     var tokens = await getCreated(owner);
     for (var i = 0; i < tokens.length; i++) {
-        var owners = await getOwnersOf(tokens[i].contract, tokens[i].token_id)
+        var owners = await getOwnersOf(tokens[i].contract, tokens[i].token_id);
         for (var j = 0; j < owners.length; j++) {
             try {
-                var token = await getTokenData(tokens[i].contract, owners[j].owner, tokens[i].token_id)
-                data.push(token)
-            } catch (e) { }
-
+                var token = await getTokenData(
+                    tokens[i].contract,
+                    owners[j].owner,
+                    tokens[i].token_id
+                );
+                data.push(token);
+            } catch (e) {}
         }
     }
     return data;
@@ -271,12 +334,11 @@ async function getTokenData(contract, owner, id) {
     //var res = await axios.get("/api/collections/" + contract);
     var biddingStatus = await getBiddingStatus(owner, contract, id);
     var isPrivate =
-
-        contract != hps721Address ?
-            true :
-            contract != hps1155Address ?
-                true :
-                false;
+        contract != hps721Address
+            ? true
+            : contract != hps1155Address
+            ? true
+            : false;
 
     var type = await getCollectionType(contract);
 
@@ -342,11 +404,11 @@ async function getTokenData(contract, owner, id) {
         nft.price = salesData.price;
         nft.is_selling = true;
         nft.currency = salesData.currency;
-        nft.currency == hpsAddress ?
-            (nft.currencyName = "HPS") :
-            nft.currency == bhcAddress ?
-                (nft.currencyName = "BHC") :
-                (nft.currencyName = "BNB");
+        nft.currency == hpsAddress
+            ? (nft.currencyName = "HPS")
+            : nft.currency == bhcAddress
+            ? (nft.currencyName = "BHC")
+            : (nft.currencyName = "BNB");
 
         nft.signed_to = salesData.signed_to;
         nft.db_id = salesData.id;
@@ -364,13 +426,12 @@ async function collectiblesOfCollection(collection) {
     var collectibles = [];
     for (var i = 0; i < collects.length; i++) {
         var id = collects[i].id;
-        var owner = collects[i].owner
+        var owner = collects[i].owner;
         try {
-            var nft = await getTokenData(collection, owner, id)
-            collectibles.push(nft)
-        }
-        catch (e) {
-            console.log(e)
+            var nft = await getTokenData(collection, owner, id);
+            collectibles.push(nft);
+        } catch (e) {
+            console.log(e);
         }
     }
     console.log(collectibles);
@@ -407,14 +468,14 @@ async function getAllSales(current_user) {
                 nft.salt = tokens[i].salt;
                 nft.currency = tokens[i].currency;
                 nft.currencyName =
-                    tokens[i].currency == hpsAddress ?
-                        "HPS" :
-                        tokens[i].currency == bhcAddress ?
-                            "BHC" :
-                            "BNB";
+                    tokens[i].currency == hpsAddress
+                        ? "HPS"
+                        : tokens[i].currency == bhcAddress
+                        ? "BHC"
+                        : "BNB";
 
                 data.push(nft);
-            } catch (e) { }
+            } catch (e) {}
         }
     }
 
@@ -438,25 +499,47 @@ async function addSale(data) {
     await axios.post(`/sales`, data);
 }
 
-async function removeSale(tokenAddress,
+async function removeSale(
+    tokenAddress,
     tokenId,
     value,
     priceToken,
     price,
     salt,
-    id) {
-    var orderData = await checkOrder(tokenAddress,
+    id
+) {
+    var orderData = await checkOrder(
+        tokenAddress,
         tokenId,
         value,
         priceToken,
         price,
-        salt)
-    console.log(orderData)
+        salt
+    );
+    console.log(orderData);
     if (Number(orderData.total) == Number(orderData.sold)) {
         await axios.delete(`/sales/${id}`);
         window.location.reload();
     }
 }
 
-export { getUserDetails, checkFollowing, tempUserData, getCollections, tempCollectionData, getTokens, getTokensData, getTokenData, addSale, updateUserDetails, getAllSales, removeSale, collectiblesOfCollection, getOnSaleTokens, getLikedTokens, getCreatedTokens }
-
+export {
+    getUserDetails,
+    checkFollowing,
+    tempUserData,
+    getCollections,
+    tempCollectionData,
+    getTokens,
+    getTokensData,
+    getTokenData,
+    addSale,
+    updateUserDetails,
+    getAllSales,
+    removeSale,
+    collectiblesOfCollection,
+    getOnSaleTokens,
+    getLikedTokens,
+    getCreatedTokens,
+    getMaxBuyers,
+    getMaxSellers
+};

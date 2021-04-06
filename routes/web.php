@@ -120,3 +120,5 @@ Route::post('deleteNotification', [NotificationController::class, 'delete']);
 Route::get('followers', [FollowController::class, 'index'])->name('followers');
 
 Route::resource('sales', SalesController::class);
+
+Route::get('/getMaxBuyers', [NotificationController::class,'getMaxBuyers']);
