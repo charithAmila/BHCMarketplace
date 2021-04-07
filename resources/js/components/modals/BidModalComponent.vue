@@ -88,10 +88,10 @@
             </button-->
 
              <button
-             v-if="notStarted && enoughWBNB && !isBHC"
+             v-if="notStarted && enoughWBNB && !isBHC && !approved"
               class="form-submit"
               type="button"
-              @click="!approved?approveWBNBFunc():''"
+              @click="!approved && !approving?approveWBNBFunc():''"
             >
 			  <span v-html="approveWBNBText"></span>
             </button>
@@ -101,23 +101,23 @@
              v-if="notStarted && !enoughWBNB && !isBHC"
               class="form-submit"
               type="button"
-              @click="!approved?convertBNB():''"
+              @click="!approved && !converting?convertBNB():''"
             >
 			  <span v-html="convertBNBText"></span>
             </button>
 
   <button
-             v-if="notStarted && isBHC"
+             v-if="notStarted &&  !approved && isBHC" 
               class="form-submit"
               type="button"
-              @click="!approved?approveBHCFunc():''"
+              @click="!approved && !approving?approveBHCFunc():''"
             >
 			  <span v-html="approveBHCText"></span>
             </button>
 
 
              <button
-             v-if="approved"
+             v-if="approved && !signed"
               class="form-submit"
               type="button"
               @click="!signed?signBidFunc():''"
@@ -154,6 +154,7 @@ export default {
   props: ["singleNft", "page"],
   data() {
     return {
+      showApproveBHC:true,
       rate:2.5,
       bid_input: 0,
       selectedBalance:0,
@@ -167,6 +168,8 @@ export default {
 	  error:"",
     approved:false,
     signed:false,
+    converting:false,
+    approving: false,signing: false,
       nft_id: 0,
       record_id: 0,
       selected_token: 0,
@@ -255,11 +258,13 @@ export default {
 //////////////////!Approve WBNB////////////////////
 async approveWBNBFunc(){
 try{
+  this.approving = true;
 this.approveWBNBText = this.approvingWbnbText;
 let res = await approveWBNB(this.total_payment);
 if(res){
 this.approveWBNBText ="Approved WBNB";
 this.approved = true;
+this.approving = false;
 }}catch(error){
          if (error.code == 4001) {
             Toast.fire({
@@ -273,9 +278,11 @@ this.approved = true;
 async convertBNB(){
   if(this.enoughBNB){
     try{
+  this.converting = true;
   this.convertBNBText = this.convertText;
 let res = await convertBNBtoWBNB(this.total_payment);
 if(res){
+  this.converting = false;
   this.WBNB_Balance += this.payment;
   this.convertBNBText = "Converted BNB to WBNB"
 }}catch(error){
@@ -292,11 +299,13 @@ else{
 },
 //////////////////!Approve BHC////////////////////
  async approveBHCFunc() {
+   this.approving = true;
 this.approveBHCText = this.approvingText;
 if(this.enoughBHC){
 try{
 var res = await approveBHC(this.total_payment)
 if(res==1){
+  this.approving = false
   this.approveBHCText = "Approved BHC"
   this.approved = true;
 }}catch(error){
@@ -384,6 +393,7 @@ console.log(this.selected_token==0);
       let success = true;
       
        if(success){
+
           let data={};
           data.message = message;
           data.user_id = window.ethereum.selectedAddress;
@@ -391,6 +401,10 @@ console.log(this.selected_token==0);
           }).then((res) => {
             console.log(res.data);
           });
+          
+          this.approved = false;
+         this.signed = false;
+         //window.location.reload();
         }}catch(error){
                  if (error.code == 4001) {
             Toast.fire({

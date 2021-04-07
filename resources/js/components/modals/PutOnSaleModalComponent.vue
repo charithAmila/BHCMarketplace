@@ -13,7 +13,7 @@
           submit</label
         >
 
-        <div class="form-section" @submit.prevent="placeOrder">
+        <div class="form-section" @submit.prevent="">
           <form autocomplete="off" id="saleForm">
             <div class="form-divide">
               <!--input
@@ -109,22 +109,27 @@
                 >
               </div>
             </div-->
-            <button v-if="!signed" class="form-submit" @click.prevent="sign">
-              {{ "Sign Order" }}
+            <button v-if="!signed" class="form-submit" @click="!signing?sign():''">
+            <span v-html="signText"></span>
             </button>
+
+
             <button
-              v-if="!approved"
+              v-if="!approved && signed"
               class="form-submit"
-              @click.prevent="approveNFT"
+             @click="!approving?approveNFT():''"
             >
-              {{ "Approve" }}
+              <span v-html="approveText"></span>
             </button>
+
+
+            
             <button
               class="form-submit"
-              type="submit"
-              :disabled="!signed || !approved"
+              v-if="signed && approved"
+              @click="placeOrder()"
             >
-              {{ "Put on Sale" }}
+              <span v-html="saleText"></span>
             </button>
 
             <!--button class="cancel-btn" type="button">Cancel</button-->
@@ -152,6 +157,11 @@ export default {
   props: ["singleNft", "page"],
   data() {
     return {
+      signing:false,
+      approving:false,
+      signText: "Sign",
+      approveText: "Approve",
+      saleText:"Put on sale",
       quantity: 1,
       balance: 0,
       service_fee: 0,
@@ -165,6 +175,8 @@ export default {
       signed: false,
       salt: "",
       progress: "Sign Order",
+       approvingText: "Approving...<img src='/images/loading.gif' alt='' width='7%' />",
+	    signingText: "Signing...  <img src='/images/loading.gif' alt='' width='7%' />",
       processing: false,
       orderId: "",
       approved: "",
@@ -208,6 +220,9 @@ export default {
     },
     async sign() {
       try {
+
+        this.signText = this.signingText;
+        this.signing = true;
         const _this = this;
         _this.salt = Math.random().toString(36).substring(7);
 
@@ -230,6 +245,7 @@ export default {
         _this.signed = true;
         _this.progress = "Put Order";
         _this.orderId = orderId;
+        this.signed = true;
       } catch (error) {
         if (error.code == 4001) {
           alert("User rejected minting token");
@@ -237,7 +253,10 @@ export default {
       }
     },
     async approveNFT() {
+
       try {
+        this.approveText = this.approvingText;
+        this.approving = true;
         var tx = await approveNFT(this.singleNft.contract);
         waitForTransaction(tx.hash).then((data) => {
           if (data.status) {
@@ -250,6 +269,8 @@ export default {
         }
       }
     },
+
+    
     async placeOrder() {
       const _this = this;
       var data = {
