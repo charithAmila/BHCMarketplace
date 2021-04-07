@@ -32,7 +32,7 @@ function checkConnection() {
     catch (e) {
         var acc = null
     }
-    return toAddress("");
+    return acc
 }
 
 function redirectToConnect() {
