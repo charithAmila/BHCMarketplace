@@ -13,7 +13,7 @@ class MakeNotificationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('Notifications', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
             $table->string('message');
