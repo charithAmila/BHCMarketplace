@@ -25,7 +25,7 @@ import axios from "axios";
 
 async function getMaxBuyers() {
     let res = {};
-    await axios.get("/getMaxBuyers").then(function(response) {
+    await axios.get("/getData").then(function(response) {
         res = response.data;
     });
     console.log(res);
@@ -44,7 +44,7 @@ async function getMaxBuyers() {
 /////////////////getMaxSellers//////
 async function getMaxSellers() {
     let res = {};
-    await axios.get("/getMaxBuyers").then(function(response) {
+    await axios.get("/getData").then(function(response) {
         res = response.data;
     });
     let output = {};
