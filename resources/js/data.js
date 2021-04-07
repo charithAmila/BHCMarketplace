@@ -37,6 +37,7 @@ async function getMaxBuyers(time_filter) {
         output[user].buy_amount = 0;
         output[user].propic = details.display_photo;
         output[user].username = details.name;
+        output[user].currency = res[i].currency;
     }
     for (let i = 0; i < res.length; i++) {
         let user = res[i].user_id;
@@ -58,6 +59,7 @@ async function getMaxSellers(time_filter) {
         output[user].sell_amount = 0;
         output[user].propic = details.display_photo;
         output[user].username = details.name;
+        output[user].currency = res[i].currency;
     }
     for (let i = 0; i < res.length; i++) {
         let user = res[i].user_id;
