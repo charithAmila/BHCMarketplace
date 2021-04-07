@@ -490,7 +490,7 @@ async function checkSelling(collection, owner, id) {
     return res.data;
 }
 
-///////////////set///////////////
+///////////////set//////////////////////
 async function updateUserDetails(addressString, data) {
     var address = toAddress(addressString);
     await axios.patch(`/api/profile/${address}`, data);
