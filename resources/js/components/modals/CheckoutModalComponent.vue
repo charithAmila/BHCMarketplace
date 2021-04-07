@@ -272,8 +272,6 @@ export default {
             }
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
-
-
               if (success) {
                 data = {};
                 data.message_seller = message_seller;
@@ -285,7 +283,6 @@ export default {
                 await axios.post("addNotification", data, {}).then((res) => {
                   console.log(res.data);
                 });
-
               }
             }
           }
