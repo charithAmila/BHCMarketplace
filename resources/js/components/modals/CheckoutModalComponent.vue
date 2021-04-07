@@ -221,7 +221,7 @@ export default {
         collectible.name + " of collection " +collectible.collection.name +
         " has been bought for " +
         `${this.price}` +
-        this.currency+ " by "+ this.current_user;
+        this.currency;
 
       const _this = this;
 
@@ -240,6 +240,7 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
+            console.log("Notifications");
                var req = {};
                 req.message_seller = message_seller;
                 req.message_buyer = message_buyer;
@@ -248,6 +249,7 @@ export default {
                 req.seller_id = collectible.owner_id;
                 res.currency = collectible.currencyName;
                 req.bid = false;
+                console.log("Done");
                 await axios.post("addNotification", req, {}).then((res) => {
                   console.log(res.data);
                 });

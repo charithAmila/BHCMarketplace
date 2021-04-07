@@ -223,6 +223,7 @@ export default {
           _this.price,
           _this.salt
         );
+        
         var sig = await signMessage(orderId);
 
         _this.s = sig;
