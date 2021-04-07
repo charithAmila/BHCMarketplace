@@ -13,14 +13,14 @@ class MakeNotificationsTable extends Migration
      */
     public function up()
     {
-         Schema::create('Notifications', function (Blueprint $table) {
+        Schema::create('Notifications', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
             $table->string('message');
             $table->float('buy_amount')->default(0);
             $table->float('sell_amount')->default(0);
             $table->float('bid_amount')->default(0);
-            $table->string('currency');
+            $table->string('currency')->default('BNB');
             $table->timestamps();
         });
     }

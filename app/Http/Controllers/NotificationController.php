@@ -26,6 +26,7 @@ class NotificationController extends Controller
             $notification->user_id = $request->seller_id;
             $notification->message = $request->message_seller;
             $notification->sell_amount = $request->amount;
+            $notification->currency = $request->currency;
             $notification->save();
             $notification2 = new Notification;
             $notification2->user_id = $request->buyer_id;
