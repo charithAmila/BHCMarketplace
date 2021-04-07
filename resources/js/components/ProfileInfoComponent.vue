@@ -253,7 +253,7 @@ export default {
     unfollow() {
       var data = {};
       var user_id = this.user_id;
-      var follower_id = connected_account;
+      var follower_id = checkConnection();
       var _this = this;
       data.user_id = user_id;
       data.follower_id = follower_id;
@@ -271,7 +271,7 @@ export default {
         this.unfollow();
       } else {
         var user_id = this.user_id;
-        var follower_id = connected_account;
+        var follower_id = checkConnection();
         var output = await FollowController(user_id, follower_id);
         if (output.success) {
           this.following = true;
@@ -280,7 +280,7 @@ export default {
     },
     checkFollow() {
       var user_id = this.user_id;
-      var follower_id = connected_account;
+      var follower_id = checkConnection();
       var _this = this;
       axios.get("/followers").then((res) => {
         var valObj = res.data.followers.filter(function (elem) {
