@@ -335,7 +335,7 @@ console.log(this.selected_token==0);
         this.payment
       );
       if(res){
-         let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name;
+         let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name+" in the collection "+this.singleNft.collection.name;;
           let data={};
           data.message = message;
           data.user_id = window.ethereum.selectedAddress;
@@ -379,9 +379,8 @@ console.log(this.selected_token==0);
         this.currency,
         this.payment
       );
-      console.log("Bidding result");
       console.log(res);
-      let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name;
+      let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name+ " in the collection "+this.singleNft.collection.name;
       let success = true;
       
        if(success){

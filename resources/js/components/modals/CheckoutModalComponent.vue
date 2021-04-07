@@ -209,21 +209,19 @@ export default {
     },
     purchase() {
       var collectible = this.singleNft;
-
-      let success;
-
       let message_buyer =
-        "You have successfully purchased " +
-        collectible.name +
+        "You have successfully purchased " + 
+        collectible.name + " from the collection " +collectible.collection.name +
         " for " +
         `${this.price}` +
         this.currency;
+
       let message_seller =
         "The " +
-        collectible.name +
+        collectible.name + " of collection " +this.singleNft.collection.name +
         " has been bought for " +
         `${this.price}` +
-        this.currency;
+        this.currency+ " by "+ this.current_user;
 
       const _this = this;
 
@@ -242,6 +240,16 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
+               var req = {};
+                req.message_seller = message_seller;
+                req.message_buyer = message_buyer;
+                req.buyer_id = toAddress(window.ethereum.selectedAddress);
+                req.amount = _this.price;
+                req.seller_id = collectible.owner_id;
+                req.bid = false;
+                await axios.post("addNotification", req, {}).then((res) => {
+                  console.log(res.data);
+                });
             await removeSale(
               collectible.contract,
               collectible.id,
@@ -263,7 +271,7 @@ export default {
             _this.payment = 0;
             _this.bid_input = "";
             _this.quantity = 1;
-
+                
             if (_this.page == "marketplace" || _this.page == "profile") {
               _this.$parent.$parent.getCollectible();
             }
@@ -272,19 +280,10 @@ export default {
             }
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
-              if (success) {
-                data = {};
-                data.message_seller = message_seller;
-                data.message_buyer = message_buyer;
-                data.buyer_id = toAddress(window.ethereum.selectedAddress);
-                data.buy_amount = _this.price;
-                data.seller_id = collectible.owner_id;
-                data.bid = false;
-                await axios.post("addNotification", data, {}).then((res) => {
-                  console.log(res.data);
-                });
-              }
             }
+              
+              
+              
           }
               })
         .catch((error) => {
@@ -296,6 +295,7 @@ export default {
           }
         });
     },
+    
   },
 };
 </script>
