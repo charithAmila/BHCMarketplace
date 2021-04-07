@@ -50,7 +50,10 @@
                 item.username
               }}</a>
             </h6>
-            <label>{{ item.sell_amount }} BHC</label>
+            <label
+              >{{ item.sell_amount }} {{ item.buy_amount }}
+              {{ item.currency }}</label
+            >
           </div>
         </div>
       </div>
@@ -62,11 +65,13 @@
         :key="index"
         class="filterItemMobile"
       >
-        <img class="filterImg" :src="asset_url + item.asset_url" alt="" />
+        <img class="filterImg" :src="item.propic" alt="" />
         <label class="profName">
-          {{ item.display_name }}
+          {{ item.username }}
         </label>
-        <label class="prof"> {{ item.totalPrice }} BHC </label>
+        <label class="prof">
+          {{ item.sell_amount }} {{ item.buy_amount }} {{ item.currency }}
+        </label>
       </div>
     </div>
   </div>
