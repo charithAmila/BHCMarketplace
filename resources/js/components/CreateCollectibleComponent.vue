@@ -434,7 +434,6 @@
                   @click="generateModelPopup()"
                 />
               </div>
-              <button type="button" @click="popupModal()">Toast</button>
 
               <div class="col-2 col-md-2"></div>
               <div class="col-4 col-md-4 p-0">
@@ -542,9 +541,7 @@
                 class="submitBtn"
                 @click="createCollectible"
               >
-                <span
-                  v-html="isMinting ? text.mintText : 'Mint Token for hps'"
-                ></span>
+                <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
               </button>
             </div>
             <div
@@ -877,13 +874,19 @@ export default {
           if (data.status) {
             this.isNftApproved = true;
           } else {
-            alert("Try again!");
+            Toast.fire({
+              icon: "warning",
+              title: "try again!",
+            });
           }
           this.isApprovingNft = false;
         });
       } catch (error) {
         if (error.code == 4001) {
-          alert("User rejected approving NFT");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
         this.isApprovingNft = false;
       }
@@ -897,13 +900,19 @@ export default {
           if (data.status) {
             this.isApproved = true;
           } else {
-            alert("Try again!");
+            Toast.fire({
+              icon: "warning",
+              title: "try again!",
+            });
           }
           this.isApproving = false;
         });
       } catch (error) {
         if (error.code == 4001) {
-          alert("User rejected approving HPS");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
         this.isApproving = false;
       }
@@ -1054,7 +1063,10 @@ export default {
                     )}`;
                   }
                 } else {
-                  alert("Try again!");
+                  Toast.fire({
+                    icon: "warning",
+                    title: "try again!",
+                  });
                 }
                 _this.isMinting = false;
 
@@ -1083,14 +1095,16 @@ export default {
                     )}`;
                   }
                 } else {
-                  alert("Try again!");
+                  Toast.fire({
+                    icon: "warning",
+                    title: "try again!",
+                  });
                 }
                 _this.isMinting = false;
               });
             }
           } catch (error) {
             if (error.code == 4001) {
-              alert("User");
               Toast.fire({
                 icon: "error",
                 title: "User rejected transaction!",
@@ -1105,7 +1119,6 @@ export default {
               icon: "error",
               title: "User rejected transaction!",
             });
-            alert("User");
           }
           _this.isMinting = false;
         });
@@ -1146,7 +1159,10 @@ export default {
         }
       } catch (error) {
         if (error.code == 4001) {
-          alert("User denied signing the order!");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
         this.isSigning = false;
       }
