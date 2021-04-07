@@ -1103,19 +1103,16 @@ export default {
           _this.isMinting = false;
         });
 
-        if(batch_success || single_success){
-          data={};
-          data.message= message;
-          data.user_id = toAddress(window.ethereum.selectedAddress);
-          data.amount =0;
-          data.noBuy = true;
-          await axios.post('addNotification',data,{
-          }).then((res) => {
-            console.log(res.data);
-          });
-        }
-
-
+      if (batch_success || single_success) {
+        data = {};
+        data.message = message;
+        data.user_id = toAddress(window.ethereum.selectedAddress);
+        data.amount = 0;
+        data.noBuy = true;
+        await axios.post("addNotification", data, {}).then((res) => {
+          console.log(res.data);
+        });
+      }
     },
     async sign() {
       this.isSigning = true;
