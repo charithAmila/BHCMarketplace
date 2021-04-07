@@ -121,5 +121,4 @@ Route::get('followers', [FollowController::class, 'index'])->name('followers');
 
 Route::resource('sales', SalesController::class);
 
-Route::get('/getData', [NotificationController::class,'getData']);
-
+Route::get('/getData/{time}', [NotificationController::class, 'getData']);
