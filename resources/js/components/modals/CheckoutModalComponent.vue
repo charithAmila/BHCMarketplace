@@ -129,7 +129,6 @@ export default {
       nft_id: 0,
       record_id: 0,
       approved: false,
-      allowance: 0,
     };
   },
   async mounted() {
@@ -201,7 +200,10 @@ export default {
         });
       } catch (error) {
         if (error.code == 4001) {
-          alert("User rejected minting token");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
       }
     },
@@ -210,8 +212,18 @@ export default {
 
       let success;
 
-      let message_buyer = "You have successfully purchased "+collectible.name+" for "+`${this.price}`+this.currency;
-      let message_seller = "The "+collectible.name+" has been bought for "+`${this.price}`+this.currency;
+      let message_buyer =
+        "You have successfully purchased " +
+        collectible.name +
+        " for " +
+        `${this.price}` +
+        this.currency;
+      let message_seller =
+        "The " +
+        collectible.name +
+        " has been bought for " +
+        `${this.price}` +
+        this.currency;
 
       const _this = this;
 
@@ -261,25 +273,29 @@ export default {
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
 
-              if(success){
-          data={};
-          data.message_seller = message_seller;
-          data.message_buyer = message_buyer;
-          data.buyer_id = toAddress(window.ethereum.selectedAddress);
-          data.buy_amount= _this.price;
-          data.seller_id = collectible.owner_id;
-          data.bid = false;
-          await axios.post('addNotification',data,{
-          }).then((res) => {
-            console.log(res.data);
-          })
+
+              if (success) {
+                data = {};
+                data.message_seller = message_seller;
+                data.message_buyer = message_buyer;
+                data.buyer_id = toAddress(window.ethereum.selectedAddress);
+                data.buy_amount = _this.price;
+                data.seller_id = collectible.owner_id;
+                data.bid = false;
+                await axios.post("addNotification", data, {}).then((res) => {
+                  console.log(res.data);
+                });
+
               }
             }
           }
               })
         .catch((error) => {
           if (error.code == 4001) {
-            alert("User rejected minting token");
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
           }
         });
     },
