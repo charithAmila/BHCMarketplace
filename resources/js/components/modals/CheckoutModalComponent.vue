@@ -129,7 +129,6 @@ export default {
       nft_id: 0,
       record_id: 0,
       approved: false,
-      allowance: 0,
     };
   },
   async mounted() {
@@ -201,7 +200,10 @@ export default {
         });
       } catch (error) {
         if (error.code == 4001) {
-          alert("User rejected minting token");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
       }
     },
@@ -270,7 +272,6 @@ export default {
             }
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
-
               if (success) {
                 data = {};
                 data.message_seller = message_seller;
@@ -285,10 +286,13 @@ export default {
               }
             }
           }
-        })
+              })
         .catch((error) => {
           if (error.code == 4001) {
-            alert("User rejected minting token");
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
           }
         });
     },

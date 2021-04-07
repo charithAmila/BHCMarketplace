@@ -1,16 +1,25 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require("./bootstrap");
 import { ethers } from "ethers";
-import Web3Modal from "web3modal";
-// import WalletConnectProvider from "@walletconnect/web3-provider";
+
 import Vue from "vue";
+
+import Swal from "sweetalert2";
+window.Swal = Swal;
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-start",
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+    didOpen: toast => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+    }
+});
+
+window.Toast = Toast;
+
 window.ethers = ethers;
-window.Web3Modal = Web3Modal;
 
 window.Vue = require("vue").default;
 Vue.component("wc-component", require("./components/wcComponent.vue"));
@@ -229,13 +238,6 @@ Vue.component(
     "collection-page",
     require("./components/pages/CollectionPage.vue").default
 );
-/*
-import WalletConnectProvider from "@walletconnect/web3-provider";
-
-window.WalletConnect_Provider = new WalletConnectProvider({
-    rpcUrl: "http://162.0.210.42/rpc"
-});
-*/
 
 window.moment = require("moment");
 
