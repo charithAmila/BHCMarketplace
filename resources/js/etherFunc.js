@@ -41,11 +41,17 @@ function toAddress(addressString) {
 }
 
 function checkConnection() {
+    var acc = "";
     try {
-        var acc = toAddress(provider.provider.selectedAddress);
-        window.connected_account = acc;
+        var network = provider._network.chainId;
+        console.log(network);
+        if (network == 97) {
+            acc = toAddress(provider.provider.selectedAddress);
+        } else {
+            acc = toAddress("");
+        }
     } catch (e) {
-        var acc = null;
+        acc = "";
     }
     return acc;
 }

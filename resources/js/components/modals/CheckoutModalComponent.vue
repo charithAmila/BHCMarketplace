@@ -210,18 +210,24 @@ export default {
     purchase() {
       var collectible = this.singleNft;
       let message_buyer =
-        "You have successfully purchased " + 
-        collectible.name + " from the collection " +collectible.collection.name +
+        "You have successfully purchased " +
+        collectible.name +
+        " from the collection " +
+        collectible.collection.name +
         " for " +
         `${this.price}` +
         this.currency;
 
       let message_seller =
         "The " +
-        collectible.name + " of collection " +collectible.collection.name +
+        collectible.name +
+        " of collection " +
+        collectible.collection.name +
         " has been bought for " +
         `${this.price}` +
-        this.currency+ " by "+ this.current_user;
+        this.currency +
+        " by " +
+        this.current_user;
 
       const _this = this;
 
@@ -240,17 +246,18 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
-               var req = {};
-                req.message_seller = message_seller;
-                req.message_buyer = message_buyer;
-                req.buyer_id = toAddress(window.ethereum.selectedAddress);
-                req.amount = _this.price;
-                req.seller_id = collectible.owner_id;
-                res.currency = collectible.currencyName;
-                req.bid = false;
-                await axios.post("addNotification", req, {}).then((res) => {
-                  console.log(res.data);
-                });
+            var req = {};
+            req.message_seller = message_seller;
+            console.log(req);
+            req.message_buyer = message_buyer;
+            req.buyer_id = toAddress(window.ethereum.selectedAddress);
+            req.amount = _this.price;
+            req.seller_id = collectible.owner_id;
+            req.currency = collectible.currencyName;
+            req.bid = false;
+            axios.post("addNotification", req).then((res) => {
+              console.log(res.data);
+            });
             await removeSale(
               collectible.contract,
               collectible.id,
@@ -272,7 +279,7 @@ export default {
             _this.payment = 0;
             _this.bid_input = "";
             _this.quantity = 1;
-                
+
             if (_this.page == "marketplace" || _this.page == "profile") {
               _this.$parent.$parent.getCollectible();
             }
@@ -282,9 +289,6 @@ export default {
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
             }
-              
-              
-              
           }
         })
         .catch((error) => {
@@ -296,7 +300,6 @@ export default {
           }
         });
     },
-    
   },
 };
 </script>

@@ -239,6 +239,15 @@ Vue.component(
     require("./components/pages/CollectionPage.vue").default
 );
 
+try {
+    window.ethereum.on("accountsChanged", function() {
+        window.location.reload();
+    });
+    window.ethereum.on("networkChanged", function() {
+        window.location.reload();
+    });
+} catch (e) {}
+
 window.moment = require("moment");
 
 const app = new Vue({
