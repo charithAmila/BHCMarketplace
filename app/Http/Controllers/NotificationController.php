@@ -10,14 +10,25 @@ class NotificationController extends Controller
 {
     public function addNotification(Request $request){
          $request->validate([
-            'user_id' => 'required',
-            'message' => 'required',
+            'amount' => 'required'
         ]);
+        if($request->noBuy){
         $notification = new Notification;
         $notification->user_id = $request->user_id;
         $notification->message = $request->message;
     	$notification->save();
-    }
+        }else{
+        $notification = new Notification;
+        $notification->user_id = $request->seller_id;
+        $notification->message = $request->message_seller;
+        $notification->sell_amount = $request->amount;
+    	$notification->save();
+        $notification2 = new Notification;
+        $notification2->user_id =$request->buyer_id;
+        $notification2->message = $request->message_buyer;
+        $notification->buy_amount = $request->amount;
+        $notification2->save();
+    }}
 
     public function getNotification(Request $request){
           $request->validate([
@@ -33,5 +44,10 @@ class NotificationController extends Controller
 
     $data = Notification::where(['user_id'=>$request->user_id]);
     $data->delete();
+    }
+
+    public function getMaxBuyers(){
+        $data = Notification::all();
+       return $data;
     }
 }
