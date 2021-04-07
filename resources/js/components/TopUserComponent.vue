@@ -73,6 +73,8 @@
 
 
 <script>
+import { getMaxSellers, getMaxBuyers } from "../data";
+
 export default {
   props: ["asset_url"],
   data() {
@@ -83,23 +85,8 @@ export default {
     };
   },
   methods: {
-    filterUser(clicked, event) {
-      if (clicked == "user") {
-        this.userType = event.target.value;
-      } else {
-        this.filterTime = event.target.value;
-      }
-      this.fetchFilteredUser();
-    },
     fetchFilteredUser() {
-      axios
-        .get("/nft/user/filter/" + this.userType + "/" + this.filterTime)
-        .then((res) => {
-          this.userList = res.data.userList;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      getMaxBuyers(this.filterTime);
     },
   },
   mounted() {

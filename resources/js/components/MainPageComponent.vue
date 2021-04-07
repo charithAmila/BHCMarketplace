@@ -19,9 +19,6 @@
 
 
 <script>
-import {
- getMaxBuyers,getMaxSellers
-} from "././../data";
 export default {
   props: ["collectible_asset", "show_collectible", "base_url", "asset_url"],
   data() {
@@ -29,23 +26,5 @@ export default {
       customData: "",
     };
   },
-  methods: {
-
-  async  getMaxBuyerList(){
-    let list = await getMaxBuyers();
-    console.log(list);
-    },
-    async getMaxSellerList(){
-let list = await getMaxSellers();
-console.log(list);
-    },
-    updateTopUser() {
-      this.$refs.topUserRef.fetchFilteredUser();
-    },
-  },
-  mounted() {
-    this.getMaxBuyerList();
-    this.getMaxSellerList();
-  }
 };
 </script>
