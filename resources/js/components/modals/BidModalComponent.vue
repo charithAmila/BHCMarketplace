@@ -433,9 +433,9 @@ if(res==1){
               title: "User rejected transaction!",
             });
           }
-
+        
         }
-      } catch (error) {
+      },catch (error) {
         if (error.code == 4001) {
           Toast.fire({
             icon: "error",
@@ -443,7 +443,6 @@ if(res==1){
           });
         }
       }
-    },
   },
 };
 </script>
