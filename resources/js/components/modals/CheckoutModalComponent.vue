@@ -225,9 +225,9 @@ export default {
         collectible.collection.name +
         " has been bought for " +
         `${this.price}` +
-        this.currency +
-        " by " +
-        this.current_user;
+
+        this.currency;
+
 
       const _this = this;
 
@@ -246,6 +246,7 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
+
             var req = {};
             req.message_seller = message_seller;
             console.log(req);
@@ -258,6 +259,7 @@ export default {
             axios.post("addNotification", req).then((res) => {
               console.log(res.data);
             });
+
             await removeSale(
               collectible.contract,
               collectible.id,
