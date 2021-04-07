@@ -218,7 +218,7 @@ export default {
 
       let message_seller =
         "The " +
-        collectible.name + " of collection " +this.singleNft.collection.name +
+        collectible.name + " of collection " +collectible.collection.name +
         " has been bought for " +
         `${this.price}` +
         this.currency+ " by "+ this.current_user;
@@ -246,6 +246,7 @@ export default {
                 req.buyer_id = toAddress(window.ethereum.selectedAddress);
                 req.amount = _this.price;
                 req.seller_id = collectible.owner_id;
+                res.currency = collectible.currencyName;
                 req.bid = false;
                 await axios.post("addNotification", req, {}).then((res) => {
                   console.log(res.data);

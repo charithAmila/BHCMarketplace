@@ -20,6 +20,7 @@ class MakeNotificationsTable extends Migration
             $table->float('buy_amount')->default(0);
             $table->float('sell_amount')->default(0);
             $table->float('bid_amount')->default(0);
+            $table->string('currency');
             $table->timestamps();
         });
     }

@@ -19,6 +19,7 @@ class NotificationController extends Controller
             $notification = new Notification;
             $notification->user_id = $request->user_id;
             $notification->message = $request->message;
+            $notification->currency = $request->currency;
             $notification->save();
         } else {
             $notification = new Notification;
@@ -29,7 +30,8 @@ class NotificationController extends Controller
             $notification2 = new Notification;
             $notification2->user_id = $request->buyer_id;
             $notification2->message = $request->message_buyer;
-            $notification->buy_amount = $request->amount;
+            $notification2->buy_amount = $request->amount;
+            $notification2->currency = $request->currency;
             $notification2->save();
         }
     }
