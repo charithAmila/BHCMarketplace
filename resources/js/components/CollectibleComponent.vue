@@ -110,7 +110,7 @@
                     :id="collectible.name"
                     class="profile-action-menu-drop d-none"
                   >
-                    <div v-if="collectible.isp == 1" class="input-group mb-3">
+                    <!--   <div v-if="collectible.isp == 1" class="input-group mb-3">
                       <div class="input-group-prepend">
                         <div class="input-group-text">
                           <input
@@ -127,14 +127,14 @@
                           />
                         </div>
                       </div>
-                      <input
+                     <input
                         type="text"
                         class="form-control"
                         aria-label="Text input with checkbox"
                         value="Put on sale"
                         @click="putOnSale(collectible)"
-                      />
-                    </div>
+                      /> 
+                    </div>-->
                     <a
                       type="button"
                       :id="collectible.slug"

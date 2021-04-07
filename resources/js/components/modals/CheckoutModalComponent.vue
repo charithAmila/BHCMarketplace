@@ -285,7 +285,7 @@ export default {
               
               
           }
-              })
+        })
         .catch((error) => {
           if (error.code == 4001) {
             Toast.fire({

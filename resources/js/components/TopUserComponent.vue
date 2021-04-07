@@ -6,7 +6,8 @@
         id="user-type"
         class=""
         name="userType"
-        @change="filterUser('user', $event)"
+        v-model="userType"
+        @change="fetchFilteredUser()"
       >
         <option class="select-items" value="sell">Sellers</option>
         <option class="select-items" value="buy">Buyers</option>
@@ -16,12 +17,13 @@
         id="filter-time"
         class=""
         name="filterTime"
-        @change="filterUser('time', $event)"
+        @change="filterUser()"
+        v-model="filterTime"
       >
         <option class="select-items" value="all">All time</option>
-        <option class="select-items" value="0">1 day</option>
-        <option class="select-items" value="6">7 days</option>
-        <option class="select-items" value="29">30 days</option>
+        <option class="select-items" value="1">1 day</option>
+        <option class="select-items" value="7">7 days</option>
+        <option class="select-items" value="30">30 days</option>
       </select>
     </div>
     <div class="filterList d-none d-md-block">
@@ -61,7 +63,7 @@
         :key="index"
         class="filterItemMobile"
       >
-        <img class="filterImg" :src="asset_url + item.asset_url" />
+        <img class="filterImg" :src="asset_url + item.asset_url" alt="" />
         <label class="profName">
           {{ item.display_name }}
         </label>
@@ -85,8 +87,15 @@ export default {
     };
   },
   methods: {
-    fetchFilteredUser() {
-      getMaxBuyers(this.filterTime);
+    async filterUser() {
+      this.fetchFilteredUser();
+    },
+    async fetchFilteredUser() {
+      if (this.userType == "sell") {
+        this.userList = await getMaxSellers(this.filterTime);
+      } else {
+        this.userList = await getMaxBuyers(this.filterTime);
+      }
     },
   },
   mounted() {
