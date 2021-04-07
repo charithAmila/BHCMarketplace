@@ -11,12 +11,7 @@
           <h4 class="content-title text-head">
             Create {{ capitalizeFirstLetter(type) }} Collectible
           </h4>
-          <form
-            id="create-collectible"
-            :data-collectible-type="type"
-            method="POST"
-            :action="store_route"
-          >
+          <form id="create-collectible">
             <div class="form-group">
               <h6 class="content-title text-upload">{{ process }}</h6>
               <div class="fileArea">
@@ -546,9 +541,7 @@
                 class="submitBtn"
                 @click="createCollectible"
               >
-                <span
-                  v-html="isMinting ? text.mintText : 'Mint Token for hps'"
-                ></span>
+                <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
               </button>
             </div>
             <div
@@ -702,7 +695,10 @@ export default {
   },
   methods: {
     popupModal() {
-      $("#create-collectible-modal").addClass("d-block");
+      Toast.fire({
+        icon: "error",
+        title: "User rejected transaction!",
+      });
     },
     setPaywith() {
       if (this.pay_with == "hps") {
@@ -878,13 +874,19 @@ export default {
           if (data.status) {
             this.isNftApproved = true;
           } else {
-            alert("Try again!");
+            Toast.fire({
+              icon: "warning",
+              title: "try again!",
+            });
           }
           this.isApprovingNft = false;
         });
       } catch (error) {
         if (error.code == 4001) {
-          alert("User rejected approving NFT");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
         this.isApprovingNft = false;
       }
@@ -898,13 +900,19 @@ export default {
           if (data.status) {
             this.isApproved = true;
           } else {
-            alert("Try again!");
+            Toast.fire({
+              icon: "warning",
+              title: "try again!",
+            });
           }
           this.isApproving = false;
         });
       } catch (error) {
         if (error.code == 4001) {
-          alert("User rejected approving HPS");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
         this.isApproving = false;
       }
@@ -1055,7 +1063,10 @@ export default {
                     )}`;
                   }
                 } else {
-                  alert("Try again!");
+                  Toast.fire({
+                    icon: "warning",
+                    title: "try again!",
+                  });
                 }
                 _this.isMinting = false;
 
@@ -1084,21 +1095,30 @@ export default {
                     )}`;
                   }
                 } else {
-                  alert("Try again!");
+                  Toast.fire({
+                    icon: "warning",
+                    title: "try again!",
+                  });
                 }
                 _this.isMinting = false;
               });
             }
           } catch (error) {
             if (error.code == 4001) {
-              alert("User rejected minting token");
+              Toast.fire({
+                icon: "error",
+                title: "User rejected transaction!",
+              });
             }
             _this.isMinting = false;
           }
         })
         .catch(function (error) {
           if (error.code == 4001) {
-            alert("User rejected minting token");
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
           }
           _this.isMinting = false;
         });
@@ -1145,7 +1165,10 @@ export default {
         }
       } catch (error) {
         if (error.code == 4001) {
-          alert("User denied signing the order!");
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
         this.isSigning = false;
       }
