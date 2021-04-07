@@ -37,7 +37,6 @@
 
 
 <script>
-
 export default {
   data() {
     return {
@@ -49,14 +48,16 @@ export default {
   methods: {
     connectMetamsk: async function () {
       const _this = this;
-      window.ethereum.send("eth_requestAccounts").then((data) => {
-        _this.selectedAccount = data.result[0];
-        window.location.href = _this.url_previous;
-      });
+      try {
+        window.ethereum.send("eth_requestAccounts").then((data) => {
+          _this.selectedAccount = data.result[0];
+          window.location.href = _this.url_previous;
+        });
+      } catch (e) {
+        alert("No Metamask Provider Found!");
+      }
     },
-    walletConnect(){
-      
-    }
+    walletConnect() {},
   },
 };
 </script>
