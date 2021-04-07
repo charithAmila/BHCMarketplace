@@ -618,7 +618,7 @@ async function buy(
             {
 
                 gasLimit: BigNumber.from(3000000),
-                value: buyWith == toAddress("") ? ethers.utils.parseEther(`${price}`) : "0"
+                value: buyWith == toAddress("") ? ethers.utils.parseEther(`${Number(price) * 1.025}`) : "0"
             }
         );
         return tx.hash;
