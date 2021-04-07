@@ -272,11 +272,11 @@ export default {
           await axios.post('addNotification',data,{
           }).then((res) => {
             console.log(res.data);
-          });
-        }
-
+          })
+              }
+            }
           }
-        })
+              })
         .catch((error) => {
           if (error.code == 4001) {
             alert("User rejected minting token");
