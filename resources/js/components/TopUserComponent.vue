@@ -41,17 +41,16 @@
 
       <div id="actual-top-user">
         <div v-for="(item, index) in userList" :key="index" class="topUserList">
-          <label class="numbering">{{ index + 1 }}</label>
           <a class="black-link" :href="item.profile_url">
-            <img class="filterImg" :src="asset_url + item.asset_url" />
+            <img class="filterImg" :src="item.propic" alt="" />
           </a>
           <div class="user-info">
             <h6>
               <a class="black-link" :href="item.profile_url">{{
-                item.display_name
+                item.username
               }}</a>
             </h6>
-            <label>{{ item.totalPrice }} BHC</label>
+            <label>{{ item.sell_amount }} BHC</label>
           </div>
         </div>
       </div>
@@ -93,8 +92,10 @@ export default {
     async fetchFilteredUser() {
       if (this.userType == "sell") {
         this.userList = await getMaxSellers(this.filterTime);
+        $("#preloader-top-user").addClass("d-done");
       } else {
         this.userList = await getMaxBuyers(this.filterTime);
+        $("#preloader-top-user").addClass("d-done");
       }
     },
   },
@@ -103,3 +104,8 @@ export default {
   },
 };
 </script>
+<style>
+.d-done {
+  display: none !important;
+}
+</style>
