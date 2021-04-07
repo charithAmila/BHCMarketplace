@@ -46,7 +46,7 @@ class NotificationController extends Controller
     $data->delete();
     }
 
-    public function getMaxBuyers(){
+    public function getData(){
         $data = Notification::all();
        return $data;
     }
