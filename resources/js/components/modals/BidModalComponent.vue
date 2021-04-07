@@ -253,22 +253,38 @@ export default {
   methods: {
 
 //////////////////!Approve WBNB////////////////////
-async approveWBNBFunc() {
+async approveWBNBFunc(){
+try{
 this.approveWBNBText = this.approvingWbnbText;
 let res = await approveWBNB(this.total_payment);
 if(res){
 this.approveWBNBText ="Approved WBNB";
 this.approved = true;
+}}catch(error){
+         if (error.code == 4001) {
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
+          }
 }
 },
 //////////////////!Convert BNB////////////////////
 async convertBNB(){
   if(this.enoughBNB){
+    try{
   this.convertBNBText = this.convertText;
 let res = await convertBNBtoWBNB(this.total_payment);
 if(res){
   this.WBNB_Balance += this.payment;
   this.convertBNBText = "Converted BNB to WBNB"
+}}catch(error){
+         if (error.code == 4001) {
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
+          }
 }}
 else{
   	this.error  = "Not enough Balance"
@@ -278,10 +294,18 @@ else{
  async approveBHCFunc() {
 this.approveBHCText = this.approvingText;
 if(this.enoughBHC){
+try{
 var res = await approveBHC(this.total_payment)
 if(res==1){
   this.approveBHCText = "Approved BHC"
   this.approved = true;
+}}catch(error){
+         if (error.code == 4001) {
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
+          }
 }
 }else{
 	this.error  = "Not enough Balance"
@@ -291,6 +315,7 @@ if(res==1){
 //////////////////!Sign Bid////////////////////
 
 async signBidFunc(){
+
   let pay_token;
   this.signBidText = this.signText;
    this.currency = $("#selectedCurrency").text();
@@ -301,6 +326,7 @@ console.log(this.selected_token==0);
    else{
      pay_token = "0xae13d989dac2f0debff460ac112a837c89baa7cd"
    }
+   try{
   let res = await signBid(
         this.singleNft.owner_id,
         this.singleNft.contract,
@@ -322,6 +348,13 @@ console.log(this.selected_token==0);
         
         this.signed= true;
         this.signBidText = "Signed and Placed Order"
+      }}catch(error){
+               if (error.code == 4001) {
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
+          }
       }
     },
 
@@ -338,6 +371,7 @@ console.log(this.selected_token==0);
 //////////////////!Place Bid////////////////////
     async placeBid() {
       this.currency = $("#selectedCurrency").text();
+      try{
       let res = await bid(
         this.singleNft.owner_id,
         this.singleNft.contract,
@@ -349,6 +383,7 @@ console.log(this.selected_token==0);
       console.log(res);
       let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name;
       let success = true;
+      
        if(success){
           let data={};
           data.message = message;
@@ -357,6 +392,13 @@ console.log(this.selected_token==0);
           }).then((res) => {
             console.log(res.data);
           });
+        }}catch(error){
+                 if (error.code == 4001) {
+            Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
+          }
         }
     },
   },
