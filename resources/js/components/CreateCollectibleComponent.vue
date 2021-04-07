@@ -525,7 +525,11 @@
               class="col-md-12 create-cmodel-elements"
               v-if="pay_with_hps && !isApproved"
             >
-              <button type="button" class="submitBtn" @click="approve">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="!isApproving ? approve() : ''"
+              >
                 <span
                   v-html="isApproving ? text.approveText : 'Approve HPS'"
                 ></span>
@@ -539,7 +543,7 @@
               <button
                 type="button"
                 class="submitBtn"
-                @click="createCollectible"
+                @click="!isMinting ? createCollectible() : ''"
               >
                 <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
               </button>
@@ -551,7 +555,7 @@
               <button
                 type="button"
                 class="submitBtn"
-                @click="createCollectible"
+                @click="!isMinting ? createCollectible() : ''"
               >
                 <span v-html="isMinting ? text.mintText : 'Mint Token'"></span>
               </button>
@@ -560,7 +564,11 @@
               class="col-md-12 create-cmodel-elements"
               v-if="putOnSale && !isSigned && isMinted"
             >
-              <button type="button" class="submitBtn" @click="sign">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="!isSigning ? sign() : ''"
+              >
                 <span v-html="isSigning ? text.signText : 'Sign'"></span>
               </button>
             </div>
@@ -568,7 +576,11 @@
               class="col-md-12 create-cmodel-elements"
               v-if="putOnSale && !isNftApproved && isSigned"
             >
-              <button type="button" class="submitBtn" @click="approveNFT">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="!isApprovingNft ? approveNFT() : ''"
+              >
                 <span
                   v-html="isApprovingNft ? text.approvenftText : 'Approve NFT'"
                 ></span>
@@ -578,7 +590,11 @@
               class="col-md-12 create-cmodel-elements"
               v-if="putOnSale && isNftApproved"
             >
-              <button type="button" class="submitBtn" @click="placeOrder">
+              <button
+                type="button"
+                class="submitBtn"
+                @click="!isSelling ? placeOrder() : ''"
+              >
                 <span v-html="isSelling ? text.saleText : 'Put on Sale'"></span>
               </button>
             </div>
