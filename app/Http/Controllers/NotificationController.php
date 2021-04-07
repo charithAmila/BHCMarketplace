@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Notification;
+use Carbon\Carbon;
 use Auth;
+
 
 class NotificationController extends Controller
 {
@@ -50,8 +52,17 @@ class NotificationController extends Controller
         $data->delete();
     }
 
-    public function getData()
+    public function getData(Request $request, $time)
     {
-        return  Notification::all();
+        $time_duration = $time;
+        if ($time_duration == "1") {
+            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(1))->get();
+        } else if ($time_duration == "7") {
+            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(7))->get();
+        } else if ($time_duration == "30") {
+            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(30))->get();
+        } else {
+            return  Notification::all();
+        }
     }
 }
