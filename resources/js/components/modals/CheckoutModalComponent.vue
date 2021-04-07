@@ -266,27 +266,46 @@ export default {
 
             if (_this.page == "marketplace" || _this.page == "profile") {
               _this.$parent.$parent.getCollectible();
+              data = {};
+              data.message_seller = message_seller;
+              data.message_buyer = message_buyer;
+              data.buyer_id = toAddress(window.ethereum.selectedAddress);
+              data.buy_amount = _this.price;
+              data.seller_id = collectible.owner_id;
+              data.bid = false;
+              await axios.post("addNotification", data, {}).then((res) => {
+                console.log(res.data);
+              });
             }
             if (_this.page == "marketplace") {
               _this.$parent.$parent.$parent.updateTopUser();
+              data = {};
+              data.message_seller = message_seller;
+              data.message_buyer = message_buyer;
+              data.buyer_id = toAddress(window.ethereum.selectedAddress);
+              data.buy_amount = _this.price;
+              data.seller_id = collectible.owner_id;
+              data.bid = false;
+              await axios.post("addNotification", data, {}).then((res) => {
+                console.log(res.data);
+              });
             }
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
-              if (success) {
-                data = {};
-                data.message_seller = message_seller;
-                data.message_buyer = message_buyer;
-                data.buyer_id = toAddress(window.ethereum.selectedAddress);
-                data.buy_amount = _this.price;
-                data.seller_id = collectible.owner_id;
-                data.bid = false;
-                await axios.post("addNotification", data, {}).then((res) => {
-                  console.log(res.data);
-                });
-              }
+
+              data = {};
+              data.message_seller = message_seller;
+              data.message_buyer = message_buyer;
+              data.buyer_id = toAddress(window.ethereum.selectedAddress);
+              data.buy_amount = _this.price;
+              data.seller_id = collectible.owner_id;
+              data.bid = false;
+              await axios.post("addNotification", data, {}).then((res) => {
+                console.log(res.data);
+              });
             }
           }
-              })
+        })
         .catch((error) => {
           if (error.code == 4001) {
             Toast.fire({
