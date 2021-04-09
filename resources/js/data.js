@@ -99,7 +99,7 @@ async function getUserDetails(addressString) {
     try {
         var res = await axios.get("/api/profile/" + address);
         var response = await axios.get(
-            "https://gateway.pinata.cloud/ipfs/" + res.data
+            "https://gateway.pinata.cloud/ipfs/" + res.data.ipfs_hash
         );
         //console.log(response)
         user.cover_photo = response.data.cover || user.cover_photo;
