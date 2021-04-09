@@ -1176,7 +1176,7 @@ body {
 .row-0 .withBgGray .title-container {
     position: sticky;
     top: 0;
-    z-index: 999;
+    z-index: 999999;
 }
 
 .row-0 .withBgGray .title-container .space-between {
@@ -1311,7 +1311,7 @@ body {
     position: sticky;
     top: 0;
     background: #ECECEC;
-    z-index: 999;
+    z-index: 99999;
 }
 
 .row-0 .tabGroup {

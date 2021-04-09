@@ -239,6 +239,8 @@ Vue.component(
     require("./components/pages/CollectionPage.vue").default
 );
 
+Vue.component("search-page", require("./components/SearchPage.vue").default);
+
 try {
     window.ethereum.on("accountsChanged", function() {
         window.location.reload();

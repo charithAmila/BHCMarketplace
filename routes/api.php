@@ -24,6 +24,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::get('/keygen', [PinataController::class, 'generateJWT']);
 
-Route::resource('profile', ProfileController::class);
+Route::resource('/profile', ProfileController::class);
 Route::apiResource('shorturls', ShortUrlController::class);
 Route::resource('collections', CollectionsController::class);
