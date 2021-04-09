@@ -2199,7 +2199,7 @@ body {
   border: none;
   outline: none;
   text-decoration: none;
-  z-index: 9999;
+  z-index: 99;
 }
 
 .profile-cover .edit-cover-mobile {
@@ -2232,7 +2232,7 @@ body {
 }
 
 .profile-section .profile-info .actual-img-container {
-  z-index: 9999;
+  z-index: 99;
   position: relative;
   display: inline-block;
   border-radius: 50%;
