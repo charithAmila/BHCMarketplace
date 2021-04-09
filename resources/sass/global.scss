@@ -1595,7 +1595,7 @@ body {
         border: none;
         outline: none;
         text-decoration: none;
-        z-index: 9999;
+        z-index: 99;
     }
     .edit-cover-mobile {
         font-size: 13px;
@@ -1624,7 +1624,7 @@ body {
         display: block;
         text-align: center;
         .actual-img-container {
-            z-index: 9999;
+            z-index: 99;
             position: relative;
             display: inline-block;
             border-radius: 50%;
