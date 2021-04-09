@@ -12,7 +12,7 @@
             <div class="collectibleTitle col-option">
               <h3 class="inlineDiv inline-btn">
                 <a
-                  v-if="current_user != current_owner.wallet"
+                 
                   id="options-btn"
                   class="show-drop"
                   href="javascript:void(0)"
@@ -32,9 +32,9 @@
 
               <div
                 class="show-opt-menu d-none"
-                v-if="current_user != current_owner.wallet"
               >
                 <a
+                 v-if="current_user != current_owner.wallet"
                   :class="set_collectible.is_selling == 1 ? '' : 'd-none'"
                   class="buy-now"
                   href="javascript:void(0)"
@@ -42,17 +42,25 @@
                   >Buy now</a
                 >
                 <a
-                  v-if="singleNft.biddingStatus"
+                 v-if="current_user != current_owner.wallet && singleNft.biddingStatus"
+                
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
                   >Place a bid</a
                 >
                 <a
+                 v-if="current_user != current_owner.wallet"
                   class="report"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('report')"
                   >Report</a
+                >
+                  <a
+                  href="javascript:void(0)"
+                  class="report"
+                  @click="putOnSale(this.collectible)"
+                  >Put on sale</a
                 >
               </div>
 
@@ -484,7 +492,13 @@ export default {
       this.record_id = this.singleNft.record_id;
     },
   },
-  methods: {
+  methods: {  
+    putOnSale(collectible) {
+      const _this = this;
+      _this.singleNft = collectible;
+      _this.loaded = true;
+      _this.toggleModal("putOnSale");
+    },
     checkConnection() {
       const _this = this;
       var interval = setInterval(function () {
