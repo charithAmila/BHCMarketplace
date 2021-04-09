@@ -11,7 +11,7 @@ if (typeof window.ethereum == "undefined") {
 async function checkliked(contract, id) {
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    var connected_account = address.toLowerCase();
     var res = await axios.get("/like");
     var data = res.data;
     var valObj = data.likes.filter(function(elem) {
@@ -33,7 +33,7 @@ async function LikeController(contract, id) {
     const signer = provider.getSigner();
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    //  window.connected_account = address.toLowerCase();
     if (!address) {
         alert("Please connect your wallet first");
     } else {
@@ -73,7 +73,7 @@ async function LikeController(contract, id) {
 async function checkfollowed(user_id, follower_id) {
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    //  window.connected_account = address.toLowerCase();
     var res = await axios.get("/followers");
     var data = res.data;
     var valObj = data.followers.filter(function(elem) {
@@ -91,7 +91,7 @@ async function FollowController(user_id, follower_id) {
     const signer = provider.getSigner();
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    // window.connected_account = address.toLowerCase();
     if (!address) {
         alert("Please connect your wallet first");
     } else {
