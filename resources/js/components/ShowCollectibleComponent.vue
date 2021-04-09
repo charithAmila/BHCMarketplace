@@ -595,7 +595,7 @@ export default {
       var _this = this;
       data.contract = contract;
       data.token_id = id;
-      data.address = connected_account.toLowerCase();
+      data.address = checkConnection().toLowerCase();
       axios
         .post("/unlike", data, {})
         .then(function (response) {
