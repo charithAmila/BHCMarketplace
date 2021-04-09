@@ -273,6 +273,7 @@ export default {
         var user_id = this.user_id;
         var follower_id = checkConnection();
         var output = await FollowController(user_id, follower_id);
+        console.log(output);
         if (output.success) {
           this.following = true;
         }

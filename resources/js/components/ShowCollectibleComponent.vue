@@ -569,9 +569,10 @@ export default {
       var contract = this.collectible.contract;
       var id = this.collectible.id;
       var _this = this;
+      var address_connected = checkConnection().toLowerCase();
       data.contract = contract;
       data.token_id = id;
-      data.address = connected_account.toLowerCase();
+      data.address = address_connected;
       axios
         .post("/unlike", data, {})
         .then(function (response) {
