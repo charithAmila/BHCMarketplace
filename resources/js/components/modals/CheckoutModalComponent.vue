@@ -126,6 +126,7 @@ export default {
       payment: 0,
       price: 0,
       currency: "",
+      loading:"Buying...<img src='/images/loading.gif' alt='' width='7%' />",
       nft_id: 0,
       record_id: 0,
       approved: false,
