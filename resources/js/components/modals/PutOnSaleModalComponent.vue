@@ -177,6 +177,7 @@ export default {
       progress: "Sign Order",
        approvingText: "Approving...<img src='/images/loading.gif' alt='' width='7%' />",
 	    signingText: "Signing...  <img src='/images/loading.gif' alt='' width='7%' />",
+      test:'',
       processing: false,
       orderId: "",
       approved: "",

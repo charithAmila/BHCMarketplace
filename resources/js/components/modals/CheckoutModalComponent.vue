@@ -75,7 +75,7 @@
               @click.prevent="approve"
               v-if="!approved && enoughBalance"
             >
-              Approve
+            <span v-html="approveText"></span>
             </button>
             <button
               class="form-submit"
@@ -126,6 +126,7 @@ export default {
       payment: 0,
       price: 0,
       currency: "",
+      approveText: "Approve",
       loading:"Buying...<img src='/images/loading.gif' alt='' width='7%' />",
       purchasing:false,
       nft_id: 0,
