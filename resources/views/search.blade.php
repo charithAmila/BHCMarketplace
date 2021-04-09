@@ -7,8 +7,6 @@
     :collectible_asset="'collectible_aasest'" :show_collectible="{{ json_encode(asset('/nft').'/') }}"
     :base_url="{{ json_encode(URL::to('/')) }}" :asset_url="{{ json_encode(asset('/')) }}"
     :marketplace_url="{{ json_encode(route('marketplace')) }}"></search-page>
-
-
 @section('extra_scripts')
 <script src="{{ asset('js/custom.js') }}"></script>
 @endsection
