@@ -60,7 +60,7 @@
                   v-if="current_user == current_owner.wallet"
                   href="javascript:void(0)"
                   class="report"
-                  @click="putOnSale(this.collectible)"
+                  @click="putOnSale(collectible)"
                   >Put on sale</a
                 >
               </div>
@@ -451,6 +451,7 @@
 </template>
 
 <script>
+import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 import $ from "jquery";
 import CollectibleDetails from "./show_collectible/CollectibleDetailsComponent.vue";
 import BidModal from "./modals/BidModalComponent.vue";
@@ -463,6 +464,7 @@ import { LikeController } from "../mediaFunc";
 
 export default {
   components: {
+   PutOnSaleModalComponent ,
     CollectibleDetails,
     BidModal,
     CheckoutModal,
@@ -478,6 +480,7 @@ export default {
   ],
   data() {
     return {
+      current_page:'',
       creator: [],
       current_owner: [],
       owners: [],
@@ -628,6 +631,7 @@ export default {
     },
   },
   async mounted() {
+    this.current_page = 'show_collectible';
     this.loaded = false;
     this.set_collectible = this.collectible;
     this.singleNft = this.collectible;
