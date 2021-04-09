@@ -571,7 +571,7 @@ export default {
       var _this = this;
       data.contract = contract;
       data.token_id = id;
-      data.address = checkConnection().toLowerCase();
+      data.address = connected_account.toLowerCase();
       axios
         .post("/unlike", data, {})
         .then(function (response) {
@@ -585,12 +585,13 @@ export default {
       var contract = this.collectible.contract;
       var id = this.collectible.id;
       var _this = this;
+      var address_connected = checkConnection().toLowerCase();
       axios.get("/like").then((res) => {
         var valObj = res.data.likes.filter(function (elem) {
           if (
             elem.token_id == id &&
             elem.contract == contract &&
-            elem.address == checkConnection() &&
+            elem.address == address_connected &&
             elem.liked == true
           )
             return elem.token_id;
