@@ -15,8 +15,8 @@ class CategorySeeder extends Seeder
     public function run()
     {
         $categories = [
-            ['category' => 'arts'],
-            ['category' => 'memes']
+            ['category' => 'Arts'],
+            ['category' => 'Memes']
         ];
         DB::table('categories')->insert($categories);
     }
