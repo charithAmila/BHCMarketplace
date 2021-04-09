@@ -233,7 +233,7 @@ export default {
         .get("/api/profile/" + _this.user.wallet)
         .then(function (response) {
           axios
-            .get("https://ipfs.io/ipfs/" + response.data)
+            .get("https://ipfs.io/ipfs/" + response.data.ipfs_hash)
             .then(function (response) {
               _this.user.name = response.data.name;
               _this.user.bio = response.data.description;
