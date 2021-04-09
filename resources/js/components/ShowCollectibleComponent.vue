@@ -441,6 +441,12 @@
       :singleNft="singleNft"
       :page="'showcollectible'"
     ></bid-modal-component>
+    <put-on-sale-modal-component
+      v-if="loaded"
+      :singleNft="singleNft"
+      :page="current_page"
+    >
+    </put-on-sale-modal-component>
   </div>
 </template>
 
@@ -495,10 +501,10 @@ export default {
   },
   methods: {  
     putOnSale(collectible) {
-     // const _this = this;
-      //_this.singleNft = collectible;
-     // _this.loaded = true;
-     // _this.toggleModal("putOnSale");
+     const _this = this;
+      _this.singleNft = collectible;
+      _this.loaded = true;
+      _this.toggleModal("putOnSale");
     },
      toggleModal(clicked) {
       modalOpen($("#" + clicked + "Modal"), $("." + clicked + "-content"));
