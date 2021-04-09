@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\Collectible;
 use Illuminate\Http\Request;
 
@@ -14,13 +15,11 @@ class SearchController extends Controller
      */
     public function index(Request $request)
     {
-        $nft = new Collectible;
-
-        $data = $nft->fetchAllCollectibles(null, 'updated_at', 'asc', $request->input('nft'));
-
-        $this->data['collectibles'] = json_decode(json_encode($data));
-
-        return view('search', $this->data);
+        return view('search', ['query' => $request->input('nft')]);
+    }
+    public function search(Request $request)
+    {
+        return $request->parameter;
     }
 
     /**

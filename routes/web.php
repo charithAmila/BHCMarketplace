@@ -1,20 +1,21 @@
 <?php
 
 use App\Events\PlaceBid;
+use App\Http\Controllers\SearchSales;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LikesController;
+use App\Http\Controllers\SalesController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\Api\BidController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CollectibleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\CollectionController;
-use App\Http\Controllers\SalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,5 +121,7 @@ Route::post('deleteNotification', [NotificationController::class, 'delete']);
 Route::get('followers', [FollowController::class, 'index'])->name('followers');
 
 Route::resource('sales', SalesController::class);
+
+Route::get('sales_search', [SearchSales::class, 'search']);
 
 Route::get('/getData/{time}', [NotificationController::class, 'getData']);

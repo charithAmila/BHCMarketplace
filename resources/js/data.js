@@ -71,10 +71,8 @@ async function getMaxSellers(time_filter) {
 function tempUserData(addressString) {
     var address = toAddress(addressString);
     return {
-        cover_photo:
-            "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg",
-        display_photo:
-            "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+        cover_photo: "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg",
+        display_photo: "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
         name: "Empty User",
         bio: "Empty Bio",
         wallet: address,
@@ -85,8 +83,7 @@ function tempUserData(addressString) {
 function tempCollectionData() {
     //var address = toAddress(addressString);
     return {
-        icon:
-            "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+        icon: "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
         name: "Empty Name",
         Symbol: "Empty Symbol",
         description: "Empty Description",
@@ -101,7 +98,9 @@ async function getUserDetails(addressString) {
     var user = tempUserData(address);
     try {
         var res = await axios.get("/api/profile/" + address);
-        var response = await axios.get("https://ipfs.io/ipfs/" + res.data);
+        var response = await axios.get(
+            "https://gateway.pinata.cloud/ipfs/" + res.data
+        );
         //console.log(response)
         user.cover_photo = response.data.cover || user.cover_photo;
         user.display_photo = response.data.dp || user.display_photo;
@@ -118,13 +117,14 @@ async function getCollections(type, me, forDetails) {
     ///delete///
 
     var colIpfs = await collectionURI(hps721Address);
-
+    colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.cloud");
     var res = await axios.get(colIpfs);
     var t = res.data;
 
     t.address = hps721Address;
     type == 721 ? collections.push(t) : null;
     var colIpfs = await collectionURI(hps1155Address);
+    colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.cloud");
     var res = await axios.get(colIpfs);
     var t = res.data;
     t.address = hps1155Address;
@@ -171,6 +171,10 @@ async function getOwnedTokensData(owner, base_url) {
     console.log([tokens721, tokens1155]);
     for (var i = 0; i < tokens721.length; i++) {
         var selectedToken = tokens721[i];
+        selectedToken.URI = selectedToken.URI.replace(
+            "ipfs.io",
+            "gateway.pinata.cloud"
+        );
         var res = await axios.get(selectedToken.URI);
         var nft = res.data;
 
@@ -196,11 +200,11 @@ async function getOwnedTokensData(owner, base_url) {
             nft.price = salesData.price;
             nft.is_selling = true;
             nft.currency = salesData.currency;
-            nft.currency == hpsAddress
-                ? (nft.currencyName = "HPS")
-                : nft.currency == bhcAddress
-                ? (nft.currencyName = "BHC")
-                : (nft.currencyName = "BNB");
+            nft.currency == hpsAddress ?
+                (nft.currencyName = "HPS") :
+                nft.currency == bhcAddress ?
+                (nft.currencyName = "BHC") :
+                (nft.currencyName = "BNB");
 
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
@@ -212,6 +216,11 @@ async function getOwnedTokensData(owner, base_url) {
     }
     for (var i = 0; i < tokens1155.length; i++) {
         var selectedToken = tokens1155[i];
+        selectedToken.URI = selectedToken.URI.replace(
+            "ipfs.io",
+            "gateway.pinata.cloud"
+        );
+
         var res = await axios.get(selectedToken.URI);
         var nft = res.data;
 
@@ -236,11 +245,11 @@ async function getOwnedTokensData(owner, base_url) {
             nft.price = salesData.price;
             nft.is_selling = true;
             nft.currency = salesData.currency;
-            nft.currency == hpsAddress
-                ? (nft.currencyName = "HPS")
-                : nft.currency == bhcAddress
-                ? (nft.currencyName = "BHC")
-                : (nft.currencyName = "BNB");
+            nft.currency == hpsAddress ?
+                (nft.currencyName = "HPS") :
+                nft.currency == bhcAddress ?
+                (nft.currencyName = "BHC") :
+                (nft.currencyName = "BNB");
 
             nft.signed_to = salesData.signed_to;
             nft.db_id = salesData.id;
@@ -342,11 +351,11 @@ async function getTokenData(contract, owner, id) {
     //var res = await axios.get("/api/collections/" + contract);
     var biddingStatus = await getBiddingStatus(owner, contract, id);
     var isPrivate =
-        contract != hps721Address
-            ? true
-            : contract != hps1155Address
-            ? true
-            : false;
+        contract != hps721Address ?
+        true :
+        contract != hps1155Address ?
+        true :
+        false;
 
     var type = await getCollectionType(contract);
 
@@ -369,6 +378,10 @@ async function getTokenData(contract, owner, id) {
         );
         type = 1155;
     }
+    selectedToken.URI = selectedToken.URI.replace(
+        "ipfs.io",
+        "gateway.pinata.cloud"
+    );
 
     var colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
@@ -412,11 +425,11 @@ async function getTokenData(contract, owner, id) {
         nft.price = salesData.price;
         nft.is_selling = true;
         nft.currency = salesData.currency;
-        nft.currency == hpsAddress
-            ? (nft.currencyName = "HPS")
-            : nft.currency == bhcAddress
-            ? (nft.currencyName = "BHC")
-            : (nft.currencyName = "BNB");
+        nft.currency == hpsAddress ?
+            (nft.currencyName = "HPS") :
+            nft.currency == bhcAddress ?
+            (nft.currencyName = "BHC") :
+            (nft.currencyName = "BNB");
 
         nft.signed_to = salesData.signed_to;
         nft.db_id = salesData.id;
@@ -476,12 +489,56 @@ async function getAllSales(current_user) {
                 nft.salt = tokens[i].salt;
                 nft.currency = tokens[i].currency;
                 nft.currencyName =
-                    tokens[i].currency == hpsAddress
-                        ? "HPS"
-                        : tokens[i].currency == bhcAddress
-                        ? "BHC"
-                        : "BNB";
+                    tokens[i].currency == hpsAddress ?
+                    "HPS" :
+                    tokens[i].currency == bhcAddress ?
+                    "BHC" :
+                    "BNB";
 
+                data.push(nft);
+            } catch (e) {}
+        }
+    }
+
+    return data;
+}
+
+async function getAllSalesSearch(current_user, parameter) {
+    var data = [];
+    var tokens721 = [];
+    var tokens1155 = [];
+    var res = await axios.get("/sales_search?q=" + parameter);
+    var tokens = res.data;
+
+    for (var i = 0; i < tokens.length; i++) {
+        if (tokens[i].current_owner != current_user) {
+            try {
+                var nft = await getTokenData(
+                    tokens[i].collection,
+                    tokens[i].current_owner,
+                    tokens[i].token_id
+                );
+                nft.copies = nft.count;
+                nft.collection = tokens[i].collection;
+
+                nft.signed_to = tokens[i].signed_to;
+                nft.db_id = tokens[i].id;
+                nft.price = tokens[i].price;
+                nft.created_at = moment(tokens[i].created_at).format(
+                    "MM/DD/YYYY hh:mm"
+                );
+                nft.isp = 1;
+                nft.is_selling = 1;
+                nft.signature = tokens[i].signature;
+                nft.salt = tokens[i].salt;
+                nft.currency = tokens[i].currency;
+                nft.currencyName =
+                    tokens[i].currency == hpsAddress ?
+                    "HPS" :
+                    tokens[i].currency == bhcAddress ?
+                    "BHC" :
+                    "BNB";
+                nft.creatorData = await getUserDetails(nft.creator);
                 data.push(nft);
             } catch (e) {}
         }
@@ -548,5 +605,6 @@ export {
     getLikedTokens,
     getCreatedTokens,
     getMaxBuyers,
-    getMaxSellers
+    getMaxSellers,
+    getAllSalesSearch
 };

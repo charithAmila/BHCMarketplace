@@ -14,7 +14,9 @@
 		</div>
 		<div class="notif-list" :class="notifications.length > 0 ? '':'d-none'">
 			<div v-for="notif in notifications" :key="notif.id" class="notif-item">
-				<div>{{notif.message}}</div>
+				<div>
+					<p>
+					{{notif.message}}</p></div>
 				<!--a :href="asset_url+'profile/'+notif.profile_link"><img class="notif-img" :src="notif.display_photo"></a-->
 				<!--label><a class="user-profile" :href="asset_url+'profile/'">{{ notif.messaage }}</a--><!--span class="notif-item">{{ notif.nft }}</span--><!--small> {{ notif.transaction_time }} ago</small--></label>
 			</div>
@@ -23,42 +25,40 @@
 </template>
 
 <script>
-import {
-    toAddress,
-    checkConnection
-} from "../etherFunc.js";
-export default{
-	props: ['asset_url'],
-	data() {
-		return{
-			notifications: [],
-			address:''
-		}
-	},
-	methods: {
-		getNotifications(){
-			let data={}
-			data.user_id = this.address
-			axios.post('/notifications',data).then((res) => {
-				this.notifications = res.data
-			}).catch((error) =>{
-                console.log(error)
-            })
-		},
-		clearNotif(){
-			let data = {}
-			data.user_id = this.address
-			axios.post('/deleteNotification',data,{
-			}).then((res) => {
-			console.log(res.data);
-			});
-			this.notifications =[]
-		}
-	},
-	async mounted(){
-	
-		this.address = await toAddress(checkConnection());
-			this.getNotifications()
-	}
-}
+import { toAddress, checkConnection } from "../etherFunc.js";
+export default {
+  props: ["asset_url"],
+  data() {
+    return {
+      notifications: [],
+      address: "",
+    };
+  },
+  methods: {
+    getNotifications() {
+      let data = {};
+      data.user_id = this.address;
+      axios
+        .post("/notifications", data)
+        .then((res) => {
+          this.notifications = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    clearNotif() {
+      let data = {};
+      data.user_id = this.address;
+      axios.post("/deleteNotification", data, {}).then((res) => {
+        console.log(res.data);
+      });
+      this.notifications = [];
+    },
+  },
+  async mounted() {
+    this.address = await toAddress(checkConnection());
+    this.getNotifications();
+  },
+};
 </script>
