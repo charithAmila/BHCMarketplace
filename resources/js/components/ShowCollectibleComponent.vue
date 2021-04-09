@@ -57,7 +57,7 @@
                   >Report</a
                 >
                   <a
-                   v-if="current_user == current_owner.wallet"
+                  v-if="current_user == current_owner.wallet"
                   href="javascript:void(0)"
                   class="report"
                   @click="putOnSale(this.collectible)"

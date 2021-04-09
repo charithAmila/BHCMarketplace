@@ -19,7 +19,7 @@ class CreateLikesTable extends Migration
             $table->string("address")->nullable(false);
             $table->string("contract")->nullable(false);
             $table->integer("token_id")->nullable(false);
-            $table->boolean("liked");
+            $table->boolean("liked")->default(false);
         });
     }
 
