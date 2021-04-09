@@ -614,7 +614,7 @@ export default {
           if (
             elem.token_id == id &&
             elem.contract == contract &&
-            elem.address == connected_account &&
+            elem.address == checkConnection() &&
             elem.liked == true
           )
             return elem.token_id;
