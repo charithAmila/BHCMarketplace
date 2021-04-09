@@ -57,6 +57,7 @@
                   >Report</a
                 >
                   <a
+                   v-if="current_user == current_owner.wallet"
                   href="javascript:void(0)"
                   class="report"
                   @click="putOnSale(this.collectible)"
@@ -494,10 +495,13 @@ export default {
   },
   methods: {  
     putOnSale(collectible) {
-      const _this = this;
-      _this.singleNft = collectible;
-      _this.loaded = true;
-      _this.toggleModal("putOnSale");
+     // const _this = this;
+      //_this.singleNft = collectible;
+     // _this.loaded = true;
+     // _this.toggleModal("putOnSale");
+    },
+     toggleModal(clicked) {
+      modalOpen($("#" + clicked + "Modal"), $("." + clicked + "-content"));
     },
     checkConnection() {
       const _this = this;
