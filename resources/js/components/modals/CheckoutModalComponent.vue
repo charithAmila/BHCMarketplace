@@ -127,7 +127,7 @@ export default {
       price: 0,
       currency: "",
       approveText: "Approve",
-      loading:"Buying...<img src='/images/loading.gif' alt='' width='7%' />",
+      approvingText:"Approving...<img src='/images/loading.gif' alt='' width='7%' />",
       purchasing:false,
       nft_id: 0,
       record_id: 0,
@@ -192,6 +192,7 @@ export default {
     },
     async approve() {
       try {
+        this.approveText = this.approvingText;
         var hash = await approveTokens(
           this.currency,
           `${Number(this.total_payment)}`
@@ -203,6 +204,7 @@ export default {
         });
       } catch (error) {
         if (error.code == 4001) {
+          this.approveText = "Approve"
           Toast.fire({
             icon: "error",
             title: "User rejected transaction!",
