@@ -16,7 +16,7 @@
           <form
             autocomplete="off"
             id="purchaseForm"
-            @submit.prevent="enoughBalance ? purchase() : ''"
+            @submit.prevent="enoughBalance && !purchasing ? purchase() : ''"
           >
             <div class="form-divide">
               <input
@@ -80,9 +80,10 @@
             <button
               class="form-submit"
               type="submit"
+              v-if="approved"
               :disabled="!enoughBalance"
             >
-              Proceed to payment
+          <span v-html="proceedToPaymentText"></span>
             </button>
 
             <label class="text-details" v-if="!enoughBalance"
@@ -116,6 +117,7 @@ export default {
   props: ["singleNft", "page", "current_user"],
   data() {
     return {
+      purchasing:false,
       quantity: 1,
       balance: 0,
       allowance: 0,
@@ -127,7 +129,9 @@ export default {
       price: 0,
       currency: "",
       approveText: "Approve",
+      proceedToPaymentText:"Proceed to payment",
       approvingText:"Approving...<img src='/images/loading.gif' alt='' width='7%' />",
+      processPaymentText:"Processing payment...<img src='/images/loading.gif' alt='' width='7%' />",
       purchasing:false,
       nft_id: 0,
       record_id: 0,
@@ -213,6 +217,8 @@ export default {
       }
     },
     purchase() {
+      this.proceedToPaymentText = this.processPaymentText;
+      this.purchasing = true;
       var collectible = this.singleNft;
       let message_buyer =
         "You have successfully purchased " +
@@ -280,13 +286,16 @@ export default {
             setTimeout(function () {
               launch_toast();
             }, 500);
+
+           
             modalClose($("#checkoutModal"), $(".checkout-content"));
             _this.service_fee = 0;
             _this.total_payment = 0;
             _this.payment = 0;
             _this.bid_input = "";
             _this.quantity = 1;
-
+            this.purchasing = false;
+            this. proceedToPaymentText="Proceed to payment";
             if (_this.page == "marketplace" || _this.page == "profile") {
               _this.$parent.$parent.getCollectible();
             }
