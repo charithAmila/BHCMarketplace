@@ -118,7 +118,7 @@
             </button>
 
             <button
-              v-if="!approved && signed"
+              v-if="!singleNft.approved && signed"
               class="form-submit"
               @click="!approving ? approveNFT() : ''"
             >
@@ -127,7 +127,7 @@
 
             <button
               class="form-submit"
-              v-if="signed && approved"
+              v-if="signed && singleNft.approved"
               @click="placeOrder()"
             >
               <span v-html="saleText"></span>
@@ -183,7 +183,7 @@ export default {
       test: "",
       processing: false,
       orderId: "",
-      approved: "",
+      approved: false,
       currency_label: {
         1: "BHC",
         2: "BNB",
@@ -197,10 +197,6 @@ export default {
       //this.record_id = this.singleNft.record_id;
       //this.updateValues();
       this.signed = false;
-      this.approved = await checkNFTApproved(
-        this.singleNft.contract,
-        this.singleNft.owner_id
-      );
     },
     quantity: function () {
       this.updateValues();
@@ -208,7 +204,6 @@ export default {
   },
   methods: {
     toggleDropdown(ct) {
-      console.log(ct);
       var container;
       container = $(ct);
       if (!container.hasClass("fade-in-top")) {
@@ -258,6 +253,7 @@ export default {
         waitForTransaction(tx.hash).then((data) => {
           if (data.status) {
             this.approved = true;
+            this.singleNft.approved = true;
           }
         });
       } catch (error) {
