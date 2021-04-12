@@ -1,51 +1,5 @@
 [
     {
-        "inputs": [
-            {
-                "internalType": "contract IERC20TransferProxy",
-                "name": "_erc20TransferProxy",
-                "type": "address"
-            },
-            {
-                "internalType": "contract INFTStorage",
-                "name": "_nftStorage",
-                "type": "address"
-            },
-            {
-                "internalType": "contract IERC20",
-                "name": "_hps",
-                "type": "address"
-            },
-            {
-                "internalType": "address payable",
-                "name": "_benefeciary",
-                "type": "address"
-            },
-            {
-                "internalType": "address payable",
-                "name": "_com",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_fee",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_benPercentage",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_comPercentage",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
         "anonymous": false,
         "inputs": [
             {
@@ -179,6 +133,19 @@
     },
     {
         "inputs": [],
+        "name": "bnbFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "com",
         "outputs": [
             {
@@ -211,19 +178,6 @@
                 "internalType": "contract IERC20TransferProxy",
                 "name": "",
                 "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "fee",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -288,6 +242,19 @@
                 "internalType": "contract IERC20",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "hpsFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -388,13 +355,37 @@
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_hpsFee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_bnbFee",
+                "type": "uint256"
+            }
+        ],
         "name": "requiredFee",
         "outputs": [
             {
-                "internalType": "uint256",
-                "name": "_fee",
-                "type": "uint256"
+                "internalType": "uint256[2]",
+                "name": "_fees",
+                "type": "uint256[2]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "router",
+        "outputs": [
+            {
+                "internalType": "contract IBSCswapRouter01",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -417,7 +408,12 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_fee",
+                "name": "_hpsFee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_bnbFee",
                 "type": "uint256"
             },
             {
@@ -476,6 +472,19 @@
             }
         ],
         "name": "setReceivers",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract IBSCswapRouter01",
+                "name": "_router",
+                "type": "address"
+            }
+        ],
+        "name": "setRouter",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

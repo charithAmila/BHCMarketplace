@@ -1,6 +1,6 @@
 //////////////////////////////////////////Token Contracts//////////////////////////////////////////
 
-const hps721Address = "0xC8026213ea46f2eCB15069f0d6182c5C0920085D"
+/*const hps721Address = "0xC8026213ea46f2eCB15069f0d6182c5C0920085D"
 //const hps721Address = "0x99c67837E2695E2707fc3ed5cF630fcad111a1D7"
 const hps1155Address = "0x3C09A031925fBEcaA533F1C7C40ae6b3ab6CF236"
 
@@ -28,6 +28,31 @@ const WBNB_tokenAddress = "0xae13d989dac2f0debff460ac112a837c89baa7cd"; //testne
 
 /////////////////////////////////////////Exchanges////////////////////////////////////////////////
 const pancake_routerAddress = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F";
+const julswap_routerAddress = "0xbd67d157502A23309Db761c41965600c2Ec788b2";*/
+
+
+
+
+const hps721Address = "0xDE10d96076F21dda25d3b56D49F56084f9b2D647"
+//const hps721Address = "0x99c67837E2695E2707fc3ed5cF630fcad111a1D7"
+const hps1155Address = "0xC3db58eac6d44f6e91335B618B462A2515744FAb"
+
+//////////////////////////////////////////Utility Contracts///////////////////////////////////////
+const transferProxyAddress = "0xeDd0FFE20702F53EA49429ff23f2ED153e7f481b";
+const erc20TransferProxyAddress = "0x5ac627B0d9770C2b433298aF1389fc653A55bC64";
+const exchangeAddress = "0x3B700ff77F975F11861Cd475Ad12f835Aa13cE47"
+
+const NFTStorageAddress = "0x5aECe89bF2743bb1e0E33036fF174655AC68252c";
+const contractFactoryAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831";
+/////////////////////////////////////////Token address////////////////////////////////////////////
+const hpsAddress = "0xeDa21B525Ac789EaB1a08ef2404dd8505FfB973D";
+const bhcAddress = "0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4";
+const minterAddress = "0x4b8bAFA504cB1F61f33102E6F172178f9D4714eD";
+
+const WBNB_tokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //mainnet
+
+/////////////////////////////////////////Exchanges////////////////////////////////////////////////
+const pancake_routerAddress = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F";
 const julswap_routerAddress = "0xbd67d157502A23309Db761c41965600c2Ec788b2";
 
 export {
@@ -37,15 +62,15 @@ export {
     hps1155Address,
     transferProxyAddress,
     erc20TransferProxyAddress,
-    orderStorageAddress,
+    //orderStorageAddress,
     NFTStorageAddress,
     exchangeAddress,
     hpsAddress,
     bhcAddress,
     pancake_routerAddress,
-    CAD_tokenAddress,
-    ANKR_tokenAddress,
-    BELL_tokenAddress,
+    //CAD_tokenAddress,
+    //ANKR_tokenAddress,
+    //BELL_tokenAddress,
     minterAddress,
     contractFactoryAddress,
     julswap_routerAddress
