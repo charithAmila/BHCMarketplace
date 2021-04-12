@@ -39,6 +39,7 @@ function getTokenContract(bidding_token) {
         case "HPS":
             token_contract = new ethers.Contract(hpsAddress, token_ABI, signer);
             break;
+            b;
         case "ANKR":
             token_contract = new ethers.Contract(ANKR_token, token_ABI, signer);
             break;
@@ -72,7 +73,7 @@ async function getWBNBBalance() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = toAddress(checkConnection());
     const WBNB_Contract = new ethers.Contract(
-        "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+        WBNB_tokenAddress,
         WBNB_ABI,
         provider
     );
@@ -206,7 +207,7 @@ async function approveWBNB(_amount) {
     let amount = parseFloat(_amount) * 10 ** 18;
     let rate = 1;
     const WBNB_Write_Test = new ethers.Contract(
-        "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+        WBNB_tokenAddress,
         WBNB_ABI,
         signer
     );
@@ -230,7 +231,7 @@ async function convertBNBtoWBNB(_amount) {
         value: ethers.utils.parseEther(((amount * rate) / 10 ** 18).toString())
     };
     const WBNB_Write_Test = new ethers.Contract(
-        "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+        WBNB_tokenAddress,
         WBNB_ABI,
         signer
     );
@@ -290,7 +291,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
     const signer = provider.getSigner();
     const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
     const WBNB_Write_Test = new ethers.Contract(
-        "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+        WBNB_tokenAddress,
         WBNB_ABI,
         signer
     );
@@ -324,7 +325,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
     data.salt = salt;
 
     amount = parseFloat(amount) * 10 ** 18;
-    let rate = 1.025;
+    let rate = 1;
     //*******************************************BNB payment*************************************//
 
     if (bidding_token == "BNB") {
@@ -522,8 +523,8 @@ async function getHighestBid(owner, contract_address, token_id) {
 
     if (output.length != 0) {
         for (var i = 0; i < output.length; i++) {
-            // var price = await getTokenPrice(output[i].bidding_token);
-            var hpsprice = 0.001;
+            var price = await getTokenPrice(output[i].bidding_token);
+            //var hpsprice = 0.001;
 
             if (output[i].bidding_token == "HPS") {
                 const signer = provider.getSigner();
@@ -550,7 +551,7 @@ async function getHighestBid(owner, contract_address, token_id) {
                 const signer = provider.getSigner();
                 //const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
                 const WBNB_Write_Test = new ethers.Contract(
-                    "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+                    WBNB_tokenAddress,
                     WBNB_ABI,
                     signer
                 );

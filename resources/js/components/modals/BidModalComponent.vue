@@ -250,7 +250,7 @@ export default {
     },
     bid_input: function () {
       this.payment = this.bid_input;
-      this.service_fee = +(this.payment * 0.025);
+      this.service_fee = +(this.payment * 0);
       this.total_payment = +(this.payment + +this.service_fee);
     },
   },

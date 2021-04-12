@@ -30,17 +30,14 @@ const WBNB_tokenAddress = "0xae13d989dac2f0debff460ac112a837c89baa7cd"; //testne
 const pancake_routerAddress = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F";
 const julswap_routerAddress = "0xbd67d157502A23309Db761c41965600c2Ec788b2";*/
 
-
-
-
-const hps721Address = "0xDE10d96076F21dda25d3b56D49F56084f9b2D647"
+const hps721Address = "0xDE10d96076F21dda25d3b56D49F56084f9b2D647";
 //const hps721Address = "0x99c67837E2695E2707fc3ed5cF630fcad111a1D7"
-const hps1155Address = "0xC3db58eac6d44f6e91335B618B462A2515744FAb"
+const hps1155Address = "0xC3db58eac6d44f6e91335B618B462A2515744FAb";
 
 //////////////////////////////////////////Utility Contracts///////////////////////////////////////
 const transferProxyAddress = "0xeDd0FFE20702F53EA49429ff23f2ED153e7f481b";
 const erc20TransferProxyAddress = "0x5ac627B0d9770C2b433298aF1389fc653A55bC64";
-const exchangeAddress = "0x82EBE682BE1ac11f65161FB955B9a571eA27eE48"
+const exchangeAddress = "0x82EBE682BE1ac11f65161FB955B9a571eA27eE48";
 
 const NFTStorageAddress = "0x5aECe89bF2743bb1e0E33036fF174655AC68252c";
 const contractFactoryAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831";
@@ -56,7 +53,6 @@ const pancake_routerAddress = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F";
 const julswap_routerAddress = "0xbd67d157502A23309Db761c41965600c2Ec788b2";
 
 export {
-
     WBNB_tokenAddress,
     hps721Address,
     hps1155Address,
@@ -74,6 +70,4 @@ export {
     minterAddress,
     contractFactoryAddress,
     julswap_routerAddress
-
 };
-
