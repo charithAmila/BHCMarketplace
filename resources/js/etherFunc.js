@@ -45,7 +45,7 @@ function checkConnection() {
     try {
         var network = provider._network.chainId;
         console.log(network);
-        if (network == 97) {
+        if (network == 56) {
             acc = toAddress(provider.provider.selectedAddress);
         } else {
             acc = toAddress("");
@@ -136,7 +136,7 @@ async function getCollection(collectionAddess) {
             );
             var evts = await contract.queryFilter(
                 "TransferSingle",
-                0,
+                6494200,
                 "latest"
             );
             var ownerById = {};
@@ -166,7 +166,7 @@ async function getCreated(owner) {
             nftStorageABI,
             provider
         );
-        var evts = await nftStorage.queryFilter("NFTAdded", 0, "latest");
+        var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
 
         for (var i = 0; i < evts.length; i++) {
             var event = evts[i];
@@ -230,7 +230,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
             );
             var evts = await contract.queryFilter(
                 "TransferSingle",
-                0,
+                6494200,
                 "latest"
             );
             var ownerById = {};
@@ -291,7 +291,7 @@ async function getOwnedCollections(me, type, forDetails) {
             num = num + 1;
         }
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
     console.log({ COLS: collections })
     return collections;
@@ -538,8 +538,10 @@ async function getMinted(log) {
 async function getFees() {
     try {
         const minter = new ethers.Contract(minterAddress, minterABI, provider);
-        const feeInHps = await minter.requiredFee();
-        return feeInHps / 10 ** 18;
+        const feeInHps = await minter.requiredFee(
+            ethers.utils.parseEther("3.5"), ethers.utils.parseEther("5.5")
+        );
+        return feeInHps[0] / 10 ** 18;
     } catch (e) {
         return 0;
     }

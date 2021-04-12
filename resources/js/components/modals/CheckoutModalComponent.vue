@@ -75,7 +75,7 @@
               @click.prevent="approve"
               v-if="!approved && enoughBalance"
             >
-            <span v-html="approveText"></span>
+              <span v-html="approveText"></span>
             </button>
             <button
               class="form-submit"
@@ -83,7 +83,7 @@
               v-if="approved"
               :disabled="!enoughBalance"
             >
-          <span v-html="proceedToPaymentText"></span>
+              <span v-html="proceedToPaymentText"></span>
             </button>
 
             <label class="text-details" v-if="!enoughBalance"
@@ -113,11 +113,12 @@ import {
   getBNBBalance,
 } from "./../../etherFunc";
 import { removeSale } from "../../data";
+import { bhcAddress } from "./../../addresses/constants";
 export default {
   props: ["singleNft", "page", "current_user"],
   data() {
     return {
-      purchasing:false,
+      purchasing: false,
       quantity: 1,
       balance: 0,
       allowance: 0,
@@ -129,10 +130,12 @@ export default {
       price: 0,
       currency: "",
       approveText: "Approve",
-      proceedToPaymentText:"Proceed to payment",
-      approvingText:"Approving...<img src='/images/loading.gif' alt='' width='7%' />",
-      processPaymentText:"Processing payment...<img src='/images/loading.gif' alt='' width='7%' />",
-      purchasing:false,
+      proceedToPaymentText: "Proceed to payment",
+      approvingText:
+        "Approving...<img src='/images/loading.gif' alt='' width='7%' />",
+      processPaymentText:
+        "Processing payment...<img src='/images/loading.gif' alt='' width='7%' />",
+      purchasing: false,
       nft_id: 0,
       record_id: 0,
       approved: false,
@@ -151,10 +154,8 @@ export default {
   },
   methods: {
     async checkEligibility() {
-      this.singleNft.currencyName == "HPS"
-        ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
-        : this.singleNft.currency == "BHC"
-        ? (this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876")
+      this.singleNft.currencyName == "BHC"
+        ? (this.currency = bhcAddress)
         : (this.currency = toAddress(""));
       this.price = this.singleNft.price;
       this.nft_id = this.singleNft.id;
@@ -190,7 +191,7 @@ export default {
     },
     updateValues() {
       this.payment = +(this.price * this.quantity);
-      this.service_fee = +(this.payment * 0.025);
+      this.service_fee = +(this.payment + 0.05);
       this.royalty_fee = (this.payment * this.singleNft.royalties) / 100;
       this.total_payment = +(this.payment + this.service_fee);
     },
@@ -208,7 +209,7 @@ export default {
         });
       } catch (error) {
         if (error.code == 4001) {
-          this.approveText = "Approve"
+          this.approveText = "Approve";
           Toast.fire({
             icon: "error",
             title: "User rejected transaction!",
@@ -236,9 +237,7 @@ export default {
         collectible.collection.name +
         " has been bought for " +
         `${this.price}` +
-
         this.currency;
-
 
       const _this = this;
 
@@ -257,7 +256,6 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
-
             var req = {};
             req.message_seller = message_seller;
             console.log(req);
@@ -287,7 +285,6 @@ export default {
               launch_toast();
             }, 500);
 
-           
             modalClose($("#checkoutModal"), $(".checkout-content"));
             _this.service_fee = 0;
             _this.total_payment = 0;
@@ -295,12 +292,32 @@ export default {
             _this.bid_input = "";
             _this.quantity = 1;
             this.purchasing = false;
-            this. proceedToPaymentText="Proceed to payment";
+            this.proceedToPaymentText = "Proceed to payment";
             if (_this.page == "marketplace" || _this.page == "profile") {
               _this.$parent.$parent.getCollectible();
+              data = {};
+              data.message_seller = message_seller;
+              data.message_buyer = message_buyer;
+              data.buyer_id = toAddress(window.ethereum.selectedAddress);
+              data.buy_amount = _this.price;
+              data.seller_id = collectible.owner_id;
+              data.bid = false;
+              await axios.post("addNotification", data, {}).then((res) => {
+                console.log(res.data);
+              });
             }
             if (_this.page == "marketplace") {
               _this.$parent.$parent.$parent.updateTopUser();
+              data = {};
+              data.message_seller = message_seller;
+              data.message_buyer = message_buyer;
+              data.buyer_id = toAddress(window.ethereum.selectedAddress);
+              data.buy_amount = _this.price;
+              data.seller_id = collectible.owner_id;
+              data.bid = false;
+              await axios.post("addNotification", data, {}).then((res) => {
+                console.log(res.data);
+              });
             }
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
