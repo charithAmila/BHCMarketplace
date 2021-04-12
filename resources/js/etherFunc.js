@@ -134,11 +134,18 @@ async function getCollection(collectionAddess) {
                 bhc1155,
                 provider
             );
-            var evts = await contract.queryFilter(
-                "TransferSingle",
-                6494200,
-                "latest"
-            );
+            var startBlock = 6494200
+            var endBlock = await provider.getBlockNumber();
+            var evts = [];
+            for (var i = startBlock; i <= endBlock; i = i + 5000) {
+                var evtsCr = await contract.queryFilter(
+                    "TransferSingle",
+                    i,
+                    i + 5000
+                );
+                evts = [...evts, ...evtsCr]
+            }
+
             var ownerById = {};
             for (var i = 0; i < evts.length; i++) {
                 var tokenId = Number(evts[i].args.id);
@@ -166,7 +173,18 @@ async function getCreated(owner) {
             nftStorageABI,
             provider
         );
-        var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
+        //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
+        var startBlock = 6494200
+        var endBlock = await provider.getBlockNumber();
+        var evts = [];
+        for (var i = startBlock; i <= endBlock; i = i + 5000) {
+            var evtsCr = await nftStorage.queryFilter(
+                "NFTAdded",
+                i,
+                i + 5000
+            );
+            evts = [...evts, ...evtsCr]
+        }
 
         for (var i = 0; i < evts.length; i++) {
             var event = evts[i];
@@ -228,11 +246,17 @@ async function getOwnersOf(collectionAddess, tokenId) {
                 bhc1155,
                 provider
             );
-            var evts = await contract.queryFilter(
-                "TransferSingle",
-                6494200,
-                "latest"
-            );
+            var startBlock = 6494200
+            var endBlock = await provider.getBlockNumber();
+            var evts = [];
+            for (var i = startBlock; i <= endBlock; i = i + 5000) {
+                var evtsCr = await contract.queryFilter(
+                    "TransferSingle",
+                    i,
+                    i + 5000
+                );
+                evts = [...evts, ...evtsCr]
+            }
             var ownerById = {};
             for (var i = 0; i < evts.length; i++) {
                 if (Number(evts[i].args.id) == tokenId) {
