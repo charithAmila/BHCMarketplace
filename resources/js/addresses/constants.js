@@ -40,7 +40,7 @@ const hps1155Address = "0xC3db58eac6d44f6e91335B618B462A2515744FAb"
 //////////////////////////////////////////Utility Contracts///////////////////////////////////////
 const transferProxyAddress = "0xeDd0FFE20702F53EA49429ff23f2ED153e7f481b";
 const erc20TransferProxyAddress = "0x5ac627B0d9770C2b433298aF1389fc653A55bC64";
-const exchangeAddress = "0x95dd41E03B2423c619e7891CdF66D9678a39a562"
+const exchangeAddress = "0x82EBE682BE1ac11f65161FB955B9a571eA27eE48"
 
 const NFTStorageAddress = "0x5aECe89bF2743bb1e0E33036fF174655AC68252c";
 const contractFactoryAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831";
