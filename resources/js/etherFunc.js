@@ -144,7 +144,7 @@ async function getCollection(collectionAddess) {
                 var tokenId = Number(evts[i].args.id);
                 var owner = evts[i].args.to;
                 var tk = { id: tokenId, owner: owner };
-                var obj = owners.filter(function(element) {
+                var obj = owners.filter(function (element) {
                     if (element.id == tokenId && element.owner == owner)
                         return true;
                 });
@@ -153,7 +153,7 @@ async function getCollection(collectionAddess) {
                 }
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     return owners;
 }
 
@@ -180,7 +180,7 @@ async function getCreated(owner) {
             }
         }
         console.log(tokens);
-    } catch (e) {}
+    } catch (e) { }
     return tokens;
 }
 
@@ -242,7 +242,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
                         evts[i].args.id
                     );
                     var tk = { owner: owner, ownedCopies: copies };
-                    var obj = owners.filter(function(element) {
+                    var obj = owners.filter(function (element) {
                         if (element.owner == owner) return true;
                     });
                     if (obj.length == 0) {
@@ -251,7 +251,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
                 }
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     return owners;
 }
 
@@ -277,17 +277,23 @@ async function getOwnedCollections(me, type, forDetails) {
             var owner = await colCon.owner();
 
             console.log(col);
-            if (toAddress(owner) == toAddress(me) || forDetails) {
-                var uri = await colCon.contract_URI();
+            try {
+                if (toAddress(owner) == toAddress(me) || forDetails) {
+                    var uri = await colCon.contract_URI();
 
-                var res = await axios.get(uri);
-                var collection = res.data;
-                collection.address = col;
-                collections.push(collection);
-            }
+                    var res = await axios.get(uri);
+                    var collection = res.data;
+                    console.log(collection)
+                    collection.address = col;
+                    collections.push(collection);
+                }
+            } catch (e) { }
             num = num + 1;
         }
-    } catch (e) {}
+    } catch (e) {
+        console.log(e)
+    }
+    console.log({ COLS: collections })
     return collections;
 }
 
@@ -345,7 +351,7 @@ async function getSingles(contractAddress, owner, collection) {
             );
             tokens.push(nft);
         }
-    } catch (e) {}
+    } catch (e) { }
     return tokens;
 }
 
@@ -365,7 +371,7 @@ async function getMultiples(contractAddress, owner, collection) {
                 tokens.push(nft);
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     return tokens;
 }
 
@@ -413,7 +419,7 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
                 );
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     return collectible;
 }
 
@@ -551,11 +557,11 @@ async function createASingle(url, royalty, collection, isBNB) {
             url,
             BigNumber.from(Number(royalty)),
             isBNB, {
-                value: isBNB ?
-                    ethers.utils.parseEther("0.025") :
-                    ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from("3000000")
-            }
+            value: isBNB ?
+                ethers.utils.parseEther("0.025") :
+                ethers.utils.parseEther("0"),
+            gasLimit: BigNumber.from("3000000")
+        }
         ); //, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
         return tx;
     } catch (e) {
@@ -575,11 +581,11 @@ async function createABatch(url, count, royalty, collection, isBNB) {
             BigNumber.from(Number(royalty)),
 
             isBNB, {
-                value: isBNB ?
-                    ethers.utils.parseEther("0.025") :
-                    ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from(3000000)
-            }
+            value: isBNB ?
+                ethers.utils.parseEther("0.025") :
+                ethers.utils.parseEther("0"),
+            gasLimit: BigNumber.from(3000000)
+        }
         );
 
         return tx;
@@ -598,11 +604,11 @@ async function createCollection(type, uri, isBNB) {
                 uri,
 
                 isBNB, {
-                    value: isBNB ?
-                        ethers.utils.parseEther("0.025") :
-                        ethers.utils.parseEther("0"),
-                    gasLimit: BigNumber.from(3000000)
-                }
+                value: isBNB ?
+                    ethers.utils.parseEther("0.025") :
+                    ethers.utils.parseEther("0"),
+                gasLimit: BigNumber.from(3000000)
+            }
             );
         } else {
             var tx = await contract.generate1155(
@@ -611,11 +617,11 @@ async function createCollection(type, uri, isBNB) {
                 uri,
 
                 isBNB, {
-                    value: isBNB ?
-                        ethers.utils.parseEther("0.025") :
-                        ethers.utils.parseEther("0"),
-                    gasLimit: BigNumber.from(3000000)
-                }
+                value: isBNB ?
+                    ethers.utils.parseEther("0.025") :
+                    ethers.utils.parseEther("0"),
+                gasLimit: BigNumber.from(3000000)
+            }
             );
         }
         return tx.hash;
@@ -706,11 +712,11 @@ async function buy(
                 sig.r,
                 sig.s
             ], {
-                gasLimit: BigNumber.from(3000000),
-                value: buyWith == toAddress("") ?
-                    ethers.utils.parseEther(`${Number(price) * 1.025}`) :
-                    "0"
-            }
+            gasLimit: BigNumber.from(3000000),
+            value: buyWith == toAddress("") ?
+                ethers.utils.parseEther(`${Number(price) * 1.025}`) :
+                "0"
+        }
         );
         return tx.hash;
     } catch (e) {
