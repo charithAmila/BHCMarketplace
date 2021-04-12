@@ -56,22 +56,25 @@ function getTokenContract(bidding_token) {
 ////////////////////////////////////////////Get HPS Balance////////////////////////////////////////////////////////
 async function getBHCBalance() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    var address = toAddress(checkConnection());
-    const hpsContract = new ethers.Contract(hpsAddress, token_ABI, provider);
+    var address = window.ethereum.selectedAddress;
+    const hpsContract = new ethers.Contract(bhcAddress, token_ABI, provider);
     const balance = await hpsContract.balanceOf(address);
+    console.log("BhC balance");
+    console.log(address);
+    console.log(balance.toString());
     return parseFloat(balance.toString()) / 10 ** 18;
 }
 ////////////////////////////////////////////Get BNB Balance///////////////////////////////////////////////////////////
 async function getBNBBalance() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    var address = toAddress(checkConnection());
+    var address = window.ethereum.selectedAddress;
     const balance = await provider.getBalance(address);
     return parseFloat(balance.toString()) / 10 ** 18;
 }
 ////////////////////////////////////////////Get WBNB Balance////////////////////////////////////////////////////////
 async function getWBNBBalance() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    var address = toAddress(checkConnection());
+    var address = window.ethereum.selectedAddress;
     const WBNB_Contract = new ethers.Contract(
         WBNB_tokenAddress,
         WBNB_ABI,
@@ -133,7 +136,7 @@ async function startBidding(_owner, contract_address, token_id) {
     data.bidding_status = true;
     //const contract = ERC721_Website_Read;
     // const owner = await contract.ownerOf(token_id);
-    var address = toAddress(checkConnection());
+    var address = window.ethereum.selectedAddress;
     let txReceipt = await approveNFT(contract_address);
     let txResponse = txReceipt.wait();
     console.log(txResponse);
@@ -160,7 +163,7 @@ async function endBidding(_owner, contract_address, token_id) {
     const signer = provider.getSigner();
     //const owner = await contract.ownerOf(token_id);
 
-    var address = toAddress(checkConnection());
+    var address = window.ethereum.selectedAddress;
     if (address == _owner) {
         const signature = await signer.signMessage("Stop bidding for token");
         data.contract_address = contract_address;
@@ -187,7 +190,7 @@ async function approveBHC(_amount) {
     let rate = 1;
     const signer = provider.getSigner();
     const hpsContract = new ethers.Contract(hpsAddress, token_ABI, signer);
-    var address = toAddress(checkConnection()); //Get collected wallet address
+    var address = window.ethereum.selectedAddress; //Get collected wallet address
     const balance = await hpsContract.balanceOf(address);
     var address = address.toString().toLowerCase();
     const txResponse = await hpsContract.approve(
@@ -511,7 +514,7 @@ async function getAllBids(owner, contract_address, token_id) {
 ////////////////////////////////////////////Get Highest Bid//////////////////////////////////////////////////////////
 async function getHighestBid(owner, contract_address, token_id) {
     var output = await getAllBids(owner, contract_address, token_id);
-    var address = toAddress(checkConnection());
+    var address = window.ethereum.selectedAddress;
     var maxAmount = 0;
     var res = {};
     var maxBidder;
@@ -523,10 +526,12 @@ async function getHighestBid(owner, contract_address, token_id) {
 
     if (output.length != 0) {
         for (var i = 0; i < output.length; i++) {
-            var price = await getTokenPrice(output[i].bidding_token);
+            var hpsprice = await getTokenPrice(output[i].bidding_token);
+            console.log(hpsprice);
             //var hpsprice = 0.001;
 
-            if (output[i].bidding_token == "HPS") {
+            if (output[i].bidding_token == "BHC") {
+                console.log("Token is BHC");
                 const signer = provider.getSigner();
                 const hpsContract = new ethers.Contract(
                     hpsAddress,
@@ -548,6 +553,7 @@ async function getHighestBid(owner, contract_address, token_id) {
                     }
                 }
             } else {
+                console.log("Token is BNB");
                 const signer = provider.getSigner();
                 //const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
                 const WBNB_Write_Test = new ethers.Contract(
@@ -569,7 +575,9 @@ async function getHighestBid(owner, contract_address, token_id) {
                 }
             }
         }
-
+        let highestBidProPic = await (await getUserDetails(maxBidder))
+            .display_photo;
+        console.log(highestBidProPic);
         res.proPic = await (await getUserDetails(maxBidder)).display_photo;
         res.maxBidToken = maxBidToken;
         res.maxAmount = maxAmount * 10 ** 18;
@@ -583,6 +591,8 @@ async function getHighestBid(owner, contract_address, token_id) {
         res.maxAmount = "1";
         res.maxBidder = output[0].user_id;
         res.maxBidSig = output[0].signature;*/
+        console.log("Results");
+        console.log(res);
         return res;
     } else {
         return false;

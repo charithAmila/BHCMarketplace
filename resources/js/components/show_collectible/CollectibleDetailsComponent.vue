@@ -252,15 +252,18 @@ export default {
   methods: {
 
 async loadData(){
-
-    //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+  
+  //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     this.address = await getConnectedAddress();
-    var allBids = await getAllBids(
+     this.allBids = await getAllBids(
       this.current_owner.wallet,
       this.collectible.contract,
       this.collectible.id
     );
-    var output = await getBiddingStatus(
+        if (this.address == this.current_owner.wallet) {
+      this.owner = true;
+    }
+   this.biddingStatus = await getBiddingStatus(
       this.current_owner.wallet,
       this.collectible.contract,
       this.collectible.id
@@ -277,11 +280,8 @@ async loadData(){
     else{
       this.haveBids = false;
     }
-    this.biddingStatus = output;
-    this.allBids = allBids;
-    if (this.address == this.current_owner.wallet) {
-      this.owner = true;
-    }
+ 
+
     console.log(res)
 },
 

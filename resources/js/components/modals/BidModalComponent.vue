@@ -67,12 +67,12 @@
                   <span class="changeDD">BHC</span></label
                 >
               </div>
-              <div class="purchase-info">
+              <!--div class="purchase-info">
                 <label class="text-details">Service fee</label>
                 <label class="text-value"
                   >{{ service_fee }} <span class="changeDD">BHC</span></label
                 >
-              </div>
+              </div-->
               <div class="purchase-info">
                 <label class="text-details">You will pay</label>
                 <label class="text-value"
@@ -149,7 +149,7 @@ import {
   approveWBNB,
   convertBNBtoWBNB,
 } from ".././../bidFunc";
-
+import {bhcAddress,WBNB_tokenAddress} from ".././../addresses/constants";
 export default {
   props: ["singleNft", "page"],
   data() {
@@ -198,11 +198,11 @@ export default {
     };
   },
   async mounted() {
-    //this.BHC_Balance = await getBHCBalance();
-    //this.BNB_Balance = await getBNBBalance();
-    //this.WBNB_Balance = await getWBNBBalance();
+    this.BHC_Balance = await getBHCBalance();
+    this.BNB_Balance = await getBNBBalance();
+    this.WBNB_Balance = await getWBNBBalance();
     this.selected_token = 0;
-    //this.selectedBalance = this.BHC_Balance;
+    this.selectedBalance = this.BHC_Balance;
   },
 
   computed: {
@@ -268,6 +268,7 @@ export default {
         }
       } catch (error) {
         if (error.code == 4001) {
+          this.approving = false;
           Toast.fire({
             icon: "error",
             title: "User rejected transaction!",
@@ -285,10 +286,12 @@ export default {
           if (res) {
             this.converting = false;
             this.WBNB_Balance += this.payment;
-            this.convertBNBText = "Converted BNB to WBNB";
+            //this.convertBNBText = "Converted BNB to WBNB";
           }
         } catch (error) {
           if (error.code == 4001) {
+            this.converting = false;
+             this.convertBNBText = "Convert BNB to WBNB";
             Toast.fire({
               icon: "error",
               title: "User rejected transaction!",
@@ -296,23 +299,30 @@ export default {
           }
         }
       } else {
+        Toast.fire({
+              icon: "error",
+              title: "User rejected transaction!",
+            });
         this.error = "Not enough Balance";
       }
     },
     //////////////////!Approve BHC////////////////////
     async approveBHCFunc() {
-      this.approving = true;
-      this.approveBHCText = this.approvingText;
+      console.log(this.enoughBHC);
       if (this.enoughBHC) {
+          this.approving = true;
+      this.approveBHCText = this.approvingText;
         try {
           var res = await approveBHC(this.total_payment);
           if (res == 1) {
             this.approving = false;
-            this.approveBHCText = "Approved BHC";
+            //this.approveBHCText = "Approved BHC";
             this.approved = true;
           }
         } catch (error) {
           if (error.code == 4001) {
+            this.approving = false;
+           this.approveBHCText = "Approve BHC";
             Toast.fire({
               icon: "error",
               title: "User rejected transaction!",
@@ -320,6 +330,10 @@ export default {
           }
         }
       } else {
+        Toast.fire({
+              icon: "error",
+              title: "Not enough balance!",
+            });
         this.error = "Not enough Balance";
       }
     },
@@ -331,9 +345,9 @@ export default {
       this.currency = $("#selectedCurrency").text();
       console.log(this.selected_token == 0);
       if (this.selected_token == 0) {
-        pay_token = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937";
+        pay_token = bhcAddress;
       } else {
-        pay_token = "0xae13d989dac2f0debff460ac112a837c89baa7cd";
+        pay_token = WBNB_tokenAddress;
       }
       try {
         let res = await signBid(
@@ -350,14 +364,15 @@ export default {
             " " +
             this.currency +
             " to token " +
-            this.singleNft.name +
-            " in the collection " +
-            this.singleNft.collection.name;
+            this.singleNft.name; 
+           // +" in the collection " +
+           // this.singleNft.collection.name;
           let data = {};
           data.message = message;
           data.user_id = window.ethereum.selectedAddress;
           data.amount = this.payment;
           data.noBuy = true;
+          data.currency = this.currency;
           await axios.post("/addNotification", data, {}).then((res) => {
             console.log(res.data);
           });
@@ -398,7 +413,7 @@ export default {
           this.currency,
           this.payment
         );
-        console.log(res);
+
         let message =
           "You have place a bid of " +
           this.payment +
@@ -406,13 +421,13 @@ export default {
           this.currency +
           " to token " +
           this.singleNft.name +
-          " in the collection " +
-          this.singleNft.collection.name;
+          " in the collection ";
+          //+this.singleNft.collection.name;
         let success = true;
 
         if (success) {
           let data = {};
-
+          data.currency = this.currency;
           data.message = message;
           data.user_id = window.ethereum.selectedAddress;
           await axios.post("/addNotification", data, {}).then((res) => {
