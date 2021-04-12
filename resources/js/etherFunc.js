@@ -501,7 +501,7 @@ async function checkTokensApproved(contractAddress, from) {
             provider
         );
         const res = await contract.allowance(from, erc20TransferProxyAddress);
-        console.log(Number(res) / 10 ** 18);
+        //console.log(Number(res) / 10 ** 18);
         return Number(res) / 10 ** 18;
     } catch (e) {
         return 0;
@@ -545,6 +545,17 @@ async function getFees() {
     } catch (e) {
         return 0;
     }
+}
+
+async function serviceFee(currencyName) {
+    const exchange = new ethers.Contract(exchangeAddress, exchangeABI, provider);
+    const fees = await exchange.requiredFee(
+        ethers.utils.parseEther("5"), ethers.utils.parseEther("5")
+    )
+    if (currencyName == "BNB") {
+        return Number(fees[1] / (10 ** 18))//.toFixed(3)
+    }
+    else { return Number(fees[0] / (10 ** 18)) }//.toFixed(3);
 }
 
 //////Set functions/////////
@@ -677,7 +688,8 @@ async function buy(
     price,
     salt,
     owner,
-    signature
+    signature,
+    totalPayment
 ) {
     try {
         const signer = provider.getSigner();
@@ -716,7 +728,7 @@ async function buy(
             ], {
             gasLimit: BigNumber.from(3000000),
             value: buyWith == toAddress("") ?
-                ethers.utils.parseEther(`${Number(price) * 1.025}`) :
+                ethers.utils.parseEther(`${Number(totalPayment)}`) :
                 "0"
         }
         );
@@ -755,5 +767,6 @@ export {
     getCreated,
     getMinted,
     getFees,
+    serviceFee,
     checkOrder
 };

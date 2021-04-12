@@ -137,7 +137,6 @@
                     </div>-->
                     <a
                       type="button"
-                      :id="collectible.slug"
                       class="sale"
                       @click="putOnSale(collectible)"
                       v-if="collectible.is_selling != 1"
@@ -249,6 +248,7 @@
 </template>
 
 <script>
+import { checkNFTApproved } from "./../etherFunc";
 import { forceRemoveSale } from "./../data";
 import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
@@ -286,10 +286,15 @@ export default {
     },
   },
   methods: {
-    putOnSale(collectible) {
+    async putOnSale(collectible) {
       const _this = this;
       _this.singleNft = collectible;
       _this.loaded = true;
+      _this.singleNft.approved = await checkNFTApproved(
+        _this.singleNft.contract,
+        _this.singleNft.owner_id
+      );
+
       _this.toggleModal("putOnSale");
     },
     async remove(collectible) {
@@ -300,19 +305,21 @@ export default {
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
-    fetchSingleNft(collectible, clicked) {
+    async fetchSingleNft(collectible, clicked) {
       if (clicked == "bid") {
         this.open = true;
       }
+
+      this.singleNft = collectible;
+      this.singleNft.total = this.fetchTotal(collectible.price);
+      this.singleNft.currency = this.fetchCurrency(collectible.currency);
+      this.singleNft.max = this.fetchTotalCopies(collectible.copies);
+
       if (this.current_user == 0) {
         window.location.href = this.base_url + "/connect";
       } else {
         this.toggleModal(clicked);
       }
-      this.singleNft = collectible;
-      this.singleNft.total = this.fetchTotal(collectible.price);
-      this.singleNft.currency = this.fetchCurrency(collectible.currency);
-      this.singleNft.max = this.fetchTotalCopies(collectible.copies);
     },
     fetchTotal(price) {
       //return parseFloat(price.split(" ")[0]).toFixed(2);

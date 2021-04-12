@@ -38,7 +38,7 @@
                 id="checkout-price"
                 name="price"
                 readonly
-                :value="singleNft.price"
+                :value="singleNft.price * quantity"
               />
               <span class="link-url-end"
                 ><span id="checkout-currency">{{
@@ -66,7 +66,8 @@
               <div class="purchase-info">
                 <label class="text-details">You will pay</label>
                 <label class="text-value"
-                  >{{ total_payment }} {{ singleNft.currencyName }}</label
+                  >{{ Number(total_payment).toFixed(3) }}
+                  {{ singleNft.currencyName }}</label
                 >
               </div>
             </div>
@@ -111,6 +112,7 @@ import {
   waitForTransaction,
   toAddress,
   getBNBBalance,
+  serviceFee,
 } from "./../../etherFunc";
 import { removeSale } from "../../data";
 import { bhcAddress } from "./../../addresses/constants";
@@ -160,7 +162,7 @@ export default {
       this.price = this.singleNft.price;
       this.nft_id = this.singleNft.id;
       this.record_id = this.singleNft.record_id;
-      this.updateValues();
+      await this.updateValues();
       if (this.currency != toAddress("")) {
         var allowance = await checkTokensApproved(
           this.currency,
@@ -189,9 +191,9 @@ export default {
         this.enoughBalance = true;
       }
     },
-    updateValues() {
+    async updateValues() {
       this.payment = +(this.price * this.quantity);
-      this.service_fee = +(this.payment + 0.05);
+      this.service_fee = await serviceFee(this.singleNft.currencyName);
       this.royalty_fee = (this.payment * this.singleNft.royalties) / 100;
       this.total_payment = +(this.payment + this.service_fee);
     },
@@ -251,7 +253,8 @@ export default {
         `${_this.price}`,
         collectible.salt,
         collectible.owner_id,
-        collectible.signature
+        collectible.signature,
+        _this.total_payment * 1.03
       )
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
