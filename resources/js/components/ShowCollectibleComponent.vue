@@ -12,7 +12,6 @@
             <div class="collectibleTitle col-option">
               <h3 class="inlineDiv inline-btn">
                 <a
-                 
                   id="options-btn"
                   class="show-drop"
                   href="javascript:void(0)"
@@ -30,11 +29,9 @@
                 ></a>
               </h3>
 
-              <div
-                class="show-opt-menu d-none"
-              >
+              <div class="show-opt-menu d-none">
                 <a
-                 v-if="current_user != current_owner.wallet"
+                  v-if="current_user != current_owner.wallet"
                   :class="set_collectible.is_selling == 1 ? '' : 'd-none'"
                   class="buy-now"
                   href="javascript:void(0)"
@@ -42,21 +39,23 @@
                   >Buy now</a
                 >
                 <a
-                 v-if="current_user != current_owner.wallet && singleNft.biddingStatus"
-                
+                  v-if="
+                    current_user != current_owner.wallet &&
+                    singleNft.biddingStatus
+                  "
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
                   >Place a bid</a
                 >
                 <a
-                 v-if="current_user != current_owner.wallet"
+                  v-if="current_user != current_owner.wallet"
                   class="report"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('report')"
                   >Report</a
                 >
-                  <a
+                <a
                   v-if="current_user == current_owner.wallet"
                   href="javascript:void(0)"
                   class="report"
@@ -300,15 +299,16 @@
           </button>
 
           <p class="text-gray text-center d-none d-md-block">
-            Service fee 2.5% =
+            Service fee 5$ =
             <span class="text-dark-gray"
-              >{{ service_fee }} {{ set_collectible.currencyName }}</span
+              >{{ Number(service_fee).toFixed(3) }}
+              {{ set_collectible.currencyName }}</span
             >
           </p>
           <p class="text-gray text-center d-none d-md-block">
             Total to be paid for 1 collectible =
             <span class="text-dark-gray"
-              >{{ singleNft.price + service_fee }}
+              >{{ Number(singleNft.price + service_fee).toFixed(3) }}
               {{ set_collectible.currencyName }}</span
             >
           </p>
@@ -325,15 +325,16 @@
             </button>
 
             <p class="text-gray text-center">
-              Service fee 2.5% =
+              Service fee 5$ =
               <span class="text-dark-gray"
-                >{{ service_fee }} {{ set_collectible.currencyName }}</span
+                >{{ Number(service_fee).toFixed(3) }}
+                {{ set_collectible.currencyName }}</span
               >
             </p>
             <p class="text-gray text-center d-none d-md-block">
               Total to be paid for 1 collectible =
               <span class="text-dark-gray"
-                >{{ singleNft.price + service_fee }}
+                >{{ Number(singleNft.price + service_fee).toFixed(3) }}
                 {{ set_collectible.currencyName }}</span
               >
             </p>
@@ -458,13 +459,13 @@ import BidModal from "./modals/BidModalComponent.vue";
 import CheckoutModal from "./modals/CheckoutModalComponent.vue";
 import { getUserDetails } from "./../data";
 
-import { checkConnection, toAddress } from "./../etherFunc";
+import { checkConnection, toAddress, serviceFee } from "./../etherFunc";
 
 import { LikeController } from "../mediaFunc";
 
 export default {
   components: {
-   PutOnSaleModalComponent ,
+    PutOnSaleModalComponent,
     CollectibleDetails,
     BidModal,
     CheckoutModal,
@@ -480,7 +481,7 @@ export default {
   ],
   data() {
     return {
-      current_page:'',
+      current_page: "",
       creator: [],
       current_owner: [],
       owners: [],
@@ -502,14 +503,14 @@ export default {
       this.record_id = this.singleNft.record_id;
     },
   },
-  methods: {  
+  methods: {
     putOnSale(collectible) {
-     const _this = this;
+      const _this = this;
       _this.singleNft = collectible;
       _this.loaded = true;
       _this.toggleModal("putOnSale");
     },
-     toggleModal(clicked) {
+    toggleModal(clicked) {
       modalOpen($("#" + clicked + "Modal"), $("." + clicked + "-content"));
     },
     checkConnection() {
@@ -631,7 +632,7 @@ export default {
     },
   },
   async mounted() {
-    this.current_page = 'show_collectible';
+    this.current_page = "show_collectible";
     this.loaded = false;
     this.set_collectible = this.collectible;
     this.singleNft = this.collectible;
@@ -643,7 +644,7 @@ export default {
     this.loaded = true;
 
     this.checkConnection();
-    this.service_fee = (this.collectible.price * 2.5) / 100;
+    this.service_fee = await serviceFee(this.singleNft.currencyName);
     this.royaltyFee =
       (this.collectible.price * this.collectible.royalties) / 100;
 
