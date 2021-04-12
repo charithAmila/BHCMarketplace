@@ -12,7 +12,7 @@
             <div class="collectibleTitle col-option">
               <h3 class="inlineDiv inline-btn">
                 <a
-                  v-if="current_user != current_owner.wallet"
+                 
                   id="options-btn"
                   class="show-drop"
                   href="javascript:void(0)"
@@ -32,9 +32,9 @@
 
               <div
                 class="show-opt-menu d-none"
-                v-if="current_user != current_owner.wallet"
               >
                 <a
+                 v-if="current_user != current_owner.wallet"
                   :class="set_collectible.is_selling == 1 ? '' : 'd-none'"
                   class="buy-now"
                   href="javascript:void(0)"
@@ -42,17 +42,26 @@
                   >Buy now</a
                 >
                 <a
-                  v-if="singleNft.biddingStatus"
+                 v-if="current_user != current_owner.wallet && singleNft.biddingStatus"
+                
                   class="place-bid"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('bid')"
                   >Place a bid</a
                 >
                 <a
+                 v-if="current_user != current_owner.wallet"
                   class="report"
                   href="javascript:void(0)"
                   @click="fetchSingleNft('report')"
                   >Report</a
+                >
+                  <a
+                  v-if="current_user == current_owner.wallet"
+                  href="javascript:void(0)"
+                  class="report"
+                  @click="putOnSale(collectible)"
+                  >Put on sale</a
                 >
               </div>
 
@@ -432,10 +441,17 @@
       :singleNft="singleNft"
       :page="'showcollectible'"
     ></bid-modal-component>
+    <put-on-sale-modal-component
+      v-if="loaded"
+      :singleNft="singleNft"
+      :page="current_page"
+    >
+    </put-on-sale-modal-component>
   </div>
 </template>
 
 <script>
+import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 import $ from "jquery";
 import CollectibleDetails from "./show_collectible/CollectibleDetailsComponent.vue";
 import BidModal from "./modals/BidModalComponent.vue";
@@ -448,6 +464,7 @@ import { LikeController } from "../mediaFunc";
 
 export default {
   components: {
+   PutOnSaleModalComponent ,
     CollectibleDetails,
     BidModal,
     CheckoutModal,
@@ -463,6 +480,7 @@ export default {
   ],
   data() {
     return {
+      current_page:'',
       creator: [],
       current_owner: [],
       owners: [],
@@ -484,7 +502,16 @@ export default {
       this.record_id = this.singleNft.record_id;
     },
   },
-  methods: {
+  methods: {  
+    putOnSale(collectible) {
+     const _this = this;
+      _this.singleNft = collectible;
+      _this.loaded = true;
+      _this.toggleModal("putOnSale");
+    },
+     toggleModal(clicked) {
+      modalOpen($("#" + clicked + "Modal"), $("." + clicked + "-content"));
+    },
     checkConnection() {
       const _this = this;
       var interval = setInterval(function () {
@@ -569,9 +596,10 @@ export default {
       var contract = this.collectible.contract;
       var id = this.collectible.id;
       var _this = this;
+      var address_connected = checkConnection().toLowerCase();
       data.contract = contract;
       data.token_id = id;
-      data.address = connected_account.toLowerCase();
+      data.address = address_connected;
       axios
         .post("/unlike", data, {})
         .then(function (response) {
@@ -585,12 +613,13 @@ export default {
       var contract = this.collectible.contract;
       var id = this.collectible.id;
       var _this = this;
+      var address_connected = checkConnection().toLowerCase();
       axios.get("/like").then((res) => {
         var valObj = res.data.likes.filter(function (elem) {
           if (
             elem.token_id == id &&
             elem.contract == contract &&
-            elem.address == connected_account &&
+            elem.address == address_connected &&
             elem.liked == true
           )
             return elem.token_id;
@@ -602,6 +631,7 @@ export default {
     },
   },
   async mounted() {
+    this.current_page = 'show_collectible';
     this.loaded = false;
     this.set_collectible = this.collectible;
     this.singleNft = this.collectible;

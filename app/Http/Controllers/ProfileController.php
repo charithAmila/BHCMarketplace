@@ -65,7 +65,11 @@ class ProfileController extends Controller
     public function show($address)
     {
         $profile = Profile::where('address', $address)->firstOrFail();
-        return $profile->ipfs_hash;
+        if ($profile) {
+            return $profile;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -98,14 +102,13 @@ class ProfileController extends Controller
         $granted = $checker->checkSign($message, $request->sign, $address);
         $profile = Profile::where('address', $address)->first();
         if ($granted) {
-            if($profile==null){
-                $profile=new Profile;
+            if ($profile == null) {
+                $profile = new Profile;
                 $profile->address = $address;
                 $profile->ipfs_hash = $request->ipfs_hash;
                 $profile->short_url = $request->short_url;
                 $profile->save();
-            }
-            else{
+            } else {
                 $profile->ipfs_hash = $request->ipfs_hash;
                 $profile->short_url = $request->short_url;
                 $profile->update();
@@ -113,7 +116,6 @@ class ProfileController extends Controller
             return response()->json(['success' => true]);
         }
         return abort(403);
-
     }
 
     /**

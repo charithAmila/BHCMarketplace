@@ -6,7 +6,8 @@
         id="user-type"
         class=""
         name="userType"
-        @change="filterUser('user', $event)"
+        v-model="userType"
+        @change="fetchFilteredUser()"
       >
         <option class="select-items" value="sell">Sellers</option>
         <option class="select-items" value="buy">Buyers</option>
@@ -16,12 +17,13 @@
         id="filter-time"
         class=""
         name="filterTime"
-        @change="filterUser('time', $event)"
+        @change="filterUser()"
+        v-model="filterTime"
       >
         <option class="select-items" value="all">All time</option>
-        <option class="select-items" value="0">1 day</option>
-        <option class="select-items" value="6">7 days</option>
-        <option class="select-items" value="29">30 days</option>
+        <option class="select-items" value="1">1 day</option>
+        <option class="select-items" value="7">7 days</option>
+        <option class="select-items" value="30">30 days</option>
       </select>
     </div>
     <div class="filterList d-none d-md-block">
@@ -39,17 +41,19 @@
 
       <div id="actual-top-user">
         <div v-for="(item, index) in userList" :key="index" class="topUserList">
-          <label class="numbering">{{ index + 1 }}</label>
           <a class="black-link" :href="item.profile_url">
-            <img class="filterImg" :src="asset_url + item.asset_url" />
+            <img class="filterImg" :src="item.propic" alt="" />
           </a>
           <div class="user-info">
             <h6>
               <a class="black-link" :href="item.profile_url">{{
-                item.display_name
+                item.username
               }}</a>
             </h6>
-            <label>{{ item.totalPrice }} BHC</label>
+            <label
+              >{{ item.sell_amount }} {{ item.buy_amount }}
+              {{ item.currency }}</label
+            >
           </div>
         </div>
       </div>
@@ -61,11 +65,13 @@
         :key="index"
         class="filterItemMobile"
       >
-        <img class="filterImg" :src="asset_url + item.asset_url" />
+        <img class="filterImg" :src="item.propic" alt="" />
         <label class="profName">
-          {{ item.display_name }}
+          {{ item.username }}
         </label>
-        <label class="prof"> {{ item.totalPrice }} BHC </label>
+        <label class="prof">
+          {{ item.sell_amount }} {{ item.buy_amount }} {{ item.currency }}
+        </label>
       </div>
     </div>
   </div>
@@ -73,6 +79,8 @@
 
 
 <script>
+import { getMaxSellers, getMaxBuyers } from "../data";
+
 export default {
   props: ["asset_url"],
   data() {
@@ -83,23 +91,17 @@ export default {
     };
   },
   methods: {
-    filterUser(clicked, event) {
-      if (clicked == "user") {
-        this.userType = event.target.value;
-      } else {
-        this.filterTime = event.target.value;
-      }
+    async filterUser() {
       this.fetchFilteredUser();
     },
-    fetchFilteredUser() {
-      axios
-        .get("/nft/user/filter/" + this.userType + "/" + this.filterTime)
-        .then((res) => {
-          this.userList = res.data.userList;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async fetchFilteredUser() {
+      if (this.userType == "sell") {
+        this.userList = await getMaxSellers(this.filterTime);
+        $("#preloader-top-user").addClass("d-done");
+      } else {
+        this.userList = await getMaxBuyers(this.filterTime);
+        $("#preloader-top-user").addClass("d-done");
+      }
     },
   },
   mounted() {
@@ -107,3 +109,8 @@ export default {
   },
 };
 </script>
+<style>
+.d-done {
+  display: none !important;
+}
+</style>

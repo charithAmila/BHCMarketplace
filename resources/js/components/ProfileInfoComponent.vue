@@ -233,7 +233,7 @@ export default {
         .get("/api/profile/" + _this.user.wallet)
         .then(function (response) {
           axios
-            .get("https://ipfs.io/ipfs/" + response.data)
+            .get("https://ipfs.io/ipfs/" + response.data.ipfs_hash)
             .then(function (response) {
               _this.user.name = response.data.name;
               _this.user.bio = response.data.description;
@@ -253,7 +253,7 @@ export default {
     unfollow() {
       var data = {};
       var user_id = this.user_id;
-      var follower_id = connected_account;
+      var follower_id = checkConnection();
       var _this = this;
       data.user_id = user_id;
       data.follower_id = follower_id;
@@ -271,8 +271,9 @@ export default {
         this.unfollow();
       } else {
         var user_id = this.user_id;
-        var follower_id = connected_account;
+        var follower_id = checkConnection();
         var output = await FollowController(user_id, follower_id);
+        console.log(output);
         if (output.success) {
           this.following = true;
         }
@@ -280,7 +281,7 @@ export default {
     },
     checkFollow() {
       var user_id = this.user_id;
-      var follower_id = connected_account;
+      var follower_id = checkConnection();
       var _this = this;
       axios.get("/followers").then((res) => {
         var valObj = res.data.followers.filter(function (elem) {

@@ -16,7 +16,7 @@
           <form
             autocomplete="off"
             id="purchaseForm"
-            @submit.prevent="enoughBalance ? purchase() : ''"
+            @submit.prevent="enoughBalance && !purchasing ? purchase() : ''"
           >
             <div class="form-divide">
               <input
@@ -75,14 +75,15 @@
               @click.prevent="approve"
               v-if="!approved && enoughBalance"
             >
-              Approve
+              <span v-html="approveText"></span>
             </button>
             <button
               class="form-submit"
               type="submit"
+              v-if="approved"
               :disabled="!enoughBalance"
             >
-              Proceed to payment
+              <span v-html="proceedToPaymentText"></span>
             </button>
 
             <label class="text-details" v-if="!enoughBalance"
@@ -116,6 +117,7 @@ export default {
   props: ["singleNft", "page", "current_user"],
   data() {
     return {
+      purchasing: false,
       quantity: 1,
       balance: 0,
       allowance: 0,
@@ -126,6 +128,13 @@ export default {
       payment: 0,
       price: 0,
       currency: "",
+      approveText: "Approve",
+      proceedToPaymentText: "Proceed to payment",
+      approvingText:
+        "Approving...<img src='/images/loading.gif' alt='' width='7%' />",
+      processPaymentText:
+        "Processing payment...<img src='/images/loading.gif' alt='' width='7%' />",
+      purchasing: false,
       nft_id: 0,
       record_id: 0,
       approved: false,
@@ -189,6 +198,7 @@ export default {
     },
     async approve() {
       try {
+        this.approveText = this.approvingText;
         var hash = await approveTokens(
           this.currency,
           `${Number(this.total_payment)}`
@@ -200,6 +210,7 @@ export default {
         });
       } catch (error) {
         if (error.code == 4001) {
+          this.approveText = "Approve";
           Toast.fire({
             icon: "error",
             title: "User rejected transaction!",
@@ -208,19 +219,23 @@ export default {
       }
     },
     purchase() {
+      this.proceedToPaymentText = this.processPaymentText;
+      this.purchasing = true;
       var collectible = this.singleNft;
-
-      let success;
-
       let message_buyer =
         "You have successfully purchased " +
         collectible.name +
+        " from the collection " +
+        collectible.collection.name +
         " for " +
         `${this.price}` +
         this.currency;
+
       let message_seller =
         "The " +
         collectible.name +
+        " of collection " +
+        collectible.collection.name +
         " has been bought for " +
         `${this.price}` +
         this.currency;
@@ -242,6 +257,19 @@ export default {
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
           if (data.status) {
+            var req = {};
+            req.message_seller = message_seller;
+            console.log(req);
+            req.message_buyer = message_buyer;
+            req.buyer_id = toAddress(window.ethereum.selectedAddress);
+            req.amount = _this.price;
+            req.seller_id = collectible.owner_id;
+            req.currency = collectible.currencyName;
+            req.bid = false;
+            axios.post("addNotification", req).then((res) => {
+              console.log(res.data);
+            });
+
             await removeSale(
               collectible.contract,
               collectible.id,
@@ -257,13 +285,15 @@ export default {
             setTimeout(function () {
               launch_toast();
             }, 500);
+
             modalClose($("#checkoutModal"), $(".checkout-content"));
             _this.service_fee = 0;
             _this.total_payment = 0;
             _this.payment = 0;
             _this.bid_input = "";
             _this.quantity = 1;
-
+            this.purchasing = false;
+            this.proceedToPaymentText = "Proceed to payment";
             if (_this.page == "marketplace" || _this.page == "profile") {
               _this.$parent.$parent.getCollectible();
               data = {};
@@ -292,17 +322,6 @@ export default {
             }
             if (_this.page == "showcollectible") {
               _this.$parent.updateData();
-
-              data = {};
-              data.message_seller = message_seller;
-              data.message_buyer = message_buyer;
-              data.buyer_id = toAddress(window.ethereum.selectedAddress);
-              data.buy_amount = _this.price;
-              data.seller_id = collectible.owner_id;
-              data.bid = false;
-              await axios.post("addNotification", data, {}).then((res) => {
-                console.log(res.data);
-              });
             }
           }
         })

@@ -19,7 +19,7 @@ class SalesController extends Controller
         $collection = $request->collection;
         $token_id = $request->token_id;
         if ($request->has(["current_owner", "collection", "token_id"])) {
-            if ($sales = Sales::where("collection", $collection)->where('current_owner', $current_owner)->where("token_id", $token_id)->doesntExist()) {
+            if (Sales::where("collection", $collection)->where('current_owner', $current_owner)->where("token_id", $token_id)->doesntExist()) {
                 return response()->json(["on_sale" => false]);
             } else {
                 $sales = Sales::where("collection", $collection)->where('current_owner', $current_owner)->where("token_id", $token_id)->firstOrFail();
@@ -30,6 +30,7 @@ class SalesController extends Controller
         $sales = Sales::all();
         return $sales;
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -1,21 +1,20 @@
 import { ethers } from "ethers";
 import { toAddress, checkConnection } from "./etherFunc.js";
 if (typeof window.ethereum == "undefined") {
-    window.provider = new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s1.binance.org:8545");
+    window.provider = new ethers.providers.JsonRpcProvider(
+        "https://data-seed-prebsc-1-s1.binance.org:8545"
+    );
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
 }
 
-
-
-
 async function checkliked(contract, id) {
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    var connected_account = address.toLowerCase();
     var res = await axios.get("/like");
     var data = res.data;
-    var valObj = data.likes.filter(function (elem) {
+    var valObj = data.likes.filter(function(elem) {
         if (
             elem.token_id == id &&
             elem.contract == contract &&
@@ -34,7 +33,7 @@ async function LikeController(contract, id) {
     const signer = provider.getSigner();
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    //  window.connected_account = address.toLowerCase();
     if (!address) {
         alert("Please connect your wallet first");
     } else {
@@ -63,10 +62,10 @@ async function LikeController(contract, id) {
         var output;
         await axios
             .post("/like", data, {})
-            .then(function (response) {
+            .then(function(response) {
                 output = response.data;
             })
-            .catch(function (error) { });
+            .catch(function(error) {});
         return output;
     }
 }
@@ -74,10 +73,10 @@ async function LikeController(contract, id) {
 async function checkfollowed(user_id, follower_id) {
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    //  window.connected_account = address.toLowerCase();
     var res = await axios.get("/followers");
     var data = res.data;
-    var valObj = data.followers.filter(function (elem) {
+    var valObj = data.followers.filter(function(elem) {
         if (elem.user_id == user_id && elem.follower_id == follower_id)
             return elem.user_id;
     });
@@ -92,7 +91,7 @@ async function FollowController(user_id, follower_id) {
     const signer = provider.getSigner();
     var address = toAddress(checkConnection());
 
-    window.connected_account = address.toLowerCase();
+    // window.connected_account = address.toLowerCase();
     if (!address) {
         alert("Please connect your wallet first");
     } else {
@@ -120,10 +119,10 @@ async function FollowController(user_id, follower_id) {
         var output;
         await axios
             .post("/follow", data, {})
-            .then(function (response) {
+            .then(function(response) {
                 output = response.data;
             })
-            .catch(function (error) { });
+            .catch(function(error) {});
         return output;
     }
 }
