@@ -66,7 +66,7 @@
                     >
                     <i class="fa fa-check currency-check"></i>
                   </div>
-                  <div class="drop-group">
+                  <!--div class="drop-group">
                     <a
                       href="javascript:void(0)"
                       id="BNB"
@@ -75,13 +75,13 @@
                       >HPS</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
-                  </div>
+                  </div-->
                   <div class="drop-group">
                     <a
                       href="javascript:void(0)"
                       id="BNB"
                       class="side-drop currency-item"
-                      @click="currency = 3"
+                      @click="currency = 2"
                       >BNB</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
@@ -109,21 +109,22 @@
                 >
               </div>
             </div-->
-            <button v-if="!signed" class="form-submit" @click="!signing?sign():''">
-            <span v-html="signText"></span>
+            <button
+              v-if="!signed"
+              class="form-submit"
+              @click="!signing ? sign() : ''"
+            >
+              <span v-html="signText"></span>
             </button>
-
 
             <button
               v-if="!approved && signed"
               class="form-submit"
-             @click="!approving?approveNFT():''"
+              @click="!approving ? approveNFT() : ''"
             >
               <span v-html="approveText"></span>
             </button>
 
-
-            
             <button
               class="form-submit"
               v-if="signed && approved"
@@ -157,11 +158,11 @@ export default {
   props: ["singleNft", "page"],
   data() {
     return {
-      signing:false,
-      approving:false,
+      signing: false,
+      approving: false,
       signText: "Sign",
       approveText: "Approve",
-      saleText:"Put on sale",
+      saleText: "Put on sale",
       quantity: 1,
       balance: 0,
       service_fee: 0,
@@ -175,16 +176,17 @@ export default {
       signed: false,
       salt: "",
       progress: "Sign Order",
-       approvingText: "Approving...<img src='/images/loading.gif' alt='' width='7%' />",
-	    signingText: "Signing...  <img src='/images/loading.gif' alt='' width='7%' />",
-      test:'',
+      approvingText:
+        "Approving...<img src='/images/loading.gif' alt='' width='7%' />",
+      signingText:
+        "Signing...  <img src='/images/loading.gif' alt='' width='7%' />",
+      test: "",
       processing: false,
       orderId: "",
       approved: "",
       currency_label: {
-        1: "HPS",
-        2: "BHC",
-        3: "BNB",
+        1: "BHC",
+        2: "BNB",
       },
     };
   },
@@ -221,7 +223,6 @@ export default {
     },
     async sign() {
       try {
-
         this.signText = this.signingText;
         this.signing = true;
         const _this = this;
@@ -231,15 +232,11 @@ export default {
           _this.singleNft.contract,
           _this.singleNft.id,
           _this.singleNft.ownedCopies,
-          _this.currency == 1
-            ? hpsAddress
-            : _this.currency == 2
-            ? bhcAddress
-            : toAddress(""),
+          _this.currency == 1 ? bhcAddress : toAddress(""),
           _this.price,
           _this.salt
         );
-        
+
         var sig = await signMessage(orderId);
 
         _this.s = sig;
@@ -254,7 +251,6 @@ export default {
       }
     },
     async approveNFT() {
-
       try {
         this.approveText = this.approvingText;
         this.approving = true;
@@ -271,7 +267,6 @@ export default {
       }
     },
 
-    
     async placeOrder() {
       const _this = this;
       var data = {
@@ -281,12 +276,7 @@ export default {
         signed_to: Number(_this.singleNft.ownedCopies),
         price: Number(_this.price),
         is_instant: false,
-        currency:
-          _this.currency == 1
-            ? hpsAddress
-            : _this.currency == 2
-            ? bhcAddress
-            : toAddress(""),
+        currency: _this.currency == 1 ? bhcAddress : toAddress(""),
         signature: _this.s,
         order_id: _this.orderId,
         salt: _this.salt,

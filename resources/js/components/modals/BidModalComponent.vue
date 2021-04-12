@@ -88,12 +88,11 @@
 			  <span>Place a bid</span>
             </button-->
 
-             <button
-             v-if="notStarted && enoughWBNB && !isBHC && !approved"
+            <button
+              v-if="notStarted && enoughWBNB && !isBHC && !approved"
               class="form-submit"
               type="button"
-              @click="!approved && !approving?approveWBNBFunc():''"
-
+              @click="!approved && !approving ? approveWBNBFunc() : ''"
             >
               <span v-html="approveWBNBText"></span>
             </button>
@@ -102,29 +101,22 @@
               v-if="notStarted && !enoughWBNB && !isBHC"
               class="form-submit"
               type="button"
-
-              @click="!approved && !converting?convertBNB():''"
-
+              @click="!approved && !converting ? convertBNB() : ''"
             >
               <span v-html="convertBNBText"></span>
             </button>
 
-
-  <button
-             v-if="notStarted &&  !approved && isBHC" 
+            <button
+              v-if="notStarted && !approved && isBHC"
               class="form-submit"
               type="button"
-              @click="!approved && !approving?approveBHCFunc():''"
-
+              @click="!approved && !approving ? approveBHCFunc() : ''"
             >
               <span v-html="approveBHCText"></span>
             </button>
 
-
-
-             <button
-             v-if="approved && !signed"
-
+            <button
+              v-if="approved && !signed"
               class="form-submit"
               type="button"
               @click="!signed ? signBidFunc() : ''"
@@ -162,9 +154,8 @@ export default {
   props: ["singleNft", "page"],
   data() {
     return {
-
-      showApproveBHC:true,
-      rate:2.5,
+      showApproveBHC: true,
+      rate: 2.5,
 
       bid_input: 0,
       selectedBalance: 0,
@@ -176,11 +167,12 @@ export default {
       payment: 0,
       currency: "",
 
-	  error:"",
-    approved:false,
-    signed:false,
-    converting:false,
-    approving: false,signing: false,
+      error: "",
+      approved: false,
+      signed: false,
+      converting: false,
+      approving: false,
+      signing: false,
 
       nft_id: 0,
       record_id: 0,
@@ -206,11 +198,11 @@ export default {
     };
   },
   async mounted() {
-    this.BHC_Balance = await getBHCBalance();
-    this.BNB_Balance = await getBNBBalance();
-    this.WBNB_Balance = await getWBNBBalance();
+    //this.BHC_Balance = await getBHCBalance();
+    //this.BNB_Balance = await getBNBBalance();
+    //this.WBNB_Balance = await getWBNBBalance();
     this.selected_token = 0;
-    this.selectedBalance = this.BHC_Balance;
+    //this.selectedBalance = this.BHC_Balance;
   },
 
   computed: {
@@ -263,66 +255,64 @@ export default {
     },
   },
   methods: {
-
-
-//////////////////!Approve WBNB////////////////////
-async approveWBNBFunc(){
-try{
-  this.approving = true;
-this.approveWBNBText = this.approvingWbnbText;
-let res = await approveWBNB(this.total_payment);
-if(res){
-this.approveWBNBText ="Approved WBNB";
-this.approved = true;
-this.approving = false;
-}}catch(error){
-         if (error.code == 4001) {
+    //////////////////!Approve WBNB////////////////////
+    async approveWBNBFunc() {
+      try {
+        this.approving = true;
+        this.approveWBNBText = this.approvingWbnbText;
+        let res = await approveWBNB(this.total_payment);
+        if (res) {
+          this.approveWBNBText = "Approved WBNB";
+          this.approved = true;
+          this.approving = false;
+        }
+      } catch (error) {
+        if (error.code == 4001) {
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
+        }
+      }
+    },
+    //////////////////!Convert BNB////////////////////
+    async convertBNB() {
+      if (this.enoughBNB) {
+        try {
+          this.converting = true;
+          this.convertBNBText = this.convertText;
+          let res = await convertBNBtoWBNB(this.total_payment);
+          if (res) {
+            this.converting = false;
+            this.WBNB_Balance += this.payment;
+            this.convertBNBText = "Converted BNB to WBNB";
+          }
+        } catch (error) {
+          if (error.code == 4001) {
             Toast.fire({
               icon: "error",
               title: "User rejected transaction!",
             });
           }
-}
-},
-//////////////////!Convert BNB////////////////////
-async convertBNB(){
-  if(this.enoughBNB){
-    try{
-  this.converting = true;
-  this.convertBNBText = this.convertText;
-let res = await convertBNBtoWBNB(this.total_payment);
-if(res){
-  this.converting = false;
-  this.WBNB_Balance += this.payment;
-  this.convertBNBText = "Converted BNB to WBNB"
-}}catch(error){
-         if (error.code == 4001) {
-
-            Toast.fire({
-              icon: "error",
-              title: "User rejected transaction!",
-            });
+        }
+      } else {
+        this.error = "Not enough Balance";
+      }
+    },
+    //////////////////!Approve BHC////////////////////
+    async approveBHCFunc() {
+      this.approving = true;
+      this.approveBHCText = this.approvingText;
+      if (this.enoughBHC) {
+        try {
+          var res = await approveBHC(this.total_payment);
+          if (res == 1) {
+            this.approving = false;
+            this.approveBHCText = "Approved BHC";
+            this.approved = true;
           }
-
-}}
-else{
-  	this.error  = "Not enough Balance"
-}
-},
-//////////////////!Approve BHC////////////////////
- async approveBHCFunc() {
-   this.approving = true;
-this.approveBHCText = this.approvingText;
-if(this.enoughBHC){
-try{
-var res = await approveBHC(this.total_payment)
-if(res==1){
-  this.approving = false
-  this.approveBHCText = "Approved BHC"
-  this.approved = true;
-}}catch(error){
-         if (error.code == 4001) {
-
+        } catch (error) {
+          if (error.code == 4001) {
             Toast.fire({
               icon: "error",
               title: "User rejected transaction!",
@@ -400,21 +390,28 @@ if(res==1){
     async placeBid() {
       this.currency = $("#selectedCurrency").text();
 
-      try{
-      let res = await bid(
-        this.singleNft.owner_id,
-        this.singleNft.contract,
-        this.singleNft.id,
-        this.currency,
-        this.payment
-      );
-      console.log(res);
-      let message ="You have place a bid of "+this.payment +" "+this.currency+" to token "+this.singleNft.name+ " in the collection "+this.singleNft.collection.name;
-      let success = true;
-      
-       if(success){
+      try {
+        let res = await bid(
+          this.singleNft.owner_id,
+          this.singleNft.contract,
+          this.singleNft.id,
+          this.currency,
+          this.payment
+        );
+        console.log(res);
+        let message =
+          "You have place a bid of " +
+          this.payment +
+          " " +
+          this.currency +
+          " to token " +
+          this.singleNft.name +
+          " in the collection " +
+          this.singleNft.collection.name;
+        let success = true;
 
-          let data={};
+        if (success) {
+          let data = {};
 
           data.message = message;
           data.user_id = window.ethereum.selectedAddress;
@@ -422,20 +419,11 @@ if(res==1){
             console.log(res.data);
           });
 
-          
           this.approved = false;
-         this.signed = false;
-         //window.location.reload();
-        }}catch(error){
-                 if (error.code == 4001) {
-            Toast.fire({
-              icon: "error",
-              title: "User rejected transaction!",
-            });
-          }
-        
+          this.signed = false;
+          //window.location.reload();
         }
-      },catch (error) {
+      } catch (error) {
         if (error.code == 4001) {
           Toast.fire({
             icon: "error",
@@ -443,6 +431,15 @@ if(res==1){
           });
         }
       }
+    },
+    catch(error) {
+      if (error.code == 4001) {
+        Toast.fire({
+          icon: "error",
+          title: "User rejected transaction!",
+        });
+      }
+    },
   },
 };
 </script>

@@ -113,6 +113,7 @@ import {
   getBNBBalance,
 } from "./../../etherFunc";
 import { removeSale } from "../../data";
+import { bhcAddress } from "./../../addresses/constants";
 export default {
   props: ["singleNft", "page", "current_user"],
   data() {
@@ -153,10 +154,8 @@ export default {
   },
   methods: {
     async checkEligibility() {
-      this.singleNft.currencyName == "HPS"
-        ? (this.currency = "0xE19DD2fa7d332E593aaf2BBe4386844469e51937")
-        : this.singleNft.currency == "BHC"
-        ? (this.currency = "0x8Fc7fb3B85C3ADac8a8cBd51BB8EA8Bd6b1Fb876")
+      this.singleNft.currencyName == "BHC"
+        ? (this.currency = bhcAddress)
         : (this.currency = toAddress(""));
       this.price = this.singleNft.price;
       this.nft_id = this.singleNft.id;
@@ -192,7 +191,7 @@ export default {
     },
     updateValues() {
       this.payment = +(this.price * this.quantity);
-      this.service_fee = +(this.payment * 0.025);
+      this.service_fee = +(this.payment + 0.05);
       this.royalty_fee = (this.payment * this.singleNft.royalties) / 100;
       this.total_payment = +(this.payment + this.service_fee);
     },

@@ -158,7 +158,7 @@
                       <a
                         :id="collectible.slug"
                         class="sale"
-                        @click="checked ? remove(collectible) : null"
+                        @click.prevent="checked ? remove(collectible) : null"
                         >Remove From Marketplace</a
                       >
                     </div>
@@ -249,7 +249,7 @@
 </template>
 
 <script>
-import { removeSale } from "./../data";
+import { forceRemoveSale } from "./../data";
 import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
   components: { PutOnSaleModalComponent },
@@ -294,7 +294,8 @@ export default {
     },
     async remove(collectible) {
       const _this = this;
-      const res = await removeSale(collectible.db_id);
+      const res = await forceRemoveSale(collectible.db_id);
+      window.location.reload();
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
