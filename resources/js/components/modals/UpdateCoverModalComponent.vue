@@ -149,7 +149,7 @@ export default {
                   address: ad,
                   ipfs_hash: response.data.IpfsHash,
                   sign: _this.s,
-                  short_url:_this.user_data.short_url
+                  short_url: _this.user_data.short_url,
                 };
                 console.log(response);
                 axios
@@ -164,6 +164,7 @@ export default {
                     //$('#update-preferences').trigger("reset");
 
                     launch_toast();
+                    window.location.reload();
 
                     _this.$parent.getUserData();
                     if (_this.page == "profile") {
