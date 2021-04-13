@@ -57,7 +57,7 @@
               <div class="purchase-info" v-if="this.selected_token == 1">
                 <label class="text-details">Your WBNB balance</label>
                 <label class="text-value"
-                  >{{ this.WBNB_Balance }} <span>WBNB</span></label
+                  >{{ this.selectedBalance }} <span>WBNB</span></label
                 >
               </div>
               <div class="purchase-info">
@@ -159,7 +159,7 @@ export default {
 
       bid_input: 0,
       selectedBalance: 0,
-      BHC_balance: 0,
+      BHC_Balance: 0,
       BNB_Balance: 0,
       WBNB_Balance: 0,
       service_fee: 0,
@@ -399,7 +399,7 @@ export default {
     //////////////////!Set BHC////////////////////
     setBHC() {
       this.selected_token = 0;
-      this.selectedBalance = this.BHC_balance;
+      this.selectedBalance = this.BHC_Balance;
     },
     //////////////////!Place Bid////////////////////
     async placeBid() {
