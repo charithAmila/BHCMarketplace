@@ -277,7 +277,7 @@ export default {
               setTimeout(function () {
                 launch_toast();
               }, 500);
-
+              window.location.reload();
               _this.$parent.getUserData();
               if (_this.page == "profile") {
                 _this.$parent.customFunc();
