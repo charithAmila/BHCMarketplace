@@ -185,7 +185,7 @@
             <div class="col-9 col-md-10">
               <label class="position"
                 > 
-                <span class="positionHolder">{{ transac.bidding_amount }}</span> {{ transac.bidding_token }}
+                <span class="positionHolder">{{ transac.bidding_amount }}</span> {{ transac.bidding_token=="0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4"?'BHC':'BNB'}}
                 on {{ transac.created_at.slice(0, 10) }} by
                 <a :href="user_profile + '/' + transac.bidding_address"
                   ><span class="positionHolder">{{
@@ -328,7 +328,7 @@ async loadData(){
     },
 
     async acceptBidding() {
-
+   
       var res = await acceptBid(
      this.collectible.type== 721?true:false,
      this.collectible.contract,
