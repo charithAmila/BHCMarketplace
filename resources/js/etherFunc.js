@@ -750,9 +750,9 @@ async function buy(
                 sig.r,
                 sig.s
             ], {
-            gasLimit: BigNumber.from(300000),
+            gasLimit: BigNumber.from(3000000),
             value: buyWith == toAddress("") ?
-                ethers.utils.parseEther(`${Number(totalPayment)}`) :
+                ethers.utils.parseEther(`${Number(totalPayment) * 1.03}`) :
                 "0"
         }
         );

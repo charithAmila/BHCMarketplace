@@ -180,12 +180,12 @@ export default {
       }
       this.allowance = allowance;
       console.log(allowance);
-      if (this.total_payment <= allowance) {
+      if (this.total_payment * 1.03 <= allowance) {
         this.approved = true;
       } else {
         this.approved = false;
       }
-      if (this.balance < this.total_payment) {
+      if (this.balance * 1.03 < this.total_payment) {
         this.enoughBalance = false;
       } else {
         this.enoughBalance = true;
@@ -254,7 +254,7 @@ export default {
         collectible.salt,
         collectible.owner_id,
         collectible.signature,
-        _this.total_payment * 1.03
+        _this.total_payment
       )
         .then(async function (hash) {
           var data = await waitForTransaction(hash);
