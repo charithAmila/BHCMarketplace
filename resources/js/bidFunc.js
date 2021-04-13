@@ -310,7 +310,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
         token_id,
         1,
         bidding_token,
-        (amount * 10 ** 18).toString(),
+        amount,
         salt
     );
     var status = await getBiddingStatus(owner, contract_address, token_id);
