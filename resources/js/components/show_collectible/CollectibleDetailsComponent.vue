@@ -333,7 +333,7 @@ async loadData(){
      this.collectible.type== 721?true:false,
      this.collectible.contract,
      this.collectible.id,
-     this.highestBid.maxBidToken,
+     this.highestBid.maxBidToken=='BNB'?'0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c':'0x6fd7c98458a943f469e1cf4ea85b173f5cd342f4',
      this.highestBid.maxAmount,
      this.highestBid.maxBidder,
      this.highestBid.maxBidSig,
