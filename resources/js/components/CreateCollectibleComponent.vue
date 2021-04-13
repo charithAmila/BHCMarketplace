@@ -399,10 +399,10 @@
                   <div class="drop-group">
                     <a
                       href="javascript:void(0)"
-                      id="HPS"
-                      @click="setSaleCurrency('HPS')"
+                      id="BHC"
+                      @click="setSaleCurrency('BHC')"
                       class="currency-item"
-                      >HPS</a
+                      >BHC</a
                     >
                     <i class="fa fa-check currency-check opacity-0"></i>
                   </div>
@@ -1160,11 +1160,7 @@ export default {
           _this.tokenData.collection,
           _this.tokenData.tokenId,
           _this.copies > 0 ? _this.copies : 1,
-          _this.sale_currency == "BNB"
-            ? toAddress("")
-            : _this.sale_currency == "BHC"
-            ? bhcAddress
-            : hpsAddress,
+          _this.sale_currency == "BNB" ? toAddress("") : bhcAddress,
           _this.price,
           _this.salt
         );
@@ -1197,12 +1193,7 @@ export default {
         signed_to: Number(_this.copies > 0 ? _this.copies : 1),
         price: Number(_this.price),
         is_instant: _this.putOnSale,
-        currency:
-          _this.sale_currency == "BNB"
-            ? toAddress("")
-            : _this.sale_currency == "BHC"
-            ? bhcAddress
-            : hpsAddress,
+        currency: _this.sale_currency == "BNB" ? toAddress("") : bhcAddress,
         signature: _this.s,
         order_id: _this.orderId,
         salt: _this.salt,

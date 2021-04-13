@@ -694,7 +694,7 @@ async function approveTokens(contractAddress, price) {
         );
         const tx = await contract.approve(
             erc20TransferProxyAddress,
-            ethers.utils.parseEther(price)
+            ethers.utils.parseEther(`${Number(price) * 1.03}`)
         );
         return tx.hash;
     } catch (e) {
@@ -750,7 +750,7 @@ async function buy(
                 sig.r,
                 sig.s
             ], {
-            gasLimit: BigNumber.from(3000000),
+            gasLimit: BigNumber.from(300000),
             value: buyWith == toAddress("") ?
                 ethers.utils.parseEther(`${Number(totalPayment)}`) :
                 "0"
