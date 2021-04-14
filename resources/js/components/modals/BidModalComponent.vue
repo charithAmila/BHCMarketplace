@@ -57,7 +57,7 @@
               <div class="purchase-info" v-if="this.selected_token == 1">
                 <label class="text-details">Your WBNB balance</label>
                 <label class="text-value"
-                  >{{ this.selectedBalance }} <span>WBNB</span></label
+                  >{{ this.WBNB_Balance }} <span>WBNB</span></label
                 >
               </div>
               <div class="purchase-info">
@@ -271,6 +271,7 @@ export default {
       } catch (error) {
         if (error.code == 4001) {
           this.approving = false;
+          this.approveWBNBText = "Approve WBNB";
           Toast.fire({
             icon: "error",
             title: "User rejected transaction!",
@@ -310,6 +311,11 @@ export default {
     },
     //////////////////!Approve BHC////////////////////
     async approveBHCFunc() {
+      //////////////////////////////////////////////////////////////// 
+       //console.log("Contract");
+      //  console.log(singleNft.contract);
+     //  this.collection_data = await collectionURI(singleNft.contract);
+      ////////////////////////////////////////////////////////////////
       console.log(this.enoughBHC);
       if (this.enoughBHC) {
           this.approving = true;
@@ -342,10 +348,10 @@ export default {
     //////////////////!Sign Bid////////////////////
 
     async signBidFunc() {
-    console.log( singleNft);
-    this.collection_data= await collectionURI(this.singleNft.contract);
-    console.log("DATA");
-    console.log(this.collection_data);
+  //  console.log( singleNft);
+   // this.collection_data= await collectionURI(this.singleNft.contract);
+  //  console.log("DATA");
+   // console.log(this.collection_data);
       let pay_token;
       this.signBidText = this.signText;
       this.currency = $("#selectedCurrency").text();
@@ -364,9 +370,14 @@ export default {
           this.payment
         );
         if (res) {
-          let message =
+          let message_bidder =
             "You have place a bid of " +
             this.payment +
+            " " +
+            this.currency +
+            " to token " +
+            this.singleNft.name; 
+          let message_owner =  window.ethereum.selectedAddress + ' placed a bid of '+this.payment +
             " " +
             this.currency +
             " to token " +
@@ -374,8 +385,12 @@ export default {
            // +" in the collection " +
            // this.singleNft.collection.name;
           let data = {};
-          data.message = message;
+          data.message_owner = message_owner;
+          data.message_bidder = message_bidder;
           data.user_id = window.ethereum.selectedAddress;
+          data.owner = this.singleNft.owner_id;
+          data.token_id = this.singleNft.id;
+          data.contract = this.singleNft.contract;
           data.amount = this.payment;
           data.noBuy = true;
           data.currency = this.currency;
