@@ -46,9 +46,7 @@
           </a>
           <div class="user-info">
             <h6>
-              <a class="black-link" :href="item.profile_url">{{
-                item.username
-              }}</a>
+              <a class="black-link" :href="item">{{ item.username }}</a>
             </h6>
             <label
               >{{ item.sell_amount }} {{ item.buy_amount }}
