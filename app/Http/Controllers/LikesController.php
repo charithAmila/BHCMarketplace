@@ -68,6 +68,7 @@ class LikesController extends Controller
                     "address" => $request->address,
                     "contract" => $request->contract,
                     "token_id" => $request->token_id,
+                    "liked" => true,
                 ]);
                 return response()->json(['success' => true]);
             } else {
