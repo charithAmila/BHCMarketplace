@@ -41,12 +41,14 @@
 
       <div id="actual-top-user">
         <div v-for="(item, index) in userList" :key="index" class="topUserList">
-          <a class="black-link" :href="item.profile_url">
+          <a class="black-link" :href="'/profile/' + item.user_id">
             <img class="filterImg" :src="item.propic" alt="" />
           </a>
           <div class="user-info">
             <h6>
-              <a class="black-link" :href="item">{{ item.username }}</a>
+              <a class="black-link" :href="'/profile/' + item.user_id">{{
+                item.username
+              }}</a>
             </h6>
             <label
               >{{ item.sell_amount }} {{ item.buy_amount }}
@@ -63,10 +65,12 @@
         :key="index"
         class="filterItemMobile"
       >
-        <img class="filterImg" :src="item.propic" alt="" />
-        <label class="profName">
-          {{ item.username }}
-        </label>
+        <a :href="'/profile/' + item.user_id">
+          <img class="filterImg" :src="item.propic" alt="" />
+          <label class="profName">
+            {{ item.username }}
+          </label>
+        </a>
         <label class="prof">
           {{ item.sell_amount }} {{ item.buy_amount }} {{ item.currency }}
         </label>
