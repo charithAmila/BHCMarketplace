@@ -150,13 +150,14 @@ import {
   convertBNBtoWBNB,
 } from ".././../bidFunc";
 import {bhcAddress,WBNB_tokenAddress} from ".././../addresses/constants";
+import{collectionURI} from ".././../etherFunc";
 export default {
   props: ["singleNft", "page"],
   data() {
     return {
       showApproveBHC: true,
       rate: 2.5,
-
+      collection_data:{},
       bid_input: 0,
       selectedBalance: 0,
       BHC_Balance: 0,
@@ -198,6 +199,7 @@ export default {
     };
   },
   async mounted() {
+   
     this.BHC_Balance = await getBHCBalance();
     this.BNB_Balance = await getBNBBalance();
     this.WBNB_Balance = await getWBNBBalance();
@@ -340,6 +342,10 @@ export default {
     //////////////////!Sign Bid////////////////////
 
     async signBidFunc() {
+    console.log( singleNft);
+    this.collection_data= await collectionURI(this.singleNft.contract);
+    console.log("DATA");
+    console.log(this.collection_data);
       let pay_token;
       this.signBidText = this.signText;
       this.currency = $("#selectedCurrency").text();
@@ -403,6 +409,8 @@ export default {
     },
     //////////////////!Place Bid////////////////////
     async placeBid() {
+    var message_bidder;
+    var message_owner;
       this.currency = $("#selectedCurrency").text();
 
       try {
@@ -414,7 +422,8 @@ export default {
           this.payment
         );
 
-        let message =
+      if(this.page=="showCollectible"){
+        message_bidder =
           "You have place a bid of " +
           this.payment +
           " " +
@@ -422,7 +431,38 @@ export default {
           " to token " +
           this.singleNft.name +
           " in the collection ";
-          //+this.singleNft.collection.name;
+        +this.singleNft.collection.name;
+
+            message_owner =
+          "Your nft "+this.singleNft.name +
+          " in the collection ";
+        +this.singleNft.collection.name;
+          " have received a bid of" +
+          this.payment +
+          " " +
+          this.currency;
+      }
+      else{
+                message_bidder =
+          "You have place a bid of " +
+          this.payment +
+          " " +
+          this.currency +
+          " to token " +
+          this.singleNft.name +
+          " in the collection ";
+        +this.singleNft.collection.name;
+
+            message_owner =
+          "Your nft "+this.singleNft.name +
+          " in the collection ";
+        +this.singleNft.collection.name;
+          " have received a bid of" +
+          this.payment +
+          " " +
+          this.currency;
+      }
+       
         let success = true;
 
         if (success) {
