@@ -253,7 +253,7 @@ export default {
 
 async loadData(){
   
-  //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+    this.highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
     this.address = await getConnectedAddress();
      this.allBids = await getAllBids(
       this.current_owner.wallet,
@@ -328,7 +328,7 @@ async loadData(){
     },
 
     async acceptBidding() {
-   
+      try{
       var res = await acceptBid(
      this.collectible.type== 721?true:false,
      this.collectible.contract,
@@ -339,7 +339,25 @@ async loadData(){
      this.highestBid.maxBidSig,
      this.highestBid.maxBidSalt
       );
+      
+       console.log("result");
       console.log(res);
+      console.log(res==1);
+     if(res ==1){
+       this.owner = false;
+       this.haveBids = false;
+         Toast.fire({
+              icon: "success",
+              title: "Successfully accepted Highest Bid!",
+            });
+     }
+      }catch(e){
+
+        Toast.fire({
+              icon: "error",
+              title: "Accepting Highest Bid failed!",
+            });
+      }
     },
   },
 };

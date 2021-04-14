@@ -18,21 +18,38 @@ class NotificationController extends Controller
         if ($request->noBuy) {
             $notification = new Notification;
             $notification->user_id = $request->user_id;
-            $notification->message = $request->message;
+            $notification->message = $request->message_bidder;
             $notification->currency = $request->currency;
+            $notification->owner = $request->owner;
+            $notification->contract = $request->contract;
+            $notification->token_id = $request->token_id;
             $notification->save();
+            $notification2 = new Notification;
+            $notification2->user_id = $request->owner;
+            $notification2->message = $request->message_owner;
+            $notification2->currency = $request->currency;
+            $notification2->owner = $request->owner;
+            $notification2->contract = $request->contract;
+            $notification2->token_id = $request->token_id;
+            $notification2->save();
         } else {
             $notification = new Notification;
             $notification->user_id = $request->seller_id;
             $notification->message = $request->message_seller;
             $notification->sell_amount = $request->amount;
             $notification->currency = $request->currency;
+            $notification->owner = $request->owner;
+            $notification->contract = $request->contract;
+            $notification->token_id = $request->token_id;
             $notification->save();
             $notification2 = new Notification;
             $notification2->user_id = $request->buyer_id;
             $notification2->message = $request->message_buyer;
             $notification2->buy_amount = $request->amount;
             $notification2->currency = $request->currency;
+            $notification2->owner = $request->owner;
+            $notification2->contract = $request->contract;
+            $notification->token_id = $request->token_id;
             $notification2->save();
         }
     }
