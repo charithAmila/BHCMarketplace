@@ -12,6 +12,7 @@ class Likes extends Model
     protected $fillable = [
         "address",
         "contract",
-        "token_id"
+        "token_id",
+        "liked"
     ];
 }
