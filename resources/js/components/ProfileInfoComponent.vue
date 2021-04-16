@@ -170,13 +170,7 @@ import { toAddress, checkConnection } from "./../etherFunc";
 import { FollowController } from "../mediaFunc";
 
 export default {
-  props: [
-    //'auth_id',
-    "user_id",
-    "asset_url",
-    "csrf_token",
-    "user",
-  ],
+  props: ["user_id", "asset_url", "csrf_token", "user"],
 
   data() {
     return {
@@ -187,12 +181,13 @@ export default {
     };
   },
   methods: {
-    checkConnection: function () {
+    checkConnectionInit: function () {
       const _this = this;
       var connectionInterval = setInterval(function () {
         var acc = checkConnection();
         if (acc) {
           _this.auth_id = toAddress(acc);
+          _this.checkFollow();
           clearInterval(connectionInterval);
         }
       }, 300);
@@ -280,14 +275,15 @@ export default {
       }
     },
     checkFollow() {
+      var _this = this;
       var user_id = this.user_id;
       var follower_id = checkConnection();
-      var _this = this;
+      console.log(follower_id);
       axios.get("/followers").then((res) => {
         var valObj = res.data.followers.filter(function (elem) {
           if (
-            elem.user_id == user_id &&
-            elem.follower_id == follower_id &&
+            elem.user_id.toLowerCase() == user_id.toLowerCase() &&
+            elem.follower_id.toLowerCase() == follower_id.toLowerCase() &&
             elem.followed == true
           )
             return elem.user_id;
@@ -295,13 +291,14 @@ export default {
         if (valObj.length > 0) {
           _this.following = true;
         }
+        console.log(valObj);
       });
     },
   },
-  async mounted() {
-    this.checkConnection();
+  mounted() {
+    this.checkConnectionInit();
     this.getUserData();
-    this.checkFollow();
+    //  this.checkFollow();
   },
 };
 </script>

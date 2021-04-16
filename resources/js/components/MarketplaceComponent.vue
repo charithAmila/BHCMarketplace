@@ -52,7 +52,7 @@
                 @click="sortNft('updated_at', 'desc')"
               >
                 <div class="row">
-                  <div class="col-md-9" @click="sortedItems()">
+                  <div class="col-md-9" @click="sortedItems('recent')">
                     Recently added
                   </div>
                   <div class="col-md-3 checkLabel">
@@ -70,7 +70,9 @@
                 @click="sortNft('price', 'asc')"
               >
                 <div class="row">
-                  <div class="col-md-9">Cheapest</div>
+                  <div class="col-md-9" @click="sortedItems('cheap')">
+                    Cheapest
+                  </div>
                   <div class="col-md-3 checkLabel">
                     <i class="fa fa-check"></i>
                   </div>
@@ -86,7 +88,9 @@
                 @click="sortNft('price', 'desc')"
               >
                 <div class="row">
-                  <div class="col-md-9">Highest price</div>
+                  <div class="col-md-9" @click="sortedItems('hprice')">
+                    Highest price
+                  </div>
                   <div class="col-md-3 checkLabel">
                     <i class="fa fa-check"></i>
                   </div>
@@ -264,25 +268,65 @@ export default {
       }
       this.isAll = true;
     },
-    sortedItems: function () {
-      if (
-        this.new_array_collectibles === undefined ||
-        this.new_array_collectibles.length == 0
-      ) {
-        //
-      } else {
-        this.isSortedRecent = false;
-        this.collectibles = [...this.new_array_collectibles];
+    sortedItems: function (sort_status) {
+      if (sort_status == "recent") {
+        if (
+          this.new_array_collectibles === undefined ||
+          this.new_array_collectibles.length == 0
+        ) {
+          //
+        } else {
+          this.isSortedRecent = false;
+          this.collectibles = [...this.new_array_collectibles];
+        }
+        if (!this.isAll) {
+          var collectible_array = this.collectible;
+        } else {
+          var collectible_array = this.collectibles;
+        }
+        this.isSortedRecent = true;
+        this.new_array_collectibles = collectible_array.sort(function (a, b) {
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
+      } else if (sort_status == "cheap") {
+        if (
+          this.new_array_collectibles === undefined ||
+          this.new_array_collectibles.length == 0
+        ) {
+          //
+        } else {
+          this.isSortedRecent = false;
+          this.collectibles = [...this.new_array_collectibles];
+        }
+        if (!this.isAll) {
+          var collectible_array = this.collectible;
+        } else {
+          var collectible_array = this.collectibles;
+        }
+        this.isSortedRecent = true;
+        this.new_array_collectibles = collectible_array.sort(function (a, b) {
+          return new Date(b.price) - new Date(a.price);
+        });
+      } else if (sort_status == "hprice") {
+        if (
+          this.new_array_collectibles === undefined ||
+          this.new_array_collectibles.length == 0
+        ) {
+          //
+        } else {
+          this.isSortedRecent = false;
+          this.collectibles = [...this.new_array_collectibles];
+        }
+        if (!this.isAll) {
+          var collectible_array = this.collectible;
+        } else {
+          var collectible_array = this.collectibles;
+        }
+        this.isSortedRecent = true;
+        this.new_array_collectibles = collectible_array.sort(function (a, b) {
+          return new Date(a.price) - new Date(b.price);
+        });
       }
-      if (!this.isAll) {
-        var collectible_array = this.collectible;
-      } else {
-        var collectible_array = this.collectibles;
-      }
-      this.isSortedRecent = true;
-      this.new_array_collectibles = collectible_array.sort(function (a, b) {
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
     },
     getCollectible() {
       const _this = this;
