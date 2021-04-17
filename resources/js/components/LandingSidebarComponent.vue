@@ -7,6 +7,7 @@
         id="connectWallet"
         ><i class="fas fa-angle-double-right"></i> {{ account }}</a
       >
+      {{ account_check }}
     </div>
     <a :href="marketplace_route">
       <img class="sidebarLogo z-2" :src="asset_url + 'images/logo.png'" />
@@ -37,11 +38,15 @@ export default {
       account: "Connect Wallet",
       connected: false,
       profile_route: "/profile/",
+      account_check: null,
     };
   },
   props: ["wallet_route", "marketplace_route", "asset_url"],
   mounted() {
     this.checkConnection();
+    provider.getNetwork().then((data) => {
+      this.account_check = data.chainId;
+    });
   },
   methods: {
     checkConnection: function () {
