@@ -21,7 +21,7 @@
 		      <div class="newsletter">
 		        <h3>Subscribe with Happiness newsletter</h3>
 		        <label class="small-text">Don't miss out our latest updates and new created artworks</label>
-		        <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
+		        <input v-model="email"  class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
 		        <button class="form-send" v-on:click="subscribe()">Let's go!</button>
 		      </div>
 		    </div>
@@ -35,8 +35,8 @@
 		  <div class="newsletter">
 		    <h3>Subscribe with Happiness newsletter</h3>
 		    <label class="small-text">Don't miss out our latest updates and new created artworks</label>
-		    <input class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
-		    <button class="form-send">Let's go!</button>
+		    <input v-model="email"  class="newsletter-input" type="email" name="" placeholder="sample@protonmail.com">
+		    <button class="form-send"  v-on:click="subscribe()">Let's go!</button>
 		  </div>
 		  <div class="footer-social">
 		    <a href="https://twitter.com/bhc_happiness" target="_blank">
@@ -67,6 +67,7 @@ export default{
 
 data(){
 return{ 
+	email:"",
 	highestBid:{},
 	highestBidder:{},
 	biddingStatus:{}
@@ -80,7 +81,21 @@ async mounted() {
 	methods: {
 
 	async subscribe(){
-		console.log("Subscribe");
+		let data = {};
+		let success =false;
+		data.email = this.email;
+		axios.post('/subscribe',data).then((res)=>{
+			console.log(res);
+			if(res.data ==1){
+					Toast.fire({
+            icon: "success",
+            title: "Succesfully subscribed to newsletter..!",
+          });
+		
+			}
+		});
+		
+			
 	},}
 	
 
