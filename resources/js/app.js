@@ -2,7 +2,8 @@ require("./bootstrap");
 import { ethers } from "ethers";
 
 import Vue from "vue";
-
+import VueSpinners from "vue-spinners";
+Vue.use(VueSpinners);
 import Swal from "sweetalert2";
 window.Swal = Swal;
 const Toast = Swal.mixin({
@@ -177,7 +178,7 @@ Vue.component(
 Vue.component(
     "collectible-details-component",
     require("./components/show_collectible/CollectibleDetailsComponent.vue")
-    .default
+        .default
 );
 Vue.component(
     "show-fullscreen-component",
