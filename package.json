@@ -63,6 +63,7 @@
         "typedarray-to-buffer": "^4.0.0",
         "use-wallet": "^0.8.1",
         "util": "^0.11.1",
+        "vue-spinners": "^1.0.2",
         "walletconnect": "^1.3.6",
         "web3": "^1.3.4",
         "web3modal": "^1.9.3"

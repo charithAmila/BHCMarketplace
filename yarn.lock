@@ -12402,6 +12402,11 @@
     "vue-hot-reload-api" "^2.3.0"
     "vue-style-loader" "^4.1.0"
 
+"vue-spinners@^1.0.2":
+  "integrity" "sha512-Wndmjn9PN5Y+L1m94n7rMqzhi+2QZMMqJtF9hDW13K2wa5x73Yguh99zcbSLQJyz7mwQ4xQOWbOFIyklgHdOLw=="
+  "resolved" "https://registry.npmjs.org/vue-spinners/-/vue-spinners-1.0.2.tgz"
+  "version" "1.0.2"
+
 "vue-style-loader@^4.1.0":
   "integrity" "sha512-sFuh0xfbtpRlKfm39ss/ikqs9AbKCoXZBpHeVZ8Tx650o0k0q/YCM7FRvigtxpACezfq6af+a7JeqVTWvncqDg=="
   "resolved" "https://registry.npmjs.org/vue-style-loader/-/vue-style-loader-4.1.3.tgz"
