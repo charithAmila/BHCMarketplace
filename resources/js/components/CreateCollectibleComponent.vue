@@ -1021,119 +1021,113 @@ export default {
                     }
                 }
             }
-          } else {
-            this.isError.imgselectok = false;
-            this.isError.category = false;
-            this.isError.legend = false;
-            this.isError.collection = false;
-            this.isError.sale_price = false;
-            this.isError.name = false;
-            this.isError.copies = false;
-            this.errors_have = false;
-            $("#create-collectible-modal").addClass("d-block");
-          }
-        }
-      }
-    },
-    setSaleCurrency(currency) {
-      this.sale_currency = currency;
-    },
-    onClickCollection(address, index) {
-      this.selectedContract = address;
-      this.clicked_index = index;
-    },
-    checkConnection: function () {
-      const _this = this;
-      var connectionInterval = setInterval(async function () {
-        var acc = await checkConnection();
-        if (acc) {
-          _this.current_user = toAddress(acc);
-          clearInterval(connectionInterval);
-          if (_this.type == "solo") {
-            _this.loading_collections = true;
-            _this.setCollections = await getCollections(721, acc, false);
-            _this.loading_collections = false;
-          } else if (_this.type == "multiple") {
-            _this.loading_collections = true;
-            _this.setCollections = await getCollections(1155, acc, false);
-            _this.loading_collections = false;
-          }
-        }
-      }, 300);
-    },
-    async approveNFT() {
-      try {
-        this.isApprovingNft = true;
-        var tx = await approveNFT(this.tokenData.collection);
-        waitForTransaction(tx.hash).then((data) => {
-          if (data.status) {
-            this.isNftApproved = true;
-          } else {
-            Toast.fire({
-              icon: "warning",
-              title: "try again!",
+        },
+
+        setSaleCurrency(currency) {
+            this.sale_currency = currency;
+        },
+        onClickCollection(address, index) {
+            this.selectedContract = address;
+            this.clicked_index = index;
+        },
+        checkConnection: function() {
+            const _this = this;
+            var connectionInterval = setInterval(async function() {
+                var acc = await checkConnection();
+                if (acc) {
+                    _this.current_user = toAddress(acc);
+                    clearInterval(connectionInterval);
+                    if (_this.type == "solo") {
+                        _this.loading_collections = true;
+                        _this.setCollections = await getCollections(
+                            721,
+                            acc,
+                            false
+                        );
+                        _this.loading_collections = false;
+                    } else if (_this.type == "multiple") {
+                        _this.loading_collections = true;
+                        _this.setCollections = await getCollections(
+                            1155,
+                            acc,
+                            false
+                        );
+                        _this.loading_collections = false;
+                    }
+                }
+            }, 300);
+        },
+        async approveNFT() {
+            try {
+                this.isApprovingNft = true;
+                var tx = await approveNFT(this.tokenData.collection);
+                waitForTransaction(tx.hash).then(data => {
+                    if (data.status) {
+                        this.isNftApproved = true;
+                    } else {
+                        Toast.fire({
+                            icon: "warning",
+                            title: "try again!"
+                        });
+                    }
+                    this.isApprovingNft = false;
+                });
+            } catch (error) {
+                if (error.code == 4001) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "User rejected transaction!"
+                    });
+                }
+                this.isApprovingNft = false;
+            }
+        },
+        async approve() {
+            this.isApproving = true;
+            try {
+                var fee = await getFees();
+                var hash = await approveTokens(hpsAddress, `${fee}`);
+                waitForTransaction(hash).then(data => {
+                    if (data.status) {
+                        this.isApproved = true;
+                    } else {
+                        Toast.fire({
+                            icon: "warning",
+                            title: "try again!"
+                        });
+                    }
+                    this.isApproving = false;
+                });
+            } catch (error) {
+                if (error.code == 4001) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "User rejected transaction!"
+                    });
+                }
+                this.isApproving = false;
+            }
+        },
+        capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+        updateCollection(passedCollection) {
+            this.setCollections = passedCollection;
+        },
+        async aqquireKeys() {
+            const _this = this;
+            await axios.get("/api/keygen").then(res => {
+                _this.j = res.data.JWT;
             });
-          }
-          this.isApprovingNft = false;
-        });
-      } catch (error) {
-        if (error.code == 4001) {
-          Toast.fire({
-            icon: "error",
-            title: "User rejected transaction!",
-          });
-        }
-        this.isApprovingNft = false;
-      }
-    },
-    async approve() {
-      this.isApproving = true;
-      try {
-        var fee = await getFees();
-        var hash = await approveTokens(hpsAddress, `${fee}`);
-        waitForTransaction(hash).then((data) => {
-          if (data.status) {
-            this.isApproved = true;
-          } else {
-            Toast.fire({
-              icon: "warning",
-              title: "try again!",
-            });
-          }
-          this.isApproving = false;
-        });
-      } catch (error) {
-        if (error.code == 4001) {
-          Toast.fire({
-            icon: "error",
-            title: "User rejected transaction!",
-          });
-        }
-        this.isApproving = false;
-      }
-    },
-    capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-    updateCollection(passedCollection) {
-      this.setCollections = passedCollection;
-    },
-    async aqquireKeys() {
-      const _this = this;
-      await axios.get("/api/keygen").then((res) => {
-        _this.j = res.data.JWT;
-      });
-    },
-    addFile: async function (evt) {
-      const FormData = require("form-data");
-      let data = new FormData();
-      const _this = this;
-      var url;
+        },
+        addFile: async function(evt) {
+            const FormData = require("form-data");
+            let data = new FormData();
+            const _this = this;
+            var url;
 
-      _this.processing = true;
-      _this.process = "Loading...";
-
-
+            _this.processing = true;
+            _this.process = "Loading...";
 
             _this.processing = true;
             _this.process = "Loading...";
@@ -1405,7 +1399,6 @@ export default {
             _this.selectedContract = _selectedContract;
         }
     },
-
     async mounted() {
         this.checkConnection();
     }
