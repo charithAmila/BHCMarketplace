@@ -1116,9 +1116,8 @@ export default {
         },
         async aqquireKeys() {
             const _this = this;
-            await axios.get("/api/keygen").then(res => {
-                _this.j = res.data.JWT;
-            });
+            _this.j =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkM2VjNWQzNy01MmQ0LTRlYjMtYmEyNC1kNmRjYmY4YTY1NDMiLCJlbWFpbCI6ImJpbGxpb25oYXBwaW5lc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZX0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjQyZmNmMDViN2ZlZGFmNjBiMzNlIiwic2NvcGVkS2V5U2VjcmV0IjoiMGJlZTgwY2Q2OWY3MWVkMWZjZjViNTcxZjcyMjU3M2QwYTEzMzlhZjg4OWYzYjUyYTYwY2RlOGUxOTI1OTRmNSIsImlhdCI6MTYxODY2MjEyN30.8FlNm4h2vEW7TrTO5_xQf_GXQ2SkgXGJ1cepl4kkBrE";
         },
         addFile: async function(evt) {
             const FormData = require("form-data");
