@@ -16,7 +16,7 @@
 					<form autocomplete="off" id="reportForm" @submit.prevent="report">
 						<div class="form-divide">
 							<label class="input-label">Message</label>
-							<input class="modal-input" type="text" name="report_description" placeholder="Tell us some details">
+							<input v-model="message"  class="modal-input" type="text" name="report_description" placeholder="Tell us some details">
 							<label v-if="errorMsg!=null" class="text-danger">{{ errorMsg }}</label>
 						</div>
 						<button class="form-submit" type="submit">Report</button>
@@ -41,6 +41,7 @@ export default{
 	data(){
 		return{
 			errorMsg: null,
+			message:''
 		}
 	},
 	computed:{
@@ -53,26 +54,26 @@ export default{
 	},
 	methods: {
 		report(){
-			this.errorMsg = null
+			let data = {};
+			this.errorMsg = null;
+			data.message = this.message;
+			data.owner = this.singleNft.owner_id;
+			data.contract = this.singleNft.contract;
+			data.user_id = window.ethereum.selectedAddress;
+			data.token_id = this.singleNft.id;
 			$("[name='report_description']").removeClass('emptyVal')
-			var formdata = new FormData()
-	        formdata.append('type', $('#reportModal').attr('data-report-type'))
-	        if ($('#reportModal').attr('data-report-type') == 'nft') {
-	        	formdata.append('report_slug', this.singleNft.slug)
-	        }
-	        else {
-	        	formdata.append('report_slug', $('#reportModal').attr('data-report-slug'))
-	        }
-	        formdata.append('description', $("[name='report_description']").val())
+			
 
-
-			axios.post('/report', formdata).then((res) => {
-				$('.toast-message').text(res.data.message);
+			axios.post('/report', data).then((res) => {
+				if(res){
+					$('.toast-message').text(res.data.message);
 				$('#reportForm').trigger("reset");
 	            setTimeout(function() {
                     launch_toast();
                 }, 500);
 				modalClose($('#reportModal'), $(".report-content"));
+				}
+				
 			})
 			.catch((error) => {
 				$("[name='report_description']").addClass('emptyVal')

@@ -15,12 +15,11 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('report_id');
-            $table->text('description');
-
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->string('contract');
+            $table->string('user_id');
+            $table->string('owner');
+            $table->integer('token_id');
+            $table->string('message');
             $table->timestamps();
         });
     }
