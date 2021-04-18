@@ -104,7 +104,7 @@
                                     v-if="
                                         nameerror &&
                                             nameerror != null &&
-                                            fields.short_url != url_previous
+                                            fields.short_url != this.userData.short_url
                                     "
                                 >
                                     Already exists
@@ -159,9 +159,10 @@ export default {
         "user_address"
     ],
     mounted() {
+        this.userData = this.user_data;
         axios.get("/api/shorturls").then(response => {
             this.shorturls = response.data;
-            this.url_previous = this.user_data.short_url;
+           // this.url_previous = this.user_data.short_url;
             console.log(this.shorturls);
         });
     },
@@ -171,6 +172,7 @@ export default {
             fields: {},
             shorturls: null,
             nameerror: null,
+            userData: {},
             url_previous: "",
             j: "",
             s: "",
@@ -328,9 +330,11 @@ export default {
             if (shorturl.length == 0) {
                 this.nameerror = null;
             }
+            console.log("userData");
+            console.log(this.userData);
             this.nameerror = false;
             this.shorturls.forEach(i => {
-                if (i == shorturl && shorturl != this.url_previous) {
+                if (i == shorturl && shorturl != this.userData.short_url) {
                     this.nameerror = true;
                 }
             });

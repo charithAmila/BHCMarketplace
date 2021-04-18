@@ -82,11 +82,12 @@ async mounted() {
 
 	async subscribe(){
 		let data = {};
-		let success =false;
+		
 		data.email = this.email;
 		axios.post('/subscribe',data).then((res)=>{
 			console.log(res);
 			if(res.data ==1){
+				this.email = '';
 					Toast.fire({
             icon: "success",
             title: "Succesfully subscribed to newsletter..!",

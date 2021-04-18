@@ -66,7 +66,7 @@ export default{
 
 			axios.post('/report', data).then((res) => {
 				if(res){
-					$('.toast-message').text(res.data.message);
+					$('.toast-message').text('Successfully reported the collectible');
 				$('#reportForm').trigger("reset");
 	            setTimeout(function() {
                     launch_toast();
