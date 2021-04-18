@@ -5,7 +5,9 @@
             :asset_url="asset_url"
             :collection="collectionData"
         ></collection-info-component>
+
         <fold v-else></fold>
+
 
         <div class="collection-collectibles">
             <collection-collectible-component
@@ -45,8 +47,10 @@ export default {
     methods: {
         checkConnection() {
             const _this = this;
-            var interval = setInterval(function() {
-                var acc = checkConnection();
+
+            var interval = setInterval(async function() {
+                var acc = await checkConnection();
+
                 if (acc != toAddress("")) {
                     _this.current_user = acc;
                     clearInterval(interval);

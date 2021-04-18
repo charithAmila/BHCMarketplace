@@ -199,6 +199,7 @@
                         Accept Highest Bid
                     </button>
 
+
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
                     <div class="row" v-show="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
@@ -223,16 +224,19 @@
                             </div>
                         </div>
 
+
                         <div class="col-9 col-md-10">
                             <label class="position">
                                 <span class="positionHolder">{{
                                     this.highestBid.maxAmount / 10 ** 18
                                 }}</span>
                                 {{ this.highestBid.maxBidToken }} on
+
                                 {{
                                     this.highestBid.maxBidTime /*.slice(0, 10)*/
                                 }}
                                 by
+
                                 <a
                                     :href="
                                         user_profile +
@@ -287,8 +291,10 @@
                                         ? "BHC"
                                         : "BNB"
                                 }}
+
                                 on
                                 {{ transac.created_at /*.slice(0, 10) */ }} by
+
                                 <a
                                     :href="
                                         user_profile +
@@ -357,6 +363,7 @@ export default {
     },
     methods: {
         async loadData() {
+
             this.highestBid = await getHighestBid(
                 this.current_owner.wallet,
                 this.collectible.contract,
@@ -432,6 +439,7 @@ export default {
         },
 
         async acceptBidding() {
+
             try {
                 var res = await acceptBid(
                     this.collectible.type == 721 ? true : false,
@@ -463,6 +471,7 @@ export default {
                     title: "Accepting Highest Bid failed!"
                 });
             }
+
         }
     }
 };

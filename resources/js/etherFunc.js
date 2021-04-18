@@ -40,13 +40,22 @@ function toAddress(addressString) {
         : ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
 }
 
-function checkConnection() {
+
+async function checkConnection() {
+    // const account = await provider.listAccounts();
+    // const account = account[0];
+    /* provider.getNetwork().then(data => {
+        this.account_check = data.chainId;
+    });
+*/
+
     var acc = "";
     try {
-        var network = provider._network.chainId;
+        var network = await provider.getNetwork();
         console.log(network);
-        if (network == 56) {
-            acc = toAddress(provider.provider.selectedAddress);
+        if (network.chainId == 56) {
+            const accs = await provider.listAccounts();
+            acc = toAddress(accs[0]);
         } else {
             acc = toAddress("");
         }
@@ -56,8 +65,8 @@ function checkConnection() {
     return acc;
 }
 
-function redirectToConnect() {
-    if (checkConnection() == null) {
+async function redirectToConnect() {
+    if (awaitcheckConnection() == null) {
         window.location.href = "/connect";
     }
 }
@@ -177,8 +186,10 @@ async function getCreated(owner) {
         var startBlock = 6494200;
         var endBlock = await provider.getBlockNumber();
         var evts = [];
+
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
             var evtsCr = await nftStorage.queryFilter("NFTAdded", i, i + 4000);
+
             evts = [...evts, ...evtsCr];
         }
 
@@ -194,9 +205,11 @@ async function getCreated(owner) {
             }
         }
         console.log(tokens);
+
     } catch (e) {
         console.log(e);
     }
+
     return tokens;
 }
 
@@ -590,6 +603,7 @@ async function serviceFee(currencyName) {
 //////Set functions/////////
 
 async function createASingle(url, royalty, collection, isBNB) {
+
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
@@ -631,6 +645,7 @@ async function createABatch(url, count, royalty, collection, isBNB) {
 }
 
 async function createCollection(type, uri, isBNB) {
+
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     if (type == 721) {
@@ -730,6 +745,7 @@ async function buy(
             ethers.utils.parseEther(`${price}`),
             owner,
             salt,
+
             sig.v,
             sig.r,
             sig.s

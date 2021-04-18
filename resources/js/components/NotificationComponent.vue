@@ -6,10 +6,10 @@
 <!--button type="button" class="btn btn-primary btn-sm">Small button</button-->
 <button type="button" class="btn btn-secondary btn-sm" style="margin-left:20px" @click ="clearNotif()">Clear All</button>
 		</div>
-		
+
 		<div class="notif" :class="notifications.length == 0 ? '':'d-none'">
 			<img :src="notifications.length == 0 ? asset_url+'images/logo.png':asset_url+'images/logo2.png'">
-		
+
 			<label class="notif-content" >No new notifications</label>
 		</div>
 		<div class="notif-list" :class="notifications.length > 0 ? '':'d-none'">
@@ -58,7 +58,7 @@ export default {
     },
   },
   async mounted() {
-    this.address = await toAddress(checkConnection());
+    this.address = await checkConnection();
     this.getNotifications();
   },
 };
