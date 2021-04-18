@@ -866,7 +866,7 @@ export default {
     checkConnection: function () {
       const _this = this;
       var connectionInterval = setInterval(async function () {
-        var acc = checkConnection();
+        var acc = await checkConnection();
         if (acc) {
           _this.current_user = toAddress(acc);
           clearInterval(connectionInterval);

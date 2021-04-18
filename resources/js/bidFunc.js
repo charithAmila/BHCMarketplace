@@ -85,7 +85,7 @@ async function getWBNBBalance() {
 }
 ////////////////////////////////////////////Get connected address///////////////////////////////////////////////////
 async function getConnectedAddress() {
-    var address = toAddress(checkConnection());
+    var address = await checkConnection();
     return address;
 }
 ///////////////////////////////////////////Get Token Address////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ async function signBid(
     const salt = Math.random()
         .toString(36)
         .substring(7);
-    var address = toAddress(checkConnection());
+    var address = await checkConnection();
     let orderId = await generateOrderIdMessage(
         contract_address,
         token_id,
@@ -317,7 +317,7 @@ async function bid(owner, contract_address, token_id, bidding_token, amount) {
     if (status == 0) {
         return "Not open for bidding";
     }
-    var address = toAddress(checkConnection()); //Get collected wallet address
+    var address = await checkConnection(); //Get collected wallet address
     let success = false;
     let data = {};
     data.owner = owner;

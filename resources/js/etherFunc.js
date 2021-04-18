@@ -40,7 +40,7 @@ function toAddress(addressString) {
         : ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
 }
 
-function checkConnection() {
+async function checkConnection() {
     // const account = await provider.listAccounts();
     // const account = account[0];
     /* provider.getNetwork().then(data => {
@@ -49,10 +49,11 @@ function checkConnection() {
 */
     var acc = "";
     try {
-        var network = provider._network.chainId;
+        var network = await provider.getNetwork();
         console.log(network);
-        if (network == 56) {
-            acc = toAddress(provider.provider.selectedAddress);
+        if (network.chainId == 56) {
+            const accs = await provider.listAccounts();
+            acc = toAddress(accs[0]);
         } else {
             acc = toAddress("");
         }
@@ -62,8 +63,8 @@ function checkConnection() {
     return acc;
 }
 
-function redirectToConnect() {
-    if (checkConnection() == null) {
+async function redirectToConnect() {
+    if (awaitcheckConnection() == null) {
         window.location.href = "/connect";
     }
 }
