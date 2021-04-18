@@ -199,6 +199,7 @@
                         Accept Highest Bid
                     </button>
 
+
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
                     <div class="row" v-show="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
@@ -223,13 +224,19 @@
                             </div>
                         </div>
 
+
                         <div class="col-9 col-md-10">
                             <label class="position">
                                 <span class="positionHolder">{{
                                     this.highestBid.maxAmount / 10 ** 18
                                 }}</span>
                                 {{ this.highestBid.maxBidToken }} on
-                                {{ this.highestBid.maxBidTime.slice(0, 10) }} by
+
+                                {{
+                                    this.highestBid.maxBidTime /*.slice(0, 10)*/
+                                }}
+                                by
+
                                 <a
                                     :href="
                                         user_profile +
@@ -284,7 +291,10 @@
                                         ? "BHC"
                                         : "BNB"
                                 }}
-                                on {{ transac.created_at.slice(0, 10) }} by
+
+                                on
+                                {{ transac.created_at /*.slice(0, 10) */ }} by
+
                                 <a
                                     :href="
                                         user_profile +
@@ -353,7 +363,12 @@ export default {
     },
     methods: {
         async loadData() {
-            //var highestBid = await getHighestBid(this.current_owner.wallet, this.collectible.contract,this.collectible.id);
+
+            this.highestBid = await getHighestBid(
+                this.current_owner.wallet,
+                this.collectible.contract,
+                this.collectible.id
+            );
             this.address = await getConnectedAddress();
             this.allBids = await getAllBids(
                 this.current_owner.wallet,
@@ -424,19 +439,39 @@ export default {
         },
 
         async acceptBidding() {
-            var res = await acceptBid(
-                this.collectible.type == 721 ? true : false,
-                this.collectible.contract,
-                this.collectible.id,
-                this.highestBid.maxBidToken == "BNB"
-                    ? "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
-                    : "0x6fd7c98458a943f469e1cf4ea85b173f5cd342f4",
-                this.highestBid.maxAmount,
-                this.highestBid.maxBidder,
-                this.highestBid.maxBidSig,
-                this.highestBid.maxBidSalt
-            );
-            console.log(res);
+
+            try {
+                var res = await acceptBid(
+                    this.collectible.type == 721 ? true : false,
+                    this.collectible.contract,
+                    this.collectible.id,
+                    this.highestBid.maxBidToken == "BNB"
+                        ? "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+                        : "0x6fd7c98458a943f469e1cf4ea85b173f5cd342f4",
+                    this.highestBid.maxAmount,
+                    this.highestBid.maxBidder,
+                    this.highestBid.maxBidSig,
+                    this.highestBid.maxBidSalt
+                );
+
+                console.log("result");
+                console.log(res);
+                console.log(res == 1);
+                if (res == 1) {
+                    this.owner = false;
+                    this.haveBids = false;
+                    Toast.fire({
+                        icon: "success",
+                        title: "Successfully accepted Highest Bid!"
+                    });
+                }
+            } catch (e) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Accepting Highest Bid failed!"
+                });
+            }
+
         }
     }
 };

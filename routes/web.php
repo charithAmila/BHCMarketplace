@@ -16,7 +16,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CollectibleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
-
+use App\Http\Controllers\SubscribeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -125,3 +125,5 @@ Route::resource('sales', SalesController::class);
 Route::get('sales_search', [SearchSales::class, 'search']);
 
 Route::get('/getData/{time}', [NotificationController::class, 'getData']);
+
+Route::post('/subscribe', [SubscribeController::class, 'subscribe']);

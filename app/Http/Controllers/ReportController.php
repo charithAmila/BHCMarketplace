@@ -13,38 +13,13 @@ class ReportController extends Controller
 {
 
     public function report(Request $request){
-    	$request->validate([
-            'type' => 'required',
-            'report_slug' => 'required',
-            'description' => 'required',
-        ]);
-
-        $report = new Report;
-        $report->type = $request->input('type');
-        $report->user_id = Auth::user()->id;
-
-        $inputType = $request->input('type');
-        $reportSlug = $request->input('report_slug');
-        $report_id = 0;
-        if ($inputType == 'nft') {
-            $collectible = Collectible::where('slug', $reportSlug)->first();
-            $report_id = $collectible->id;
-        }
-        elseif ($inputType == 'user') {
-            $user = User::where('short_url', $reportSlug)->orWhere('wallet', $reportSlug)->first();
-            $report_id = $user->id;
-        }
-        else{
-            $collection = Collection::where('short_url', $reportSlug)->first();
-            $report_id = $collection->id;
-        }
-
-        $report->report_id = $report_id;
-        $report->description = $request->input('description');
-        $report->save();
-
-        return response()->json([
-            'message'   => 'Report submitted!',
-        ]);
+    	$data = new Report;
+        $data->user_id = $request->user_id;
+        $data->owner = $request->owner;
+        $data->contract = $request->contract;
+        $data->token_id = $request->token_id;
+        $data->message = $request->message;
+        $data->save();
+        return true;
     }
 }

@@ -531,6 +531,8 @@ async function getHighestBid(owner, contract_address, token_id) {
             //var hpsprice = await getTokenPrice(output[i].bidding_token);
             //console.log(hpsprice);
             var hpsprice = 1;
+            console.log("OUTPUT");
+            console.log(output[i]);
 
             if (
                 output[i].bidding_token ==

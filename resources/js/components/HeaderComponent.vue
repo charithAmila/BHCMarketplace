@@ -207,14 +207,18 @@
                         @click="getUser()"
                         >Edit profile</a
                     >
+
                     <a href="javascript:void(0)">Manage funds</a>
                     <!-- <a href="javascript:void(0)">
+
 		        <div class="row">
 		          <div class="col-sm-10 col-md-10">GIF/Video enabled</div>
 		          <div class="col-sm-2 col-md-2"></div>
 		        </div>
-		      </a> -->
-                    <a :href="disconnect_route">Disconnect</a>
+
+		      </a> >
+                    <a :href="disconnect_route">Disconnect</a-->
+
                 </div>
             </div>
         </nav>
@@ -301,6 +305,7 @@ export default {
             const _this = this;
             var interval = setInterval(async function() {
                 var acc = await checkConnection();
+
                 if (acc != toAddress("")) {
                     _this.auth_check = true;
                     _this.current_user.wallet = acc;
@@ -399,6 +404,14 @@ export default {
                     }, 200);
                 }
             }
+
+        },
+        getUser() {
+            $("#preferencesModal").addClass("d-block");
+            $(".preferences-content")
+                .removeClass("fade-out-bottom")
+                .addClass("fade-in-bottom");
+
         }
     },
     mounted() {

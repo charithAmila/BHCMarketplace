@@ -266,6 +266,9 @@ export default {
             req.buyer_id = toAddress(window.ethereum.selectedAddress);
             req.amount = _this.price;
             req.seller_id = collectible.owner_id;
+            req.token_id = collectible.id;
+            req.owner = collectible.owner_id;
+            req.contract = collectible.contract;
             req.currency = collectible.currencyName;
             req.bid = false;
             axios.post("addNotification", req).then((res) => {

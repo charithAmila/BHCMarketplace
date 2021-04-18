@@ -17,6 +17,11 @@
                 :asset_url="asset_url"
             ></show-fullscreen-component>
         </div>
+
+        <div v-else>
+            <cube></cube>
+            <h2 class="text-center">NFT is loading....</h2>
+        </div>
     </div>
 </template>
 <script>
@@ -55,13 +60,16 @@ export default {
         authCheck: async function() {
             const _this = this;
             _this.current_user = await checkConnection();
+
             _this.current_user == _this.owner ? (_this.is_auth = true) : null;
         }
     },
     async mounted() {
         this.collectible = await this.getCollectible();
         await this.getOwners();
+
         await this.authCheck();
+
         this.loaded = true;
     }
 };

@@ -15,8 +15,9 @@
 		<div class="notif-list" :class="notifications.length > 0 ? '':'d-none'">
 			<div v-for="notif in notifications" :key="notif.id" class="notif-item">
 				<div>
-					<p>
-					{{notif.message}}</p></div>
+
+				 <a :href="'/nft/'+ notif.contract+':'+notif.token_id+':'+notif.owner"><p>
+					{{notif.message}}</p></a> </div>
 				<!--a :href="asset_url+'profile/'+notif.profile_link"><img class="notif-img" :src="notif.display_photo"></a-->
 				<!--label><a class="user-profile" :href="asset_url+'profile/'">{{ notif.messaage }}</a--><!--span class="notif-item">{{ notif.nft }}</span--><!--small> {{ notif.transaction_time }} ago</small--></label>
 			</div>

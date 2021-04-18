@@ -40,6 +40,7 @@ function toAddress(addressString) {
         : ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
 }
 
+
 async function checkConnection() {
     // const account = await provider.listAccounts();
     // const account = account[0];
@@ -47,6 +48,7 @@ async function checkConnection() {
         this.account_check = data.chainId;
     });
 */
+
     var acc = "";
     try {
         var network = await provider.getNetwork();
@@ -144,11 +146,11 @@ async function getCollection(collectionAddess) {
             var startBlock = 6494200;
             var endBlock = await provider.getBlockNumber();
             var evts = [];
-            for (var i = startBlock; i <= endBlock; i = i + 5000) {
+            for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    i + 5000
+                    i + 4000
                 );
                 evts = [...evts, ...evtsCr];
             }
@@ -184,8 +186,10 @@ async function getCreated(owner) {
         var startBlock = 6494200;
         var endBlock = await provider.getBlockNumber();
         var evts = [];
-        for (var i = startBlock; i <= endBlock; i = i + 5000) {
-            var evtsCr = await nftStorage.queryFilter("NFTAdded", i, i + 5000);
+
+        for (var i = startBlock; i <= endBlock; i = i + 4000) {
+            var evtsCr = await nftStorage.queryFilter("NFTAdded", i, i + 4000);
+
             evts = [...evts, ...evtsCr];
         }
 
@@ -201,7 +205,11 @@ async function getCreated(owner) {
             }
         }
         console.log(tokens);
-    } catch (e) {}
+
+    } catch (e) {
+        console.log(e);
+    }
+
     return tokens;
 }
 
@@ -252,11 +260,11 @@ async function getOwnersOf(collectionAddess, tokenId) {
             var startBlock = 6494200;
             var endBlock = await provider.getBlockNumber();
             var evts = [];
-            for (var i = startBlock; i <= endBlock; i = i + 5000) {
+            for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    i + 5000
+                    i + 4000
                 );
                 evts = [...evts, ...evtsCr];
             }
@@ -595,38 +603,55 @@ async function serviceFee(currencyName) {
 //////Set functions/////////
 
 async function createASingle(url, royalty, collection, isBNB) {
-    try {
-        const signer = provider.getSigner();
-        var contract = new ethers.Contract(minterAddress, minterABI, signer);
-        console.log(contract);
-        var tx = await contract.mint721(
-            collection,
-            url,
-            BigNumber.from(Number(royalty)),
-            isBNB,
-            {
-                value: isBNB
-                    ? ethers.utils.parseEther("0.025")
-                    : ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from("3000000")
-            }
-        ); //, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
-        return tx;
-    } catch (e) {
-        return null;
-    }
+
+    const signer = provider.getSigner();
+    var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    console.log(contract);
+    var tx = await contract.mint721(
+        collection,
+        url,
+        BigNumber.from(Number(royalty)),
+        isBNB,
+        {
+            value: isBNB
+                ? ethers.utils.parseEther("0.025")
+                : ethers.utils.parseEther("0"),
+            gasLimit: BigNumber.from("3000000")
+        }
+    ); //, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
+    return tx;
 }
 
 async function createABatch(url, count, royalty, collection, isBNB) {
-    try {
-        const signer = provider.getSigner();
-        var contract = new ethers.Contract(minterAddress, minterABI, signer);
-        console.log(contract);
-        var tx = await contract.mint1155(
-            collection,
-            url,
-            BigNumber.from(Number(count)),
-            BigNumber.from(Number(royalty)),
+    const signer = provider.getSigner();
+    var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    console.log(contract);
+    var tx = await contract.mint1155(
+        collection,
+        url,
+        BigNumber.from(Number(count)),
+        BigNumber.from(Number(royalty)),
+
+        isBNB,
+        {
+            value: isBNB
+                ? ethers.utils.parseEther("0.025")
+                : ethers.utils.parseEther("0"),
+            gasLimit: BigNumber.from(3000000)
+        }
+    );
+
+    return tx;
+}
+
+async function createCollection(type, uri, isBNB) {
+
+    const signer = provider.getSigner();
+    var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    if (type == 721) {
+        var tx = await contract.generate721(
+            contractFactoryAddress,
+            uri,
 
             isBNB,
             {
@@ -636,84 +661,49 @@ async function createABatch(url, count, royalty, collection, isBNB) {
                 gasLimit: BigNumber.from(3000000)
             }
         );
+    } else {
+        var tx = await contract.generate1155(
+            contractFactoryAddress,
+            "https://ipfs.io/ipfs/",
+            uri,
 
-        return tx;
-    } catch (e) {
-        return null;
+            isBNB,
+            {
+                value: isBNB
+                    ? ethers.utils.parseEther("0.025")
+                    : ethers.utils.parseEther("0"),
+                gasLimit: BigNumber.from(3000000)
+            }
+        );
     }
-}
-
-async function createCollection(type, uri, isBNB) {
-    try {
-        const signer = provider.getSigner();
-        var contract = new ethers.Contract(minterAddress, minterABI, signer);
-        if (type == 721) {
-            var tx = await contract.generate721(
-                contractFactoryAddress,
-                uri,
-
-                isBNB,
-                {
-                    value: isBNB
-                        ? ethers.utils.parseEther("0.025")
-                        : ethers.utils.parseEther("0"),
-                    gasLimit: BigNumber.from(3000000)
-                }
-            );
-        } else {
-            var tx = await contract.generate1155(
-                contractFactoryAddress,
-                "https://ipfs.io/ipfs/",
-                uri,
-
-                isBNB,
-                {
-                    value: isBNB
-                        ? ethers.utils.parseEther("0.025")
-                        : ethers.utils.parseEther("0"),
-                    gasLimit: BigNumber.from(3000000)
-                }
-            );
-        }
-        return tx.hash;
-    } catch (e) {
-        return null;
-    }
+    return tx.hash;
 }
 
 async function approveNFT(contractAddress) {
-    try {
-        const signer = provider.getSigner();
-        const ABI = bhc721;
-        const contract = new ethers.Contract(
-            toAddress(contractAddress),
-            ABI,
-            signer
-        );
-        const tx = await contract.setApprovalForAll(transferProxyAddress, true);
-        return tx;
-    } catch (e) {
-        return null;
-    }
+    const signer = provider.getSigner();
+    const ABI = bhc721;
+    const contract = new ethers.Contract(
+        toAddress(contractAddress),
+        ABI,
+        signer
+    );
+    const tx = await contract.setApprovalForAll(transferProxyAddress, true);
+    return tx;
 }
 
 async function approveTokens(contractAddress, price) {
-    try {
-        const signer = provider.getSigner();
-        const ABI = bep20ABI;
-        const contract = new ethers.Contract(
-            toAddress(contractAddress),
-            ABI,
-            signer
-        );
-        const tx = await contract.approve(
-            erc20TransferProxyAddress,
-            ethers.utils.parseEther(`${Number(price) * 1.03}`)
-        );
-        return tx.hash;
-    } catch (e) {
-        return null;
-    }
+    const signer = provider.getSigner();
+    const ABI = bep20ABI;
+    const contract = new ethers.Contract(
+        toAddress(contractAddress),
+        ABI,
+        signer
+    );
+    const tx = await contract.approve(
+        erc20TransferProxyAddress,
+        ethers.utils.parseEther(`${Number(price) * 1.03}`)
+    );
+    return tx.hash;
 }
 
 async function buy(
@@ -729,55 +719,46 @@ async function buy(
     signature,
     totalPayment
 ) {
-    try {
-        const signer = provider.getSigner();
-        const exchange = new ethers.Contract(
-            exchangeAddress,
-            exchangeABI,
-            signer
-        );
-        const sig = ethers.utils.splitSignature(signature);
-        console.log([
+    const signer = provider.getSigner();
+    const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
+    const sig = ethers.utils.splitSignature(signature);
+    console.log([
+        is721,
+        collection,
+        tokenId,
+        total,
+        value,
+        buyWith,
+        price,
+        owner,
+        salt,
+        sig
+    ]);
+    const tx = await exchange.exchange(
+        [
             is721,
             collection,
             tokenId,
             total,
             value,
             buyWith,
-            price,
+            ethers.utils.parseEther(`${price}`),
             owner,
             salt,
-            sig
-        ]);
-        const tx = await exchange.exchange(
-            [
-                is721,
-                collection,
-                tokenId,
-                total,
-                value,
-                buyWith,
-                ethers.utils.parseEther(`${price}`),
-                owner,
-                salt,
-                sig.v,
-                sig.r,
-                sig.s
-            ],
-            {
-                gasLimit: BigNumber.from(3000000),
-                value:
-                    buyWith == toAddress("")
-                        ? ethers.utils.parseEther(
-                              `${Number(totalPayment) * 1.03}`
-                          )
-                        : "0"
-            }
-        );
-        return tx.hash;
-    } catch (e) {
-        return null;
-    }
+
+            sig.v,
+            sig.r,
+            sig.s
+        ],
+        {
+            gasLimit: BigNumber.from(3000000),
+            value:
+                buyWith == toAddress("")
+                    ? ethers.utils.parseEther(`${Number(totalPayment) * 1.03}`)
+                    : "0"
+        }
+    );
+    return tx.hash;
 }
 
 export {
