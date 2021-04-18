@@ -226,23 +226,19 @@ export default {
             this.proceedToPaymentText = this.processPaymentText;
             this.purchasing = true;
             var collectible = this.singleNft;
+            let currency =  (this.currency=="0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4")?'BHC':'BNB';
             let message_buyer =
                 "You have successfully purchased " +
                 collectible.name +
-                " from the collection " +
-                collectible.collection.name +
                 " for " +
-                `${this.price}` +
-                this.currency;
+                `${this.price} ` + currency;
+               
 
             let message_seller =
                 "The " +
                 collectible.name +
-                " of collection " +
-                collectible.collection.name +
                 " has been bought for " +
-                `${this.price}` +
-                this.currency;
+                `${this.price} ` + currency;
 
             const _this = this;
 

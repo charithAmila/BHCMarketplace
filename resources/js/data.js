@@ -528,6 +528,7 @@ async function getAllSalesSearch(current_user, parameter) {
                     tokens[i].current_owner,
                     tokens[i].token_id
                 );
+
                 nft.copies = nft.count;
                 nft.collection = tokens[i].collection;
 
