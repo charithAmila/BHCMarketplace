@@ -6,7 +6,7 @@
       </div>
       <h1 class="collection-name">{{ collection.name }}</h1>
 
-      <div class="action-container">
+      <!--   <div class="action-container">
         <a class="btn btn-social share-link" href="javascript:void(0)">
           <i class="fa fa-upload"></i>
         </a>
@@ -79,6 +79,7 @@
           <a class="report-collection" href="javascript:void(0)">Report page</a>
         </div>
       </div>
+      -->
     </div>
 
     <report-modal-component></report-modal-component>
@@ -89,7 +90,9 @@
 export default {
   props: ["asset_url", "collection"],
   data() {
-    return {};
+    return {
+      url: "",
+    };
   },
   computed: {
     collectionPhoto: function () {
@@ -101,6 +104,9 @@ export default {
       $("input.linkToCopy").select();
       document.execCommand("copy");
     },
+  },
+  mounted() {
+    this.url = window.location.href;
   },
 };
 </script>
