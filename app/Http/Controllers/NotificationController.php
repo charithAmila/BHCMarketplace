@@ -38,7 +38,7 @@ class NotificationController extends Controller
             $notification->message = $request->message_seller;
             $notification->sell_amount = $request->amount;
             $notification->currency = $request->currency;
-            $notification->owner = $request->owner;
+            $notification->owner = $request->buyer_id;
             $notification->contract = $request->contract;
             $notification->token_id = $request->token_id;
             $notification->save();
@@ -47,9 +47,9 @@ class NotificationController extends Controller
             $notification2->message = $request->message_buyer;
             $notification2->buy_amount = $request->amount;
             $notification2->currency = $request->currency;
-            $notification2->owner = $request->owner;
+            $notification2->owner = $request->buyer_id;
             $notification2->contract = $request->contract;
-            $notification->token_id = $request->token_id;
+            $notification2->token_id = $request->token_id;
             $notification2->save();
         }
     }

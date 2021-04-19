@@ -379,11 +379,20 @@
                                             v-model="royalties"
                                         />
                                     </div>
+
                                     <p class="this-error text-danger"></p>
+                                   <div v-if="royalties>=100">
                                     <span
                                         id="royalties-validation"
                                         class="custom-error text-danger"
-                                    ></span>
+                                      
+                                    >
+                                    Royalty must be less than 100%
+                                    
+                                    </span>
+
+                                   </div>
+                                  
                                     <small class="faded-text"
                                         >Recommended 5%, 10%, 15%, 20%, 30%,
                                         35%, 40%, 50%</small
@@ -553,7 +562,7 @@
                                     fields above and try again.
                                 </p>
                             </div>
-                            <div class="col-6 col-md-6">
+                            <div v-if="royalties<=100" class="col-6 col-md-6">
                                 <input
                                     id="createCollectiblea"
                                     class="submitBtn"
@@ -1210,6 +1219,7 @@ export default {
             let single_success = false;
             let batch_success = false;
             const _this = this;
+            
             var data = {
                 creator: toAddress(this.current_user),
                 name: _this.name,
