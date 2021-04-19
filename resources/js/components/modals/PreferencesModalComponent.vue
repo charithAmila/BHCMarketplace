@@ -104,7 +104,7 @@
                                     v-if="
                                         nameerror &&
                                             nameerror != null &&
-                                            fields.short_url != this.userData.short_url
+                                            fields.short_url != user_data.short_url
                                     "
                                 >
                                     Already exists
@@ -147,7 +147,7 @@
 
 <script>
 import $ from "jquery";
-import { signMessage } from "./../../etherFunc";
+import { signMessage, checkConnection } from "./../../etherFunc";
 
 export default {
     props: [
@@ -159,7 +159,6 @@ export default {
         "user_address"
     ],
     mounted() {
-        this.userData = this.user_data;
         axios.get("/api/shorturls").then(response => {
             this.shorturls = response.data;
            // this.url_previous = this.user_data.short_url;
@@ -265,8 +264,8 @@ export default {
                         Authorization: `Bearer ${_this.j}`
                     }
                 })
-                .then(function(response) {
-                    var ad = window.ethereum.selectedAddress;
+                .then(async function(response) {
+                    var ad = await checkConnection();
                     var proData = {
                         address: ad,
                         ipfs_hash: response.data.IpfsHash,
@@ -326,15 +325,13 @@ export default {
 
         nameCheck() {
             let shorturl = $("#short_url-profile").val();
-
             if (shorturl.length == 0) {
                 this.nameerror = null;
             }
-            console.log("userData");
-            console.log(this.userData);
+
             this.nameerror = false;
             this.shorturls.forEach(i => {
-                if (i == shorturl && shorturl != this.userData.short_url) {
+                if (i == shorturl && shorturl != this.url_previous) {
                     this.nameerror = true;
                 }
             });

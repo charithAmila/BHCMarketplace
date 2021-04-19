@@ -150,7 +150,7 @@ import {
   convertBNBtoWBNB,
 } from ".././../bidFunc";
 import {bhcAddress,WBNB_tokenAddress} from ".././../addresses/constants";
-import{collectionURI} from ".././../etherFunc";
+import{collectionURI,checkConnection} from ".././../etherFunc";
 export default {
   props: ["singleNft", "page"],
   data() {
@@ -370,6 +370,7 @@ export default {
           this.payment
         );
         if (res) {
+          let address = await checkConnection();
           let message_bidder =
             "You have place a bid of " +
             this.payment +
@@ -377,7 +378,7 @@ export default {
             this.currency +
             " to token " +
             this.singleNft.name; 
-          let message_owner =  window.ethereum.selectedAddress + ' placed a bid of '+this.payment +
+          let message_owner =  address + ' placed a bid of '+this.payment +
             " " +
             this.currency +
             " to token " +
@@ -387,7 +388,7 @@ export default {
           let data = {};
           data.message_owner = message_owner;
           data.message_bidder = message_bidder;
-          data.user_id = window.ethereum.selectedAddress;
+          data.user_id = await checkConnection();
           data.owner = this.singleNft.owner_id;
           data.token_id = this.singleNft.id;
           data.contract = this.singleNft.contract;
@@ -484,7 +485,7 @@ export default {
           let data = {};
           data.currency = this.currency;
           data.message = message;
-          data.user_id = window.ethereum.selectedAddress;
+          data.user_id = await checkConnection();
           await axios.post("/addNotification", data, {}).then((res) => {
             console.log(res.data);
           });

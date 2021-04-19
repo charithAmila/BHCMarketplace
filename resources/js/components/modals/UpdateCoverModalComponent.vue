@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import { checkConnection } from "./../../etherFunc";
 export default {
     props: [
         "asset_url",
@@ -147,8 +148,8 @@ export default {
                                     Authorization: `Bearer ${_this.j}`
                                 }
                             })
-                            .then(function(response) {
-                                var ad = window.ethereum.selectedAddress;
+                            .then(async function(response) {
+                                var ad = await checkConnection();
                                 var proData = {
                                     address: ad,
                                     ipfs_hash: response.data.IpfsHash,

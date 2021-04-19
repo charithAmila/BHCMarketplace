@@ -558,6 +558,8 @@ async function getAllSalesSearch(current_user, parameter) {
                     data.push(nft);
                     console.log("jgvhvjhvhvh");
                 }
+
+
             } catch (e) {}
         }
     }
