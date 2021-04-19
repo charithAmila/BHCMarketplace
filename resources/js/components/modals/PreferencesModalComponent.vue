@@ -120,6 +120,8 @@
                                     class="custom-error text-danger"
                                 ></span>
                             </div>
+                            <div v-if="this.nameerror == false">
+
                             <button
                                 v-if="!signed"
                                 id="sign-data"
@@ -137,6 +139,9 @@
                             >
                                 {{ process }}
                             </button>
+
+                            </div>
+                            
                         </form>
                     </div>
                 </div>
