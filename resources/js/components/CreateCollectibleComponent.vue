@@ -1030,32 +1030,34 @@ export default {
             this.selectedContract = address;
             this.clicked_index = index;
         },
-        checkConnection: function() {
+        checkConnection: async function() {
             const _this = this;
-            var connectionInterval = setInterval(async function() {
-                var acc = await checkConnection();
-                if (acc) {
-                    _this.current_user = toAddress(acc);
-                    clearInterval(connectionInterval);
-                    if (_this.type == "solo") {
-                        _this.loading_collections = true;
-                        _this.setCollections = await getCollections(
-                            721,
-                            acc,
-                            false
-                        );
-                        _this.loading_collections = false;
-                    } else if (_this.type == "multiple") {
-                        _this.loading_collections = true;
-                        _this.setCollections = await getCollections(
-                            1155,
-                            acc,
-                            false
-                        );
-                        _this.loading_collections = false;
-                    }
+            //var connectionInterval = setInterval(async function() {
+            var acc = await checkConnection();
+            if (acc != toAddress("")) {
+                _this.current_user = toAddress(acc);
+                //clearInterval(connectionInterval);
+                if (_this.type == "solo") {
+                    _this.loading_collections = true;
+                    _this.setCollections = await getCollections(
+                        721,
+                        acc,
+                        false
+                    );
+                    _this.loading_collections = false;
+                } else if (_this.type == "multiple") {
+                    _this.loading_collections = true;
+                    _this.setCollections = await getCollections(
+                        1155,
+                        acc,
+                        false
+                    );
+                    _this.loading_collections = false;
                 }
-            }, 300);
+            } else {
+                window.location.href = "/connect";
+            }
+            //}, 300);
         },
         async approveNFT() {
             try {
@@ -1209,7 +1211,7 @@ export default {
             let batch_success = false;
             const _this = this;
             var data = {
-                creator: toAddress(window.ethereum.selectedAddress),
+                creator: toAddress(this.current_user),
                 name: _this.name,
                 file: _this.uploadedImage,
                 fileType: _this.fileType,
@@ -1257,7 +1259,7 @@ export default {
                                     );
                                     if (!_this.putOnSale) {
                                         window.location.href = `/profile/${toAddress(
-                                            window.ethereum.selectedAddress
+                                            _this.current_user
                                         )}`;
                                     }
                                 } else {
@@ -1269,7 +1271,7 @@ export default {
                                 _this.isMinting = false;
 
                                 /*window.location.href = `/profile/${toAddress(
-                    window.ethereum.selectedAddress
+                    _this.current_user
                   )}`;*/
                             });
                         } else {
@@ -1292,7 +1294,7 @@ export default {
                                     );
                                     if (!_this.putOnSale) {
                                         window.location.href = `/profile/${toAddress(
-                                            window.ethereum.selectedAddress
+                                            _this.current_user
                                         )}`;
                                     }
                                 } else {
@@ -1327,7 +1329,7 @@ export default {
             if (batch_success || single_success) {
                 data = {};
                 data.message = message;
-                data.user_id = toAddress(window.ethereum.selectedAddress);
+                data.user_id = toAddress(_this.current_user);
                 data.amount = 0;
                 data.noBuy = true;
                 await axios.post("addNotification", data, {}).then(res => {
@@ -1389,7 +1391,7 @@ export default {
             addSale(data).then(data => {
                 this.isSelling = false;
                 window.location.href = `/profile/${toAddress(
-                    window.ethereum.selectedAddress
+                    this.current_user
                 )}`;
             });
         },
@@ -1399,7 +1401,7 @@ export default {
         }
     },
     async mounted() {
-        this.checkConnection();
+        await this.checkConnection();
     }
 };
 </script>

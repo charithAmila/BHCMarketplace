@@ -208,8 +208,8 @@
                         >Edit profile</a
                     >
 
-                    <a href="javascript:void(0)">Manage funds</a>
-                    <!-- <a href="javascript:void(0)">
+                    <!--a href="javascript:void(0)">Manage funds</a>
+                    < <a href="javascript:void(0)">
 
 		        <div class="row">
 		          <div class="col-sm-10 col-md-10">GIF/Video enabled</div>
@@ -218,7 +218,6 @@
 
 		      </a> >
                     <a :href="disconnect_route">Disconnect</a-->
-
                 </div>
             </div>
         </nav>
@@ -301,22 +300,22 @@ export default {
         };
     },
     methods: {
-        checkConnection: function() {
+        checkConnection: async function() {
             const _this = this;
-            var interval = setInterval(async function() {
-                var acc = await checkConnection();
+            //var interval = setInterval(async function() {
+            var acc = await checkConnection();
 
-                if (acc != toAddress("")) {
-                    _this.auth_check = true;
-                    _this.current_user.wallet = acc;
-                    _this.selectedAddress = acc;
-                    _this.account = acc.substring(0, 10) + "...";
-                    _this.user_link = toAddress(acc);
-                    _this.current_user = await getUserDetails(acc);
-                    _this.userPhoto = _this.current_user.display_photo;
-                    clearInterval(interval);
-                }
-            }, 300);
+            if (acc != toAddress("")) {
+                _this.auth_check = true;
+                _this.current_user.wallet = acc;
+                _this.selectedAddress = acc;
+                _this.account = acc.substring(0, 10) + "...";
+                _this.user_link = toAddress(acc);
+                _this.current_user = await getUserDetails(acc);
+                _this.userPhoto = _this.current_user.display_photo;
+                //clearInterval(interval);
+            }
+            //}, 300);
         },
         bidEvent() {
             Pusher.logToConsole = false;
@@ -404,18 +403,16 @@ export default {
                     }, 200);
                 }
             }
-
         },
         getUser() {
             $("#preferencesModal").addClass("d-block");
             $(".preferences-content")
                 .removeClass("fade-out-bottom")
                 .addClass("fade-in-bottom");
-
         }
     },
-    mounted() {
-        this.checkConnection();
+    async mounted() {
+        await this.checkConnection();
         //this.bidEvent();
     }
 };
