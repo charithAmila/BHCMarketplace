@@ -53,7 +53,7 @@
 
 <script>
 import $ from "jquery";
-import { checkConnection } from "./../../etherFunc";
+import{checkConnection} from ".././../etherFunc";
 export default {
     props: ["singleNft"],
     data() {

@@ -25,6 +25,7 @@ class CreateSalesTable extends Migration
             $table->string("currency")->default("0x0000000000000000000000000000000000000000");
             $table->string("signature")->nullable(false);
             $table->string("salt")->nullable(false);
+            $table->integer("sold")->default(0);
         });
     }
 
