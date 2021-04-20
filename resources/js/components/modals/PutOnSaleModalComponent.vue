@@ -16,16 +16,16 @@
                 <div class="form-section" @submit.prevent="">
                     <form autocomplete="off" id="saleForm">
                         <div class="form-divide">
-                            <!--input
-                v-model.number="quantity"
-                class="modal-input"
-                type="number"
-                id="checkout-quantity"
-                name="quantity"
-                placeholder="Enter quantity"
-                min="1"
-                :max="singleNft.max"
-              /-->
+                            <input
+                                v-model.number="quantity"
+                                class="modal-input"
+                                type="number"
+                                id="checkout-quantity"
+                                name="quantity"
+                                placeholder="Enter quantity"
+                                min="1"
+                                :max="singleNft.ownedCopies"
+                            />
                             <label class="desc-url">You Have.</label>
                             <label class="desc-url"
                                 >{{ singleNft.ownedCopies }} out of
@@ -116,7 +116,11 @@
                         <button
                             v-if="!signed"
                             class="form-submit"
-                            @click="!signing ? sign() : ''"
+                            @click="
+                                !signing && quantity <= singleNft.ownedCopies
+                                    ? sign()
+                                    : ''
+                            "
                         >
                             <span v-html="signText"></span>
                         </button>
@@ -231,7 +235,7 @@ export default {
                 var orderId = await generateOrderIdMessage(
                     _this.singleNft.contract,
                     _this.singleNft.id,
-                    _this.singleNft.ownedCopies,
+                    _this.quantity,
                     _this.currency == 1 ? bhcAddress : toAddress(""),
                     _this.price,
                     _this.salt
@@ -243,12 +247,13 @@ export default {
                 _this.signed = true;
                 _this.progress = "Put Order";
                 _this.orderId = orderId;
-                this.signed = true;
             } catch (error) {
                 if (error.code == 4001) {
                     alert("User rejected minting token");
                     this.signing = false;
                 }
+                this.signing = false;
+                this.signText = "Sign";
             }
         },
         async approveNFT() {
@@ -266,6 +271,7 @@ export default {
                 if (error.code == 4001) {
                     alert("User rejected minting token");
                     this.approving = false;
+                    this.approveText = "Approve";
                 }
             }
         },
@@ -276,7 +282,7 @@ export default {
                 collection: _this.singleNft.contract,
                 current_owner: _this.singleNft.owner_id,
                 token_id: _this.singleNft.id,
-                signed_to: Number(_this.singleNft.ownedCopies),
+                signed_to: Number(_this.quantity),
                 price: Number(_this.price),
                 is_instant: false,
                 currency: _this.currency == 1 ? bhcAddress : toAddress(""),

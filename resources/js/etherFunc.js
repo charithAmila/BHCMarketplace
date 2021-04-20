@@ -40,7 +40,6 @@ function toAddress(addressString) {
         : ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
 }
 
-
 async function checkConnection() {
     // const account = await provider.listAccounts();
     // const account = account[0];
@@ -205,7 +204,6 @@ async function getCreated(owner) {
             }
         }
         console.log(tokens);
-
     } catch (e) {
         console.log(e);
     }
@@ -603,7 +601,6 @@ async function serviceFee(currencyName) {
 //////Set functions/////////
 
 async function createASingle(url, royalty, collection, isBNB) {
-
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
@@ -645,7 +642,6 @@ async function createABatch(url, count, royalty, collection, isBNB) {
 }
 
 async function createCollection(type, uri, isBNB) {
-
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     if (type == 721) {

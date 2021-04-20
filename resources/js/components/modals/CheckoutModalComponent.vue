@@ -29,7 +29,7 @@
                                 name="quantity"
                                 placeholder="Enter quantity"
                                 min="1"
-                                :max="singleNft.ownedCopies"
+                                :max="singleNft.on_sale"
                             />
                             <label class="desc-url">Enter quantity.</label>
                         </div>
@@ -117,7 +117,7 @@ import {
     getBNBBalance,
     serviceFee
 } from "./../../etherFunc";
-import { removeSale } from "../../data";
+import { removeSale, bought } from "../../data";
 import { bhcAddress } from "./../../addresses/constants";
 export default {
     props: ["singleNft", "page", "current_user"],
@@ -226,19 +226,23 @@ export default {
             this.proceedToPaymentText = this.processPaymentText;
             this.purchasing = true;
             var collectible = this.singleNft;
-            let currency =  (this.currency=="0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4")?'BHC':'BNB';
+            let currency =
+                this.currency == "0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4"
+                    ? "BHC"
+                    : "BNB";
             let message_buyer =
                 "You have successfully purchased " +
                 collectible.name +
                 " for " +
-                `${this.price} ` + currency;
-               
+                `${this.price} ` +
+                currency;
 
             let message_seller =
                 "The " +
                 collectible.name +
                 " has been bought for " +
-                `${this.price} ` + currency;
+                `${this.price} ` +
+                currency;
 
             const _this = this;
 
@@ -283,6 +287,7 @@ export default {
                             collectible.salt,
                             collectible.db_id
                         );
+                        await bought(collectible.db_id, _this.quantity);
 
                         $(".toast-message").text("Purchased");
                         $("#purchaseForm").trigger("reset");
