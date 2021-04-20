@@ -125,23 +125,39 @@
         </div>
       </div>
     </div>
+        <div class="items">
+            <collectible-component
+                :div_id="div_id"
+                :collectible_asset="collectible_asset"
+                :show_collectible="show_collectible"
+                :current_user="current_user"
+                :base_url="base_url"
+                :collectibles="
+                    isSortedRecent
+                        ? new_array_collectibles
+                        : isAll
+                        ? collectibles
+                        : collectible
+                "
+                :page="'marketplace'"
+                :isLoading="loading_collectibles"
+            ></collectible-component>
+            <div id="preloader" class="row d-none">
+                <div
+                    v-for="index in 24"
+                    :key="index"
+                    class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
+                >
+                    <div class="outside-nft border-on-profile">
+                        <div class="inside-nft">
+                            <div class="inner-outside-nft">
+                                <div class="inner-nft">
+                                    <div class="item-main">
+                                        <div class="item-head">
+                                            <div class="preloader-img"></div>
+                                        </div>
+                                    </div>
 
-    <div class="items">
-      <div id="preloader" class="row d-none">
-        <div
-          v-for="index in 24"
-          :key="index"
-          class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
-        >
-          <div class="outside-nft border-on-profile">
-            <div class="inside-nft">
-              <div class="inner-outside-nft">
-                <div class="inner-nft">
-                  <div class="item-main">
-                    <div class="item-head">
-                      <div class="preloader-img"></div>
-                    </div>
-                  </div>
 
                   <div class="item-img"></div>
 
@@ -157,7 +173,7 @@
                 </div>
               </div>
             </div>
-          </div>
+
         </div>
       </div>
 
@@ -221,6 +237,46 @@ export default {
         }
       }, 300);
     },
+    props: ["collectible_asset", "show_collectible", "base_url", "asset_url"],
+    data() {
+        return {
+            collectibles: window.sales,
+            collectible: [],
+            category: "all",
+            sortBy: "updated_at",
+            order: "desc",
+            div_id: "nft-container",
+            notifications: [],
+            current_user: "",
+            isAll: true,
+            new_array_collectibles: [],
+            isSortedRecent: false,
+            loading_collectibles: true
+        };
+    },
+    methods: {
+        checkConnection: async function() {
+            const _this = this;
+            _this.current_user = await checkConnection();
+        },
+        getCollectible() {
+            const _this = this;
+            //this.loading_collectibles = true;
+            var itemInterval = setInterval(function() {
+                _this.collectibles = window.sales;
+                if (!_this.loading_collectibles) {
+                    clearInterval(itemInterval);
+                }
+            }, 1);
+            getAllSales(_this.current_user)
+                .then(data => {
+                    //_this.collectibles = data;
+                    this.loading_collectibles = false;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
     getFilterdArts() {
       if (
         this.new_array_collectibles === undefined ||
@@ -328,18 +384,6 @@ export default {
         });
       }
     },
-    getCollectible() {
-      const _this = this;
-      this.loading_collectibles = true;
-      getAllSales(_this.current_user)
-        .then((data) => {
-          _this.collectibles = data;
-          this.loading_collectibles = false;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     filterNft(clickedCategory) {
       this.category = clickedCategory;
       // this.fetchFilterNft();
@@ -361,9 +405,10 @@ export default {
           console.log(error);
         });
     },
-  },
-  mounted() {
-    this.checkConnection();
-  },
+    async mounted() {
+        await this.checkConnection();
+        this.getCollectible();
+    }
+
 };
 </script>

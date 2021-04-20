@@ -81,23 +81,25 @@ export default {
             data.token_id = this.singleNft.id;
             $("[name='report_description']").removeClass("emptyVal");
 
-
-			axios.post('/report', data).then((res) => {
-				if(res){
-					$('.toast-message').text('Successfully reported the collectible');
-				$('#reportForm').trigger("reset");
-	            setTimeout(function() {
-                    launch_toast();
-                }, 500);
-				modalClose($('#reportModal'), $(".report-content"));
-				}
-				
-			})
-			.catch((error) => {
-				$("[name='report_description']").addClass('emptyVal')
-				this.errorMsg = error.response.data.errors.description[0]
-            })
-		}
-	}
-}
+            axios
+                .post("/report", data)
+                .then(res => {
+                    if (res) {
+                        $(".toast-message").text(
+                            "Successfully reported the collectible"
+                        );
+                        $("#reportForm").trigger("reset");
+                        setTimeout(function() {
+                            launch_toast();
+                        }, 500);
+                        modalClose($("#reportModal"), $(".report-content"));
+                    }
+                })
+                .catch(error => {
+                    $("[name='report_description']").addClass("emptyVal");
+                    this.errorMsg = error.response.data.errors.description[0];
+                });
+        }
+    }
+};
 </script>
