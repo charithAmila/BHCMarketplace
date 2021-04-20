@@ -117,9 +117,13 @@ class SalesController extends Controller
      * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Sales $sales)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'amount' => 'required'
+        ]);
+        $sales = Sales::where("id",$id);
+        $sales->increment('sold',$request->amount);
     }
 
     /**

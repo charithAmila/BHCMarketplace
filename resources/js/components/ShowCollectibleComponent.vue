@@ -233,6 +233,9 @@
                             >{{ set_collectible.ownedCopies }} out of
                             {{ set_collectible.count }}</label
                         >
+                        <label class="positionHolder"
+                            >On Sale : {{ set_collectible.on_sale }}</label
+                        >
                     </div>
                     <!--div
             v-if="

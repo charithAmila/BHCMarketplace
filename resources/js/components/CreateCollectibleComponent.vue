@@ -381,18 +381,15 @@
                                     </div>
 
                                     <p class="this-error text-danger"></p>
-                                   <div v-if="royalties>=100">
-                                    <span
-                                        id="royalties-validation"
-                                        class="custom-error text-danger"
-                                      
-                                    >
-                                    Royalty must be less than 100%
-                                    
-                                    </span>
+                                    <div v-if="royalties >= 100">
+                                        <span
+                                            id="royalties-validation"
+                                            class="custom-error text-danger"
+                                        >
+                                            Royalty must be less than 100%
+                                        </span>
+                                    </div>
 
-                                   </div>
-                                  
                                     <small class="faded-text"
                                         >Recommended 5%, 10%, 15%, 20%, 30%,
                                         35%, 40%, 50%</small
@@ -562,7 +559,7 @@
                                     fields above and try again.
                                 </p>
                             </div>
-                            <div v-if="royalties<=100" class="col-6 col-md-6">
+                            <div v-if="royalties <= 100" class="col-6 col-md-6">
                                 <input
                                     id="createCollectiblea"
                                     class="submitBtn"
@@ -672,6 +669,17 @@
                                 <option value="hps">HPS</option>
                             </select>
                         </div>
+                        <input
+                            v-if="putOnSale && isNftApproved && type != 'solo'"
+                            v-model.number="quantity"
+                            class="modal-input"
+                            type="number"
+                            id="checkout-quantity"
+                            name="quantity"
+                            placeholder="Enter quantity"
+                            min="1"
+                            :max="copies"
+                        />
 
                         <div
                             class="col-md-12 create-cmodel-elements"
@@ -849,6 +857,7 @@ export default {
             fileType: "image",
             selectedContract: "",
             copies: 0,
+            quantity: 1,
             imgselectok: false,
             uploadPercentageimg: 0,
             colType: this.type == "solo" ? 721 : 1155,
@@ -1219,7 +1228,7 @@ export default {
             let single_success = false;
             let batch_success = false;
             const _this = this;
-            
+
             var data = {
                 creator: toAddress(this.current_user),
                 name: _this.name,
@@ -1358,7 +1367,7 @@ export default {
                 var orderId = await generateOrderIdMessage(
                     _this.tokenData.collection,
                     _this.tokenData.tokenId,
-                    _this.copies > 0 ? _this.copies : 1,
+                    _this.quantity,
                     _this.sale_currency == "BNB" ? toAddress("") : bhcAddress,
                     _this.price,
                     _this.salt
@@ -1389,7 +1398,7 @@ export default {
                 collection: _this.tokenData.collection,
                 current_owner: _this.current_user,
                 token_id: _this.tokenData.tokenId,
-                signed_to: Number(_this.copies > 0 ? _this.copies : 1),
+                signed_to: Number(_this.quantity),
                 price: Number(_this.price),
                 is_instant: _this.putOnSale,
                 currency:
