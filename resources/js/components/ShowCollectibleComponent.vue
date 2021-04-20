@@ -18,6 +18,10 @@
                                     class="show-drop"
                                     href="javascript:void(0)"
                                     @click="toggleDropdown('.show-opt-menu')"
+                                    v-if="
+                                        current_user != current_owner.wallet ||
+                                            !singleNft.is_selling
+                                    "
                                 >
                                     <i class="fas fa-ellipsis-h titleIcon"></i
                                 ></a>
@@ -225,6 +229,7 @@
                     :collection_url="set_collectible.collection_url"
                     :collectible="collectible"
                 ></collectible-details-component>
+                <tile v-else></tile>
 
                 <div class="row m-20 text-center end-content">
                     <div class="col-4 col-md-4">
@@ -502,7 +507,12 @@ import BidModal from "./modals/BidModalComponent.vue";
 import CheckoutModal from "./modals/CheckoutModalComponent.vue";
 import { getUserDetails } from "./../data";
 
-import { checkConnection, toAddress, serviceFee } from "./../etherFunc";
+import {
+    checkConnection,
+    toAddress,
+    serviceFee,
+    getOwnersOf
+} from "./../etherFunc";
 
 import { LikeController } from "../mediaFunc";
 
@@ -571,6 +581,11 @@ export default {
         },
         async getOwnersDetails() {
             const _this = this;
+            var _owners = await getOwnersOf(
+                _this.collectible.contract,
+                _this.collectible.id
+            );
+            _this.collectible.owners = _owners;
             for (var i = 0; i < _this.collectible.owners.length; i++) {
                 var details = await getUserDetails(
                     _this.collectible.owners[i].owner
@@ -699,14 +714,13 @@ export default {
         this.creator = await getUserDetails(this.collectible.creator);
         this.current_owner = await getUserDetails(this.collectible.owner_id);
 
-        await this.getOwnersDetails();
-        this.loaded = true;
-
         this.checkConnection();
+
         this.service_fee = await serviceFee(this.singleNft.currencyName);
         this.royaltyFee =
             (this.collectible.price * this.collectible.royalties) / 100;
-
+        await this.getOwnersDetails();
+        this.loaded = true;
         await this.checkLike();
     }
 };

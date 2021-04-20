@@ -37,6 +37,7 @@ export default {
             collectible: { creator: "dddd" },
             transactions: [],
             loaded: false,
+            fullyLoaded: false,
             current_user: "",
             owners: []
         };
@@ -52,11 +53,7 @@ export default {
 
             return data;
         },
-        getOwners: async function() {
-            const _this = this;
-            var _owners = await getOwnersOf(_this.contract, _this.id);
-            _this.collectible.owners = _owners;
-        },
+
         authCheck: async function() {
             const _this = this;
             _this.current_user = await checkConnection();
@@ -66,11 +63,10 @@ export default {
     },
     async mounted() {
         this.collectible = await this.getCollectible();
-        await this.getOwners();
+        this.loaded = true;
 
         await this.authCheck();
-
-        this.loaded = true;
+        this.fullyLoaded = true;
     }
 };
 </script>
