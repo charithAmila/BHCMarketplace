@@ -245,6 +245,8 @@ export default {
 
                 _this.s = sig;
                 _this.signed = true;
+                this.signing = false;
+                this.signText = "Sign";
                 _this.progress = "Put Order";
                 _this.orderId = orderId;
             } catch (error) {
@@ -267,6 +269,8 @@ export default {
                         this.singleNft.approved = true;
                     }
                 });
+                this.approving = false;
+                this.approveText = "Approve";
             } catch (error) {
                 if (error.code == 4001) {
                     alert("User rejected minting token");

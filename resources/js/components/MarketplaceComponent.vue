@@ -145,6 +145,22 @@
         </div>
 
         <div class="items">
+            <collectible-component
+                :div_id="div_id"
+                :collectible_asset="collectible_asset"
+                :show_collectible="show_collectible"
+                :current_user="current_user"
+                :base_url="base_url"
+                :collectibles="
+                    isSortedRecent
+                        ? new_array_collectibles
+                        : isAll
+                        ? collectibles
+                        : collectible
+                "
+                :page="'marketplace'"
+                :isLoading="loading_collectibles"
+            ></collectible-component>
             <div id="preloader" class="row d-none">
                 <div
                     v-for="index in 24"
@@ -178,23 +194,6 @@
                     </div>
                 </div>
             </div>
-
-            <collectible-component
-                :div_id="div_id"
-                :collectible_asset="collectible_asset"
-                :show_collectible="show_collectible"
-                :current_user="current_user"
-                :base_url="base_url"
-                :collectibles="
-                    isSortedRecent
-                        ? new_array_collectibles
-                        : isAll
-                        ? collectibles
-                        : collectible
-                "
-                :page="'marketplace'"
-                :isLoading="loading_collectibles"
-            ></collectible-component>
         </div>
     </div>
 </template>
@@ -210,7 +209,7 @@ export default {
     props: ["collectible_asset", "show_collectible", "base_url", "asset_url"],
     data() {
         return {
-            collectibles: [],
+            collectibles: window.sales,
             collectible: [],
             category: "all",
             sortBy: "updated_at",
@@ -225,19 +224,9 @@ export default {
         };
     },
     methods: {
-        checkConnection: function() {
+        checkConnection: async function() {
             const _this = this;
-            var connectionInterval = setInterval(async function() {
-                var acc = await checkConnection();
-                if (acc) {
-                    _this.current_user = toAddress(acc);
-                    _this.getCollectible();
-                    clearInterval(connectionInterval);
-                } else {
-                    _this.current_user = toAddress("");
-                    _this.getCollectible();
-                }
-            }, 300);
+            _this.current_user = await checkConnection();
         },
         getFilterdArts() {
             if (
@@ -357,10 +346,16 @@ export default {
         },
         getCollectible() {
             const _this = this;
-            this.loading_collectibles = true;
+            //this.loading_collectibles = true;
+            var itemInterval = setInterval(function() {
+                _this.collectibles = window.sales;
+                if (!_this.loading_collectibles) {
+                    clearInterval(itemInterval);
+                }
+            }, 1);
             getAllSales(_this.current_user)
                 .then(data => {
-                    _this.collectibles = data;
+                    //_this.collectibles = data;
                     this.loading_collectibles = false;
                 })
                 .catch(error => {
@@ -394,8 +389,9 @@ export default {
                 });
         }
     },
-    mounted() {
-        this.checkConnection();
+    async mounted() {
+        await this.checkConnection();
+        this.getCollectible();
     }
 };
 </script>

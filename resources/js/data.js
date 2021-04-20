@@ -22,7 +22,14 @@ import {
 import axios from "axios";
 
 //////////////getMaxUsers/////////
-
+window.myTokens = {
+    "on-sale": [],
+    collectibles: [],
+    liked: [],
+    created: []
+};
+window.proPageLoading = true;
+window.sales = [];
 async function getMaxBuyers(time_filter) {
     let res = {};
     await axios.get("/getData/" + time_filter).then(function(response) {
@@ -173,11 +180,13 @@ async function getTokens(owner) {
 async function getOwnedTokensData(owner, base_url) {
     var listed = false;
     var data = [];
+
     var tokens = await getTokens(owner);
     var tokens721 = tokens[0];
     var tokens1155 = tokens[1];
     console.log([tokens721, tokens1155]);
     for (var i = 0; i < tokens721.length; i++) {
+        window.proPageLoading = true;
         var selectedToken = tokens721[i];
         selectedToken.URI = selectedToken.URI.replace(
             "ipfs.io",
@@ -222,8 +231,10 @@ async function getOwnedTokensData(owner, base_url) {
         }
 
         data.push(nft);
+        window.myTokens.collectibles.push(nft);
     }
     for (var i = 0; i < tokens1155.length; i++) {
+        window.proPageLoading = true;
         var selectedToken = tokens1155[i];
         selectedToken.URI = selectedToken.URI.replace(
             "ipfs.io",
@@ -266,7 +277,13 @@ async function getOwnedTokensData(owner, base_url) {
             nft.salt = salesData.salt;
         }
         data.push(nft);
+        window.myTokens.collectibles.push(nft);
     }
+    window.proPageLoading = false;
+    if (window.myTokens.collectibles.length == 0) {
+        window.myTokens.collectibles = null;
+    }
+
     return data;
 }
 
@@ -277,6 +294,7 @@ async function getLikedTokens(owner, base_url) {
         if (toAddress(like.address) == toAddress(owner)) return true;
     });
     for (var i = 0; i < likes.length; i++) {
+        window.proPageLoading = true;
         var owners = await getOwnersOf(likes[i].contract, likes[i].token_id);
         for (var j = 0; j < owners.length; j++) {
             var token = await getTokenData(
@@ -285,8 +303,14 @@ async function getLikedTokens(owner, base_url) {
                 likes[i].token_id
             );
             data.push(token);
+            window.myTokens.liked.push(token);
         }
     }
+    window.proPageLoading = false;
+    if (window.myTokens.liked.length == 0) {
+        window.myTokens.liked = null;
+    }
+
     return data;
 }
 
@@ -294,6 +318,7 @@ async function getCreatedTokens(owner, base_url) {
     var data = [];
     var tokens = await getCreated(owner);
     for (var i = 0; i < tokens.length; i++) {
+        window.proPageLoading = true;
         var owners = await getOwnersOf(tokens[i].contract, tokens[i].token_id);
         for (var j = 0; j < owners.length; j++) {
             try {
@@ -303,13 +328,21 @@ async function getCreatedTokens(owner, base_url) {
                     tokens[i].token_id
                 );
                 data.push(token);
+                window.myTokens.created.push(token);
             } catch (e) {}
         }
     }
+    window.proPageLoading = false;
+    if (window.myTokens.created.length == 0) {
+        window.myTokens.created = null;
+    }
+
     return data;
 }
 
 async function getOnSaleTokens(owner, base_url) {
+    window.myTokens["on-sale"] = [];
+
     var data = [];
     var tokens721 = [];
     var tokens1155 = [];
@@ -317,6 +350,7 @@ async function getOnSaleTokens(owner, base_url) {
     var tokens = res.data;
 
     for (var i = 0; i < tokens.length; i++) {
+        window.proPageLoading = true;
         try {
             var nft = await getTokenData(
                 tokens[i].collection,
@@ -333,27 +367,35 @@ async function getOnSaleTokens(owner, base_url) {
             nft.collection = tokens[i].collection;
             nft.copies = nft.count;
             data.push(nft);
+            window.myTokens["on-sale"].push(nft);
         } catch (e) {
             //console.log(e)
         }
     }
+    window.proPageLoading = false;
+    if (window.myTokens["on-sale"].length == 0) {
+        window.myTokens["on-sale"] = null;
+    }
+
     return data;
 }
 
 async function getTokensData(owner, base_url) {
-    var ownedTokens = await getOwnedTokensData(owner, base_url);
+    //getOnSaleTokens(owner, base_url);
+    getOwnedTokensData(owner, base_url);
+    getCreatedTokens(owner, base_url);
+    getLikedTokens(owner, base_url);
     //var likedTokens = await getLikedTokens(owner, base_url);
     //var createdTokens = await getCreatedTokens(owner, base_url);
-    var onSaleTokens = await getOnSaleTokens(owner, base_url);
 
-    var data = {
+    /*var data = {
         "on-sale": onSaleTokens,
         liked: [], //likedTokens,
         created: [], //createdTokens,
         collectibles: ownedTokens
-    };
+    };*/
     //console.log(data)
-    return data;
+    //return data;
 }
 
 async function getTokenData(contract, owner, id) {
@@ -471,6 +513,7 @@ async function collectiblesOfCollection(collection) {
 }
 
 async function getAllSales(current_user) {
+    window.sales = [];
     var data = [];
     var tokens721 = [];
     var tokens1155 = [];
@@ -509,6 +552,7 @@ async function getAllSales(current_user) {
                         : "BNB";
                 nft.file = nft.file.replace("ipfs.io", "gateway.pinata.cloud");
                 data.push(nft);
+                window.sales.push(nft);
             } catch (e) {}
         }
     }
