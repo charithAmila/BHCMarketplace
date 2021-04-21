@@ -120,7 +120,7 @@
                                     class="custom-error text-danger"
                                 ></span>
                             </div>
-                            <div v-if="this.nameerror == false">
+                            <div v-if="this.nameerror == false || this.nameerror==null">
 
                             <button
                                 v-if="!signed"
