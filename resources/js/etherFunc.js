@@ -28,7 +28,13 @@ if (typeof window.ethereum == "undefined") {
     );
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
+    window.rpcprovider = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
 }
+
+/*window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
+    "https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
+    //"https://data-seed-prebsc-1-s1.binance.org:8545"
+);*/
 
 //const selectedAddress = provider.provider.selectedAddress;
 
@@ -72,7 +78,7 @@ async function redirectToConnect() {
 
 async function getBNBBalance(address) {
     try {
-        var balance = await provider.getBalance(toAddress(address));
+        var balance = await rpcprovider.getBalance(toAddress(address));
         return balance / 10 ** 18;
     } catch (error) {
         return 0;
@@ -88,13 +94,17 @@ function splitSign(signature) {
 }
 
 async function waitForTransaction(tx) {
-    var res = await provider.waitForTransaction(tx);
+    var res = await rpcprovider.waitForTransaction(tx);
     return res;
 }
 
 async function collectionURI(contractAddress) {
     try {
-        const contract = new ethers.Contract(contractAddress, bhc721, provider);
+        const contract = new ethers.Contract(
+            contractAddress,
+            bhc721,
+            rpcprovider
+        );
         const uri = contract.contract_URI();
         return uri;
     } catch (e) {
@@ -105,7 +115,7 @@ async function collectionURI(contractAddress) {
 async function getOwner(addressString, ABI) {
     try {
         var contractAddress = toAddress(addressString);
-        var contract = new ethers.Contract(contractAddress, ABI, provider);
+        var contract = new ethers.Contract(contractAddress, ABI, rpcprovider);
         var data = await contract.owner();
         return owner;
     } catch (e) {
@@ -123,7 +133,7 @@ async function getCollection(collectionAddess) {
         var contract = new ethers.Contract(
             toAddress(collectionAddess),
             bhc721,
-            provider
+            rpcprovider
         );
         var is721 = await contract.supportsInterface(ERC721Interface);
         var is1155 = await contract.supportsInterface(ERC1155Interface);
@@ -140,10 +150,10 @@ async function getCollection(collectionAddess) {
             contract = new ethers.Contract(
                 toAddress(collectionAddess),
                 bhc1155,
-                provider
+                rpcprovider
             );
             var startBlock = 6494200;
-            var endBlock = await provider.getBlockNumber();
+            var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var evtsCr = await contract.queryFilter(
@@ -179,11 +189,11 @@ async function getCreated(owner) {
         const nftStorage = new ethers.Contract(
             NFTStorageAddress,
             nftStorageABI,
-            provider
+            rpcprovider
         );
         //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
         var startBlock = 6494200;
-        var endBlock = await provider.getBlockNumber();
+        var endBlock = await rpcprovider.getBlockNumber();
         var evts = [];
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
@@ -220,7 +230,7 @@ async function getCollectionType(collectionAddress) {
         var contract = new ethers.Contract(
             toAddress(collectionAddress),
             bhc721,
-            provider
+            rpcprovider
         );
         var is721 = await contract.supportsInterface(ERC721Interface);
         var is1155 = await contract.supportsInterface(ERC1155Interface);
@@ -242,7 +252,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
         var contract = new ethers.Contract(
             toAddress(collectionAddess),
             bhc721,
-            provider
+            rpcprovider
         );
         var is721 = await contract.supportsInterface(ERC721Interface);
         var is1155 = await contract.supportsInterface(ERC1155Interface);
@@ -253,10 +263,10 @@ async function getOwnersOf(collectionAddess, tokenId) {
             contract = new ethers.Contract(
                 toAddress(collectionAddess),
                 bhc1155,
-                provider
+                rpcprovider
             );
             var startBlock = 6494200;
-            var endBlock = await provider.getBlockNumber();
+            var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var evtsCr = await contract.queryFilter(
@@ -294,7 +304,7 @@ async function getOwnedCollections(me, type, forDetails) {
     const contract = new ethers.Contract(
         contractFactoryAddress,
         factoryABI,
-        provider
+        rpcprovider
     );
     try {
         var num = 0;
@@ -306,7 +316,7 @@ async function getOwnedCollections(me, type, forDetails) {
                 ? (col = await contract.ERC721contracts(num))
                 : (col = await contract.ERC1155contracts(num));
             type == 721 ? (ABI = bhc721) : (ABI = bhc1155);
-            var colCon = new ethers.Contract(col, ABI, provider);
+            var colCon = new ethers.Contract(col, ABI, rpcprovider);
             var owner = await colCon.owner();
 
             console.log(col);
@@ -372,7 +382,11 @@ async function get1155Token(contract, collection, tokenId, owner) {
 async function getSingles(contractAddress, owner, collection) {
     var tokens = [];
     try {
-        const contract = new ethers.Contract(contractAddress, bhc721, provider);
+        const contract = new ethers.Contract(
+            contractAddress,
+            bhc721,
+            rpcprovider
+        );
         const nftCount = await contract.balanceOf(owner);
         for (var i = 0; i < Number(nftCount); i++) {
             var tokenId = await contract.tokenOfOwnerByIndex(owner, i);
@@ -394,7 +408,7 @@ async function getMultiples(contractAddress, owner, collection) {
         const contract = new ethers.Contract(
             contractAddress,
             bhc1155,
-            provider
+            rpcprovider
         );
         const currentId = await contract.current_id();
         for (var i = 1; i < Number(currentId) + 1; i++) {
@@ -417,7 +431,7 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             var contract = new ethers.Contract(
                 contractAddress,
                 isPrivate ? bhc721 : bhc721,
-                provider
+                rpcprovider
             );
             var realOwner = await contract.ownerOf(id);
             var col = await contract.contract_URI();
@@ -436,7 +450,7 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             var contract = new ethers.Contract(
                 contractAddress,
                 isPrivate ? bhc1155 : bhc1155,
-                provider
+                rpcprovider
             );
             var ownerHave = await contract.balanceOf(owner, id);
             var col = await contract.contract_URI();
@@ -477,6 +491,27 @@ async function generateOrderIdMessage(
     return order;
 }
 
+async function generateOrderId(
+    tokenAddress,
+    tokenId,
+    value,
+    priceToken,
+    price,
+    salt
+) {
+    const signer = provider.getSigner();
+    const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
+    const order = await exchange.generateKey(
+        tokenAddress,
+        tokenId,
+        value,
+        priceToken,
+        ethers.utils.parseEther(`${price}`),
+        salt
+    );
+    return order;
+}
+
 async function checkOrder(
     tokenAddress,
     tokenId,
@@ -489,12 +524,12 @@ async function checkOrder(
         const exchange = new ethers.Contract(
             exchangeAddress,
             exchangeABI,
-            provider
+            rpcprovider
         );
         const nftStorage = new ethers.Contract(
             NFTStorageAddress,
             nftStorageABI,
-            provider
+            rpcprovider
         );
         const orderKey = await exchange.generateKey(
             tokenAddress,
@@ -511,13 +546,41 @@ async function checkOrder(
     }
 }
 
+async function availableToBuy(
+    tokenAddress,
+    tokenId,
+    value,
+    priceToken,
+    price,
+    salt
+) {
+    var available = null;
+    try {
+        const order = await checkOrder(
+            tokenAddress,
+            tokenId,
+            value,
+            priceToken,
+            price,
+            salt
+        );
+        available = Number(order.total) - Number(order.sold);
+        if (Number(order.total) == 0) {
+            available = value;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    return available;
+}
+
 async function checkNFTApproved(contractAddress, from) {
     const ABI = bhc721;
     try {
         const contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
-            provider
+            rpcprovider
         );
         const res = await contract.isApprovedForAll(from, transferProxyAddress);
         return res;
@@ -531,7 +594,7 @@ async function checkTokensApproved(contractAddress, from) {
         const contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
-            provider
+            rpcprovider
         );
         const res = await contract.allowance(from, erc20TransferProxyAddress);
         //console.log(Number(res) / 10 ** 18);
@@ -547,7 +610,7 @@ async function checkTokensBalance(contractAddress, from) {
         const contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
-            provider
+            rpcprovider
         );
         const res = await contract.balanceOf(from);
         return Number(res) / 10 ** 18;
@@ -570,7 +633,11 @@ async function getMinted(log) {
 
 async function getFees() {
     try {
-        const minter = new ethers.Contract(minterAddress, minterABI, provider);
+        const minter = new ethers.Contract(
+            minterAddress,
+            minterABI,
+            rpcprovider
+        );
         const feeInHps = await minter.requiredFee(
             ethers.utils.parseEther("3.5"),
             ethers.utils.parseEther("5.5")
@@ -585,16 +652,20 @@ async function serviceFee(currencyName) {
     const exchange = new ethers.Contract(
         exchangeAddress,
         exchangeABI,
-        provider
+        rpcprovider
     );
-    const fees = await exchange.requiredFee(
-        ethers.utils.parseEther("5"),
-        ethers.utils.parseEther("5")
-    );
-    if (currencyName == "BNB") {
-        return Number(fees[1] / 10 ** 18); //.toFixed(3)
-    } else {
-        return Number(fees[0] / 10 ** 18);
+    try {
+        const fees = await exchange.requiredFee(
+            ethers.utils.parseEther("5"),
+            ethers.utils.parseEther("5")
+        );
+        if (currencyName == "BNB") {
+            return Number(fees[1] / 10 ** 18); //.toFixed(3)
+        } else {
+            return Number(fees[0] / 10 ** 18);
+        }
+    } catch (e) {
+        return 0;
     } //.toFixed(3);
 }
 
@@ -769,6 +840,7 @@ export {
     waitForTransaction,
     getCollectible,
     generateOrderIdMessage,
+    generateOrderId,
     checkNFTApproved,
     approveNFT,
     checkTokensApproved,
@@ -787,5 +859,6 @@ export {
     getMinted,
     getFees,
     serviceFee,
-    checkOrder
+    checkOrder,
+    availableToBuy
 };

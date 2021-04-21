@@ -11,7 +11,9 @@ import {
     getCollectionType,
     getOwnersOf,
     getCreated,
-    checkOrder
+    checkOrder,
+    generateOrderId,
+    availableToBuy
 } from "./etherFunc";
 import {
     hps721Address,
@@ -30,6 +32,7 @@ window.myTokens = {
 };
 window.proPageLoading = true;
 window.sales = [];
+window.searches = [];
 async function getMaxBuyers(time_filter) {
     let res = {};
     await axios.get("/getData/" + time_filter).then(function(response) {
@@ -363,7 +366,14 @@ async function getOnSaleTokens(owner, base_url) {
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
             nft.file = nft.file.replace("ipfs.io", "gateway.pinata.cloud");
-            nft.on_sale = tokens[i].signed_to - tokens[i].sold;
+            nft.on_sale = await availableToBuy(
+                tokens[i].collection,
+                tokens[i].token_id,
+                tokens[i].signed_to,
+                tokens[i].currency,
+                tokens[i].price,
+                tokens[i].salt
+            );
             nft.collection = tokens[i].collection;
             nft.copies = nft.count;
             data.push(nft);
@@ -484,7 +494,14 @@ async function getTokenData(contract, owner, id) {
             : (nft.currencyName = "BNB");
 
         nft.signed_to = salesData.signed_to;
-        nft.on_sale = salesData.signed_to - salesData.sold;
+        nft.on_sale = await availableToBuy(
+            salesData.collection,
+            salesData.token_id,
+            salesData.signed_to,
+            salesData.currency,
+            salesData.price,
+            salesData.salt
+        );
         nft.db_id = salesData.id;
         nft.signature = salesData.signature;
         nft.salt = salesData.salt;
@@ -537,8 +554,15 @@ async function getAllSales(current_user) {
                 nft.created_at = moment(tokens[i].created_at).format(
                     "MM/DD/YYYY hh:mm"
                 );
-                nft.on_sale = tokens[i].signed_to - tokens[i].sold;
-                nft.ownedCopies = tokens[i].signed_to - tokens[i].sold;
+                nft.ownedCopies = await availableToBuy(
+                    tokens[i].collection,
+                    tokens[i].token_id,
+                    tokens[i].signed_to,
+                    tokens[i].currency,
+                    tokens[i].price,
+                    tokens[i].salt
+                );
+                //nft.ownedCopies = tokens[i].signed_to - tokens[i].sold;
                 nft.isp = 1;
                 nft.is_selling = 1;
                 nft.signature = tokens[i].signature;
@@ -562,6 +586,7 @@ async function getAllSales(current_user) {
 
 async function getAllSalesSearch(current_user, parameter) {
     var data = [];
+    window.searches = [];
     var tokens721 = [];
     var tokens1155 = [];
     var res = await axios.get("/sales_search");
@@ -605,7 +630,9 @@ async function getAllSalesSearch(current_user, parameter) {
                         "ipfs.io",
                         "gateway.pinata.cloud"
                     );
+                    nft.ownedCopies = nft.on_sale;
                     data.push(nft);
+                    window.searches.push(nft);
                     console.log("jgvhvjhvhvh");
                 }
             } catch (e) {}
