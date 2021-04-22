@@ -96,14 +96,24 @@ export default {
                 .post("/report", data)
                 .then(res => {
                     if (res) {
-                        $(".toast-message").text(
+                        if(this.page=='profile'){
+                            $(".toast-message").text(
+                            "Successfully reported the profile"
+                        );
+                        }
+                        else{
+
+                            $(".toast-message").text(
                             "Successfully reported the collectible"
                         );
+                        }
+                       
                         $("#reportForm").trigger("reset");
                         setTimeout(function() {
                             launch_toast();
                         }, 500);
                         modalClose($("#reportModal"), $(".report-content"));
+
                     }
                 })
                 .catch(error => {
