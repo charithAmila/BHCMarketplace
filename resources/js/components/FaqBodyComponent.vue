@@ -154,7 +154,7 @@ Verification is the process of verifying your actual identity. We will require s
 			</div>
 		</section>
 
-		<section class="marketplace">
+		<!--section class="marketplace">
 			<label class="section-head">Governance</label>
 			<div>
 				<div class="display-flex">
@@ -185,9 +185,9 @@ Verification is the process of verifying your actual identity. We will require s
 					</div>
 				</div>
 			</div>
-		</section>
+		</section-->
 
-		<section class="marketplace">
+		<!--section class="marketplace">
 			<label class="section-head">BHC Token</label>
 			<div>
 				<div class="display-flex">
@@ -312,6 +312,6 @@ Verification is the process of verifying your actual identity. We will require s
 					</div>
 				</div>
 			</div>
-		</section>
+		</section-->
 	</div>
 </template>
