@@ -267,7 +267,7 @@ export default {
                         console.log(req);
                         req.message_buyer = message_buyer;
                         req.buyer_id = toAddress(_this.current_user);
-                        req.amount = _this.price;
+                        req.amount =  _this.total_payment;
                         req.seller_id = collectible.owner_id;
                         req.token_id = collectible.id;
                         req.owner = collectible.owner_id;
@@ -327,7 +327,7 @@ export default {
                             data.message_seller = message_seller;
                             data.message_buyer = message_buyer;
                             data.buyer_id = toAddress(_this.current_user);
-                            data.buy_amount = _this.price;
+                            data.buy_amount =  _this.total_payment;
                             data.seller_id = collectible.owner_id;
                             data.bid = false;
                             await axios

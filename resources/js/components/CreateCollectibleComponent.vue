@@ -1081,6 +1081,7 @@ export default {
       };
       const message =
         "New collectible " + _this.name + " was minted successfully";
+
       _this.type == "multiple" ? (data.count = _this.copies) : null;
       _this.isMinting = true;
       var url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -1183,6 +1184,10 @@ export default {
         data.user_id = toAddress(_this.current_user);
         data.amount = 0;
         data.noBuy = true;
+        data.currency = '';
+        data.owner = '';
+        data.contract = '';
+        data.token_id =0;
         await axios.post("addNotification", data, {}).then((res) => {
           console.log(res.data);
         });
