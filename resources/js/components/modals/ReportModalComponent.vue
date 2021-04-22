@@ -55,7 +55,7 @@
 import $ from "jquery";
 import { checkConnection } from ".././../etherFunc";
 export default {
-    props: ["singleNft"],
+    props: ["singleNft","current_user","page"],
     data() {
         return {
             errorMsg: null,
@@ -73,12 +73,23 @@ export default {
     methods: {
         async report() {
             let data = {};
+            if(this.page=='profile'){
+            this.errorMsg = null;
+            data.message = this.message;
+            data.owner = this.current_user;
+            data.contract = 'N/A';
+            data.user_id = await checkConnection();
+            data.token_id =0;
+            }
+            else{
             this.errorMsg = null;
             data.message = this.message;
             data.owner = this.singleNft.owner_id;
             data.contract = this.singleNft.contract;
             data.user_id = await checkConnection();
             data.token_id = this.singleNft.id;
+            }
+           
             $("[name='report_description']").removeClass("emptyVal");
 
             axios

@@ -1135,12 +1135,29 @@ export default {
                 !_this.pay_with_hps
               );
 
+
               waitForTransaction(res.hash).then(async function (data) {
                 if (data.status) {
+
+
                   _this.isMinted = true;
                   _this.tokenData = await getMinted(
                     data.logs[_this.pay_with_hps ? 5 : 1]
                   );
+                                              
+                  data = {};
+                  data.message = message;
+                  data.user_id = toAddress(_this.current_user);
+                  data.amount = 0;
+                  data.noBuy = true;
+                  data.currency = '';
+                  data.owner = '';
+                  data.contract = '';
+                  data.token_id =0;
+                  await axios.post("addNotification", data, {}).then((res) => {
+                    console.log(res.data);
+                  });
+                
                   if (!_this.putOnSale) {
                     window.location.href = `/profile/${toAddress(
                       _this.current_user
@@ -1178,20 +1195,7 @@ export default {
           _this.isMinting = false;
         });
 
-      if (batch_success || single_success) {
-        data = {};
-        data.message = message;
-        data.user_id = toAddress(_this.current_user);
-        data.amount = 0;
-        data.noBuy = true;
-        data.currency = '';
-        data.owner = '';
-        data.contract = '';
-        data.token_id =0;
-        await axios.post("addNotification", data, {}).then((res) => {
-          console.log(res.data);
-        });
-      }
+     
     },
     async sign() {
       this.isSigning = true;

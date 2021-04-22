@@ -256,7 +256,7 @@
             :page="current_page"
             :bidOpen="open"
         ></bid-modal-component>
-        <report-modal-component :singleNft="singleNft"></report-modal-component>
+        <report-modal-component :singleNft="singleNft" :current_user="current_user" :page="current_page"></report-modal-component>
         <bid-list-modal-component
             v-if="current_page == 'profile'"
             :bidList="bidList"
