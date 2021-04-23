@@ -24,6 +24,7 @@ class MakeNotificationsTable extends Migration
             $table->string('owner')->default('');
             $table->string('contract')->default('');
             $table->integer('token_id')->default(0);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

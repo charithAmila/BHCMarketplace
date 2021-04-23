@@ -59,7 +59,7 @@ class NotificationController extends Controller
         $request->validate([
             'user_id' => 'required',
         ]);
-        $data = Notification::where(['user_id' => $request->user_id])->get();
+        $data = Notification::where(['user_id' => $request->user_id,'status'=>true])->get();
         return $data;
     }
     public function delete(Request $request)
@@ -68,8 +68,8 @@ class NotificationController extends Controller
             'user_id' => 'required'
         ]);
 
-        $data = Notification::where(['user_id' => $request->user_id]);
-        $data->delete();
+        $data = Notification::where(['user_id' => $request->user_id])->update(['status' =>false]);
+       // $data->delete();
     }
 
     public function getData(Request $request, $time)
