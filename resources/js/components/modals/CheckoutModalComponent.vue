@@ -335,8 +335,10 @@ export default {
                                 .then(res => {
                                     console.log(res.data);
                                 });
+                            window.location.reload();
                         }
                         if (_this.page == "showcollectible") {
+                            window.location.href = "/nft";
                             _this.$parent.updateData();
                         }
                     }

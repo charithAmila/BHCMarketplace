@@ -19,6 +19,10 @@ class Sales extends Model
         'is_instant',
         "currency",
         "signature",
-        "salt","sold"
+        "salt",
+        "sold",
+        "col_name",
+            "owner_name",
+            "nft_name"
     ];
 }

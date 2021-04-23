@@ -232,7 +232,9 @@
                             >{{ set_collectible.ownedCopies }} out of
                             {{ set_collectible.count }}</label
                         >
-                        <label class="positionHolder"
+                        <label
+                            class="positionHolder"
+                            v-if="set_collectible.is_selling"
                             >On Sale : {{ set_collectible.on_sale }}</label
                         >
                     </div>
@@ -577,7 +579,8 @@ export default {
             const _this = this;
             var _owners = await getOwnersOf(
                 _this.collectible.contract,
-                _this.collectible.id
+                _this.collectible.id,
+                6494200
             );
             _this.collectible.owners = _owners;
             for (var i = 0; i < _this.collectible.owners.length; i++) {

@@ -60,7 +60,10 @@ class SalesController extends Controller
             "currency" => "required",
             "signature" => "required",
             "order_id" => "required",
-            "salt" => "required"
+            "salt" => "required",
+            "col_name" =>"required",
+            "owner_name" =>"required",
+            "nft_name" =>"required",
         ]);
         $checker = new CheckSign;
         $message = $request->order_id;
@@ -80,6 +83,9 @@ class SalesController extends Controller
                 "currency" => $request->currency,
                 "signature" => $request->signature,
                 "salt" => $request->salt,
+                "col_name" =>$request->col_name,
+            "owner_name" =>$request->owner_name,
+            "nft_name" =>$request->nft_name
             ]);
             return response()->json(["success" => true]);
         } else {
