@@ -185,6 +185,7 @@ export default {
             if (selectedFilter == "on-sale") {
                 getOnSaleTokens(_this.user_id, _this.base_url);
             }
+            
             window.myTokens[selectedFilter] != null
                 ? (_this.showing = window.myTokens[selectedFilter])
                 : (_this.showing = []);
