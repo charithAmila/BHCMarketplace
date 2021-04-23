@@ -96,7 +96,6 @@ body {
 .footer-mobile {
     padding-top: 20px 0;
     text-align: center;
-    margin-top: 270px;
     width: 100%;
     background: linear-gradient( 90deg, rgba(255, 253, 252, 1) 0%, rgba(255, 193, 112, 1) 76%, rgba(255, 193, 112, 1) 100%);
     .newsletter {
@@ -226,7 +225,7 @@ body {
         }
     }
     .create-section {
-        height: calc(100vh - 221px);
+        
         .inner-section {
             height: 100%;
         }
@@ -846,7 +845,7 @@ body {
         position: sticky;
         top: 0;
         background: #ececec;
-        z-index: 999;
+        z-index: 99;
     }
     .tabGroup {
         margin-top: 15px;
@@ -857,7 +856,7 @@ body {
         right: 0px;
         bottom: -17px;
         color: $primaryColor;
-        z-index: 999;
+        z-index: 99;
     }
     .position {
         display: block;
@@ -1285,6 +1284,7 @@ body {
     }
     .menu-links {
         padding: 30px;
+        margin-top: 68px;
         a {
             text-decoration: none;
             color: black;
@@ -1753,6 +1753,7 @@ body {
                     text-align: center;
                     padding: 20px;
                     z-index: 999;
+                    overflow: hidden;
                     .share-title {
                         font-size: 1rem;
                         font-weight: 800;
@@ -2445,6 +2446,7 @@ body {
     width: 100vw;
     height: 100vh;
     position: relative;
+    margin-top: -71px;
     .nft-item {
         position: absolute;
         top: 50%;

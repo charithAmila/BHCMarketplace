@@ -18,6 +18,31 @@
               </h6>
               <div class="fileArea">
                 <div class="file-input">
+                  <div
+                    v-if="fileType == 'image' && uploadedImage != ''"
+                    class="image-container d-block d-md-none"
+                  >
+                    <img
+                      v-bind:src="uploadedImage"
+                      class="category-img-tag"
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    v-if="
+                      (fileType == 'video' || fileType == 'audio') &&
+                      uploadedImage != ''
+                    "
+                    class="video-container d-block d-md-none"
+                  >
+                    <video controls autoplay loop muted>
+                      <source
+                        v-bind:src="uploadedImage"
+                        class="category-video-prev"
+                      />
+                      Your browser does not support HTML5 video.
+                    </video>
+                  </div>
                   <p id="sizeInvalid" class="text-danger d-none">
                     File too Big, please select a file less than 50mb
                   </p>

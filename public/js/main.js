@@ -18,20 +18,31 @@ $(document).ready(function () {
 
     $('.hamburger-menu').click(function () {
         $('.main-content').hide();
+        $('.create-tab').hide();
         $('.faq-container').hide();
         $('.about-bhc').hide();
         $('.user-profile-page').hide();
         $('.default-nav').hide();
+        $('.footer-mobile').hide();
+        $('.show-collectible').hide();
+
         $('.onclick-menu').fadeIn();
     });
 
     $('.menu-close').click(function () {
         $('.onclick-menu').hide();
         $('.faq-container').fadeIn();
+        $('.create-tab').fadeIn();
         $('.about-bhc').fadeIn();
         $('.user-profile-page').fadeIn();
         $('.main-content').fadeIn();
         $('.default-nav').fadeIn();
+    });
+
+    $(document).on('click', '.menu-close', function(){
+        $('.create-tab').fadeIn();
+        $('.footer-mobile').fadeIn();
+        $('.show-collectible').fadeIn();
     });
 
     $('.report-collection').click(function () {
@@ -57,6 +68,7 @@ $(document).ready(function () {
 
     $(document).on('click', function (event) {
         if ($(event.target).closest('.notif-btn').length === 0 && $(event.target).closest('.notification').length === 0 && $('.notification').hasClass('d-md-block')) {
+            $('.notification').addClass('d-none');
             toggleNotification();
         }
         event.stopPropagation();

@@ -128,7 +128,7 @@
             </div>
 
             <div class="options d-none">
-              <a class="report-page" href="javascript:void(0)">Report page</a>
+              <a v-if="auth_id != user_id" class="report-page" href="javascript:void(0)">Report page</a>
               <a
                 v-if="auth_id == user_id"
                 class="profile-preferences"
@@ -193,6 +193,7 @@ export default {
 
     getUser() {
       $("#preferencesModal").addClass("d-block");
+      $(".options").removeClass("d-block").removeClass("fade-in-top")
       $(".preferences-content")
         .removeClass("fade-out-bottom")
         .addClass("fade-in-bottom");
