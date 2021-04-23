@@ -7,7 +7,7 @@
             <a href="https://twitter.com/bhc_happiness" target="_blank">
               <img src="images/twitter.png" alt="" /> Follow us on Twitter
             </a>
-            <a href="https://t.me/BillionHappinessOfficial" target="_blank">
+            <a href="https://t.me/BH_NFT_Support" target="_blank">
               <img src="images/telegram.png" alt="" /> Join our Telegram
               community
             </a>
