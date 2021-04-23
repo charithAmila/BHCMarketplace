@@ -93,9 +93,9 @@
                                             :data-url="
                                                 asset_url +
                                                     'nft/' +
-                                                    current_owner.user_profile +
-                                                    '/' +
-                                                    collectible.nft_slug
+                                                    singleNft.contract +
+                                                    ':' +
+                                                    current_owner.wallet
                                             "
                                         >
                                             <i class="fa fa-twitter s-btn"></i>
