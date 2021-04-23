@@ -182,7 +182,7 @@
                                         : 'inactive-btn'
                                 "
                                 @click="
-                                    onClickCollection(collection.address, index)
+                                    onClickCollection(collection.address,collection.name ,index)
                                 "
                             >
                                 <div class="outside">
@@ -856,6 +856,7 @@ export default {
             uploadedImage: "",
             fileType: "image",
             selectedContract: "",
+            selectedCollection:"",
             copies: 0,
             quantity: 1,
             imgselectok: false,
@@ -1044,9 +1045,10 @@ export default {
         setSaleCurrency(currency) {
             this.sale_currency = currency;
         },
-        onClickCollection(address, index) {
+        onClickCollection(address, name, index) {
             this.selectedContract = address;
             this.clicked_index = index;
+            this.selectedCollection = name;
         },
         checkConnection: async function() {
             const _this = this;
@@ -1394,6 +1396,7 @@ export default {
         async placeOrder() {
             const _this = this;
             _this.isSelling = true;
+            const user = await getUserDetails(_this.current_user);
             var data = {
                 collection: _this.tokenData.collection,
                 current_owner: _this.current_user,
@@ -1405,7 +1408,11 @@ export default {
                     _this.sale_currency == "BNB" ? toAddress("") : bhcAddress,
                 signature: _this.s,
                 order_id: _this.orderId,
-                salt: _this.salt
+                salt: _this.salt,
+                col_name:_this.selectedCollection,
+                owner_name:user.name,
+                nft_name:_this.name
+
             };
             addSale(data).then(data => {
                 this.isSelling = false;

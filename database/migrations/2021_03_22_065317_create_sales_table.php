@@ -26,6 +26,9 @@ class CreateSalesTable extends Migration
             $table->string("signature")->nullable(false);
             $table->string("salt")->nullable(false);
             $table->integer("sold")->default(0);
+            $table->string("col_name")->nullable(false);
+            $table->string("owner_name")->nullable(false);
+            $table->string("nft_name")->nullable(false);
         });
     }
 

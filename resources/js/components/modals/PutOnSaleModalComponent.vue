@@ -160,7 +160,7 @@ import {
     toAddress
 } from "./../../etherFunc";
 import { hpsAddress, bhcAddress } from "./../../addresses/constants";
-import { addSale } from "./../../data";
+import { addSale,getUserDetails } from "./../../data";
 export default {
     props: ["singleNft", "page"],
     data() {
@@ -194,7 +194,7 @@ export default {
             currency_label: {
                 1: "BHC",
                 2: "BNB"
-            }
+            },
         };
     },
     watch: {
@@ -204,6 +204,8 @@ export default {
             //this.record_id = this.singleNft.record_id;
             //this.updateValues();
             this.signed = false;
+            
+            
         },
         quantity: function() {
             this.updateValues();
@@ -282,6 +284,7 @@ export default {
 
         async placeOrder() {
             const _this = this;
+            var user = await getUserDetails(_this.singleNft.owner_id);
             var data = {
                 collection: _this.singleNft.contract,
                 current_owner: _this.singleNft.owner_id,
@@ -292,7 +295,10 @@ export default {
                 currency: _this.currency == 1 ? bhcAddress : toAddress(""),
                 signature: _this.s,
                 order_id: _this.orderId,
-                salt: _this.salt
+                salt: _this.salt,
+                col_name:_this.singleNft.collection.name,
+                owner_name:user.name,
+                nft_name:_this.singleNft.name
             };
             await addSale(data);
             $(".putOnSale-content")
