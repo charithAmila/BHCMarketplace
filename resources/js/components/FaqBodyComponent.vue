@@ -12,8 +12,7 @@
 							NFT? ERC-721 tokens?
 						</label>
 						<label class="answer d-none">
-							NFT stands for non-fungible tokens like ERC-721 (a smart contract standard) tokens which are hosted on Ethereum’s own blockchain. NFTs are unique digital items such as collectibles or artworks or game items. As an artist, by tokenizing your work you both ensure that it is unique and brand it as your work. The actual ownership is blockchain-managed.
-						</label>
+							NFT stands for non-fungible token like the ERC-721 token hosted on the BSC network. NFTs are digital artworks or game items by an artist. The artist tokenizes his unique work and brands it.</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -25,7 +24,7 @@
 							What does “minting” mean?
 						</label>
 						<label class="answer d-none">
-							The process of tokenizing your work and creating an NFT (see above).
+						Minting is the process of tokenizing the artwork and creating an NFT.
 						</label>
 					</div>
 				</div>
@@ -35,10 +34,10 @@
 					</a>
 					<div class="change-bg">
 						<label class="question">
-							Can I create an NFT on BHCble.com without putting it on sale?
+							Can I create an NFT on https://billionhappiness.finance/ without putting it on sale?
 						</label>
 						<label class="answer d-none">
-							Yes, you can and it is up to you if you decide to sell it later or not.
+							Yes, you can create it and sell it whenever you decide to.
 						</label>
 					</div>
 				</div>
@@ -51,8 +50,7 @@
 							Can I change the price of an already created collectible?
 						</label>
 						<label class="answer d-none">
-							Absolutely, you can lower the price free of transaction costs at any time. You just need to sign the signature request via your wallet.
-						</label>
+							You can lower the price of the collectible free of transaction costs at any time. You need to sign the signature request through your wallet.						</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -64,8 +62,7 @@
 							Can I gift or send a collectible to someone?
 						</label>
 						<label class="answer d-none">
-							Yes, just go on the detail page of a collectible you own, open the “...” menu and select “transfer token”
-						</label>
+							Yes, it's effortless, go to the detail page of a collectible you own, open the menu, and select transfer token</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -77,8 +74,7 @@
 							What does “burn a token” mean?
 						</label>
 						<label class="answer d-none">
-							The ERC-721 standard does not only allow the creation of NFTs, but also includes a possibility to destroy them - i.e. burning the token.
-						</label>
+							The billion happiness NFT allows the creation and also the possibility to pull down of NFTs	</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -90,8 +86,7 @@
 							What is “unlockable content”?
 						</label>
 						<label class="answer d-none">
-							As a content creator, you can add unlockable content to your collectibles, that only becomes visible after a transfer of ownership (i.e. selling or gifting your NFT). Artists use this feature to include high res files, making ofs. videos, secret messages etc.
-						</label>
+A content creator can add unlockable content to your collectibles that become visible when a transfer of ownership has occurred either by selling or gifting the NFT.						</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -103,8 +98,7 @@
 							How does the royalty system work?
 						</label>
 						<label class="answer d-none">
-							Whenever you create a collectible you can set a certain percentage as royalty for secondary sales. Example: You create a digital painting and sell it for 0.2 ETH, the royalty is 10 percent. Your buyer then sells your painting at a higher price point for 0.5 ETH. Here, the royalty system kicks in. As the original content creator you receive 10% of that sale, being 0.05 ETH.
-						</label>
+The royalty system allows content creators to set a certain percentage as royalty, so when the NFT is sold, and the buyer resells, the NFT %10 of the sale comes to the creator of the NFT.						</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -116,8 +110,7 @@
 							Can I report an artwork or collectible?
 						</label>
 						<label class="answer d-none">
-							Yes, go on the detail page of the token you want to report, click on the “...” button and select “Report”.
-						</label>
+Yes, click on the details of the NFT you want to report and click on the Report button.						</label>
 					</div>
 				</div>
 				<div class="display-flex">
@@ -129,14 +122,39 @@
 							What is verification?
 						</label>
 						<label class="answer d-none">
-							Verified badges are granted to creators and collectors that show enough proof of authenticity and active dedication to the marketplace. We are looking at multiple factors such as active social media presence and following, dialogue with community members,number of minted and sold items.
+Verification is the process of verifying your actual identity. We will require some legal documents for the verification. This will help you to get more visibility and gain trust on the Marketplace. This process may take up to several weeks. 						</label>
+					</div>
+				</div>
+				<div class="display-flex">
+					<a class="arrow-link" href="javascript:void(0)">
+						<i class="fas fa-caret-right arrow-drop"></i>
+					</a>
+					<div class="change-bg">
+						<label class="question">
+						How to get a "verified" badge?
 						</label>
+						<label class="answer d-none">
+								You will receive a verified badge once your identity is verified. 			</label>
+					</div>
+				</div>
+				<div class="display-flex">
+					<a class="arrow-link" href="javascript:void(0)">
+						<i class="fas fa-caret-right arrow-drop"></i>
+					</a>
+					<div class="change-bg">
+						<label class="question">
+						It's been a while, and I don't get verified. Why?
+						</label>
+						<label class="answer d-none">
+								 Due to the huge number of requests for verification, it would take a while for the verification process to be completed. Our team will do the verification as soon as possible.
+
+		</label>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<section class="marketplace">
+		<!--section class="marketplace">
 			<label class="section-head">Governance</label>
 			<div>
 				<div class="display-flex">
@@ -167,9 +185,9 @@
 					</div>
 				</div>
 			</div>
-		</section>
+		</section-->
 
-		<section class="marketplace">
+		<!--section class="marketplace">
 			<label class="section-head">BHC Token</label>
 			<div>
 				<div class="display-flex">
@@ -294,6 +312,6 @@
 					</div>
 				</div>
 			</div>
-		</section>
+		</section-->
 	</div>
 </template>

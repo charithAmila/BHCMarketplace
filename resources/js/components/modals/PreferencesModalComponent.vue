@@ -87,7 +87,7 @@
                             </div>
                             <div class="form-divide">
                                 <label class="input-label">Short url</label>
-                                <span class="link-url">billion.com/</span>
+                                <span class="link-url">billionhappiness.finance/</span>
                                 <input
                                     id="short_url-profile"
                                     class="modal-input preferences-check with-link"
@@ -120,7 +120,7 @@
                                     class="custom-error text-danger"
                                 ></span>
                             </div>
-                            <div v-if="this.nameerror == false">
+                            <div v-if="this.nameerror == false || this.nameerror==null">
 
                             <button
                                 v-if="!signed"

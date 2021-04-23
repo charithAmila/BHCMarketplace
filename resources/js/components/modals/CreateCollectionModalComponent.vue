@@ -165,7 +165,7 @@ import {
     createCollection,
     waitForTransaction,
     approveTokens,
-    getFees
+    getFees,checkConnection
 } from "./../../etherFunc.js";
 import { hpsAddress } from "./../../addresses/constants";
 
@@ -301,6 +301,8 @@ export default {
                     .catch(function(error) {
                         //handle error here
                     });
+
+
             }
 
             details.name = _this.name;
@@ -341,6 +343,22 @@ export default {
                     }
                     _this.isGenerating = false;
                 });
+
+                 const message =
+        "New collection " + _this.name + " was created successfully";
+        const user = await checkConnection();
+         data = {};
+        data.message = message;
+        data.user_id = user;
+        data.amount = 0;
+        data.noBuy = true;
+        data.currency = '';
+        data.owner = '';
+        data.contract = '';
+        data.token_id =0;
+        await axios.post("addNotification", data, {}).then((res) => {
+          console.log(res.data);
+        });
         },
         generateCollectionOld() {
             var formdata = new FormData();
@@ -387,6 +405,9 @@ export default {
                 .catch(error => {
                     console.log(error);
                 });
+
+                
+
         }
     }
 };

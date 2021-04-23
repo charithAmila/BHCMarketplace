@@ -460,7 +460,6 @@ body {
 .footer-mobile {
   padding-top: 20px 0;
   text-align: center;
-  margin-top: 270px;
   width: 100%;
   background: linear-gradient(90deg, #fffdfc 0%, #ffc170 76%, #ffc170 100%);
 }
@@ -620,10 +619,6 @@ body {
 .create-tab .create-content .sum-error {
   font-weight: 600;
   font-size: 15px;
-}
-
-.create-tab .create-section {
-  height: calc(100vh - 221px);
 }
 
 .create-tab .create-section .inner-section {
@@ -1337,7 +1332,7 @@ body {
   position: sticky;
   top: 0;
   background: #ececec;
-  z-index: 999;
+  z-index: 99;
 }
 
 .row-0 .tabGroup {
@@ -1350,7 +1345,7 @@ body {
   right: 0px;
   bottom: -17px;
   color: #F88130;
-  z-index: 999;
+  z-index: 99;
 }
 
 .row-0 .position {
@@ -1823,6 +1818,7 @@ body {
 
 .onclick-menu .menu-links {
   padding: 30px;
+  margin-top: 68px;
 }
 
 .onclick-menu .menu-links a {
@@ -2383,6 +2379,7 @@ body {
   text-align: center;
   padding: 20px;
   z-index: 999;
+  overflow: hidden;
 }
 
 .profile-section .profile-info .details-container .profile-button .share-drop .share-title {
@@ -3171,6 +3168,7 @@ body {
   width: 100vw;
   height: 100vh;
   position: relative;
+  margin-top: -71px;
 }
 
 .nft-fullscreen .nft-item {

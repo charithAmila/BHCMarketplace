@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="items"></div>
-        <div :id="div_id" class="row grid-conatainer">
+        <div :id="div_id" class="row grid-container">
             <div
                 v-for="(collectible, index) in collectibles"
                 :key="index"
@@ -256,14 +256,14 @@
             :page="current_page"
             :bidOpen="open"
         ></bid-modal-component>
-        <report-modal-component :singleNft="singleNft"></report-modal-component>
+        <report-modal-component :singleNft="singleNft" :current_user="current_user" :page="current_page"></report-modal-component>
         <bid-list-modal-component
             v-if="current_page == 'profile'"
             :bidList="bidList"
             :collectible="bidListNFT"
             :page="current_page"
         ></bid-list-modal-component>
-        <div id="preloader" class="row grid-conatainer" v-if="isLoading">
+        <div id="preloader" class="row grid-container" v-if="isLoading">
             <div
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
                 v-for="i in 24"
@@ -436,7 +436,7 @@ export default {
     font-size: 16px;
 }
 
-.grid-conatainer {
+.grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, 250px);
     grid-gap: 30px;
