@@ -1,4 +1,8 @@
 @media only screen and (max-width: 450px) {
+  #web-content {
+    margin-top: 68px;
+  }
+
   .walletSection {
     height: 100vh;
     text-align: center !important;
@@ -155,6 +159,10 @@
 
   .main-content .item-content {
     margin-left: 0 !important;
+  }
+
+  .main-content .item-content #nft-container {
+    display: flex !important;
   }
 
   .main-row {
@@ -746,7 +754,7 @@
   .show-collectible .custom-lg-4 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
-    max-height: 60%;
+    max-height: 100%;
   }
 
   .show-collectible .custom-lg-8 {
@@ -768,7 +776,7 @@
     position: sticky;
     top: 0;
     background: #ececec;
-    z-index: 99999;
+    z-index: 99;
     display: flex;
     flex-wrap: nowrap;
     overflow: auto;
@@ -789,6 +797,18 @@
 
   .search-page .main-dashboard .outside-nft {
     height: 400px;
+  }
+
+  .profile-section .profile-info .details-container #profile-wallet {
+    overflow-x: scroll;
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+}
+
+@media only screen and (min-width: 700px) {
+  .create-tab .create-section {
+    height: calc(100vh - 221px);
   }
 }
 

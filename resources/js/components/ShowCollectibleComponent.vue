@@ -173,13 +173,7 @@
                                     <div class="col-4 col-md-4">
                                         <input
                                             class="linkToCopy"
-                                            :value="
-                                                asset_url +
-                                                    'nft/' +
-                                                    current_owner.user_profile +
-                                                    '/' +
-                                                    collectible.nft_slug
-                                            "
+                                            :value="asset_url +'nft/' +current_owner.user_profile +'/' +collectible.nft_slug"
                                         />
                                         <a
                                             href="javascript:void(0)"
@@ -649,6 +643,9 @@ export default {
                 });
         },
         copyUrl() {
+            // alert(window.location.href)
+
+            $("input.linkToCopy").val(window.location.href)
             $("input.linkToCopy").select();
             document.execCommand("copy");
         },

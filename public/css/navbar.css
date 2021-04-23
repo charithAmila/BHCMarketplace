@@ -773,12 +773,12 @@
 }
 
 .custom-modal .modal-content .modal-body .form-section .form-divide .with-link {
-  padding-left: 100px;
+  padding-left: 150px;
 }
 
 .custom-modal .modal-content .modal-body .form-section .form-divide .link-url {
   position: absolute;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
   margin-top: 2px;
 }
