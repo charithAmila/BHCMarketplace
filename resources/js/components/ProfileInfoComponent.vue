@@ -270,7 +270,18 @@ export default {
         console.log(output);
         if (output.success) {
           this.following = true;
+          let message = follower_id + " has followed you"
+           let notif = {};
+            notif.message = message;
+            notif.user_id = user_id;
+           notif.type ="follow";
+            await axios
+           .post("/addNotification", notif, {})
+            .then(result => {
+          console.log(result.data);
+          });
         }
+
       }
     },
     async checkFollow() {

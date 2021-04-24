@@ -1313,6 +1313,23 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
+                                      let notif = {};
+                                    notif.message = message;
+                                    notif.user_id = toAddress(
+                                        _this.current_user
+                                    );
+                                    notif.amount = 0;
+                                    notif.currency = "";
+                                    notif.owner = "";
+                                    notif.contract = "";
+                                    notif.token_id = 0;
+                                    notif.type = "create"
+
+                                    await axios
+                                        .post("addNotification", notif, {})
+                                        .then(result => {
+                                            console.log(result.data);
+                                        });
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
@@ -1349,27 +1366,28 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
+                                      let notif = {};
+                                    notif.message = message;
+                                    notif.user_id = toAddress(
+                                        _this.current_user
+                                    );
+                                    notif.amount = 0;
+                                    notif.currency = "";
+                                    notif.owner = "";
+                                    notif.contract = "";
+                                    notif.token_id = 0;
+                                     notif.type = "create"
+                                    await axios
+                                        .post("addNotification", notif, {})
+                                        .then(result => {
+                                            console.log(result.data);
+                                        });
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
                                     );
 
-                                    data = {};
-                                    data.message = message;
-                                    data.user_id = toAddress(
-                                        _this.current_user
-                                    );
-                                    data.amount = 0;
-                                    data.noBuy = true;
-                                    data.currency = "";
-                                    data.owner = "";
-                                    data.contract = "";
-                                    data.token_id = 0;
-                                    await axios
-                                        .post("addNotification", data, {})
-                                        .then(res => {
-                                            console.log(res.data);
-                                        });
+                                 
 
                                     if (!_this.putOnSale) {
                                         window.location.href = `/profile/${toAddress(

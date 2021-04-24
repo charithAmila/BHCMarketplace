@@ -11,7 +11,7 @@
               <img src="images/telegram.png" alt="" /> Join our Telegram
               community
             </a>
-            <a href="javascript:void(0)">
+            <a href="https://rbjrcxhzb4w.typeform.com/to/Ak0nEWnn">
               <img src="images/message.png" alt="" /> Community Feedback
             </a>
           </div>
@@ -60,12 +60,12 @@
         <a href="https://t.me/BH_NFT_Support" target="_blank">
           <img src="images/telegram.png" alt="" /> Join our Telegram community
         </a>
-        <a href="javascript:void(0)">
+        <a href="https://rbjrcxhzb4w.typeform.com/to/Ak0nEWnn">
           <img src="images/message.png" alt="" /> Community Feedback
         </a>
       </div>
       <div class="copyright-section">
-        <p>&#169; 2020 Billion, Inc.</p>
+        <p>&#169; 2021 Billion, Inc.</p>
       </div>
     </section>
   </div>

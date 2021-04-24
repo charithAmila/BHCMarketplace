@@ -21,7 +21,7 @@ class CreateBidsTable extends Migration
             $table->string('contract_address');
             $table->integer('token_id');
             $table->string('bidding_token');
-            $table->float('bidding_amount');
+            $table->decimal('bidding_amount',10,8);
             $table->string('signature');
             $table->string('message');
             $table->string('salt');
