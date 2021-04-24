@@ -28,6 +28,9 @@ if (typeof window.ethereum == "undefined") {
     window.provider = new ethers.providers.JsonRpcProvider(
         "https://data-seed-prebsc-1-s1.binance.org:8545"
     );
+    window.rpcprovider = new ethers.providers.JsonRpcProvider(
+        "https://data-seed-prebsc-1-s1.binance.org:8545"
+    );
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
     window.rpcprovider = window.provider;
