@@ -333,6 +333,7 @@ import {
     acceptBid
 } from ".././../bidFunc";
 import { toAddress, checkConnection, getOwnersOf } from ".././../etherFunc";
+import { getUserDetails } from ".././../data";
 export default {
     props: [
         "creator",
