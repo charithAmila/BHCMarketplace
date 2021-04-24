@@ -1,6 +1,6 @@
 require("./bootstrap");
 import { ethers } from "ethers";
-
+//window.ipfs = require("ipfs");
 import Vue from "vue";
 import VueSpinners from "vue-spinners";
 Vue.use(VueSpinners);

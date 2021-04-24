@@ -131,6 +131,7 @@ async function getOwner(addressString, ABI) {
 }
 
 async function getCollection(collectionAddess) {
+    window.myTokens.created = [];
     var owners = [];
     try {
         const ERC1155Interface = "0x0e89341c";
@@ -204,8 +205,8 @@ async function getCreated(owner, _startingBlock) {
         var evts = [];
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
-            var st = i;
             var evtsCr = await nftStorage.queryFilter("NFTAdded", i, i + 4000);
+            var st = i + 4000;
             console.log(i + 4000);
             for (var j = 0; j < evtsCr.length; j++) {
                 var event = evtsCr[j];
@@ -220,25 +221,25 @@ async function getCreated(owner, _startingBlock) {
 
                     //for (var i = 0; i < tokens.length; i++) {
                     window.proPageLoading = true;
-                    getOwnersOf(
+                    var owners = await getAnOwner(
                         event.args._collection,
                         event.args._id,
-                        6494200
-                    ).then(async function(owners) {
-                        //for (var n = 0; n < owners.length; n++) {
-                        try {
-                            var token = await getTokenData(
-                                event.args._collection,
-                                owners[0].owner,
-                                event.args._id
-                            );
-                            //data.push(token);
-                            window.myTokens.created.push(token);
-                        } catch (e) {
-                            //console.log(e);
-                        }
-                        //}
-                    });
+                        6494200,
+                        owner
+                    );
+                    //for (var n = 0; n < owners.length; n++) {
+                    try {
+                        var token = await getTokenData(
+                            event.args._collection,
+                            owners[0].owner,
+                            event.args._id
+                        );
+                        //data.push(token);
+                        window.myTokens.created.push(token);
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    //}
 
                     //}
                 }
@@ -347,6 +348,83 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
     return owners;
 }
 
+async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
+    const ERC1155Interface = "0x0e89341c";
+    const ERC721Interface = "0x80ac58cd";
+
+    var filters = {};
+    var owners = [];
+    var allCopies = 0;
+
+    try {
+        var contract = new ethers.Contract(
+            toAddress(collectionAddess),
+            bhc721,
+            rpcprovider
+        );
+        var is721 = await contract.supportsInterface(ERC721Interface);
+        var is1155 = await contract.supportsInterface(ERC1155Interface);
+        if (is721) {
+            var owner = await contract.ownerOf(tokenId);
+            owners.push({ owner: owner, ownedCopies: 1 });
+        } else {
+            contract = new ethers.Contract(
+                toAddress(collectionAddess),
+                bhc1155,
+                rpcprovider1
+            );
+            var copies = await contract.balanceOf(_owner, tokenId);
+            if (Number(copies) > 0) {
+                var tk = { owner: _owner, ownedCopies: copies };
+                owners.push(tk);
+                return owners;
+            }
+            var startBlock = _startBlock;
+            var endBlock = await rpcprovider1.getBlockNumber();
+            var evts = [];
+            var filter = contract.filters.TransferSingle(
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+            for (var i = startBlock; i <= endBlock; i = i + 4000) {
+                var st = i;
+                var evtsCr = await contract.queryFilter(
+                    "TransferSingle",
+                    i,
+                    i + 4000
+                );
+                console.log(evtsCr);
+
+                var ownerById = {};
+                for (var j = 0; j < evtsCr.length; j++) {
+                    if (Number(evtsCr[j].args.id) == tokenId) {
+                        var owner = evtsCr[j].args.to;
+                        var copies = await contract.balanceOf(
+                            owner,
+                            evtsCr[j].args.id
+                        );
+                        if (Number(copies) > 0) {
+                            var tk = { owner: owner, ownedCopies: copies };
+                            owners.push(tk);
+                            return owners;
+                        }
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        if (st < endBlock) {
+            await getAnOwner(collectionAddess, tokenId, st, _owner);
+            //owners = [...owners, ...owners_d];
+        }
+        console.log(e);
+    }
+    return owners;
+}
+
 async function getOwnedCollections(me, type, forDetails) {
     var collections = [];
     const address = toAddress(me);
@@ -374,7 +452,7 @@ async function getOwnedCollections(me, type, forDetails) {
                     var uri = await colCon.contract_URI();
 
                     var res = await axios.get(
-                        uri.replace("ipfs.io", "gateway.pinata.cloud")
+                        uri.replace("ipfs.io", "dweb.link")
                     );
                     var collection = res.data;
                     console.log(collection);
@@ -401,7 +479,7 @@ async function get721Token(contract, collection, tokenId, owner) {
             tokenType: 721,
             ownedCopies: 1,
             tokenOwner: owner,
-            URI: tokenURI.replace("ipfs.io", "gateway.pinata.cloud")
+            URI: tokenURI //.replace("ipfs.io", "dweb.link")
         };
         return tokenData;
     } catch (e) {
@@ -422,7 +500,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
             tokenType: 1155,
             ownedCopies: ownedCount,
             tokenOwner: owner,
-            URI: tokenURI.replace("ipfs.io", "gateway.pinata.cloud")
+            URI: tokenURI //.replace("ipfs.io", "dweb.link")
         };
         return tokenData;
     } catch (e) {
@@ -463,11 +541,18 @@ async function getMultiples(contractAddress, owner, collection) {
         );
         const currentId = await contract.current_id();
         for (var i = 1; i < Number(currentId) + 1; i++) {
-            var ownedCount = await contract.balanceOf(owner, i);
-            if (ownedCount > 0) {
-                var nft = await get1155Token(contract, collection, i, owner);
-                tokens.push(nft);
-            }
+            try {
+                var ownedCount = await contract.balanceOf(owner, i);
+                if (ownedCount > 0) {
+                    var nft = await get1155Token(
+                        contract,
+                        collection,
+                        i,
+                        owner
+                    );
+                    tokens.push(nft);
+                }
+            } catch (e) {}
         }
     } catch (e) {}
     return tokens;
@@ -486,8 +571,8 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             );
             var realOwner = await contract.ownerOf(id);
             var col = await contract.contract_URI();
-            var res = await axios.get(col);
-            var collection = res.data;
+            //var res = await axios.get(col);
+            var collection = { URI: col }; //res.data;
             collection.address = contractAddress;
             if (owner == toAddress(realOwner)) {
                 var collectible = await get721Token(
@@ -505,8 +590,8 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             );
             var ownerHave = await contract.balanceOf(owner, id);
             var col = await contract.contract_URI();
-            var res = await axios.get(col);
-            var collection = res.data;
+            //var res = await axios.get(col);
+            var collection = { URI: col }; //res.data;
             collection.address = contractAddress;
             if (Number(ownerHave) > 0) {
                 var collectible = await get1155Token(
@@ -906,6 +991,7 @@ export {
     getCollection,
     getCollectionType,
     getOwnersOf,
+    getAnOwner,
     getCreated,
     getMinted,
     getFees,
