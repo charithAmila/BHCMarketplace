@@ -365,7 +365,8 @@ export default {
             },
             address: {},
             owners: [],
-            ownersLoaded: false
+            ownersLoaded: false,
+            ownersRequested: false
         };
     },
     async mounted() {
@@ -374,6 +375,7 @@ export default {
     methods: {
         async getOwnersDetails() {
             const _this = this;
+            _this.ownersRequested = true;
             var _owners = await getOwnersOf(
                 _this.collectible.contract,
                 _this.collectible.id,
@@ -435,7 +437,7 @@ export default {
             this.home_active = false;
             this.holder_active = true;
             this.bid_active = false;
-            this.getOwnersDetails();
+            !this.ownersRequested ? this.getOwnersDetails() : null;
         },
         bidsActive() {
             this.home_active = false;
