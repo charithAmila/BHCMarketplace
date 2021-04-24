@@ -128,7 +128,7 @@
             </div>
 
             <div class="options d-none">
-              <a v-if="auth_id != user_id" class="report-page" href="javascript:void(0)">Report page</a>
+              <a :class="auth_id == user_id ? 'd-none': ''" class="report-page" href="javascript:void(0)">Report page</a>
               <a
                 v-if="auth_id == user_id"
                 class="profile-preferences"
