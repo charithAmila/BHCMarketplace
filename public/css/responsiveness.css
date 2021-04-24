@@ -617,19 +617,19 @@
 
   .custom-modal .report-content {
     left: 0% !important;
-    top: 40% !important;
+    top: 45% !important;
   }
 
   .custom-modal .preferences-content {
     left: 0% !important;
-    top: 9% !important;
+    top: 14.5% !important;
   }
 
   .custom-modal .following-content,
   .custom-modal .follower-content,
   .custom-modal .cover-content {
     left: 0% !important;
-    top: 60% !important;
+    top: 63.5% !important;
   }
 
   .about-bhc {
