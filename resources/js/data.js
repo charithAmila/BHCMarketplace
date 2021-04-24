@@ -192,12 +192,15 @@ async function getOwnedTokensData(owner, base_url) {
         for (var i = 0; i < tokens721.length; i++) {
             window.proPageLoading = true;
             var selectedToken = tokens721[i];
-            selectedToken.URI = selectedToken.URI.replace(
-                "ipfs.io",
-                "gateway.pinata.cloud"
-            );
-            var res = await axios.get(selectedToken.URI);
-            var nft = res.data;
+            try {
+                var res = await axios.get(
+                    selectedToken.URI.replace("ipfs.io", "gateway.pinata.cloud")
+                );
+                var nft = res.data;
+            } catch (e) {
+                var res = await axios.get(selectedToken.URI);
+                var nft = res.data;
+            }
 
             nft.copies = 1;
             nft.ownedCopies = selectedToken.ownedCopies;
@@ -320,10 +323,11 @@ async function getLikedTokens(owner, base_url) {
 }
 
 async function getCreatedTokens(owner, base_url) {
-    var data = [];
-    var tokens = await getCreated(owner, 6494200);
-
-    return data;
+    if (window.myTokens.created != null) {
+        if (window.myTokens.created.length == 0) {
+            getCreated(owner, 6494200);
+        }
+    }
 }
 
 async function getOnSaleTokens(owner, base_url) {
@@ -378,7 +382,7 @@ async function getOnSaleTokens(owner, base_url) {
 async function getTokensData(owner, base_url) {
     //getOnSaleTokens(owner, base_url);
     getOwnedTokensData(owner, base_url);
-    getCreatedTokens(owner, base_url);
+    //getCreatedTokens(owner, base_url);
     getLikedTokens(owner, base_url);
     //var likedTokens = await getLikedTokens(owner, base_url);
     //var createdTokens = await getCreatedTokens(owner, base_url);

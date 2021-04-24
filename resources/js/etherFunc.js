@@ -30,14 +30,15 @@ if (typeof window.ethereum == "undefined") {
     );
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
-    window.rpcprovider = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
+    window.rpcprovider = window.provider;
+    window.rpcprovider1 = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
 }
 
-window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
-    //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
-    "https://data-seed-prebsc-1-s1.binance.org:8545"
-    //"http://162.0.210.42/rpc"
-);
+//window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
+//"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
+//"https://data-seed-prebsc-1-s1.binance.org:8545"
+//"http://162.0.210.42/rpc"
+///);
 
 //const selectedAddress = provider.provider.selectedAddress;
 
@@ -192,17 +193,17 @@ async function getCreated(owner, _startingBlock) {
         const nftStorage = new ethers.Contract(
             NFTStorageAddress,
             nftStorageABI,
-            rpcprovider
+            rpcprovider1
         );
         //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
         var startBlock = _startingBlock;
-        var endBlock = await rpcprovider.getBlockNumber();
+        var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
             var st = i;
             var evtsCr = await nftStorage.queryFilter("NFTAdded", i, i + 4000);
-            console.log(i + 1000);
+            console.log(i + 4000);
             for (var j = 0; j < evtsCr.length; j++) {
                 var event = evtsCr[j];
                 var creator = toAddress(event.args._creator);
@@ -231,7 +232,7 @@ async function getCreated(owner, _startingBlock) {
                             //data.push(token);
                             window.myTokens.created.push(token);
                         } catch (e) {
-                            console.log(e);
+                            //console.log(e);
                         }
                         //}
                     });
@@ -293,10 +294,10 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             contract = new ethers.Contract(
                 toAddress(collectionAddess),
                 bhc1155,
-                rpcprovider
+                rpcprovider1
             );
             var startBlock = _startBlock;
-            var endBlock = await rpcprovider.getBlockNumber();
+            var endBlock = await rpcprovider1.getBlockNumber();
             var evts = [];
             var filter = contract.filters.TransferSingle(
                 null,
