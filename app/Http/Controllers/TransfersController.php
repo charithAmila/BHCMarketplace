@@ -78,7 +78,7 @@ class TransfersController extends Controller
      * @param  \App\Models\transfers  $transfers
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, transfers $collection)
+    public function update(Request $request, $collection)
     {
         $last = transfers::where("collection",$collection)->latest("id")->first();
         $last->block=$request->block;

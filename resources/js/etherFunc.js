@@ -185,6 +185,10 @@ async function getCollection(collectionAddess) {
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var transfers = [];
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: i - 1
+                });
+
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
@@ -338,7 +342,7 @@ async function getCreated(owner, _startingBlock) {
             }
         }
     } catch (e) {
-        await getCreated(owner, st);
+        //await getCreated(owner, st);
         console.log(e);
     }
     if (window.myTokens.created.length == 0) {
@@ -427,6 +431,9 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             );
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var st = i;
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: i - 1
+                });
                 var transfers = [];
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
@@ -466,7 +473,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
         }
     } catch (e) {
         if (st < endBlock) {
-            await getOwnersOf(collectionAddess, tokenId, st);
+            //await getOwnersOf(collectionAddess, tokenId, st);
             //owners = [...owners, ...owners_d];
         }
         console.log(e);
