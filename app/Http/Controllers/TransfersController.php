@@ -14,7 +14,7 @@ class TransfersController extends Controller
      */
     public function index(Request $request)
     {
-        $last = transfers::where("collection",$request->collection)->latest()->first();
+        $last = transfers::where("collection",$request->collection)->latest("id")->first();
         return $last;
     }
 
