@@ -99,7 +99,7 @@
                                     :href="
                                         asset_url +
                                             'collection/' +
-                                            collection.address
+                                            collectible.contract
                                     "
                                 >
                                     <img
@@ -121,7 +121,7 @@
                                     :href="
                                         asset_url +
                                             'collection/' +
-                                            collection.address
+                                            collectible.contract
                                     "
                                     >{{ collection.name }}</a
                                 ></label
