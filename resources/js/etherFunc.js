@@ -342,7 +342,7 @@ async function getCreated(owner, _startingBlock) {
             }
         }
     } catch (e) {
-        //await getCreated(owner, st);
+        await getCreated(owner, st);
         console.log(e);
     }
     if (window.myTokens.created.length == 0) {
@@ -585,7 +585,8 @@ async function getOwnedCollections(me, type, forDetails) {
                     var uri = await colCon.contract_URI();
 
                     var res = await axios.get(
-                        uri.replace("ipfs.io", "gateway.ipfs.io")
+                        //uri.replace("https://ipfs.io", "billionhappiness.finance/ipfs")
+                        uri.replace("https://ipfs.io", "/ipfs")
                     );
                     var collection = res.data;
                     console.log(collection);
@@ -612,7 +613,7 @@ async function get721Token(contract, collection, tokenId, owner) {
             tokenType: 721,
             ownedCopies: 1,
             tokenOwner: owner,
-            URI: tokenURI //.replace("ipfs.io", "gateway.ipfs.io")
+            URI: tokenURI //.replace("ipfs.io", "billionhappiness.finance/ipfs")
         };
         return tokenData;
     } catch (e) {
@@ -633,7 +634,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
             tokenType: 1155,
             ownedCopies: ownedCount,
             tokenOwner: owner,
-            URI: tokenURI //.replace("ipfs.io", "gateway.ipfs.io")
+            URI: tokenURI //.replace("ipfs.io", "billionhappiness.finance/ipfs")
         };
         return tokenData;
     } catch (e) {
