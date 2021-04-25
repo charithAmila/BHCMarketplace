@@ -114,14 +114,14 @@ async function getUserDetails(addressString) {
     try {
         var res = await axios.get("/api/profile/" + address);
         var response = await axios.get(
-            "https://dweb.link/ipfs/" + res.data.ipfs_hash
+            "https://gateway.ipfs.io/ipfs/" + res.data.ipfs_hash
         );
         //console.log(response)
         user.cover_photo =
-            response.data.cover.replace("ipfs.io", "dweb.link") ||
+            response.data.cover.replace("ipfs.io", "gateway.ipfs.io") ||
             user.cover_photo;
         user.display_photo =
-            response.data.dp.replace("ipfs.io", "dweb.link") ||
+            response.data.dp.replace("ipfs.io", "gateway.ipfs.io") ||
             user.display_photo;
         user.name = response.data.name;
         user.bio = response.data.description;
@@ -136,14 +136,14 @@ async function getCollections(type, me, forDetails) {
     ///delete///
 
     var colIpfs = await collectionURI(hps721Address);
-    colIpfs = colIpfs.replace("ipfs.io", "dweb.link");
+    colIpfs = colIpfs.replace("ipfs.io", "gateway.ipfs.io");
     var res = await axios.get(colIpfs);
     var t = res.data;
 
     t.address = hps721Address;
     type == 721 ? collections.push(t) : null;
     var colIpfs = await collectionURI(hps1155Address);
-    colIpfs = colIpfs.replace("ipfs.io", "dweb.link");
+    colIpfs = colIpfs.replace("ipfs.io", "gateway.ipfs.io");
     var res = await axios.get(colIpfs);
     var t = res.data;
     t.address = hps1155Address;
@@ -195,7 +195,7 @@ async function getOwnedTokensData(owner, base_url) {
             var selectedToken = tokens721[i];
             try {
                 var res = await axios.get(
-                    selectedToken.URI.replace("ipfs.io", "dweb.link")
+                    selectedToken.URI.replace("ipfs.io", "gateway.ipfs.io")
                 );
                 var nft = res.data;
             } catch (e) {
@@ -211,7 +211,7 @@ async function getOwnedTokensData(owner, base_url) {
 
             nft.collection = selectedToken.collection;
             nft.legend = nft.legend || "normal";
-            //nft.file = nft.file.replace("ipfs.io", "dweb.link");
+            //nft.file = nft.file.replace("ipfs.io", "gateway.ipfs.io");
 
             ////remove/////
             nft.isp = 1;
@@ -246,7 +246,7 @@ async function getOwnedTokensData(owner, base_url) {
             var selectedToken = tokens1155[i];
             selectedToken.URI = selectedToken.URI.replace(
                 "ipfs.io",
-                "dweb.link"
+                "gateway.ipfs.io"
             );
 
             var res = await axios.get(selectedToken.URI);
@@ -268,7 +268,7 @@ async function getOwnedTokensData(owner, base_url) {
                 selectedToken.id
             );
             //nft.fileType = nft.fileType || "image";
-            nft.file = nft.file.replace("ipfs.io", "dweb.link");
+            nft.file = nft.file.replace("ipfs.io", "gateway.ipfs.io");
             if (salesData.on_sale) {
                 nft.price = salesData.price;
                 nft.is_selling = true;
@@ -359,7 +359,7 @@ async function getOnSaleTokens(owner, base_url) {
             nft.price = tokens[i].price;
             nft.currency = tokens[i].currency;
             try {
-                nft.file = nft.file.replace("ipfs.io", "dweb.link");
+                nft.file = nft.file.replace("ipfs.io", "gateway.ipfs.io");
             } catch (e) {}
             nft.on_sale = await availableToBuy(
                 tokens[i].collection,
@@ -437,7 +437,10 @@ async function getTokenData(contract, owner, id) {
         type = 1155;
     }
     try {
-        selectedToken.URI = selectedToken.URI.replace("ipfs.io", "dweb.link");
+        selectedToken.URI = selectedToken.URI.replace(
+            "ipfs.io",
+            "gateway.ipfs.io"
+        );
     } catch (e) {}
 
     var colData = await axios.get(selectedToken.URI);
@@ -469,7 +472,7 @@ async function getTokenData(contract, owner, id) {
 
     nft.type = type;
     try {
-        //nft.file = nft.file.replace("ipfs.io", "dweb.link");
+        //nft.file = nft.file.replace("ipfs.io", "gateway.ipfs.io");
     } catch (e) {}
     ////remove/////
     nft.isp = 1;
@@ -572,7 +575,7 @@ async function getAllSales(current_user) {
                         : tokens[i].currency == bhcAddress
                         ? "BHC"
                         : "BNB";
-                nft.file = nft.file.replace("ipfs.io", "dweb.link");
+                nft.file = nft.file.replace("ipfs.io", "gateway.ipfs.io");
                 data.push(nft);
                 window.sales.push(nft);
             } catch (e) {}
@@ -631,7 +634,7 @@ async function getAllSalesSearch(current_user, parameter) {
                             ? "BHC"
                             : "BNB";
                     nft.creatorData = await getUserDetails(nft.creator);
-                    nft.file = nft.file.replace("ipfs.io", "dweb.link");
+                    nft.file = nft.file.replace("ipfs.io", "gateway.ipfs.io");
                     nft.ownedCopies = nft.on_sale;
                     data.push(nft);
                     window.searches.push(nft);
