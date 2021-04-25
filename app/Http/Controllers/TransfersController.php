@@ -38,7 +38,8 @@ class TransfersController extends Controller
     {
         $data = $request->transfers;
         for($i=0;$i<count($data);$i++){
-        $existingRecord = transfers::where("block",$data[$i][0])->where("collection",$data[$i][1])->where("owner",$data[$i][2])->where("token_id",$data[$i][3])->get();
+        $existingRecord = transfers::where("collection",$data[$i][1])->where("owner",$data[$i][2])->where("token_id",$data[$i][3])->get();
+
            if(count($existingRecord)==0) {transfers::create([
                 "block"=>$data[$i][0],
                 "collection" => $data[$i][1],
@@ -78,9 +79,12 @@ class TransfersController extends Controller
      * @param  \App\Models\transfers  $transfers
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, transfers $transfers)
+    public function update(Request $request, $collection)
     {
-        //
+        $last = transfers::where("collection",$collection)->latest("id")->first();
+        $last->block=$request->block;
+        $last->update();
+
     }
 
     /**

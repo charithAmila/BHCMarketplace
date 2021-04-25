@@ -41,8 +41,8 @@ if (typeof window.ethereum == "undefined") {
 //window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
 //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
 //"https://data-seed-prebsc-1-s1.binance.org:8545"
-//"http://162.0.210.42/rpc"
-//);
+// "http://162.0.210.42/rpc"
+////);
 
 //const selectedAddress = provider.provider.selectedAddress;
 
@@ -185,6 +185,10 @@ async function getCollection(collectionAddess) {
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var transfers = [];
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: i - 1
+                });
+
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
@@ -226,6 +230,7 @@ async function getCollection(collectionAddess) {
 
 async function getCreated(owner, _startingBlock) {
     const tokens = [];
+    window.myTokens.created = [];
 
     try {
         const nftStorage = new ethers.Contract(
@@ -279,6 +284,7 @@ async function getCreated(owner, _startingBlock) {
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
             var st = i;
+            await axios.patch("/minted/" + owner, { block: i - 1 });
             var evtsCr = await nftStorage.queryFilter(
                 "NFTAdded",
                 i,
@@ -425,6 +431,9 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             );
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var st = i;
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: i - 1
+                });
                 var transfers = [];
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
@@ -464,7 +473,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
         }
     } catch (e) {
         if (st < endBlock) {
-            await getOwnersOf(collectionAddess, tokenId, st);
+            //await getOwnersOf(collectionAddess, tokenId, st);
             //owners = [...owners, ...owners_d];
         }
         console.log(e);
