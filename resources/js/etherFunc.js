@@ -336,7 +336,7 @@ async function getCreated(owner, _startingBlock) {
             }
         }
     } catch (e) {
-        //await getCreated(owner, st);
+        await getCreated(owner, st);
         console.log(e);
     }
     if (window.myTokens.created.length == 0) {
