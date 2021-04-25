@@ -179,7 +179,7 @@ async function getCollection(collectionAddess) {
             var latest = await axios.get(
                 "/transfers?collection=" + collectionAddess
             );
-            var startBlock = latest.block + 1;
+            var startBlock = latest.length == 0 ? 6494200 : latest.block + 1;
             var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
@@ -270,7 +270,7 @@ async function getCreated(owner, _startingBlock) {
         }
         //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
         var latest = await axios.get("/minted");
-        var startBlock = latest.data.block + 1;
+        var startBlock = latest.length == 0 ? 6494200 : latest.data.block + 1;
         var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
         console.log(startBlock);
@@ -409,7 +409,8 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             var latest = await axios.get(
                 "/transfers?collection=" + collectionAddess
             );
-            var startBlock = latest.data.block + 1;
+            var startBlock =
+                latest.length == 0 ? 6494200 : latest.data.block + 1;
             console.log(startBlock);
             var endBlock = await rpcprovider1.getBlockNumber();
             var evts = [];
