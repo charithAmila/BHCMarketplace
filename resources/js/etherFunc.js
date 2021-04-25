@@ -230,7 +230,7 @@ async function getCollection(collectionAddess) {
 
 async function getCreated(owner, _startingBlock) {
     const tokens = [];
-    window.myTokens.created = [];
+    //window.myTokens.created = [];
 
     try {
         const nftStorage = new ethers.Contract(
