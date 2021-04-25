@@ -82,7 +82,7 @@ class TransfersController extends Controller
     public function update(Request $request, $collection)
     {
         $last = transfers::where("collection",$collection)->latest("id")->first();
-        if(count($last)!=0){
+        if($last!=null){
         $last->block=$request->block;
         $last->update();}
 

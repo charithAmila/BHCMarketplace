@@ -82,7 +82,7 @@ class MintedController extends Controller
     public function update(Request $request,$owner)
     {
         $last = minted::latest("id")->first();
-        if(count($last)!=0){
+        if($last!=null){
             $last->block=$request->block;
             $last->update();
         }
