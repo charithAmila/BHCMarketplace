@@ -114,7 +114,8 @@ async function getUserDetails(addressString) {
     try {
         var res = await axios.get("/api/profile/" + address);
         var response = await axios.get(
-            "https://billionhappiness.finance/ipfs/ipfs/" + res.data.ipfs_hash
+            //"https://billionhappiness.finance/ipfs/ipfs/" + res.data.ipfs_hash
+            "/ipfs/ipfs/" + res.data.ipfs_hash
         );
         //console.log(response)
         user.cover_photo =
