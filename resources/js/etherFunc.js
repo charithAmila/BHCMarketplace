@@ -584,10 +584,18 @@ async function getOwnedCollections(me, type, forDetails) {
                 if (toAddress(owner) == toAddress(me) || forDetails) {
                     var uri = await colCon.contract_URI();
 
-                    var res = await axios.get(
-                        //uri.replace("https://ipfs.io", "billionhappiness.finance/ipfs")
-                        uri.replace("https://ipfs.io", "/ipfs")
-                    );
+                    var res = null;
+                    try {
+                        res = await axios.get(
+                            //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                            uri.replace("https://ipfs.io", "/ipfs")
+                        );
+                    } catch (e) {
+                        res = await axios.get(
+                            uri.replace("ipfs.io", "gateway.pinata.io")
+                            //uri.replace("https://ipfs.io", "/ipfs")
+                        );
+                    }
                     var collection = res.data;
                     console.log(collection);
                     collection.address = col;
@@ -613,7 +621,7 @@ async function get721Token(contract, collection, tokenId, owner) {
             tokenType: 721,
             ownedCopies: 1,
             tokenOwner: owner,
-            URI: tokenURI //.replace("ipfs.io", "billionhappiness.finance/ipfs")
+            URI: tokenURI //.replace("ipfs.io", "gateway.pinata.io")
         };
         return tokenData;
     } catch (e) {
@@ -634,7 +642,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
             tokenType: 1155,
             ownedCopies: ownedCount,
             tokenOwner: owner,
-            URI: tokenURI //.replace("ipfs.io", "billionhappiness.finance/ipfs")
+            URI: tokenURI //.replace("ipfs.io", "gateway.pinata.io")
         };
         return tokenData;
     } catch (e) {

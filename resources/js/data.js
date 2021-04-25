@@ -113,27 +113,48 @@ async function getUserDetails(addressString) {
     var user = tempUserData(address);
     try {
         var res = await axios.get("/api/profile/" + address);
-        var response = await axios.get(
-            //"https://billionhappiness.finance/ipfs/ipfs/" + res.data.ipfs_hash
-            "/ipfs/ipfs/" + res.data.ipfs_hash
-        );
+        var response;
+        try {
+            response = await axios.get(
+                //"https://gateway.pinata.io/ipfs/" + res.data.ipfs_hash
+                "/ipfs/ipfs/" + res.data.ipfs_hash
+            );
+        } catch (e) {
+            response = await axios.get(
+                "https://gateway.pinata.io/ipfs/" + res.data.ipfs_hash
+                //"/ipfs/ipfs/" + res.data.ipfs_hash
+            );
+        }
         //console.log(response)
-        user.cover_photo =
-            /*response.data.cover.replace(
+
+        try {
+            user.cover_photo =
+                /*response.data.cover.replace(
                 "ipfs.io",
-                "billionhappiness.finance/ipfs"
+                "gateway.pinata.io"
             ) */ response.data.cover.replace(
-                "https://ipfs.io",
-                "/ipfs"
-            ) || user.cover_photo;
-        user.display_photo =
-            /*response.data.dp.replace(
+                    "https://ipfs.io",
+                    "/ipfs"
+                ) || user.cover_photo;
+        } catch (e) {
+            user.cover_photo =
+                response.data.cover.replace("ipfs.io", "gateway.pinata.io") ||
+                user.cover_photo;
+        }
+        try {
+            user.display_photo =
+                /*response.data.dp.replace(
                 "ipfs.io",
-                "billionhappiness.finance/ipfs"
+                "gateway.pinata.io"
             )*/ response.data.dp.replace(
-                "https://ipfs.io",
-                "/ipfs"
-            ) || user.display_photo;
+                    "https://ipfs.io",
+                    "/ipfs"
+                ) || user.display_photo;
+        } catch (e) {
+            user.display_photo =
+                response.data.dp.replace("ipfs.io", "gateway.pinata.io") ||
+                user.display_photo;
+        }
         user.name = response.data.name;
         user.bio = response.data.description;
         user.short_url = response.data.short_url;
@@ -147,17 +168,30 @@ async function getCollections(type, me, forDetails) {
     ///delete///
 
     var colIpfs = await collectionURI(hps721Address);
-    //colIpfs = colIpfs.replace("ipfs.io", "billionhappiness.finance/ipfs");
-    colIpfs = colIpfs.replace("https://ipfs.io", "/ipfs");
-    var res = await axios.get(colIpfs);
+    var res = null;
+    //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
+    try {
+        colIpfs = colIpfs.replace("https://ipfs.io", "/ipfs");
+        res = await axios.get(colIpfs);
+    } catch (e) {
+        //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
+        res = await axios.get(colIpfs);
+    }
+
     var t = res.data;
 
     t.address = hps721Address;
     type == 721 ? collections.push(t) : null;
     var colIpfs = await collectionURI(hps1155Address);
-    //colIpfs = colIpfs.replace("ipfs.io", "billionhappiness.finance/ipfs");
-    colIpfs = colIpfs.replace("https://ipfs.io", "/ipfs");
-    var res = await axios.get(colIpfs);
+    res = null;
+    //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
+    try {
+        //colIpfs = colIpfs.replace("https://ipfs.io", "/ipfs");
+        res = await axios.get(colIpfs);
+    } catch (e) {
+        colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
+        res = await axios.get(colIpfs);
+    }
     var t = res.data;
     t.address = hps1155Address;
 
@@ -208,7 +242,7 @@ async function getOwnedTokensData(owner, base_url) {
             var selectedToken = tokens721[i];
             try {
                 var res = await axios.get(
-                    //selectedToken.URI.replace("ipfs.io","billionhappiness.finance/ipfs")
+                    //selectedToken.URI.replace("ipfs.io","gateway.pinata.io")
                     selectedToken.URI.replace("https://ipfs.io", "/ipfs")
                 );
                 var nft = res.data;
@@ -225,7 +259,7 @@ async function getOwnedTokensData(owner, base_url) {
 
             nft.collection = selectedToken.collection;
             nft.legend = nft.legend || "normal";
-            //nft.file = nft.file.replace("ipfs.io", "billionhappiness.finance/ipfs");
+            //nft.file = nft.file.replace("ipfs.io", "gateway.pinata.io");
 
             ////remove/////
             nft.isp = 1;
@@ -258,13 +292,20 @@ async function getOwnedTokensData(owner, base_url) {
         for (var i = 0; i < tokens1155.length; i++) {
             window.proPageLoading = true;
             var selectedToken = tokens1155[i];
-            //selectedToken.URI = selectedToken.URI.replace("ipfs.io","billionhappiness.finance/ipfs");
-            selectedToken.URI = selectedToken.URI.replace(
-                "https://ipfs.io",
-                "/ipfs"
-            );
+            var res = null;
+            //selectedToken.URI = selectedToken.URI.replace("ipfs.io","gateway.pinata.io");
+            try {
+                selectedToken.URI = selectedToken.URI.replace(
+                    "https://ipfs.io",
+                    "/ipfs"
+                );
 
-            var res = await axios.get(selectedToken.URI);
+                res = await axios.get(selectedToken.URI);
+            } catch (e) {
+                //selectedToken.URI = selectedToken.URI.replace("ipfs.io","gateway.pinata.io");
+
+                res = await axios.get(selectedToken.URI);
+            }
             var nft = res.data;
 
             nft.copies = nft.count;
@@ -283,7 +324,7 @@ async function getOwnedTokensData(owner, base_url) {
                 selectedToken.id
             );
             //nft.fileType = nft.fileType || "image";
-            //nft.file = nft.file.replace("ipfs.io","billionhappiness.finance/ipfs");
+            //nft.file = nft.file.replace("ipfs.io","gateway.pinata.io");
             nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
 
             if (salesData.on_sale) {
@@ -378,7 +419,7 @@ async function getOnSaleTokens(owner, base_url) {
             try {
                 /*nft.file = nft.file.replace(
                     "ipfs.io",
-                    "billionhappiness.finance/ipfs"
+                    "gateway.pinata.io"
                 );*/
                 nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
             } catch (e) {}
@@ -457,15 +498,24 @@ async function getTokenData(contract, owner, id) {
         );
         type = 1155;
     }
+    var colData = null;
     try {
-        //selectedToken.URI = selectedToken.URI.replace( "ipfs.io","billionhappiness.finance/ipfs");
+        //selectedToken.URI = selectedToken.URI.replace( "ipfs.io","gateway.pinata.io");
         selectedToken.URI = selectedToken.URI.replace(
             "https://ipfs.io",
             "/ipfs"
         );
-    } catch (e) {}
+        colData = await axios.get(selectedToken.URI);
+    } catch (e) {
+        selectedToken.URI = selectedToken.URI.replace(
+            "ipfs.io",
+            "gateway.pinata.io"
+        );
 
-    var colData = await axios.get(selectedToken.URI);
+        colData = await axios.get(selectedToken.URI);
+    }
+
+    colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
     /*data.current_owner = collectible.tokenOwner;
     data.is_selling = 1;
@@ -494,7 +544,7 @@ async function getTokenData(contract, owner, id) {
 
     nft.type = type;
     try {
-        //nft.file = nft.file.replace("ipfs.io", "billionhappiness.finance/ipfs");
+        nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
     } catch (e) {}
     ////remove/////
     nft.isp = 1;
@@ -599,7 +649,7 @@ async function getAllSales(current_user) {
                         : "BNB";
                 /*nft.file = nft.file.replace(
                     "ipfs.io",
-                    "billionhappiness.finance/ipfs"
+                    "gateway.pinata.io"
                 );*/
                 nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
                 data.push(nft);
@@ -662,12 +712,9 @@ async function getAllSalesSearch(current_user, parameter) {
                     nft.creatorData = await getUserDetails(nft.creator);
                     /*nft.file = nft.file.replace(
                         "ipfs.io",
-                        "billionhappiness.finance/ipfs"
+                        "gateway.pinata.io"
                     );*/
-                    nft.file = nft.file.replace(
-                        "ipfs.io",
-                        "billionhappiness.finance/ipfs"
-                    );
+                    nft.file = nft.file.replace("ipfs.io", "gateway.pinata.io");
                     nft.ownedCopies = nft.on_sale;
                     data.push(nft);
                     window.searches.push(nft);
