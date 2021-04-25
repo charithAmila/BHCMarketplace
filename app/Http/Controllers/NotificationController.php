@@ -55,7 +55,7 @@ class NotificationController extends Controller
         }
         elseif($request->type == 'create'){
             $notification = new Notification;
-            $notification->user_id = $request->seller_id;
+            $notification->user_id = $request->user_id;
             $notification->message = $request->message;
             $notification->type = 'create';
             $notification->save();
