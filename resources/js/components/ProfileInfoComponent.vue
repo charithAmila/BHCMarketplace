@@ -274,6 +274,7 @@ export default {
            let notif = {};
             notif.message = message;
             notif.user_id = user_id;
+            notif.owner = follower_id;
            notif.type ="follow";
             await axios
            .post("/addNotification", notif, {})

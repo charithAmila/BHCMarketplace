@@ -64,6 +64,7 @@ class NotificationController extends Controller
             $notification = new Notification;
             $notification->user_id = $request->user_id;
             $notification->message = $request->message;
+            $notification->owner = $request->owner;
             $notification->type = 'follow';
             $notification->save();
         }
