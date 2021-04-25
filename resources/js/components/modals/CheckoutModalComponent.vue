@@ -274,7 +274,7 @@ export default {
                         req.contract = collectible.contract;
                         req.currency = collectible.currencyName;
                         req.type = "sell";
-                        axios.post("addNotification", req).then(res => {
+                        axios.post("/addNotification", req).then(res => {
                             console.log(res.data);
                         });
 
@@ -316,7 +316,7 @@ export default {
                             data.seller_id = collectible.owner_id;
                             data.type= "sell";
                             await axios
-                                .post("addNotification", data, {})
+                                .post("/addNotification", data, {})
                                 .then(res => {
                                     console.log(res.data);
                                 });
@@ -330,9 +330,8 @@ export default {
                             data.buy_amount =  _this.total_payment;
                             data.seller_id = collectible.owner_id;
                             data.type= "sell";
-                            data.bid = false;
                             await axios
-                                .post("addNotification", data, {})
+                                .post("/addNotification", data, {})
                                 .then(res => {
                                     console.log(res.data);
                                 });

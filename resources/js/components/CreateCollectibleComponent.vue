@@ -1378,7 +1378,7 @@ export default {
                                     notif.token_id = 0;
                                      notif.type = "create"
                                     await axios
-                                        .post("addNotification", notif, {})
+                                        .post("/addNotification", notif, {})
                                         .then(result => {
                                             console.log(result.data);
                                         });
