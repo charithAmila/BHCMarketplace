@@ -38,12 +38,14 @@ class MintedController extends Controller
     {
         $data = $request->mints;
         for($i=0;$i<count($data);$i++){
-            minted::create([
+            $existingRecord = minted::where("block",$data[$i][0])->where("minter",$data[$i][1])->where("collection",$data[$i][2])->where("token_id",$data[$i][3])->get();
+            if(count($existingRecord)==0){
+                minted::create([
                 "block"=>$data[$i][0],
                 "minter" => $data[$i][1],
                 "collection" => $data[$i][2],
                 "token_id" => $data[$i][3],
-            ]);
+            ]);}
         }
     }
 

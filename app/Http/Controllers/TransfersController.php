@@ -38,12 +38,13 @@ class TransfersController extends Controller
     {
         $data = $request->transfers;
         for($i=0;$i<count($data);$i++){
-            transfers::create([
+        $existingRecord = transfers::where("block",$data[$i][0])->where("colletion",$data[$i][1])->where("owner",$data[$i][2])->where("token_id",$data[$i][3])->get();
+           if(count($existingRecord)==0) {transfers::create([
                 "block"=>$data[$i][0],
                 "collection" => $data[$i][1],
                 "owner" => $data[$i][2],
                 "token_id" => $data[$i][3],
-            ]);
+            ]);}
         }
     }
 
