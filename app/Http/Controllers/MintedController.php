@@ -14,7 +14,7 @@ class MintedController extends Controller
      */
     public function index()
     {
-        $last = minted::latest()->first();
+        $last = minted::latest("id")->first();
         return $last;
     }
 
