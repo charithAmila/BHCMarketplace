@@ -5,17 +5,17 @@
         <div class="col-md-4">
           <div class="social-links">
             <a href="https://twitter.com/bhc_happiness" target="_blank">
-              <img src="images/twitter.png" alt="" /> Follow us on Twitter
+              <img src="/images/twitter.png" alt="" /> Follow us on Twitter
             </a>
             <a href="https://t.me/BH_NFT_Support" target="_blank">
-              <img src="images/telegram.png" alt="" /> Join our Telegram
+              <img src="/images/telegram.png" alt="" /> Join our Telegram
               community
             </a>
             <a
               href="https://rbjrcxhzb4w.typeform.com/to/Ak0nEWnn"
               target="_blank"
             >
-              <img src="images/message.png" alt="" /> Community Feedback
+              <img src="/images/message.png" alt="" /> Community Feedback
             </a>
           </div>
         </div>
