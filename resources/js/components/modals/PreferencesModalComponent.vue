@@ -87,7 +87,7 @@
                             </div>
                             <div class="form-divide">
                                 <label class="input-label">Short url</label>
-                                <span class="link-url">billionhappiness.finance/profile/{{url_previous}}</span>
+                                <span style="font-size:5px" class="link-url">billionhappiness.finance/profile/</span>
                                 <input
                                     id="short_url-profile"
                                     class="modal-input preferences-check with-link"
