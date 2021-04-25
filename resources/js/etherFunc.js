@@ -41,7 +41,7 @@ if (typeof window.ethereum == "undefined") {
 //window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
 //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
 //"https://data-seed-prebsc-1-s1.binance.org:8545"
-("http://162.0.210.42/rpc");
+//"http://162.0.210.42/rpc"
 //);
 
 //const selectedAddress = provider.provider.selectedAddress;
@@ -179,15 +179,16 @@ async function getCollection(collectionAddess) {
             var latest = await axios.get(
                 "/transfers?collection=" + collectionAddess
             );
-            var startBlock = latest.length == 0 ? 6494200 : latest.block + 1;
+            var startBlock =
+                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
             var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
-            for (var i = startBlock; i <= endBlock; i = i + 4000) {
+            for (var i = startBlock; i <= endBlock; i = i + 2000) {
                 var transfers = [];
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    i + 4000
+                    i + 2000
                 );
                 for (var x = 0; x < evtsCr.length; x++) {
                     var event = evtsCr[x];
@@ -270,17 +271,18 @@ async function getCreated(owner, _startingBlock) {
         }
         //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
         var latest = await axios.get("/minted");
-        var startBlock = latest.length == 0 ? 6494200 : latest.data.block + 1;
+        var startBlock =
+            latest.data.length == 0 ? 6494200 : latest.data.block + 1;
         var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
         console.log(startBlock);
 
-        for (var i = startBlock; i <= endBlock; i = i + 4000) {
+        for (var i = startBlock; i <= endBlock; i = i + 2000) {
             var st = i;
             var evtsCr = await nftStorage.queryFilter(
                 "NFTAdded",
                 i,
-                i + 4000 <= endBlock ? i + 4000 : endBlock
+                i + 2000 <= endBlock ? i + 2000 : endBlock
             );
             console.log(evtsCr);
             var mints = [];
@@ -410,7 +412,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                 "/transfers?collection=" + collectionAddess
             );
             var startBlock =
-                latest.length == 0 ? 6494200 : latest.data.block + 1;
+                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
             console.log(startBlock);
             var endBlock = await rpcprovider1.getBlockNumber();
             var evts = [];
@@ -421,13 +423,13 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                 null,
                 null
             );
-            for (var i = startBlock; i <= endBlock; i = i + 4000) {
+            for (var i = startBlock; i <= endBlock; i = i + 2000) {
                 var st = i;
                 var transfers = [];
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    endBlock >= i + 4000 ? i + 4000 : endBlock
+                    endBlock >= i + 2000 ? i + 2000 : endBlock
                 );
                 for (var x = 0; x < evtsCr.length; x++) {
                     var event = evtsCr[x];
@@ -511,12 +513,12 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                 null,
                 null
             );
-            for (var i = startBlock; i <= endBlock; i = i + 4000) {
+            for (var i = startBlock; i <= endBlock; i = i + 2000) {
                 var st = i;
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    i + 4000
+                    i + 2000
                 );
                 console.log(evtsCr);
 
