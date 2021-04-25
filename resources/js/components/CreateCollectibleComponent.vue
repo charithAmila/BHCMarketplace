@@ -1326,7 +1326,7 @@ export default {
                                     notif.type = "create"
 
                                     await axios
-                                        .post("addNotification", notif, {})
+                                        .post("/addNotification", notif, {})
                                         .then(result => {
                                             console.log(result.data);
                                         });
