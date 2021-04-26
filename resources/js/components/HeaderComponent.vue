@@ -67,7 +67,7 @@
           class="nav-item right-border"
           :class="request_segment == 'bhc' ? 'active' : ''"
           :href="about_route"
-          >HPS</a
+          >BHC</a
         >
         <a :href="create_collectible_route" class="btn nav-create">Create</a>
 
