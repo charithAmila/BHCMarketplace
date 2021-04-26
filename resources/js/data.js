@@ -117,7 +117,7 @@ async function getUserDetails(addressString) {
         try {
             response = await axios.get(
                 //"https://gateway.pinata.io/ipfs/" + res.data.ipfs_hash
-                "/ipfs/ipfs/" + res.data.ipfs_hash
+                "/data/" + res.data.ipfs_hash
             );
         } catch (e) {
             response = await axios.get(
@@ -171,7 +171,7 @@ async function getCollections(type, me, forDetails) {
     var res = null;
     //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
     try {
-        colIpfs = colIpfs.replace("https://ipfs.io", "/ipfs");
+        colIpfs = colIpfs.replace("https://ipfs.io/ipfs/", "/data/");
         res = await axios.get(colIpfs);
     } catch (e) {
         //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
@@ -186,7 +186,7 @@ async function getCollections(type, me, forDetails) {
     res = null;
     //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
     try {
-        //colIpfs = colIpfs.replace("https://ipfs.io", "/ipfs");
+        colIpfs = colIpfs.replace("https://ipfs.io/ipfs/", "/data/");
         res = await axios.get(colIpfs);
     } catch (e) {
         colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
@@ -243,7 +243,7 @@ async function getOwnedTokensData(owner, base_url) {
             try {
                 var res = await axios.get(
                     //selectedToken.URI.replace("ipfs.io","gateway.pinata.io")
-                    selectedToken.URI.replace("https://ipfs.io", "/ipfs")
+                    selectedToken.URI.replace("https://ipfs.io/ipfs/", "/data/")
                 );
                 var nft = res.data;
             } catch (e) {
@@ -296,8 +296,8 @@ async function getOwnedTokensData(owner, base_url) {
             //selectedToken.URI = selectedToken.URI.replace("ipfs.io","gateway.pinata.io");
             try {
                 selectedToken.URI = selectedToken.URI.replace(
-                    "https://ipfs.io",
-                    "/ipfs"
+                    "https://ipfs.io/ipfs/",
+                    "/data/"
                 );
 
                 res = await axios.get(selectedToken.URI);
@@ -502,8 +502,8 @@ async function getTokenData(contract, owner, id) {
     try {
         //selectedToken.URI = selectedToken.URI.replace( "ipfs.io","gateway.pinata.io");
         selectedToken.URI = selectedToken.URI.replace(
-            "https://ipfs.io",
-            "/ipfs"
+            "https://ipfs.io/ipfs/",
+            "/data/"
         );
         colData = await axios.get(selectedToken.URI);
     } catch (e) {

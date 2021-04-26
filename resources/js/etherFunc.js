@@ -588,7 +588,7 @@ async function getOwnedCollections(me, type, forDetails) {
                     try {
                         res = await axios.get(
                             //uri.replace("https://ipfs.io", "gateway.pinata.io")
-                            uri.replace("https://ipfs.io", "/ipfs")
+                            uri.replace("https://ipfs.io/ipfs/", "/data/")
                         );
                     } catch (e) {
                         res = await axios.get(
