@@ -949,14 +949,15 @@ export default {
                     !this.imgselectok ||
                     !this.legend ||
                     !this.category ||
-                    this.selectedContract == ""
+                    this.selectedContract == "" ||
+                    this.uploadedImage == ""
                 ) {
                     if (!this.name) {
                         this.isError.name = true;
                     } else {
                         this.isError.name = false;
                     }
-                    if (!this.imgselectok) {
+                    if (!this.imgselectok || this.uploadedImage == "") {
                         this.isError.imgselectok = true;
                     } else {
                         this.isError.imgselectok = false;
@@ -1011,7 +1012,8 @@ export default {
                     !this.legend ||
                     !this.category ||
                     this.selectedContract == "" ||
-                    this.copies == 0
+                    this.copies == 0 ||
+                    this.uploadedImage == ""
                 ) {
                     if (!this.name) {
                         this.isError.name = true;
@@ -1180,8 +1182,6 @@ export default {
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkM2VjNWQzNy01MmQ0LTRlYjMtYmEyNC1kNmRjYmY4YTY1NDMiLCJlbWFpbCI6ImJpbGxpb25oYXBwaW5lc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZX0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjQyZmNmMDViN2ZlZGFmNjBiMzNlIiwic2NvcGVkS2V5U2VjcmV0IjoiMGJlZTgwY2Q2OWY3MWVkMWZjZjViNTcxZjcyMjU3M2QwYTEzMzlhZjg4OWYzYjUyYTYwY2RlOGUxOTI1OTRmNSIsImlhdCI6MTYxODY2MjEyN30.8FlNm4h2vEW7TrTO5_xQf_GXQ2SkgXGJ1cepl4kkBrE";
         },
         addFile: async function(evt) {
-            _this.imgselectok = false;
-
             const FormData = require("form-data");
             let data = new FormData();
             const _this = this;
@@ -1206,6 +1206,7 @@ export default {
                     evt.target.files[0]["type"] === "video/mp4" ||
                     evt.target.files[0]["type"] === "audio/mpeg"
                 ) {
+                    _this.uploadedImage = "";
                     this.isError.invalid_file = false;
                     _this.fileType = evt.target.files[0].type.split("/")[0];
                     var url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
@@ -1234,7 +1235,7 @@ export default {
                     await axios
                         .post(url, data, {
                             onUploadProgress: function(uploadEvent) {
-                                //_this.imgselectok = true;
+                                _this.imgselectok = true;
                                 _this.uploadPercentageimg = Math.round(
                                     (uploadEvent.loaded / uploadEvent.total) *
                                         100
@@ -1251,7 +1252,6 @@ export default {
                             _this.uploadedImage =
                                 "https://ipfs.io/ipfs/" +
                                 response.data.IpfsHash;
-                            _this.imgselectok = true;
                         })
                         .catch(function(error) {
                             //handle error here
