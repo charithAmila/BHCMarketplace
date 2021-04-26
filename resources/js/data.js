@@ -59,23 +59,28 @@ async function getMaxBuyers(time_filter) {
 /////////////////getMaxSellers//////
 async function getMaxSellers(time_filter) {
     let res = {};
+
     await axios.get("/getData/" + time_filter).then(function(response) {
         res = response.data;
     });
     let output = {};
     for (let i = 0; i < res.length; i++) {
-        let user = res[i].user_id;
-        let details = await getUserDetails(user);
-        output[user] = {};
-        output[user].sell_amount = 0;
-        output[user].propic = details.display_photo;
-        output[user].username = details.name;
-        output[user].currency = res[i].currency;
-        output[user].user_id = res[i].user_id;
+        if (res[i].type != "follow" && res[i].type != "create") {
+            let user = res[i].user_id;
+            let details = await getUserDetails(user);
+            output[user] = {};
+            output[user].sell_amount = 0;
+            output[user].propic = details.display_photo;
+            output[user].username = details.name;
+            output[user].currency = res[i].currency;
+            output[user].user_id = res[i].user_id;
+        }
     }
     for (let i = 0; i < res.length; i++) {
-        let user = res[i].user_id;
-        output[user].sell_amount += res[i].sell_amount;
+        if (res[i].type != "follow" && res[i].type != "create") {
+            let user = res[i].user_id;
+            output[user].sell_amount += res[i].sell_amount;
+        }
     }
     return output;
 }
