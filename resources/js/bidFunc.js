@@ -191,11 +191,11 @@ async function approveBHC(_amount) {
     let amount = parseFloat(_amount) * 10 ** 18;
     let rate = 1;
     const signer = provider.getSigner();
-    const hpsContract = new ethers.Contract(hpsAddress, token_ABI, signer);
+    const bhcContract = new ethers.Contract(bhcAddress, token_ABI, signer);
     var address = await checkConnection(); //Get collected wallet address
-    const balance = await hpsContract.balanceOf(address);
+    const balance = await bhcContract.balanceOf(address);
     var address = address.toString().toLowerCase();
-    const txResponse = await hpsContract.approve(
+    const txResponse = await bhcContract.approve(
         erc20TransferProxyAddress,
         (amount * rate).toString()
     );
