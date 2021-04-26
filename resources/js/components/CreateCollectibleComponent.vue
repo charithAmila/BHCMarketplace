@@ -1180,6 +1180,8 @@ export default {
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkM2VjNWQzNy01MmQ0LTRlYjMtYmEyNC1kNmRjYmY4YTY1NDMiLCJlbWFpbCI6ImJpbGxpb25oYXBwaW5lc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZX0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjQyZmNmMDViN2ZlZGFmNjBiMzNlIiwic2NvcGVkS2V5U2VjcmV0IjoiMGJlZTgwY2Q2OWY3MWVkMWZjZjViNTcxZjcyMjU3M2QwYTEzMzlhZjg4OWYzYjUyYTYwY2RlOGUxOTI1OTRmNSIsImlhdCI6MTYxODY2MjEyN30.8FlNm4h2vEW7TrTO5_xQf_GXQ2SkgXGJ1cepl4kkBrE";
         },
         addFile: async function(evt) {
+            _this.imgselectok = false;
+
             const FormData = require("form-data");
             let data = new FormData();
             const _this = this;
@@ -1232,7 +1234,7 @@ export default {
                     await axios
                         .post(url, data, {
                             onUploadProgress: function(uploadEvent) {
-                                _this.imgselectok = true;
+                                //_this.imgselectok = true;
                                 _this.uploadPercentageimg = Math.round(
                                     (uploadEvent.loaded / uploadEvent.total) *
                                         100
@@ -1249,6 +1251,7 @@ export default {
                             _this.uploadedImage =
                                 "https://ipfs.io/ipfs/" +
                                 response.data.IpfsHash;
+                            _this.imgselectok = true;
                         })
                         .catch(function(error) {
                             //handle error here
@@ -1313,7 +1316,7 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
-                                      let notif = {};
+                                    let notif = {};
                                     notif.message = message;
                                     notif.user_id = toAddress(
                                         _this.current_user
@@ -1323,7 +1326,7 @@ export default {
                                     notif.owner = "";
                                     notif.contract = "";
                                     notif.token_id = 0;
-                                    notif.type = "create"
+                                    notif.type = "create";
 
                                     await axios
                                         .post("/addNotification", notif, {})
@@ -1366,7 +1369,7 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
-                                      let notif = {};
+                                    let notif = {};
                                     notif.message = message;
                                     notif.user_id = toAddress(
                                         _this.current_user
@@ -1376,7 +1379,7 @@ export default {
                                     notif.owner = "";
                                     notif.contract = "";
                                     notif.token_id = 0;
-                                     notif.type = "create"
+                                    notif.type = "create";
                                     await axios
                                         .post("/addNotification", notif, {})
                                         .then(result => {
@@ -1386,8 +1389,6 @@ export default {
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
                                     );
-
-                                 
 
                                     if (!_this.putOnSale) {
                                         window.location.href = `/profile/${toAddress(
