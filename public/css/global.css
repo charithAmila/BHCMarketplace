@@ -3848,6 +3848,7 @@ body {
 .notification .notif-title {
   color: #afafaf;
   font-weight: 700;
+  margin: 5px 0 0 10px;
 }
 
 .notification .notif {
