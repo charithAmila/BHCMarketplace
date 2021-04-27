@@ -703,6 +703,8 @@ async function getSingles(contractAddress, owner, collection) {
 
 async function getMultiples(contractAddress, owner, collection) {
     var tokens = [];
+    var transfers = [];
+    var lastSyncedId = 1;
     try {
         const contract = new ethers.Contract(
             contractAddress,
@@ -710,7 +712,44 @@ async function getMultiples(contractAddress, owner, collection) {
             rpcprovider
         );
         const currentId = await contract.current_id();
-        for (var i = 1; i < Number(currentId) + 1; i++) {
+        var transfersRes = await axios.get("/transfers/" + contractAddress);
+        var filteredTransfers = transfersRes.data.filter(function(element) {
+            if (element.owner == owner) return true;
+        });
+        for (var i = 0; i < filteredTransfers.length; i++) {
+            var col = filteredTransfers[i].collection;
+            var id = filteredTransfers[i].token_id;
+            if (id > lastSyncedId) {
+                lastSyncedId = id;
+            }
+            var existing = transfers.filter(function(element) {
+                if (element.collection == col && element.token_id == id)
+                    return true;
+            });
+            if (existing.length == 0) {
+                transfers.push(filteredTransfers[i]);
+            }
+        }
+        for (var i = 0; i < transfers.length; i++) {
+            try {
+                var ownedCount = await contract.balanceOf(
+                    owner,
+                    transfers[i].token_id
+                );
+                if (ownedCount > 0) {
+                    var nft = await get1155Token(
+                        contract,
+                        collection,
+                        transfers[i].token_id,
+                        owner
+                    );
+                    tokens.push(nft);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        for (var i = 1; i < Number(lastSyncedId) + 1; i++) {
             try {
                 var ownedCount = await contract.balanceOf(owner, i);
                 if (ownedCount > 0) {
