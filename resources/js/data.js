@@ -80,7 +80,7 @@ async function getMaxSellers(time_filter) {
         if (res[i].type != "follow" && res[i].type != "create") {
             let user = res[i].user_id;
 
-            if ((output[i].currency = "BNB")) {
+            if ((res[i].currency = "BNB")) {
                 output[user].sell_amount += res[i].sell_amount;
             } else {
                 output[user].sell_amount +=
