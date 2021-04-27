@@ -175,6 +175,7 @@ async function getCollection(collectionAddess) {
                 if (obj.length == 0) {
                     owners.push(tk);
                 }
+                //console.log(owners);
             }
 
             var latest = await axios.get(
@@ -205,9 +206,9 @@ async function getCollection(collectionAddess) {
                     await axios.post("/transfers", { transfers: transfers });
                 }
                 evts = evtsCr;
-                for (var i = 0; i < evts.length; i++) {
-                    var tokenId = Number(evts[i].args.id);
-                    var owner = evts[i].args.to;
+                for (var j = 0; j < evts.length; j++) {
+                    var tokenId = Number(evts[j].args.id);
+                    var owner = evts[j].args.to;
                     var tk = { id: tokenId, owner: owner };
                     var obj = owners.filter(function(element) {
                         if (element.id == tokenId && element.owner == owner)
@@ -217,7 +218,6 @@ async function getCollection(collectionAddess) {
                         owners.push(tk);
                     }
                 }
-                console.log(i);
             }
 
             var ownerById = {};
@@ -235,6 +235,7 @@ async function getCollection(collectionAddess) {
         }
         console.log(e);
     }
+    console.log(owners);
     return owners;
 }
 

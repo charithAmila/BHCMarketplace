@@ -613,7 +613,7 @@ async function collectiblesOfCollection(collection) {
             console.log(e);
         }
     }
-    console.log(collectibles);
+    //console.log(collectibles);
     return collectibles;
 }
 
