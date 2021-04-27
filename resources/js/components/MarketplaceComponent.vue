@@ -114,8 +114,8 @@
                             </a>
                         </li>
                     </ul>
-                    <label class="sortLabel">Options</label>
-                    <ul>
+                    <!--label class="sortLabel">Options</label-->
+                    <!--ul>
                         <li>
                             <a href="javascript:void(0)">
                                 <div class="row">
@@ -139,7 +139,7 @@
                                 </div>
                             </a>
                         </li>
-                    </ul>
+                    </ul-->
                 </div>
             </div>
         </div>
