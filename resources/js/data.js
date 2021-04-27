@@ -366,6 +366,7 @@ async function getLikedTokens(owner, base_url) {
     var likes = liked.data.likes.filter(function(like) {
         if (toAddress(like.address) == toAddress(owner)) return true;
     });
+    console.log(likes);
     for (var i = 0; i < likes.length; i++) {
         window.proPageLoading = true;
         var owners = await getAnOwner(
