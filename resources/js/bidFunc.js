@@ -31,6 +31,19 @@ const token_ABI = require("../js/abis/bep20.json");
 const julswap_ABI = require("../js/abis/julswap.json");
 const WBNB_ABI = require("../js/abis/wbnb.json");
 const exchange_abi = require("../js/abis/new_exchange.json");
+/////////////////////////////////////////provider////////////////////////////////////////////////////////////////
+if (typeof window.ethereum == "undefined") {
+    window.provider = new ethers.providers.JsonRpcProvider(
+        "https://data-seed-prebsc-1-s1.binance.org:8545"
+    );
+    window.rpcprovider = new ethers.providers.JsonRpcProvider(
+        "https://data-seed-prebsc-1-s1.binance.org:8545"
+    );
+} else {
+    window.provider = new ethers.providers.Web3Provider(window.ethereum);
+    window.rpcprovider = window.provider;
+    window.rpcprovider1 = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
+}
 //////////////////////////////////////////Get Token Contract////////////////////////////////////////////////////////
 function getTokenContract(bidding_token) {
     const signer = provider.getSigner();
@@ -55,7 +68,7 @@ function getTokenContract(bidding_token) {
 }
 ////////////////////////////////////////////Get HPS Balance////////////////////////////////////////////////////////
 async function getBHCBalance() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
     const hpsContract = new ethers.Contract(bhcAddress, token_ABI, provider);
     const balance = await hpsContract.balanceOf(address);
@@ -66,14 +79,14 @@ async function getBHCBalance() {
 }
 ////////////////////////////////////////////Get BNB Balance///////////////////////////////////////////////////////////
 async function getBNBBalance() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //  const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
     const balance = await provider.getBalance(address);
     return parseFloat(balance.toString()) / 10 ** 18;
 }
 ////////////////////////////////////////////Get WBNB Balance////////////////////////////////////////////////////////
 async function getWBNBBalance() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
     const WBNB_Contract = new ethers.Contract(
         WBNB_tokenAddress,
@@ -111,7 +124,7 @@ function getTokenAddress(bidding_token) {
 }
 ///////////////////////////////////////////Get Token Price//////////////////////////////////////////////////////////
 async function getTokenPrice(bidding_token) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //const provider = new ethers.providers.Web3Provider(window.ethereum);
     const julswap_router = ethers.utils.getAddress(julswap_routerAddress);
     const julswap_Read = new ethers.Contract(
         julswap_router,
@@ -161,7 +174,7 @@ async function startBidding(_owner, contract_address, token_id) {
 ///////////////////////////////////////////End Bidding//////////////////////////////////////////////////////////////
 async function endBidding(_owner, contract_address, token_id) {
     let data = {};
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     //const owner = await contract.ownerOf(token_id);
 
@@ -292,7 +305,7 @@ async function signBid(
 }
 /*******************************************************************************************************************/
 async function bid(owner, contract_address, token_id, bidding_token, amount) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
     const WBNB_Write_Test = new ethers.Contract(
