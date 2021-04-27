@@ -8,7 +8,6 @@
 
         <fold v-else></fold>
 
-
         <div class="collection-collectibles">
             <collection-collectible-component
                 :div_id="'collection-page'"
@@ -18,7 +17,6 @@
                 :base_url="base_url"
                 :collectibles="collectibles"
                 :page="'collection'"
-                :filter="'on-sale'"
                 :collection="collectionData"
             ></collection-collectible-component>
         </div>

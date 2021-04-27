@@ -36,6 +36,9 @@ class MintedController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            "mints" => "required"
+        ]);
         $data = $request->mints;
         for($i=0;$i<count($data);$i++){
             $existingRecord = minted::where("minter",$data[$i][1])->where("collection",$data[$i][2])->where("token_id",$data[$i][3])->get();
@@ -57,7 +60,7 @@ class MintedController extends Controller
      */
     public function show($minter)
     {
-        $mints = minted::where("minter",$minter)->get();
+        $mints = minted::where("minter",$minter)->latest()->get();
         return $mints;
     }
 
