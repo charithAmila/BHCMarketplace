@@ -540,47 +540,15 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                 owners.push(tk);
                 return owners;
             }
-            var startBlock = _startBlock;
-            var endBlock = await rpcprovider1.getBlockNumber();
-            var evts = [];
-            var filter = contract.filters.TransferSingle(
-                null,
-                null,
-                null,
-                null,
-                null
+            var syncedOwners = getOwnersOf(
+                collectionAddess,
+                tokenId,
+                _startBlock
             );
-            for (var i = startBlock; i <= endBlock; i = i + 4000) {
-                var st = i;
-                var evtsCr = await contract.queryFilter(
-                    "TransferSingle",
-                    i,
-                    i + 4000
-                );
-                console.log(evtsCr);
-
-                var ownerById = {};
-                for (var j = 0; j < evtsCr.length; j++) {
-                    if (Number(evtsCr[j].args.id) == tokenId) {
-                        var owner = evtsCr[j].args.to;
-                        var copies = await contract.balanceOf(
-                            owner,
-                            evtsCr[j].args.id
-                        );
-                        if (Number(copies) > 0) {
-                            var tk = { owner: owner, ownedCopies: copies };
-                            owners.push(tk);
-                            return owners;
-                        }
-                    }
-                }
-            }
+            owners.push(syncedOwners[0]);
+            console.log("LAST OWNER = " + owners[0].owner);
         }
     } catch (e) {
-        if (st < endBlock) {
-            await getAnOwner(collectionAddess, tokenId, st, _owner);
-            //owners = [...owners, ...owners_d];
-        }
         console.log(e);
     }
     return owners;
