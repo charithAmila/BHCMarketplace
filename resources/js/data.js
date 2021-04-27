@@ -237,119 +237,138 @@ async function getTokens(owner) {
 async function getOwnedTokensData(owner, base_url) {
     var listed = false;
     var data = [];
-
-    var tokens = await getTokens(owner);
-    var tokens721 = tokens[0];
-    var tokens1155 = tokens[1];
-    console.log([tokens721, tokens1155]);
+    window.proPageLoading = true;
+    //var tokens = await getTokens(owner);
+    var tokens721 = []; //tokens[0];
+    var tokens1155 = []; //tokens[1];
+    //console.log([tokens721, tokens1155]);
     try {
-        for (var i = 0; i < tokens721.length; i++) {
-            window.proPageLoading = true;
-            var selectedToken = tokens721[i];
-            try {
-                var res = await axios.get(
-                    //selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud")
-                    selectedToken.URI.replace("https://ipfs.io/ipfs/", "/data/")
+        var cl721 = await getCollections(721, owner, true);
+        for (var n = 0; n < cl721.length; n++) {
+            var contract = cl721[n].address;
+            var collection = cl721[n];
+            var singles = await getSingles(contract, owner, collection);
+            tokens721 = singles;
+            for (var i = 0; i < tokens721.length; i++) {
+                window.proPageLoading = true;
+                var selectedToken = tokens721[i];
+                try {
+                    var res = await axios.get(
+                        //selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud")
+                        selectedToken.URI.replace(
+                            "https://ipfs.io/ipfs/",
+                            "/data/"
+                        )
+                    );
+                    var nft = res.data;
+                } catch (e) {
+                    var res = await axios.get(selectedToken.URI);
+                    var nft = res.data;
+                }
+
+                nft.copies = 1;
+                nft.ownedCopies = selectedToken.ownedCopies;
+                nft.id = selectedToken.id;
+                nft.contract = selectedToken.contract;
+                nft.owner_id = selectedToken.tokenOwner;
+
+                nft.collection = selectedToken.collection;
+                nft.legend = nft.legend || "normal";
+                //nft.file = nft.file.replace("ipfs.io", "gateway.pinata.cloud");
+
+                ////remove/////
+                nft.isp = 1;
+                var salesData = await checkSelling(
+                    selectedToken.contract,
+                    selectedToken.tokenOwner,
+                    selectedToken.id
                 );
-                var nft = res.data;
-            } catch (e) {
-                var res = await axios.get(selectedToken.URI);
-                var nft = res.data;
+                //nft.fileType = nft.fileType || "image";
+
+                if (salesData.on_sale) {
+                    nft.price = salesData.price;
+                    nft.is_selling = true;
+                    nft.currency = salesData.currency;
+                    nft.currency == hpsAddress
+                        ? (nft.currencyName = "HPS")
+                        : nft.currency == bhcAddress
+                        ? (nft.currencyName = "BHC")
+                        : (nft.currencyName = "BNB");
+
+                    nft.signed_to = salesData.signed_to;
+                    nft.db_id = salesData.id;
+                    nft.signature = salesData.signature;
+                    nft.salt = salesData.salt;
+                }
+
+                data.push(nft);
+                window.myTokens.collectibles.push(nft);
             }
-
-            nft.copies = 1;
-            nft.ownedCopies = selectedToken.ownedCopies;
-            nft.id = selectedToken.id;
-            nft.contract = selectedToken.contract;
-            nft.owner_id = selectedToken.tokenOwner;
-
-            nft.collection = selectedToken.collection;
-            nft.legend = nft.legend || "normal";
-            //nft.file = nft.file.replace("ipfs.io", "gateway.pinata.cloud");
-
-            ////remove/////
-            nft.isp = 1;
-            var salesData = await checkSelling(
-                selectedToken.contract,
-                selectedToken.tokenOwner,
-                selectedToken.id
-            );
-            //nft.fileType = nft.fileType || "image";
-
-            if (salesData.on_sale) {
-                nft.price = salesData.price;
-                nft.is_selling = true;
-                nft.currency = salesData.currency;
-                nft.currency == hpsAddress
-                    ? (nft.currencyName = "HPS")
-                    : nft.currency == bhcAddress
-                    ? (nft.currencyName = "BHC")
-                    : (nft.currencyName = "BNB");
-
-                nft.signed_to = salesData.signed_to;
-                nft.db_id = salesData.id;
-                nft.signature = salesData.signature;
-                nft.salt = salesData.salt;
-            }
-
-            data.push(nft);
-            window.myTokens.collectibles.push(nft);
         }
-        for (var i = 0; i < tokens1155.length; i++) {
-            window.proPageLoading = true;
-            var selectedToken = tokens1155[i];
-            var res = null;
-            //selectedToken.URI = selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud");
-            try {
-                selectedToken.URI = selectedToken.URI.replace(
-                    "https://ipfs.io/ipfs/",
-                    "/data/"
-                );
 
-                res = await axios.get(selectedToken.URI);
-            } catch (e) {
+        var cl1155 = await getCollections(1155, owner, true);
+        for (var m = 0; m < cl1155.length; m++) {
+            var contract = cl1155[m].address;
+            var collection = cl1155[m];
+            var multiples = await getMultiples(contract, owner, collection);
+
+            tokens1155 = multiples;
+            for (var i = 0; i < tokens1155.length; i++) {
+                window.proPageLoading = true;
+                var selectedToken = tokens1155[i];
+                var res = null;
                 //selectedToken.URI = selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud");
+                try {
+                    selectedToken.URI = selectedToken.URI.replace(
+                        "https://ipfs.io/ipfs/",
+                        "/data/"
+                    );
 
-                res = await axios.get(selectedToken.URI);
+                    res = await axios.get(selectedToken.URI);
+                } catch (e) {
+                    //selectedToken.URI = selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud");
+
+                    res = await axios.get(selectedToken.URI);
+                }
+                var nft = res.data;
+
+                nft.copies = nft.count;
+                nft.ownedCopies = selectedToken.ownedCopies;
+                nft.id = selectedToken.id;
+                nft.contract = selectedToken.contract;
+                nft.owner_id = selectedToken.tokenOwner;
+
+                nft.collection = selectedToken.collection;
+                nft.legend = nft.legend || "normal";
+
+                nft.isp = 1;
+                var salesData = await checkSelling(
+                    selectedToken.contract,
+                    selectedToken.tokenOwner,
+                    selectedToken.id
+                );
+                //nft.fileType = nft.fileType || "image";
+                //nft.file = nft.file.replace("ipfs.io","gateway.pinata.cloud");
+                nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
+
+                if (salesData.on_sale) {
+                    nft.price = salesData.price;
+                    nft.is_selling = true;
+                    nft.currency = salesData.currency;
+                    nft.currency == hpsAddress
+                        ? (nft.currencyName = "HPS")
+                        : nft.currency == bhcAddress
+                        ? (nft.currencyName = "BHC")
+                        : (nft.currencyName = "BNB");
+
+                    nft.signed_to = salesData.signed_to;
+                    nft.db_id = salesData.id;
+                    nft.signature = salesData.signature;
+                    nft.salt = salesData.salt;
+                }
+                data.push(nft);
+                window.myTokens.collectibles.push(nft);
             }
-            var nft = res.data;
-
-            nft.copies = nft.count;
-            nft.ownedCopies = selectedToken.ownedCopies;
-            nft.id = selectedToken.id;
-            nft.contract = selectedToken.contract;
-            nft.owner_id = selectedToken.tokenOwner;
-
-            nft.collection = selectedToken.collection;
-            nft.legend = nft.legend || "normal";
-
-            nft.isp = 1;
-            var salesData = await checkSelling(
-                selectedToken.contract,
-                selectedToken.tokenOwner,
-                selectedToken.id
-            );
-            //nft.fileType = nft.fileType || "image";
-            //nft.file = nft.file.replace("ipfs.io","gateway.pinata.cloud");
-            nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
-
-            if (salesData.on_sale) {
-                nft.price = salesData.price;
-                nft.is_selling = true;
-                nft.currency = salesData.currency;
-                nft.currency == hpsAddress
-                    ? (nft.currencyName = "HPS")
-                    : nft.currency == bhcAddress
-                    ? (nft.currencyName = "BHC")
-                    : (nft.currencyName = "BNB");
-
-                nft.signed_to = salesData.signed_to;
-                nft.db_id = salesData.id;
-                nft.signature = salesData.signature;
-                nft.salt = salesData.salt;
-            }
-            data.push(nft);
-            window.myTokens.collectibles.push(nft);
         }
     } catch (e) {}
     window.proPageLoading = false;
