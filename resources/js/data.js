@@ -643,14 +643,6 @@ async function getAllSales(current_user) {
                 nft.created_at = moment(tokens[i].created_at).format(
                     "MM/DD/YYYY hh:mm"
                 );
-                nft.ownedCopies = await availableToBuy(
-                    tokens[i].collection,
-                    tokens[i].token_id,
-                    tokens[i].signed_to,
-                    tokens[i].currency,
-                    tokens[i].price,
-                    tokens[i].salt
-                );
                 //nft.ownedCopies = tokens[i].signed_to - tokens[i].sold;
                 nft.isp = 1;
                 nft.is_selling = 1;
