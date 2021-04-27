@@ -734,7 +734,7 @@ async function getMultiples(contractAddress, owner, collection) {
                 console.log(e);
             }
         }
-        for (var i = 1; i < Number(lastSyncedId) + 1; i++) {
+        for (var i = Number(lastSyncedId) + 1; i < currentId + 1; i++) {
             try {
                 var ownedCount = await contract.balanceOf(owner, i);
                 if (ownedCount > 0) {
