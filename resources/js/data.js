@@ -176,7 +176,7 @@ async function getCollections(type, me, forDetails) {
     var res = null;
     //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
     try {
-        colIpfs = colIpfs.replace("https://ipfs.io/ipfs/", "/data/");
+        colIpfs = colIpfs.replace("https://gateway.pinata.io/ipfs/", "/data/");
         res = await axios.get(colIpfs);
     } catch (e) {
         //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
@@ -191,7 +191,7 @@ async function getCollections(type, me, forDetails) {
     res = null;
     //colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
     try {
-        colIpfs = colIpfs.replace("https://ipfs.io/ipfs/", "/data/");
+        colIpfs = colIpfs.replace("https://gateway.pinata.io/ipfs/", "/data/");
         res = await axios.get(colIpfs);
     } catch (e) {
         colIpfs = colIpfs.replace("ipfs.io", "gateway.pinata.io");
