@@ -678,7 +678,7 @@ async function getAllSales(current_user) {
                     "ipfs.io",
                     "gateway.pinata.cloud"
                 );*/
-                nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
+                //nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
                 data.push(nft);
                 window.sales.push(nft);
             } catch (e) {}

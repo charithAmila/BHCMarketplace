@@ -36,6 +36,9 @@ class TransfersController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            "transfers" => "required"
+        ]);
         $data = $request->transfers;
         for($i=0;$i<count($data);$i++){
         $existingRecord = transfers::where("collection",$data[$i][1])->where("owner",$data[$i][2])->where("token_id",$data[$i][3])->get();
