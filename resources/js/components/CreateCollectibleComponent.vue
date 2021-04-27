@@ -875,7 +875,7 @@ export default {
             legend: "",
             royalties: 0,
             properties: {},
-            putOnSale: true,
+            putOnSale: false,
             instantSale: false,
             price: 0,
             myCollection: [],

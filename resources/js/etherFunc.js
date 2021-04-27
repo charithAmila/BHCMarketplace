@@ -295,7 +295,7 @@ async function getCreated(owner, _startingBlock) {
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
             var st = i;
-
+            var startBlock = i;
             var evtsCr = await nftStorage.queryFilter(
                 "NFTAdded",
                 i,
@@ -988,6 +988,8 @@ async function createASingle(url, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
+    var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
+    console.log(serviceFee);
     var tx = await contract.mint721(
         collection,
         url,
@@ -995,11 +997,11 @@ async function createASingle(url, royalty, collection, isBNB) {
         isBNB,
         {
             value: isBNB
-                ? ethers.utils.parseEther("0.025")
-                : ethers.utils.parseEther("0"),
-            gasLimit: BigNumber.from("3000000")
+                ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                : ethers.utils.parseEther("0")
+            //gasLimit: BigNumber.from("300000")
         }
-    ); //, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
+    ); //, gasPrice:BigNumber.from(30000000000), //gasLimit: BigNumber.from(8500000)});
     return tx;
 }
 
@@ -1007,6 +1009,7 @@ async function createABatch(url, count, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
+    var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
     var tx = await contract.mint1155(
         collection,
         url,
@@ -1016,9 +1019,9 @@ async function createABatch(url, count, royalty, collection, isBNB) {
         isBNB,
         {
             value: isBNB
-                ? ethers.utils.parseEther("0.025")
-                : ethers.utils.parseEther("0"),
-            gasLimit: BigNumber.from(3000000)
+                ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                : ethers.utils.parseEther("0")
+            //gasLimit: BigNumber.from(300000)
         }
     );
 
@@ -1028,6 +1031,7 @@ async function createABatch(url, count, royalty, collection, isBNB) {
 async function createCollection(type, uri, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
     if (type == 721) {
         var tx = await contract.generate721(
             contractFactoryAddress,
@@ -1036,9 +1040,9 @@ async function createCollection(type, uri, isBNB) {
             isBNB,
             {
                 value: isBNB
-                    ? ethers.utils.parseEther("0.025")
-                    : ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from(3000000)
+                    ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                    : ethers.utils.parseEther("0")
+                //gasLimit: BigNumber.from(3000000)
             }
         );
     } else {
@@ -1050,9 +1054,9 @@ async function createCollection(type, uri, isBNB) {
             isBNB,
             {
                 value: isBNB
-                    ? ethers.utils.parseEther("0.025")
-                    : ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from(3000000)
+                    ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                    : ethers.utils.parseEther("0")
+                //gasLimit: BigNumber.from(3000000)
             }
         );
     }
@@ -1131,7 +1135,7 @@ async function buy(
             sig.s
         ],
         {
-            gasLimit: BigNumber.from(3000000),
+            ////gasLimit: BigNumber.from(300000),
             value:
                 buyWith == toAddress("")
                     ? ethers.utils.parseEther(`${Number(totalPayment) * 1.03}`)
