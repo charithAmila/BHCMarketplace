@@ -75,7 +75,7 @@ class NotificationController extends Controller
         $request->validate([
             'user_id' => 'required',
         ]);
-        $data = Notification::where(['user_id' => $request->user_id,'status'=>true])->get();
+        $data = Notification::where(['user_id' => $request->user_id,'status'=>true])->orderBy('created_at', 'DESC')->get();
         return $data;
     }
     public function delete(Request $request)
