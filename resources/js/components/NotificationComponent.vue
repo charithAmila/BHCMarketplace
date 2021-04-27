@@ -13,12 +13,6 @@
 			<label class="notif-content" >No new notifications</label>
 		</div>
 		<div class="notif-list" :class="notifications.length > 0 ? '':'d-none'">
-      <div class="notif-item">
-        <label>
-          <a class="user-profile" href="#">Itachi</a> purchased 1 edition for 1000 BHC of <span class="notif-item">Kyubi mode</span><small> 9 hours ago</small>
-        </label>
-      </div>
-
 			<div v-for="notif in notifications" :key="notif.id" class="notif-item">
 				<div class="notif-container">
           <a :href="notif.type=='sell'||notif.type=='bid'?'/nft/'+ notif.contract+':'+notif.token_id+':'+notif.owner:'/profile/'+notif.owner">

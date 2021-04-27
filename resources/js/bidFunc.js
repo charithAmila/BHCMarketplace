@@ -31,6 +31,19 @@ const token_ABI = require("../js/abis/bep20.json");
 const julswap_ABI = require("../js/abis/julswap.json");
 const WBNB_ABI = require("../js/abis/wbnb.json");
 const exchange_abi = require("../js/abis/new_exchange.json");
+/////////////////////////////////////////provider////////////////////////////////////////////////////////////////
+if (typeof window.ethereum == "undefined") {
+    window.provider = new ethers.providers.JsonRpcProvider(
+        "https://bsc-dataseed.binance.org/"
+    );
+    window.rpcprovider = new ethers.providers.JsonRpcProvider(
+        "https://bsc-dataseed.binance.org/"
+    );
+} else {
+    window.provider = new ethers.providers.Web3Provider(window.ethereum);
+    window.rpcprovider = window.provider;
+    window.rpcprovider1 = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
+}
 //////////////////////////////////////////Get Token Contract////////////////////////////////////////////////////////
 function getTokenContract(bidding_token) {
     const signer = provider.getSigner();
@@ -55,7 +68,7 @@ function getTokenContract(bidding_token) {
 }
 ////////////////////////////////////////////Get HPS Balance////////////////////////////////////////////////////////
 async function getBHCBalance() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
     const hpsContract = new ethers.Contract(bhcAddress, token_ABI, provider);
     const balance = await hpsContract.balanceOf(address);
@@ -66,14 +79,14 @@ async function getBHCBalance() {
 }
 ////////////////////////////////////////////Get BNB Balance///////////////////////////////////////////////////////////
 async function getBNBBalance() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //  const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
     const balance = await provider.getBalance(address);
     return parseFloat(balance.toString()) / 10 ** 18;
 }
 ////////////////////////////////////////////Get WBNB Balance////////////////////////////////////////////////////////
 async function getWBNBBalance() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
     const WBNB_Contract = new ethers.Contract(
         WBNB_tokenAddress,
@@ -111,7 +124,7 @@ function getTokenAddress(bidding_token) {
 }
 ///////////////////////////////////////////Get Token Price//////////////////////////////////////////////////////////
 async function getTokenPrice(bidding_token) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //const provider = new ethers.providers.Web3Provider(window.ethereum);
     const julswap_router = ethers.utils.getAddress(julswap_routerAddress);
     const julswap_Read = new ethers.Contract(
         julswap_router,
@@ -161,7 +174,7 @@ async function startBidding(_owner, contract_address, token_id) {
 ///////////////////////////////////////////End Bidding//////////////////////////////////////////////////////////////
 async function endBidding(_owner, contract_address, token_id) {
     let data = {};
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     //const owner = await contract.ownerOf(token_id);
 
@@ -191,11 +204,11 @@ async function approveBHC(_amount) {
     let amount = parseFloat(_amount) * 10 ** 18;
     let rate = 1;
     const signer = provider.getSigner();
-    const hpsContract = new ethers.Contract(hpsAddress, token_ABI, signer);
+    const bhcContract = new ethers.Contract(bhcAddress, token_ABI, signer);
     var address = await checkConnection(); //Get collected wallet address
-    const balance = await hpsContract.balanceOf(address);
+    const balance = await bhcContract.balanceOf(address);
     var address = address.toString().toLowerCase();
-    const txResponse = await hpsContract.approve(
+    const txResponse = await bhcContract.approve(
         erc20TransferProxyAddress,
         (amount * rate).toString()
     );
@@ -292,7 +305,7 @@ async function signBid(
 }
 /*******************************************************************************************************************/
 async function bid(owner, contract_address, token_id, bidding_token, amount) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
     const WBNB_Write_Test = new ethers.Contract(
@@ -528,7 +541,9 @@ async function getHighestBid(owner, contract_address, token_id) {
 
     if (output.length != 0) {
         for (var i = 0; i < output.length; i++) {
-            //var hpsprice = await getTokenPrice(output[i].bidding_token);
+            var bhcprice = await getTokenPrice("BHC");
+            console.log("BHC price");
+            console.log(bhcprice);
             //console.log(hpsprice);
             var hpsprice = 1;
             console.log("OUTPUT");
@@ -548,8 +563,8 @@ async function getHighestBid(owner, contract_address, token_id) {
                 const balance = await bhcContract.balanceOf(
                     output[i].bidding_address
                 );
-                console.log("Balances");
-                console.log(parseFloat(balance));
+                //  console.log("Balances");
+                //  console.log(parseFloat(balance));
                 // const balance = 1000000000000000000;
                 if (
                     parseFloat(balance) >

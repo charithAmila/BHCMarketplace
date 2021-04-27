@@ -173,7 +173,13 @@
                                     <div class="col-4 col-md-4">
                                         <input
                                             class="linkToCopy"
-                                            :value="asset_url +'nft/' +current_owner.user_profile +'/' +collectible.nft_slug"
+                                            :value="
+                                                asset_url +
+                                                    'nft/' +
+                                                    current_owner.user_profile +
+                                                    '/' +
+                                                    collectible.nft_slug
+                                            "
                                         />
                                         <a
                                             href="javascript:void(0)"
@@ -214,7 +220,6 @@
                     v-if="loaded"
                     :creator="creator"
                     :current_owner="current_owner"
-                    :owners="owners"
                     :transactions="set_transactions"
                     :user_profile="user_profile"
                     :asset_url="asset_url"
@@ -223,7 +228,6 @@
                     :collection_url="set_collectible.collection_url"
                     :collectible="collectible"
                 ></collectible-details-component>
-                <tile v-else></tile>
 
                 <div class="row m-20 text-center end-content">
                     <div class="col-4 col-md-4">
@@ -648,7 +652,7 @@ export default {
         copyUrl() {
             // alert(window.location.href)
 
-            $("input.linkToCopy").val(window.location.href)
+            $("input.linkToCopy").val(window.location.href);
             $("input.linkToCopy").select();
             document.execCommand("copy");
         },
@@ -719,7 +723,7 @@ export default {
         this.service_fee = await serviceFee(this.singleNft.currencyName);
         this.royaltyFee =
             (this.collectible.price * this.collectible.royalties) / 100;
-        await this.getOwnersDetails();
+        //await this.getOwnersDetails();
         this.loaded = true;
         await this.checkLike();
     }

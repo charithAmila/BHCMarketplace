@@ -5,14 +5,17 @@
         <div class="col-md-4">
           <div class="social-links">
             <a href="https://twitter.com/bhc_happiness" target="_blank">
-              <img src="images/twitter.png" alt="" /> Follow us on Twitter
+              <img src="/images/twitter.png" alt="" /> Follow us on Twitter
             </a>
             <a href="https://t.me/BH_NFT_Support" target="_blank">
-              <img src="images/telegram.png" alt="" /> Join our Telegram
+              <img src="/images/telegram.png" alt="" /> Join our Telegram
               community
             </a>
-            <a href="javascript:void(0)">
-              <img src="images/message.png" alt="" /> Community Feedback
+            <a
+              href="https://rbjrcxhzb4w.typeform.com/to/Ak0nEWnn"
+              target="_blank"
+            >
+              <img src="/images/message.png" alt="" /> Community Feedback
             </a>
           </div>
         </div>
@@ -55,17 +58,19 @@
       </div>
       <div class="footer-social">
         <a href="https://twitter.com/bhc_happiness" target="_blank">
-          <img src="images/twitter.png" alt="" /> Follow us on Twitter
+          <img src="/images/twitter.png" alt="" /> Follow us on Twitter
         </a>
+
         <a href="https://t.me/BH_NFT_Support" target="_blank">
-          <img src="images/telegram.png" alt="" /> Join our Telegram community
+          <img src="/images/telegram.png" alt="" /> Join our Telegram community
         </a>
-        <a href="javascript:void(0)">
-          <img src="images/message.png" alt="" /> Community Feedback
+
+        <a href="https://rbjrcxhzb4w.typeform.com/to/Ak0nEWnn" target="_blank">
+          <img src="/images/message.png" alt="" /> Community Feedback
         </a>
       </div>
       <div class="copyright-section">
-        <p>&#169; 2020 Billion, Inc.</p>
+        <p>&#169; 2021 Billion, Inc.</p>
       </div>
     </section>
   </div>

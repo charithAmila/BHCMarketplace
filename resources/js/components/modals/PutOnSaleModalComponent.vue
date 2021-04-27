@@ -160,7 +160,7 @@ import {
     toAddress
 } from "./../../etherFunc";
 import { hpsAddress, bhcAddress } from "./../../addresses/constants";
-import { addSale,getUserDetails } from "./../../data";
+import { addSale, getUserDetails } from "./../../data";
 export default {
     props: ["singleNft", "page"],
     data() {
@@ -194,7 +194,7 @@ export default {
             currency_label: {
                 1: "BHC",
                 2: "BNB"
-            },
+            }
         };
     },
     watch: {
@@ -204,8 +204,6 @@ export default {
             //this.record_id = this.singleNft.record_id;
             //this.updateValues();
             this.signed = false;
-            
-            
         },
         quantity: function() {
             this.updateValues();
@@ -269,10 +267,10 @@ export default {
                     if (data.status) {
                         this.approved = true;
                         this.singleNft.approved = true;
+                        this.approving = false;
+                        this.approveText = "Approve";
                     }
                 });
-                this.approving = false;
-                this.approveText = "Approve";
             } catch (error) {
                 if (error.code == 4001) {
                     alert("User rejected minting token");
@@ -296,9 +294,9 @@ export default {
                 signature: _this.s,
                 order_id: _this.orderId,
                 salt: _this.salt,
-                col_name:_this.singleNft.collection.name,
-                owner_name:user.name,
-                nft_name:_this.singleNft.name
+                col_name: _this.singleNft.collection.name,
+                owner_name: user.name,
+                nft_name: _this.singleNft.name
             };
             await addSale(data);
             $(".putOnSale-content")

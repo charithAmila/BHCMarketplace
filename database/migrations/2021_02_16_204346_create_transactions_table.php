@@ -20,7 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('nft_id');
             $table->unsignedBigInteger('user_id');
             $table->integer('quantity')->nullable();
-            $table->double('price', 10, 2)->nullable();
+            $table->decimal('price', 8,3)->nullable();
             $table->string('currency')->nullable();
             $table->boolean('sold')->nullable();
             $table->timestamps();

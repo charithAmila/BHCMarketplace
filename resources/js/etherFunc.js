@@ -1,3 +1,4 @@
+import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { start } from "single-spa";
 import {
@@ -26,18 +27,28 @@ const factoryABI = require("./abis/factory.json");
 
 if (typeof window.ethereum == "undefined") {
     window.provider = new ethers.providers.JsonRpcProvider(
-        "https://data-seed-prebsc-1-s1.binance.org:8545"
+        "https://bsc-dataseed.binance.org/"
     );
+    window.rpcprovider = new ethers.providers.JsonRpcProvider(
+        "https://bsc-dataseed.binance.org/"
+    );
+    window.rpcprovider1 = window.provider;
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
-    window.rpcprovider = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
+    window.rpcprovider = window.provider;
+    window.rpcprovider1 = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
 }
 
-window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
+/*window.rpcprovider = new ethers.providers.JsonRpcProvider(
     //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
-    "https://data-seed-prebsc-1-s1.binance.org:8545"
-    //"http://162.0.210.42/rpc"
+    //"https://data-seed-prebsc-1-s1.binance.org:8545"
+    "http://162.0.210.42/rpc"
 );
+window.rpcprovider = new ethers.providers.JsonRpcProvider(
+    //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
+    //"https://data-seed-prebsc-1-s1.binance.org:8545"
+    "http://162.0.210.42/rpc"
+);*/
 
 //const selectedAddress = provider.provider.selectedAddress;
 
@@ -127,7 +138,9 @@ async function getOwner(addressString, ABI) {
 }
 
 async function getCollection(collectionAddess) {
+    window.myTokens.created = [];
     var owners = [];
+    var startBlock = 0;
     try {
         const ERC1155Interface = "0x0e89341c";
         const ERC721Interface = "0x80ac58cd";
@@ -155,22 +168,11 @@ async function getCollection(collectionAddess) {
                 bhc1155,
                 rpcprovider
             );
-            var startBlock = 6494200;
-            var endBlock = await rpcprovider.getBlockNumber();
-            var evts = [];
-            for (var i = startBlock; i <= endBlock; i = i + 4000) {
-                var evtsCr = await contract.queryFilter(
-                    "TransferSingle",
-                    i,
-                    i + 4000
-                );
-                evts = [...evts, ...evtsCr];
-            }
-
-            var ownerById = {};
+            var res = await axios.get("/transfers/" + collectionAddess);
+            var evts = res.data;
             for (var i = 0; i < evts.length; i++) {
-                var tokenId = Number(evts[i].args.id);
-                var owner = evts[i].args.to;
+                var tokenId = Number(evts[i].token_id);
+                var owner = evts[i].owner;
                 var tk = { id: tokenId, owner: owner };
                 var obj = owners.filter(function(element) {
                     if (element.id == tokenId && element.owner == owner)
@@ -179,30 +181,150 @@ async function getCollection(collectionAddess) {
                 if (obj.length == 0) {
                     owners.push(tk);
                 }
+                //console.log(owners);
+            }
+
+            var latest = await axios.get(
+                "/transfers?collection=" + collectionAddess
+            );
+            startBlock =
+                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+            var endBlock = await rpcprovider.getBlockNumber();
+            var evts = [];
+            for (var i = startBlock; i <= endBlock; i = i + 4000) {
+                var transfers = [];
+                startBlock = i;
+                var evtsCr = await contract.queryFilter(
+                    "TransferSingle",
+                    i,
+                    i + 4000 <= endBlock ? i + 4000 : endBlock
+                );
+
+                for (var x = 0; x < evtsCr.length; x++) {
+                    var event = evtsCr[x];
+                    transfers.push([
+                        event.blockNumber,
+                        collectionAddess,
+                        event.args.to,
+                        Number(event.args.id)
+                    ]);
+                }
+                if (transfers.length > 0) {
+                    await axios.post("/transfers", { transfers: transfers });
+                }
+                startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
+                evts = evtsCr;
+                for (var j = 0; j < evts.length; j++) {
+                    var tokenId = Number(evts[j].args.id);
+                    var owner = evts[j].args.to;
+                    var tk = { id: tokenId, owner: owner };
+                    var obj = owners.filter(function(element) {
+                        if (element.id == tokenId && element.owner == owner)
+                            return true;
+                    });
+                    if (obj.length == 0) {
+                        owners.push(tk);
+                    }
+                }
+            }
+
+            var ownerById = {};
+            if (startBlock != 0) {
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: startBlock - 1
+                });
             }
         }
-    } catch (e) {}
+    } catch (e) {
+        if (startBlock != 0) {
+            await axios.patch("/transfers/" + collectionAddess, {
+                block: startBlock - 1
+            });
+        }
+        console.log(e);
+    }
+    console.log(owners);
     return owners;
 }
 
 async function getCreated(owner, _startingBlock) {
     const tokens = [];
+    //window.myTokens.created = [];
+    var startBlock = 0;
 
     try {
         const nftStorage = new ethers.Contract(
             NFTStorageAddress,
             nftStorageABI,
-            rpcprovider
+            rpcprovider1
         );
+        var res = await axios.get("/minted/" + owner);
+        var savedEvents = res.data;
+        console.log(savedEvents);
+        for (var j = 0; j < savedEvents.length; j++) {
+            var event = savedEvents[j];
+            var type = getCollectionType(event.collection);
+            tokens.push({
+                contract: event.collection,
+                token_id: Number(event.token_id)
+            });
+            console.log({ tok: tokens });
+
+            //for (var i = 0; i < tokens.length; i++) {
+            window.proPageLoading = true;
+            var owners = await getAnOwner(
+                event.collection,
+                event.token_id,
+                6494200,
+                owner
+            );
+            //for (var n = 0; n < owners.length; n++) {
+            try {
+                var token = await getTokenData(
+                    event.collection,
+                    owners[0].owner,
+                    event.token_id
+                );
+                //data.push(token);
+                window.myTokens.created.push(token);
+            } catch (e) {
+                console.log(e);
+            }
+            //}
+
+            //}
+        }
         //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
-        var startBlock = _startingBlock;
-        var endBlock = await rpcprovider.getBlockNumber();
+        var latest = await axios.get("/minted");
+        startBlock = latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+        var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
+        console.log(startBlock);
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
             var st = i;
-            var evtsCr = await nftStorage.queryFilter("NFTAdded", i, i + 4000);
-            console.log(i + 1000);
+            var startBlock = i;
+            var evtsCr = await nftStorage.queryFilter(
+                "NFTAdded",
+                i,
+                i + 4000 <= endBlock ? i + 4000 : endBlock
+            );
+            console.log(evtsCr);
+            var mints = [];
+            for (var x = 0; x < evtsCr.length; x++) {
+                var event = evtsCr[x];
+                mints.push([
+                    event.blockNumber,
+                    event.args._creator,
+                    event.args._collection,
+                    Number(event.args._id)
+                ]);
+            }
+
+            if (mints.length > 0) {
+                await axios.post("/minted", { mints: mints });
+            }
+            startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
             for (var j = 0; j < evtsCr.length; j++) {
                 var event = evtsCr[j];
                 var creator = toAddress(event.args._creator);
@@ -216,32 +338,40 @@ async function getCreated(owner, _startingBlock) {
 
                     //for (var i = 0; i < tokens.length; i++) {
                     window.proPageLoading = true;
-                    getOwnersOf(
+                    var owners = await getAnOwner(
                         event.args._collection,
                         event.args._id,
-                        6494200
-                    ).then(async function(owners) {
-                        //for (var n = 0; n < owners.length; n++) {
-                        try {
-                            var token = await getTokenData(
-                                event.args._collection,
-                                owners[0].owner,
-                                event.args._id
-                            );
-                            //data.push(token);
-                            window.myTokens.created.push(token);
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        //}
-                    });
+                        6494200,
+                        owner
+                    );
+                    //for (var n = 0; n < owners.length; n++) {
+                    try {
+                        var token = await getTokenData(
+                            event.args._collection,
+                            owners[0].owner,
+                            event.args._id
+                        );
+                        //data.push(token);
+                        window.myTokens.created.push(token);
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    //}
 
                     //}
                 }
             }
         }
+        if (startBlock != 0) {
+            await axios.patch("/minted/" + owner, {
+                block: startBlock - 1
+            });
+        }
     } catch (e) {
-        await getCreated(owner, st);
+        //await getCreated(owner, st);
+        if (startBlock != 0) {
+            await axios.patch("/minted/" + owner, { block: startBlock - 1 });
+        }
         console.log(e);
     }
     if (window.myTokens.created.length == 0) {
@@ -277,6 +407,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
 
     var filters = {};
     var owners = [];
+    var startBlock = 0;
 
     try {
         var contract = new ethers.Contract(
@@ -293,10 +424,33 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             contract = new ethers.Contract(
                 toAddress(collectionAddess),
                 bhc1155,
-                rpcprovider
+                rpcprovider1
             );
-            var startBlock = _startBlock;
-            var endBlock = await rpcprovider.getBlockNumber();
+            var res = await axios.get("/transfers/" + collectionAddess);
+            var evtsCr = res.data;
+            for (var j = 0; j < evtsCr.length; j++) {
+                if (Number(evtsCr[j].token_id) == tokenId) {
+                    var owner = evtsCr[j].owner;
+                    var copies = await contract.balanceOf(
+                        owner,
+                        evtsCr[j].token_id
+                    );
+                    var tk = { owner: owner, ownedCopies: copies };
+                    var obj = owners.filter(function(element) {
+                        if (element.owner == owner) return true;
+                    });
+                    if (obj.length == 0) {
+                        owners.push(tk);
+                    }
+                }
+            }
+            var latest = await axios.get(
+                "/transfers?collection=" + collectionAddess
+            );
+            startBlock =
+                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+            console.log(startBlock);
+            var endBlock = await rpcprovider1.getBlockNumber();
             var evts = [];
             var filter = contract.filters.TransferSingle(
                 null,
@@ -307,11 +461,26 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             );
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var st = i;
+                var startBlock = i;
+                var transfers = [];
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    i + 4000
+                    endBlock >= i + 4000 ? i + 4000 : endBlock
                 );
+                for (var x = 0; x < evtsCr.length; x++) {
+                    var event = evtsCr[x];
+                    transfers.push([
+                        event.blockNumber,
+                        collectionAddess,
+                        event.args.to,
+                        Number(event.args.id)
+                    ]);
+                }
+                if (transfers.length > 0) {
+                    await axios.post("/transfers", { transfers: transfers });
+                }
+                startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
                 console.log(evtsCr);
 
                 var ownerById = {};
@@ -332,13 +501,72 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                     }
                 }
             }
+            if (startBlock != 0) {
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: startBlock - 1
+                });
+            }
         }
     } catch (e) {
-        if (st < endBlock) {
-            await getOwnersOf(collectionAddess, tokenId, st);
-            //owners = [...owners, ...owners_d];
+        if (startBlock != 0) {
+            await axios.patch("/transfers/" + collectionAddess, {
+                block: startBlock - 1
+            });
         }
         console.log(e);
+    }
+    return owners;
+}
+
+async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
+    const ERC1155Interface = "0x0e89341c";
+    const ERC721Interface = "0x80ac58cd";
+
+    var filters = {};
+    var owners = [];
+    var allCopies = 0;
+
+    try {
+        var contract = new ethers.Contract(
+            toAddress(collectionAddess),
+            bhc721,
+            rpcprovider
+        );
+        var is721 = await contract.supportsInterface(ERC721Interface);
+        var is1155 = await contract.supportsInterface(ERC1155Interface);
+        if (is721) {
+            var owner = await contract.ownerOf(tokenId);
+            owners.push({ owner: owner, ownedCopies: 1 });
+        } else {
+            contract = new ethers.Contract(
+                toAddress(collectionAddess),
+                bhc1155,
+                rpcprovider1
+            );
+            var copies = await contract.balanceOf(_owner, tokenId);
+            if (Number(copies) > 0) {
+                var tk = { owner: _owner, ownedCopies: copies };
+                owners.push(tk);
+                return owners;
+            }
+            var syncedOwners = getOwnersOf(
+                collectionAddess,
+                tokenId,
+                _startBlock
+            );
+            for (var ow = syncedOwners.length - 1; ow > -1; ow--) {
+                var copies = await contract.balanceOf(
+                    syncedOwners[ow].owner,
+                    tokenId
+                );
+                if (Number(copies) > 0) {
+                    owners.push(syncedOwners[ow]);
+                    return owners;
+                }
+            }
+        }
+    } catch (e) {
+        //console.log(e);
     }
     return owners;
 }
@@ -366,16 +594,51 @@ async function getOwnedCollections(me, type, forDetails) {
 
             console.log(col);
             try {
-                if (toAddress(owner) == toAddress(me) || forDetails) {
+                if (toAddress(owner) == toAddress(me)) {
                     var uri = await colCon.contract_URI();
 
-                    var res = await axios.get(
-                        uri.replace("ipfs.io", "gateway.pinata.cloud")
-                    );
+                    var res = null;
+                    try {
+                        res = await axios.get(
+                            //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                            uri.replace("https://ipfs.io/ipfs/", "/data/")
+                        );
+                    } catch (e) {
+                        res = await axios.get(
+                            uri.replace("ipfs.io", "gateway.pinata.io")
+                            //uri.replace("https://ipfs.io", "/ipfs")
+                        );
+                    }
                     var collection = res.data;
                     console.log(collection);
                     collection.address = col;
                     collections.push(collection);
+                } else if (forDetails) {
+                    var res = await axios.get("/transfers/" + toAddress(col));
+                    var transfers = res.data;
+                    var filtered = transfers.filter(function(element) {
+                        if (element.owner == toAddress(owner)) return true;
+                    });
+                    if (filtered.length > 0) {
+                        var uri = await colCon.contract_URI();
+
+                        var res = null;
+                        try {
+                            res = await axios.get(
+                                //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                                uri.replace("https://ipfs.io/ipfs/", "/data/")
+                            );
+                        } catch (e) {
+                            res = await axios.get(
+                                uri.replace("ipfs.io", "gateway.pinata.io")
+                                //uri.replace("https://ipfs.io", "/ipfs")
+                            );
+                        }
+                        var collection = res.data;
+                        console.log(collection);
+                        collection.address = col;
+                        collections.push(collection);
+                    }
                 }
             } catch (e) {}
             num = num + 1;
@@ -389,7 +652,21 @@ async function getOwnedCollections(me, type, forDetails) {
 
 async function get721Token(contract, collection, tokenId, owner) {
     try {
-        const tokenURI = await contract.tokenURI(tokenId);
+        const res = await axios.get(
+            `/nftdata/${contract.address}?token_id=${tokenId}`
+        );
+        var tokenURI = null;
+        if (res.data.length == 0) {
+            tokenURI = await contract.tokenURI(tokenId);
+            const res = await axios.post("/nftdata", {
+                collection: contract.address,
+                token_id: tokenId,
+                uri: tokenURI
+            });
+        } else {
+            tokenURI = res.data.uri;
+        }
+
         const tokenData = {
             contract: contract.address,
             collection: collection,
@@ -397,7 +674,7 @@ async function get721Token(contract, collection, tokenId, owner) {
             tokenType: 721,
             ownedCopies: 1,
             tokenOwner: owner,
-            URI: tokenURI.replace("ipfs.io", "gateway.pinata.cloud")
+            URI: tokenURI //.replace("ipfs.io", "gateway.pinata.io")
         };
         return tokenData;
     } catch (e) {
@@ -408,7 +685,20 @@ async function get721Token(contract, collection, tokenId, owner) {
 async function get1155Token(contract, collection, tokenId, owner) {
     //const tokenCount = await contract.tokenCount(tokenId);
     try {
-        const tokenURI = await contract.tokenURI(tokenId);
+        const res = await axios.get(
+            `/nftdata/${contract.address}?token_id=${tokenId}`
+        );
+        var tokenURI = null;
+        if (res.data.length == 0) {
+            tokenURI = await contract.tokenURI(tokenId);
+            const res = await axios.post("/nftdata", {
+                collection: contract.address,
+                token_id: tokenId,
+                uri: tokenURI
+            });
+        } else {
+            tokenURI = res.data.uri;
+        }
         const ownedCount = await contract.balanceOf(owner, tokenId);
 
         const tokenData = {
@@ -418,7 +708,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
             tokenType: 1155,
             ownedCopies: ownedCount,
             tokenOwner: owner,
-            URI: tokenURI.replace("ipfs.io", "gateway.pinata.cloud")
+            URI: tokenURI //.replace("ipfs.io", "gateway.pinata.io")
         };
         return tokenData;
     } catch (e) {
@@ -451,6 +741,8 @@ async function getSingles(contractAddress, owner, collection) {
 
 async function getMultiples(contractAddress, owner, collection) {
     var tokens = [];
+    var transfers = [];
+    var lastSyncedId = 1;
     try {
         const contract = new ethers.Contract(
             contractAddress,
@@ -458,12 +750,56 @@ async function getMultiples(contractAddress, owner, collection) {
             rpcprovider
         );
         const currentId = await contract.current_id();
-        for (var i = 1; i < Number(currentId) + 1; i++) {
-            var ownedCount = await contract.balanceOf(owner, i);
-            if (ownedCount > 0) {
-                var nft = await get1155Token(contract, collection, i, owner);
-                tokens.push(nft);
+        var transfersRes = await axios.get("/transfers/" + contractAddress);
+        var filteredTransfers = transfersRes.data.filter(function(element) {
+            if (element.owner == owner) return true;
+        });
+        for (var i = 0; i < filteredTransfers.length; i++) {
+            var col = filteredTransfers[i].collection;
+            var id = filteredTransfers[i].token_id;
+            if (id > lastSyncedId) {
+                lastSyncedId = id;
             }
+            var existing = transfers.filter(function(element) {
+                if (element.collection == col && element.token_id == id)
+                    return true;
+            });
+            if (existing.length == 0) {
+                transfers.push(filteredTransfers[i]);
+            }
+        }
+        for (var i = 0; i < transfers.length; i++) {
+            try {
+                var ownedCount = await contract.balanceOf(
+                    owner,
+                    transfers[i].token_id
+                );
+                if (ownedCount > 0) {
+                    var nft = await get1155Token(
+                        contract,
+                        collection,
+                        transfers[i].token_id,
+                        owner
+                    );
+                    tokens.push(nft);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        for (var i = Number(lastSyncedId) + 1; i < currentId + 1; i++) {
+            try {
+                var ownedCount = await contract.balanceOf(owner, i);
+                if (ownedCount > 0) {
+                    var nft = await get1155Token(
+                        contract,
+                        collection,
+                        i,
+                        owner
+                    );
+                    tokens.push(nft);
+                }
+            } catch (e) {}
         }
     } catch (e) {}
     return tokens;
@@ -482,8 +818,8 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             );
             var realOwner = await contract.ownerOf(id);
             var col = await contract.contract_URI();
-            var res = await axios.get(col);
-            var collection = res.data;
+            //var res = await axios.get(col);
+            var collection = { URI: col }; //res.data;
             collection.address = contractAddress;
             if (owner == toAddress(realOwner)) {
                 var collectible = await get721Token(
@@ -501,8 +837,8 @@ async function getCollectible(contractAddress, type, isPrivate, owner, id) {
             );
             var ownerHave = await contract.balanceOf(owner, id);
             var col = await contract.contract_URI();
-            var res = await axios.get(col);
-            var collection = res.data;
+            //var res = await axios.get(col);
+            var collection = { URI: col }; //res.data;
             collection.address = contractAddress;
             if (Number(ownerHave) > 0) {
                 var collectible = await get1155Token(
@@ -722,6 +1058,8 @@ async function createASingle(url, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
+    var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
+    console.log(serviceFee);
     var tx = await contract.mint721(
         collection,
         url,
@@ -729,11 +1067,11 @@ async function createASingle(url, royalty, collection, isBNB) {
         isBNB,
         {
             value: isBNB
-                ? ethers.utils.parseEther("0.025")
-                : ethers.utils.parseEther("0"),
-            gasLimit: BigNumber.from("3000000")
+                ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                : ethers.utils.parseEther("0")
+            //gasLimit: BigNumber.from("300000")
         }
-    ); //, gasPrice:BigNumber.from(30000000000), gasLimit: BigNumber.from(8500000)});
+    ); //, gasPrice:BigNumber.from(30000000000), //gasLimit: BigNumber.from(8500000)});
     return tx;
 }
 
@@ -741,6 +1079,7 @@ async function createABatch(url, count, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     console.log(contract);
+    var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
     var tx = await contract.mint1155(
         collection,
         url,
@@ -750,9 +1089,9 @@ async function createABatch(url, count, royalty, collection, isBNB) {
         isBNB,
         {
             value: isBNB
-                ? ethers.utils.parseEther("0.025")
-                : ethers.utils.parseEther("0"),
-            gasLimit: BigNumber.from(3000000)
+                ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                : ethers.utils.parseEther("0")
+            //gasLimit: BigNumber.from(300000)
         }
     );
 
@@ -762,6 +1101,7 @@ async function createABatch(url, count, royalty, collection, isBNB) {
 async function createCollection(type, uri, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
+    var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
     if (type == 721) {
         var tx = await contract.generate721(
             contractFactoryAddress,
@@ -770,9 +1110,9 @@ async function createCollection(type, uri, isBNB) {
             isBNB,
             {
                 value: isBNB
-                    ? ethers.utils.parseEther("0.025")
-                    : ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from(3000000)
+                    ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                    : ethers.utils.parseEther("0")
+                //gasLimit: BigNumber.from(3000000)
             }
         );
     } else {
@@ -784,9 +1124,9 @@ async function createCollection(type, uri, isBNB) {
             isBNB,
             {
                 value: isBNB
-                    ? ethers.utils.parseEther("0.025")
-                    : ethers.utils.parseEther("0"),
-                gasLimit: BigNumber.from(3000000)
+                    ? ethers.utils.parseEther(`${sFee * 1.03}`)
+                    : ethers.utils.parseEther("0")
+                //gasLimit: BigNumber.from(3000000)
             }
         );
     }
@@ -865,7 +1205,7 @@ async function buy(
             sig.s
         ],
         {
-            gasLimit: BigNumber.from(3000000),
+            ////gasLimit: BigNumber.from(300000),
             value:
                 buyWith == toAddress("")
                     ? ethers.utils.parseEther(`${Number(totalPayment) * 1.03}`)
@@ -902,6 +1242,7 @@ export {
     getCollection,
     getCollectionType,
     getOwnersOf,
+    getAnOwner,
     getCreated,
     getMinted,
     getFees,

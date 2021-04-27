@@ -99,7 +99,7 @@
                                     :href="
                                         asset_url +
                                             'collection/' +
-                                            collection.address
+                                            collectible.contract
                                     "
                                 >
                                     <img
@@ -121,7 +121,7 @@
                                     :href="
                                         asset_url +
                                             'collection/' +
-                                            collection.address
+                                            collectible.contract
                                     "
                                     >{{ collection.name }}</a
                                 ></label
@@ -135,38 +135,48 @@
                     class="tab-pane"
                     v-bind:class="{ 'tab-active': holder_active }"
                 >
-                    <div
-                        v-for="(owner, index) in owners"
-                        :key="index"
-                        class="row dtab"
-                    >
-                        <div class="col-3 col-md-2">
-                            <div class="inlineDiv">
-                                <a :href="user_profile + '/' + owner.wallet">
-                                    <img
-                                        class="br-50"
-                                        :src="owner.display_photo"
-                                        width="50"
-                                    />
-                                </a>
-                                <i
-                                    class="fa fa-check-circle imgCheck"
-                                    aria-hidden="true"
-                                ></i>
+                    <div v-if="ownersLoaded">
+                        <div
+                            v-for="(owner, index) in owners"
+                            :key="index"
+                            class="row dtab"
+                        >
+                            <div class="col-3 col-md-2">
+                                <div class="inlineDiv">
+                                    <a
+                                        :href="
+                                            user_profile + '/' + owner.wallet
+                                        "
+                                    >
+                                        <img
+                                            class="br-50"
+                                            :src="owner.display_photo"
+                                            width="50"
+                                        />
+                                    </a>
+                                    <i
+                                        class="fa fa-check-circle imgCheck"
+                                        aria-hidden="true"
+                                    ></i>
+                                </div>
+                            </div>
+                            <div class="col-9 col-md-10">
+                                <label class="position"
+                                    >{{ owner.ownedCopies }} of
+                                    {{ collectible.copies }}</label
+                                >
+                                <label class="positionHolder"
+                                    ><a
+                                        :href="
+                                            user_profile + '/' + owner.wallet
+                                        "
+                                        >{{ owner.name }}</a
+                                    ></label
+                                >
                             </div>
                         </div>
-                        <div class="col-9 col-md-10">
-                            <label class="position"
-                                >{{ owner.ownedCopies }} of
-                                {{ collectible.copies }}</label
-                            >
-                            <label class="positionHolder"
-                                ><a :href="user_profile + '/' + owner.wallet">{{
-                                    owner.name
-                                }}</a></label
-                            >
-                        </div>
                     </div>
+                    <tile v-else></tile>
                 </div>
 
                 <div
@@ -199,7 +209,6 @@
                         Accept Highest Bid
                     </button>
 
-
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
                     <div class="row" v-show="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
@@ -223,7 +232,6 @@
                                 ></i>
                             </div>
                         </div>
-
 
                         <div class="col-9 col-md-10">
                             <label class="position">
@@ -324,12 +332,12 @@ import {
     getConnectedAddress,
     acceptBid
 } from ".././../bidFunc";
-import { toAddress, checkConnection } from ".././../etherFunc";
+import { toAddress, checkConnection, getOwnersOf } from ".././../etherFunc";
+import { getUserDetails } from ".././../data";
 export default {
     props: [
         "creator",
         "current_owner",
-        "owners",
         "transactions",
         "user_profile",
         "collectible",
@@ -355,15 +363,37 @@ export default {
                 maxBidTime: "",
                 maxBidToken: ""
             },
-            address: {}
+            address: {},
+            owners: [],
+            ownersLoaded: false,
+            ownersRequested: false
         };
     },
     async mounted() {
         this.loadData();
     },
     methods: {
+        async getOwnersDetails() {
+            const _this = this;
+            _this.ownersRequested = true;
+            var _owners = await getOwnersOf(
+                _this.collectible.contract,
+                _this.collectible.id,
+                6494200
+            );
+            _this.collectible.owners = _owners;
+            for (var i = 0; i < _this.collectible.owners.length; i++) {
+                var details = await getUserDetails(
+                    _this.collectible.owners[i].owner
+                );
+                details.ownedCopies = Number(
+                    _this.collectible.owners[i].ownedCopies
+                );
+                _this.owners.push(details);
+            }
+            this.ownersLoaded = true;
+        },
         async loadData() {
-
             this.highestBid = await getHighestBid(
                 this.current_owner.wallet,
                 this.collectible.contract,
@@ -403,10 +433,11 @@ export default {
             this.holder_active = false;
             this.bid_active = false;
         },
-        holderActive() {
+        async holderActive() {
             this.home_active = false;
             this.holder_active = true;
             this.bid_active = false;
+            !this.ownersRequested ? this.getOwnersDetails() : null;
         },
         bidsActive() {
             this.home_active = false;
@@ -439,7 +470,6 @@ export default {
         },
 
         async acceptBidding() {
-
             try {
                 var res = await acceptBid(
                     this.collectible.type == 721 ? true : false,
@@ -471,7 +501,6 @@ export default {
                     title: "Accepting Highest Bid failed!"
                 });
             }
-
         }
     }
 };

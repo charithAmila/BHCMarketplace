@@ -213,7 +213,7 @@
         <a :href="marketplace_route">Marketplace</a>
         <a :href="profile_route + '/' + user_link">My NFT's</a>
         <a :href="faq_route">FAQ</a>
-        <a :href="about_route">BHC</a>
+        <a :href="about_route">HPS</a>
       </div>
       <div class="menu-footer">
         <div class="footer-social">

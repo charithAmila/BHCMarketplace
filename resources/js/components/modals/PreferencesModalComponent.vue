@@ -87,7 +87,7 @@
                             </div>
                             <div class="form-divide">
                                 <label class="input-label">Short url</label>
-                                <span class="link-url">billionhappiness.finance/</span>
+                                <span style="font-size:9px" class="link-url">billionhappiness.finance/profile/</span>
                                 <input
                                     id="short_url-profile"
                                     class="modal-input preferences-check with-link"
@@ -97,7 +97,7 @@
                                     v-model="user_data.short_url"
                                     @input="nameCheck"
                                 />
-                                <pre>{{ url_previous }}</pre>
+                                <!--pre>{{ url_previous }}</pre-->
                                 <p class="preferences-error text-danger"></p>
                                 <div
                                     class="alert alert-danger"

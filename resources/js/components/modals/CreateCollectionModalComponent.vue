@@ -347,16 +347,11 @@ export default {
                  const message =
         "New collection " + _this.name + " was created successfully";
         const user = await checkConnection();
-         data = {};
-        data.message = message;
-        data.user_id = user;
-        data.amount = 0;
-        data.noBuy = true;
-        data.currency = '';
-        data.owner = '';
-        data.contract = '';
-        data.token_id =0;
-        await axios.post("addNotification", data, {}).then((res) => {
+        let notif = {};
+        notif.message = message;
+        notif.user_id = user;
+        notif.type= "create"
+        await axios.post("/addNotification", notif, {}).then((res) => {
           console.log(res.data);
         });
         },

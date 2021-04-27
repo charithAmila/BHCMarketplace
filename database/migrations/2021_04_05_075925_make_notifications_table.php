@@ -17,14 +17,15 @@ class MakeNotificationsTable extends Migration
             $table->id();
             $table->string('user_id')->default('');
             $table->string('message')->default('');
-            $table->float('buy_amount')->default(0);
-            $table->float('sell_amount')->default(0);
-            $table->float('bid_amount')->default(0);
+            $table->decimal('buy_amount', 10,8)->default(0);
+            $table->decimal('sell_amount',10,8)->default(0);
+            $table->decimal('bid_amount',10,8)->default(0);
             $table->string('currency')->default('');
             $table->string('owner')->default('');
             $table->string('contract')->default('');
             $table->integer('token_id')->default(0);
             $table->boolean('status')->default(1);
+            $table->string('type')->default('');
             $table->timestamps();
         });
     }

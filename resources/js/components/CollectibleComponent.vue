@@ -203,18 +203,13 @@
                                     </div>
 
                                     <span
-                                        v-if="
-                                            filter != 'created' &&
-                                                filter != 'on-sale'
-                                        "
-                                        class="copies"
-                                        >{{ collectible.ownedCopies }} of
-                                        {{ collectible.copies }}</span
-                                    >
-                                    <span
                                         v-if="filter == 'on-sale'"
                                         class="copies"
                                         >{{ collectible.on_sale }} of
+                                        {{ collectible.copies }}</span
+                                    >
+                                    <span v-else class="copies"
+                                        >{{ collectible.ownedCopies }} of
                                         {{ collectible.copies }}</span
                                     >
                                 </div>
@@ -289,7 +284,11 @@
             :page="current_page"
             :bidOpen="open"
         ></bid-modal-component>
-        <report-modal-component :singleNft="singleNft" :current_user="current_user" :page="current_page"></report-modal-component>
+        <report-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></report-modal-component>
         <bid-list-modal-component
             v-if="current_page == 'profile'"
             :bidList="bidList"

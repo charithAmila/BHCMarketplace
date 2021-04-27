@@ -167,7 +167,8 @@ export default {
       total_payment: 0,
       payment: 0,
       currency: "",
-
+      message_bidder:"",
+      message_owner:"",
       error: "",
       approved: false,
       signed: false,
@@ -393,7 +394,7 @@ export default {
           data.token_id = this.singleNft.id;
           data.contract = this.singleNft.contract;
           data.amount = this.payment;
-          data.noBuy = true;
+          data.type = "bid";
           data.currency = this.currency;
           await axios.post("/addNotification", data, {}).then((res) => {
             console.log(res.data);
@@ -401,7 +402,12 @@ export default {
 
           this.signed = true;
           this.signBidText = "Signed and Placed Order";
+          Toast.fire({
+                            icon: "success",
+                            title: "Successfully placed a bid!"
+                        });
           $("#bidModal").removeClass("d-block");
+           
         }
       } catch (error) {
         if (error.code == 4001) {
@@ -425,8 +431,7 @@ export default {
     },
     //////////////////!Place Bid////////////////////
     async placeBid() {
-    var message_bidder;
-    var message_owner;
+    
       this.currency = $("#selectedCurrency").text();
 
       try {
@@ -438,8 +443,8 @@ export default {
           this.payment
         );
 
-      if(this.page=="showCollectible"){
-        message_bidder =
+     /* if(this.page=="showCollectible"){
+        this.message_bidder =
           "You have place a bid of " +
           this.payment +
           " " +
@@ -449,7 +454,7 @@ export default {
           " in the collection ";
         +this.singleNft.collection.name;
 
-            message_owner =
+            this.message_owner =
           "Your nft "+this.singleNft.name +
           " in the collection ";
         +this.singleNft.collection.name;
@@ -459,7 +464,7 @@ export default {
           this.currency;
       }
       else{
-                message_bidder =
+                this.message_bidder =
           "You have place a bid of " +
           this.payment +
           " " +
@@ -469,7 +474,7 @@ export default {
           " in the collection ";
         +this.singleNft.collection.name;
 
-            message_owner =
+            this.message_owner =
           "Your nft "+this.singleNft.name +
           " in the collection ";
         +this.singleNft.collection.name;
@@ -477,18 +482,18 @@ export default {
           this.payment +
           " " +
           this.currency;
-      }
+      }*/
        
         let success = true;
 
         if (success) {
-          let data = {};
+         /* let data = {};
           data.currency = this.currency;
           data.message = message;
           data.user_id = await checkConnection();
-          await axios.post("/addNotification", data, {}).then((res) => {
+         await axios.post("/addNotification", data, {}).then((res) => {
             console.log(res.data);
-          });
+          });*/
 
           this.approved = false;
           this.signed = false;

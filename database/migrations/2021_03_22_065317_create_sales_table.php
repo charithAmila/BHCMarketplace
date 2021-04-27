@@ -20,7 +20,7 @@ class CreateSalesTable extends Migration
             $table->string("current_owner")->nullable(false);
             $table->integer("token_id")->nullable(false);
             $table->integer("signed_to")->nullable(false);
-            $table->float("price")->nullable(false);
+            $table->decimal("price",8,3)->nullable(false);
             $table->boolean('is_instant')->default(false);
             $table->string("currency")->default("0x0000000000000000000000000000000000000000");
             $table->string("signature")->nullable(false);

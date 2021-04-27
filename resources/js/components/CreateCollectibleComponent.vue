@@ -875,7 +875,7 @@ export default {
             legend: "",
             royalties: 0,
             properties: {},
-            putOnSale: true,
+            putOnSale: false,
             instantSale: false,
             price: 0,
             myCollection: [],
@@ -949,14 +949,15 @@ export default {
                     !this.imgselectok ||
                     !this.legend ||
                     !this.category ||
-                    this.selectedContract == ""
+                    this.selectedContract == "" ||
+                    this.uploadedImage == ""
                 ) {
                     if (!this.name) {
                         this.isError.name = true;
                     } else {
                         this.isError.name = false;
                     }
-                    if (!this.imgselectok) {
+                    if (!this.imgselectok || this.uploadedImage == "") {
                         this.isError.imgselectok = true;
                     } else {
                         this.isError.imgselectok = false;
@@ -1011,7 +1012,8 @@ export default {
                     !this.legend ||
                     !this.category ||
                     this.selectedContract == "" ||
-                    this.copies == 0
+                    this.copies == 0 ||
+                    this.uploadedImage == ""
                 ) {
                     if (!this.name) {
                         this.isError.name = true;
@@ -1204,6 +1206,7 @@ export default {
                     evt.target.files[0]["type"] === "video/mp4" ||
                     evt.target.files[0]["type"] === "audio/mpeg"
                 ) {
+                    _this.uploadedImage = "";
                     this.isError.invalid_file = false;
                     _this.fileType = evt.target.files[0].type.split("/")[0];
                     var url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
@@ -1313,6 +1316,23 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
+                                    let notif = {};
+                                    notif.message = message;
+                                    notif.user_id = toAddress(
+                                        _this.current_user
+                                    );
+                                    notif.amount = 0;
+                                    notif.currency = "";
+                                    notif.owner = "";
+                                    notif.contract = "";
+                                    notif.token_id = 0;
+                                    notif.type = "create";
+
+                                    await axios
+                                        .post("/addNotification", notif, {})
+                                        .then(result => {
+                                            console.log(result.data);
+                                        });
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
@@ -1349,27 +1369,26 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
+                                    let notif = {};
+                                    notif.message = message;
+                                    notif.user_id = toAddress(
+                                        _this.current_user
+                                    );
+                                    notif.amount = 0;
+                                    notif.currency = "";
+                                    notif.owner = "";
+                                    notif.contract = "";
+                                    notif.token_id = 0;
+                                    notif.type = "create";
+                                    await axios
+                                        .post("/addNotification", notif, {})
+                                        .then(result => {
+                                            console.log(result.data);
+                                        });
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
                                     );
-
-                                    data = {};
-                                    data.message = message;
-                                    data.user_id = toAddress(
-                                        _this.current_user
-                                    );
-                                    data.amount = 0;
-                                    data.noBuy = true;
-                                    data.currency = "";
-                                    data.owner = "";
-                                    data.contract = "";
-                                    data.token_id = 0;
-                                    await axios
-                                        .post("addNotification", data, {})
-                                        .then(res => {
-                                            console.log(res.data);
-                                        });
 
                                     if (!_this.putOnSale) {
                                         window.location.href = `/profile/${toAddress(
