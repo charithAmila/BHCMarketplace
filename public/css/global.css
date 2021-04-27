@@ -3874,6 +3874,7 @@ body {
   display: flex;
   border-radius: 10px;
   padding: 5px;
+  overflow: hidden;
 }
 
 .notification .notif-list .notif-item:hover {

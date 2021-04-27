@@ -238,6 +238,39 @@
                     </div>
                 </div>
             </div>
+
+            <div
+                v-if="isLoading"
+                class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
+                v-for="i in 10"
+                v-bind:key="i"
+            >
+                <div class="outside-nft border-on-profile">
+                    <div class="inside-nft">
+                        <div class="inner-outside-nft">
+                            <div class="inner-nft">
+                                <div class="item-main">
+                                    <div class="item-head">
+                                        <div class="preloader-img"></div>
+                                    </div>
+                                </div>
+
+                                <div class="item-img"></div>
+
+                                <div class="display-flex -mt-15">
+                                    <div class="preloader-content"></div>
+                                </div>
+                                <div class="text-center currency-label">
+                                    <div class="preloader-content"></div>
+                                </div>
+                                <div class="preloader-half">
+                                    <div class="preloader-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <checkout-modal-component
@@ -263,8 +296,9 @@
             :collectible="bidListNFT"
             :page="current_page"
         ></bid-list-modal-component>
-        <div id="preloader" class="row grid-container" v-if="isLoading">
+        <!-- <div id="preloader" class="row grid-container">
             <div
+                v-if="isLoading"
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
                 v-for="i in 24"
                 v-bind:key="i"
@@ -295,7 +329,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
+
     </div>
 </template>
 
