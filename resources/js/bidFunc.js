@@ -541,7 +541,8 @@ async function getHighestBid(owner, contract_address, token_id) {
 
     if (output.length != 0) {
         for (var i = 0; i < output.length; i++) {
-            var bhcprice = await getTokenPrice("BHC");
+            //var bhcprice = await getTokenPrice("BHC");
+            var bhcprice = 3.615528545705218;
             console.log("BHC price");
             console.log(bhcprice);
             //console.log(hpsprice);
@@ -571,7 +572,7 @@ async function getHighestBid(owner, contract_address, token_id) {
                     parseFloat(output[i].bidding_amount) * 10 ** 18
                 ) {
                     console.log(output[i].bidding_amount * 10 ** 18);
-                    if (hpsprice * output[i].bidding_amount > maxAmount) {
+                    if (bhcprice * output[i].bidding_amount > maxAmount) {
                         maxAmount = output[i].bidding_amount;
                         maxBidder = output[i].bidding_address;
                         maxBidToken = "BHC";
