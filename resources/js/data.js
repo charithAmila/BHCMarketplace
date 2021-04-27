@@ -610,7 +610,7 @@ async function collectiblesOfCollection(collection) {
             var nft = await getTokenData(collection, owner, id);
             collectibles.push(nft);
         } catch (e) {
-            console.log(e);
+            //console.log(e);
         }
     }
     //console.log(collectibles);
