@@ -1190,14 +1190,14 @@ body {
 
 .row-0 .withBgGray {
   background: #ececec;
-  overflow: scroll;
+  overflow: auto;
   height: calc(100vh - 71px);
 }
 
 .row-0 .withBgGray .title-container {
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 99;
 }
 
 .row-0 .withBgGray .title-container .space-between {
@@ -3877,6 +3877,20 @@ body {
 
 .notification .notif-list .notif-item:hover {
   background: #e8e7e7;
+  cursor: pointer;
+}
+
+.notification .notif-list .notif-item .notif-container a {
+  text-decoration: none;
+  color: black;
+}
+
+.notification .notif-list .notif-item .notif-container a:hover {
+  color: #F88130;
+}
+
+.notification .notif-list .notif-item .notif-container a p {
+  margin-bottom: 0;
 }
 
 .notification .notif-list .notif-item .notif-img {

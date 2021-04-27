@@ -722,7 +722,7 @@ body {
     }
     .withBgGray {
         background: $lightGray;
-        overflow: scroll;
+        overflow: auto;
         height: calc(100vh - 71px);
         // &:hover{
         // 	overflow-y: scroll;
@@ -731,7 +731,7 @@ body {
             position: -webkit-sticky;
             position: sticky;
             top: 0;
-            z-index: 999;
+            z-index: 99;
             .space-between {
                 justify-content: space-between;
             }
@@ -3077,7 +3077,26 @@ body {
             padding: 5px;
             &:hover {
                 background: $hoverBgGray;
+                cursor: pointer;
             }
+
+            .notif-container{
+                a{
+                    text-decoration: none;
+                    color: black;
+                    &:hover{
+                        color: $primaryColor;
+                    }
+
+                    p{
+                        margin-bottom: 0;
+                    }
+                }
+            }
+
+
+
+
             .notif-img {
                 margin-right: 10px;
                 width: 50px;

@@ -219,7 +219,7 @@
                                     >
                                 </div>
                                 <div class="text-center currency-label">
-                                    {{ collectible.name }}
+                                    {{ truncate(collectible.name) }}
                                 </div>
                                 <a
                                     :href="
@@ -423,6 +423,12 @@ export default {
                 $("#" + clicked + "Modal"),
                 $("." + clicked + "-content")
             );
+        },
+        truncate(string){
+            if (string.length <= 18) {
+                return string;
+            }
+            return string.slice(0, 18) + "...";
         }
     },
     mounted() {

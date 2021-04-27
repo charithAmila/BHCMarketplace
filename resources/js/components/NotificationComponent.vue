@@ -1,25 +1,50 @@
 <template>
 	<div class="notification d-none">
 		<div class="row">
-<label class="notif-title">Notifications</label>
+      <label class="notif-title">Notifications</label>
 
 <!--button type="button" class="btn btn-primary btn-sm">Small button</button-->
-<button type="button" class="btn btn-secondary btn-sm" style="margin-left:20px" @click ="clearNotif()">Clear All</button>
+      <button type="button" class="btn btn-secondary btn-sm" style="margin-left:20px" @click ="clearNotif()">Clear All</button>
 		</div>
 
-		<div class="notif" :class="notifications.length == 0 ? '':'d-none'">
+		<div class="notif" :class="notifications.length != 0 ? '':'d-none'">
 			<img :src="notifications.length == 0 ? asset_url+'images/logo.png':asset_url+'images/logo2.png'">
 
 			<label class="notif-content" >No new notifications</label>
 		</div>
-		<div class="notif-list" :class="notifications.length > 0 ? '':'d-none'">
+		<div class="notif-list" :class="notifications.length == 0 ? '':'d-none'">
+      <div class="notif-item">
+        <div class="notif-container">
+          <a href="#">
+            <p>Itachi purchased 1 edition for 1000 BHC of Kyubi mode 9 hours ago</p>
+          </a>
+        </div>
+
+      </div>
+
+      <div class="notif-item">
+        <label>
+          <a class="user-profile" href="#">Itachi</a> purchased 1 edition for 1000 BHC of <span class="notif-item">Kyubi mode</span><small> 9 hours ago</small>
+        </label>
+      </div>
+
 			<div v-for="notif in notifications" :key="notif.id" class="notif-item">
 				<div>
+  				<!-- <a :href="'/nft/'+ notif.contract+':'+notif.token_id+':'+notif.owner">
+            <p>{{notif.message}}</p>
+          </a> -->
 
-				 <a :href="'/nft/'+ notif.contract+':'+notif.token_id+':'+notif.owner"><p>
-					{{notif.message}}</p></a> </div>
+
+          <a :href="notif.type=='sell'||notif.type=='bid'?'/nft/'+ notif.contract+':'+notif.token_id+':'+notif.owner:'/profile/'+notif.owner">
+            <p>{{notif.message}}</p>
+          </a>
+
+
+
+
+        </div>
 				<!--a :href="asset_url+'profile/'+notif.profile_link"><img class="notif-img" :src="notif.display_photo"></a-->
-				<!--label><a class="user-profile" :href="asset_url+'profile/'">{{ notif.messaage }}</a--><!--span class="notif-item">{{ notif.nft }}</span--><!--small> {{ notif.transaction_time }} ago</small--></label>
+				<!--label><a class="user-profile" :href="asset_url+'profile/'">{{ notif.messaage }}</a--><!--span class="notif-item">{{ notif.nft }}</span--><!--small> {{ notif.transaction_time }} ago</small></label>-->
 			</div>
 		</div>
 	</div>

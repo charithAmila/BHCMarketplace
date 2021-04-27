@@ -438,6 +438,10 @@
   text-decoration: inherit;
 }
 
+.custom-navbar .right-nav .nav-item:hover {
+  cursor: pointer;
+}
+
 .custom-navbar .right-nav .right-border {
   position: relative;
   color: #9ea3a9;

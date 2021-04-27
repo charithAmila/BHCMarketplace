@@ -79,6 +79,10 @@
             color: inherit;
             font-weight: 600;
             text-decoration: inherit;
+
+            &:hover{
+                cursor: pointer;
+            }
         }
         .right-border {
             position: relative;
