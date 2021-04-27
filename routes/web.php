@@ -10,6 +10,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\MintedController;
 use App\Http\Controllers\TransfersController;
 use App\Http\Controllers\IpfsController;
+use App\Http\Controllers\NftDataController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
@@ -127,6 +128,7 @@ Route::resource('sales', SalesController::class);
 Route::resource('minted', MintedController::class);
 Route::resource('transfers', TransfersController::class);
 Route::resource('data', IpfsController::class);
+Route::resource('nftdata', NftDataController::class);
 Route::get('sales_search', [SearchSales::class, 'search']);
 
 Route::get('/getData/{time}', [NotificationController::class, 'getData']);

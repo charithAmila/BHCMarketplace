@@ -594,7 +594,7 @@ async function getOwnedCollections(me, type, forDetails) {
 
             console.log(col);
             try {
-                if (toAddress(owner) == toAddress(me) || forDetails) {
+                if (toAddress(owner) == toAddress(me)) {
                     var uri = await colCon.contract_URI();
 
                     var res = null;
@@ -613,6 +613,32 @@ async function getOwnedCollections(me, type, forDetails) {
                     console.log(collection);
                     collection.address = col;
                     collections.push(collection);
+                } else if (forDetails) {
+                    var res = await axios.get("/transfers/" + toAddress(col));
+                    var transfers = res.data;
+                    var filtered = transfers.filter(function(element) {
+                        if (element.owner == toAddress(owner)) return true;
+                    });
+                    if (filtered.length > 0) {
+                        var uri = await colCon.contract_URI();
+
+                        var res = null;
+                        try {
+                            res = await axios.get(
+                                //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                                uri.replace("https://ipfs.io/ipfs/", "/data/")
+                            );
+                        } catch (e) {
+                            res = await axios.get(
+                                uri.replace("ipfs.io", "gateway.pinata.io")
+                                //uri.replace("https://ipfs.io", "/ipfs")
+                            );
+                        }
+                        var collection = res.data;
+                        console.log(collection);
+                        collection.address = col;
+                        collections.push(collection);
+                    }
                 }
             } catch (e) {}
             num = num + 1;
@@ -626,7 +652,21 @@ async function getOwnedCollections(me, type, forDetails) {
 
 async function get721Token(contract, collection, tokenId, owner) {
     try {
-        const tokenURI = await contract.tokenURI(tokenId);
+        const res = await axios.get(
+            `/nftdata/${contract.address}?token_id=${tokenId}`
+        );
+        var tokenURI = null;
+        if (res.data.length == 0) {
+            tokenURI = await contract.tokenURI(tokenId);
+            const res = await axios.post("/nftdata", {
+                collection: contract.address,
+                token_id: tokenId,
+                uri: tokenURI
+            });
+        } else {
+            tokenURI = res.data.uri;
+        }
+
         const tokenData = {
             contract: contract.address,
             collection: collection,
@@ -645,7 +685,20 @@ async function get721Token(contract, collection, tokenId, owner) {
 async function get1155Token(contract, collection, tokenId, owner) {
     //const tokenCount = await contract.tokenCount(tokenId);
     try {
-        const tokenURI = await contract.tokenURI(tokenId);
+        const res = await axios.get(
+            `/nftdata/${contract.address}?token_id=${tokenId}`
+        );
+        var tokenURI = null;
+        if (res.data.length == 0) {
+            tokenURI = await contract.tokenURI(tokenId);
+            const res = await axios.post("/nftdata", {
+                collection: contract.address,
+                token_id: tokenId,
+                uri: tokenURI
+            });
+        } else {
+            tokenURI = res.data.uri;
+        }
         const ownedCount = await contract.balanceOf(owner, tokenId);
 
         const tokenData = {
