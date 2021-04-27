@@ -27,18 +27,19 @@ const factoryABI = require("./abis/factory.json");
 
 if (typeof window.ethereum == "undefined") {
     window.provider = new ethers.providers.JsonRpcProvider(
-        "https://data-seed-prebsc-1-s1.binance.org:8545"
+        "https://bsc-dataseed.binance.org/"
     );
     window.rpcprovider = new ethers.providers.JsonRpcProvider(
-        "https://data-seed-prebsc-1-s1.binance.org:8545"
+        "https://bsc-dataseed.binance.org/"
     );
+    window.rpcprovider1 = window.provider;
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
     window.rpcprovider = window.provider;
     window.rpcprovider1 = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
 }
 
-/*window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
+/*window.rpcprovider = new ethers.providers.JsonRpcProvider(
     //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
     //"https://data-seed-prebsc-1-s1.binance.org:8545"
     "http://162.0.210.42/rpc"
