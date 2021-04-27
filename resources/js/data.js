@@ -48,11 +48,16 @@ async function getMaxBuyers(time_filter) {
         output[user].buy_amount = 0;
         output[user].propic = details.display_photo;
         output[user].username = details.name;
-        output[user].currency = res[i].currency;
+        output[user].currency = "BNB";
     }
     for (let i = 0; i < res.length; i++) {
         let user = res[i].user_id;
-        output[user].buy_amount += res[i].buy_amount;
+
+        if ((res[i].currency = "BNB")) {
+            output[user].buy_amount += res[i].buy_amount;
+        } else {
+            output[user].buy_amount += res[i].buy_amount * 3.615528545705218;
+        }
     }
     return output;
 }
