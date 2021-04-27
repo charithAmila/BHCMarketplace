@@ -38,11 +38,16 @@ if (typeof window.ethereum == "undefined") {
     window.rpcprovider1 = window.provider; //new ethers.providers.Web3Provider(window.ethereum);
 }
 
-//window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
-//"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
-//"https://data-seed-prebsc-1-s1.binance.org:8545"
-// "http://162.0.210.42/rpc"
-////);
+/*window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
+    //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
+    //"https://data-seed-prebsc-1-s1.binance.org:8545"
+    "http://162.0.210.42/rpc"
+);
+window.rpcprovider = new ethers.providers.JsonRpcProvider(
+    //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
+    //"https://data-seed-prebsc-1-s1.binance.org:8545"
+    "http://162.0.210.42/rpc"
+);*/
 
 //const selectedAddress = provider.provider.selectedAddress;
 
@@ -187,12 +192,13 @@ async function getCollection(collectionAddess) {
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var transfers = [];
-
+                startBlock = i;
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
                     i,
-                    i + 4000
+                    i + 4000 <= endBlock ? i + 4000 : endBlock
                 );
+
                 for (var x = 0; x < evtsCr.length; x++) {
                     var event = evtsCr[x];
                     transfers.push([
@@ -205,6 +211,7 @@ async function getCollection(collectionAddess) {
                 if (transfers.length > 0) {
                     await axios.post("/transfers", { transfers: transfers });
                 }
+                startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
                 evts = evtsCr;
                 for (var j = 0; j < evts.length; j++) {
                     var tokenId = Number(evts[j].args.id);
@@ -316,7 +323,7 @@ async function getCreated(owner, _startingBlock) {
             if (mints.length > 0) {
                 await axios.post("/minted", { mints: mints });
             }
-
+            startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
             for (var j = 0; j < evtsCr.length; j++) {
                 var event = evtsCr[j];
                 var creator = toAddress(event.args._creator);
@@ -453,7 +460,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             );
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
                 var st = i;
-
+                var startBlock = i;
                 var transfers = [];
                 var evtsCr = await contract.queryFilter(
                     "TransferSingle",
@@ -472,6 +479,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                 if (transfers.length > 0) {
                     await axios.post("/transfers", { transfers: transfers });
                 }
+                startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
                 console.log(evtsCr);
 
                 var ownerById = {};
@@ -545,11 +553,19 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                 tokenId,
                 _startBlock
             );
-            owners.push(syncedOwners[0]);
-            console.log("LAST OWNER = " + owners[0].owner);
+            for (var ow = syncedOwners.length - 1; ow > -1; ow--) {
+                var copies = await contract.balanceOf(
+                    syncedOwners[ow].owner,
+                    tokenId
+                );
+                if (Number(copies) > 0) {
+                    owners.push(syncedOwners[ow]);
+                    return owners;
+                }
+            }
         }
     } catch (e) {
-        console.log(e);
+        //console.log(e);
     }
     return owners;
 }
