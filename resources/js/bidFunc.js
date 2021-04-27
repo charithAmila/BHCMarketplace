@@ -34,10 +34,10 @@ const exchange_abi = require("../js/abis/new_exchange.json");
 /////////////////////////////////////////provider////////////////////////////////////////////////////////////////
 if (typeof window.ethereum == "undefined") {
     window.provider = new ethers.providers.JsonRpcProvider(
-        "https://data-seed-prebsc-1-s1.binance.org:8545"
+        "https://bsc-dataseed.binance.org/"
     );
     window.rpcprovider = new ethers.providers.JsonRpcProvider(
-        "https://data-seed-prebsc-1-s1.binance.org:8545"
+        "https://bsc-dataseed.binance.org/"
     );
 } else {
     window.provider = new ethers.providers.Web3Provider(window.ethereum);
