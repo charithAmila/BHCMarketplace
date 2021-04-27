@@ -72,14 +72,20 @@ async function getMaxSellers(time_filter) {
             output[user].sell_amount = 0;
             output[user].propic = details.display_photo;
             output[user].username = details.name;
-            output[user].currency = res[i].currency;
+            output[user].currency = "BNB";
             output[user].user_id = res[i].user_id;
         }
     }
     for (let i = 0; i < res.length; i++) {
         if (res[i].type != "follow" && res[i].type != "create") {
             let user = res[i].user_id;
-            output[user].sell_amount += res[i].sell_amount;
+
+            if ((output[i].currency = "BNB")) {
+                output[user].sell_amount += res[i].sell_amount;
+            } else {
+                output[user].sell_amount +=
+                    res[i].sell_amount * 3.615528545705218;
+            }
         }
     }
     return output;
