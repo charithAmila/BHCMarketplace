@@ -210,7 +210,7 @@
                     </button>
 
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
-                    <div class="row" v-show="biddingStatus && haveBids">
+                    <div class="row" v-if="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
                             <div class="inlineDiv">
                                 <a
@@ -241,7 +241,7 @@
                                 {{ this.highestBid.maxBidToken }} on
 
                                 {{
-                                    this.highestBid.maxBidTime /*.slice(0, 10)*/
+                                    this.highestBid.maxBidTime.slice(0, 10) 
                                 }}
                                 by
 
