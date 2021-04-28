@@ -169,7 +169,8 @@ export default {
             followings: [],
             output_array: [],
             output_array_followings: [],
-            loading: true
+            loading: true,
+            interval: null
         };
     },
     methods: {
@@ -179,6 +180,9 @@ export default {
         },
         async filterProfileNft(selectedFilter) {
             const _this = this;
+            try {
+                clearInterval(_this.interval);
+            } catch (e) {}
             _this.loading = true;
             _this.filter = selectedFilter;
 
@@ -190,7 +194,7 @@ export default {
                 getCreatedTokens(_this.user_id, _this.base_url);
             }
 
-            var interval = setInterval(function() {
+            _this.interval = setInterval(function() {
                 _this.showing = window.myTokens[_this.filter];
                 if (
                     window.myTokens[_this.filter].length == 0 &&
@@ -198,12 +202,12 @@ export default {
                 ) {
                     _this.loading = false;
                     _this.showing = [];
-                    clearInterval(interval);
+                    clearInterval(_this.interval);
                 } else if (window.loaded[_this.filter]) {
                     _this.loading = false;
-                    clearInterval(interval);
+                    clearInterval(_this.interval);
                 }
-            }, 10);
+            }, 1);
 
             /*const _this = this;
             _this.filter = selectedFilter;

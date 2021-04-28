@@ -564,11 +564,12 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                 owners.push(tk);
                 return owners;
             }
-            var syncedOwners = getOwnersOf(
+            var syncedOwners = await getOwnersOf(
                 collectionAddess,
                 tokenId,
                 _startBlock
             );
+            console.log(syncedOwners);
             for (var ow = syncedOwners.length - 1; ow > -1; ow--) {
                 var copies = await contract.balanceOf(
                     syncedOwners[ow].owner,
