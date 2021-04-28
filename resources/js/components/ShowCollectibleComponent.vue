@@ -97,6 +97,7 @@
                                                     ':' +
                                                     current_owner.wallet
                                             "
+                                            @click="customSocialShare('twitter','Look what I found! ' +collectible.name +' collectible', asset_url +'nft/'+singleNft.contract+':' +current_owner.wallet)"
                                         >
                                             <i class="fa fa-twitter s-btn"></i>
                                             <label>Twitter</label>
@@ -649,6 +650,31 @@ export default {
                     console.log(error);
                 });
         },
+
+        customSocialShare(social, content, url) {
+
+            switch(social) {
+              case "twitter":
+                var setUrl = encodeURI('https://twitter.com/intent/tweet/?text='+content+'&url='+url)
+                break;
+              case "facebook":
+                var setUrl = encodeURI('https://www.facebook.com/sharer/sharer.php?u='+url)
+                break;
+              case "telegram":
+                var setUrl = encodeURI('https://t.me/share/url?url='+url+'&text='+content)
+                break;
+              default:
+                var setUrl = encodeURI('')
+            }
+
+
+
+            var title = "Billion Happiness";
+            var custom_url = setUrl;
+            return window.open(custom_url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=1000, height=500');
+        },
+
+
         copyUrl() {
             // alert(window.location.href)
 
