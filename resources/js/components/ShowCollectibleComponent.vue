@@ -681,9 +681,6 @@ export default {
                 var title = "Billion Happiness";
                 return window.open(setUrl, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=1000, height=500');
             }
-
-            
-
         },
 
 
