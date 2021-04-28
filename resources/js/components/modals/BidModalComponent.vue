@@ -151,6 +151,8 @@ import {
 } from ".././../bidFunc";
 import {bhcAddress,WBNB_tokenAddress} from ".././../addresses/constants";
 import{collectionURI,checkConnection} from ".././../etherFunc";
+import{getUserDetails} from ".././../data";
+
 export default {
   props: ["singleNft", "page"],
   data() {
@@ -353,6 +355,9 @@ export default {
    // this.collection_data= await collectionURI(this.singleNft.contract);
   //  console.log("DATA");
    // console.log(this.collection_data);
+    let details = await getUserDetails(user);
+    console.log("details");
+    console.log(details);
       let pay_token;
       this.signBidText = this.signText;
       this.currency = $("#selectedCurrency").text();
@@ -372,6 +377,7 @@ export default {
         );
         if (res) {
           let address = await checkConnection();
+
           let message_bidder =
             "You have place a bid of " +
             this.payment +
@@ -379,6 +385,7 @@ export default {
             this.currency +
             " to token " +
             this.singleNft.name; 
+
           let message_owner =  address + ' placed a bid of '+this.payment +
             " " +
             this.currency +
