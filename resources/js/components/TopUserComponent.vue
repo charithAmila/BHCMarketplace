@@ -40,7 +40,11 @@
       </div>
 
       <div id="actual-top-user">
-        <div v-for="(item, index) in userList" :key="index" class="topUserList">
+        <div
+          v-for="(item, index) in orderedUsers"
+          :key="index"
+          class="topUserList"
+        >
           <a class="black-link" :href="'/profile/' + item.user_id">
             <img class="filterImg" :src="item.propic" alt="" />
           </a>
@@ -90,7 +94,6 @@ export default {
       userList: [],
       userType: "sell",
       filterTime: "all",
-      userListOld: [],
     };
   },
   methods: {
@@ -99,24 +102,21 @@ export default {
     },
     async fetchFilteredUser() {
       if (this.userType == "sell") {
-        this.userListOld = await getMaxSellers(this.filterTime);
-        var userlistold = this.userListOld;
-        this.userList = userlistold.sort(function (a, b) {
-          return new Date(b.sell_amount) - new Date(a.sell_amount);
-        });
+        this.userList = await getMaxSellers(this.filterTime);
         $("#preloader-top-user").addClass("d-done");
       } else {
-        this.userListOld = await getMaxBuyers(this.filterTime);
-        var userlistold1 = this.userListOld;
-        this.userList = userlistold1.sort(function (a, b) {
-          return new Date(b.sell_amount) - new Date(a.sell_amount);
-        });
+        this.userList = await getMaxBuyers(this.filterTime);
         $("#preloader-top-user").addClass("d-done");
       }
     },
   },
   mounted() {
     this.fetchFilteredUser();
+  },
+  computed: {
+    orderedUsers: function () {
+      return _.orderBy(this.userList, "sell_amount", "desc");
+    },
   },
 };
 </script>
