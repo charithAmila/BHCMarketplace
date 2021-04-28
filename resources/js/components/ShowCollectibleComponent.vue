@@ -97,6 +97,7 @@
                                                     ':' +
                                                     current_owner.wallet
                                             "
+                                            @click="customSocialShare('twitter','Look what I found! ' +collectible.name +' collectible', asset_url +'nft/'+singleNft.contract+':'+singleNft.id+':'+current_owner.wallet)"
                                         >
                                             <i class="fa fa-twitter s-btn"></i>
                                             <label>Twitter</label>
@@ -114,10 +115,11 @@
                                             :data-url="
                                                 asset_url +
                                                     'nft/' +
-                                                    current_owner.user_profile +
-                                                    '/' +
-                                                    collectible.nft_slug
+                                                    singleNft.contract +
+                                                    ':' +
+                                                    current_owner.wallet
                                             "
+                                            @click="customSocialShare('facebook', 'Look what I found! ' +collectible.name +' collectible', asset_url +'nft/'+singleNft.contract+':'+singleNft.id+':'+current_owner.wallet)"
                                         >
                                             <i class="fa fa-facebook s-btn"></i>
                                             <label class="fb-label"
@@ -137,10 +139,11 @@
                                             :data-url="
                                                 asset_url +
                                                     'nft/' +
-                                                    current_owner.user_profile +
-                                                    '/' +
-                                                    collectible.nft_slug
+                                                    singleNft.contract +
+                                                    ':' +
+                                                    current_owner.wallet
                                             "
+                                            @click="customSocialShare('telegram', 'Look what I found! ' +collectible.name +' collectible', asset_url +'nft/'+singleNft.contract+':'+singleNft.id+':'+current_owner.wallet)"
                                         >
                                             <i
                                                 class="fab fa-telegram-plane s-btn"
@@ -160,11 +163,12 @@
                                             :data-url="
                                                 asset_url +
                                                     'nft/' +
-                                                    current_owner.user_profile +
-                                                    '/' +
-                                                    collectible.nft_slug
+                                                    singleNft.contract +
+                                                    ':' +
+                                                    current_owner.wallet
                                             "
                                             data-subject="Hey! Check out that URL"
+                                            @click="customSocialShare('email', 'Look what I found! ' +collectible.name +' collectible', asset_url +'nft/'+singleNft.contract+':'+singleNft.id+':'+current_owner.wallet, 'Hey! Check out that URL')"
                                         >
                                             <i class="fa fa-envelope s-btn"></i>
                                             <label>Email</label>
@@ -649,6 +653,37 @@ export default {
                     console.log(error);
                 });
         },
+
+        customSocialShare(social, content, url, subject='') {
+            switch(social) {
+              case "twitter":
+                var formatContent = encodeURI(content)
+                var setUrl = 'https://twitter.com/intent/tweet/?text='+formatContent+'&url='+url+'&&'
+                break;
+              case "facebook":
+                var setUrl = encodeURI('https://www.facebook.com/sharer/sharer.php?u='+url)
+                break;
+              case "telegram":
+                var formatContent = encodeURI(content)
+                var setUrl = 'https://t.me/share/url?url='+url+'&text='+formatContent
+                break;
+              default:
+                var formatSubject = encodeURI(subject)
+                var formatContent = encodeURI(content)
+                var setUrl = 'mailto:?subject='+formatSubject+'&body='+formatContent+'%0d%0a%0d%0a'+url
+            }
+
+            switch(social) {
+              case "email":
+                window.location.replace(setUrl)
+                break;
+              default:
+                var title = "Billion Happiness";
+                return window.open(setUrl, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=1000, height=500');
+            }
+        },
+
+
         copyUrl() {
             // alert(window.location.href)
 

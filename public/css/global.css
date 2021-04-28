@@ -1332,7 +1332,7 @@ body {
   position: sticky;
   top: 0;
   background: #ececec;
-  z-index: 99;
+  z-index: 98;
 }
 
 .row-0 .tabGroup {
