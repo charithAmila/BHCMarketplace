@@ -380,9 +380,7 @@ async function getOwnedTokensData(owner, base_url) {
         }
     } catch (e) {}
     window.proPageLoading = false;
-    if (window.myTokens.collectibles.length == 0) {
-        window.myTokens.collectibles = null;
-    }
+
     window.loaded["collectibles"] = true;
     return data;
 }
@@ -413,15 +411,13 @@ async function getLikedTokens(owner, base_url) {
         }
     }
     window.proPageLoading = false;
-    if (window.myTokens.liked.length == 0) {
-        window.myTokens.liked = null;
-    }
+
     window.loaded["liked"] = true;
     return data;
 }
 
 async function getCreatedTokens(owner, base_url) {
-    if (window.myTokens.created != null) {
+    if (!window.loaded["created"]) {
         if (window.myTokens.created.length == 0) {
             getCreated(owner, 6494200);
         }
@@ -474,9 +470,7 @@ async function getOnSaleTokens(owner, base_url) {
         }
     }
     window.proPageLoading = false;
-    if (window.myTokens["on-sale"].length == 0) {
-        window.myTokens["on-sale"] = null;
-    }
+
     window.loaded["on-sale"] = true;
     return data;
 }

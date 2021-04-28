@@ -289,6 +289,7 @@ async function getCreated(owner, _startingBlock) {
                 ).then(token => {
                     window.myTokens.created.push(token);
                 });
+
                 //data.push(token);
             } catch (e) {
                 console.log(e);
@@ -349,13 +350,25 @@ async function getCreated(owner, _startingBlock) {
                     );
                     //for (var n = 0; n < owners.length; n++) {
                     try {
-                        var token = await getTokenData(
+                        getTokenData(
                             event.args._collection,
                             owners[0].owner,
                             event.args._id
-                        );
+                        )
+                            .then(token => {
+                                window.myTokens.created.push(token);
+                            })
+                            .catch(err => {
+                                if (i + 4000 >= endBlock) {
+                                    window.loaded["created"] = true;
+                                }
+                            })
+                            .finally(data => {
+                                if (i + 4000 >= endBlock) {
+                                    window.loaded["created"] = true;
+                                }
+                            });
                         //data.push(token);
-                        window.myTokens.created.push(token);
                     } catch (e) {
                         console.log(e);
                     }
@@ -366,6 +379,7 @@ async function getCreated(owner, _startingBlock) {
             }
         }
         if (startBlock != 0) {
+            window.loaded["created"] = true;
             await axios.patch("/minted/" + owner, {
                 block: startBlock - 1
             });
@@ -375,12 +389,10 @@ async function getCreated(owner, _startingBlock) {
         if (startBlock != 0) {
             await axios.patch("/minted/" + owner, { block: startBlock - 1 });
         }
+        window.loaded["created"] = true;
         console.log(e);
     }
-    if (window.myTokens.created.length == 0) {
-        window.myTokens.created = null;
-    }
-    window.loaded["created"] = true;
+
     return tokens;
 }
 

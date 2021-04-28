@@ -160,7 +160,7 @@
                 :page="'marketplace'"
                 :isLoading="loading_collectibles"
             ></collectible-component>
-            <div id="preloader" class="row d-none">
+            <div id="preloader" class="row d-block" v-if="loading_collectibles">
                 <div
                     v-for="index in 24"
                     :key="index"
