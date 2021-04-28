@@ -12,7 +12,7 @@ class NotificationController extends Controller
 {
     public function addNotification(Request $request)
     {
-        if ($request->type =='bid') {
+        if ($request->type == 'bid') {
             $notification = new Notification;
             $notification->user_id = $request->user_id;
             $notification->message = $request->message_bidder;
@@ -31,7 +31,7 @@ class NotificationController extends Controller
             $notification2->token_id = $request->token_id;
             $notification2->type = 'bid';
             $notification2->save();
-        } else if($request->type == 'sell'){
+        } else if ($request->type == 'sell') {
             $notification = new Notification;
             $notification->user_id = $request->seller_id;
             $notification->message = $request->message_seller;
@@ -52,15 +52,13 @@ class NotificationController extends Controller
             $notification2->token_id = $request->token_id;
             $notification2->type = 'sell';
             $notification2->save();
-        }
-        elseif($request->type == 'create'){
+        } elseif ($request->type == 'create') {
             $notification = new Notification;
             $notification->user_id = $request->user_id;
             $notification->message = $request->message;
             $notification->type = 'create';
             $notification->save();
-        }
-        else if($request->type == 'follow'){
+        } else if ($request->type == 'follow') {
             $notification = new Notification;
             $notification->user_id = $request->user_id;
             $notification->message = $request->message;
@@ -75,7 +73,7 @@ class NotificationController extends Controller
         $request->validate([
             'user_id' => 'required',
         ]);
-        $data = Notification::where(['user_id' => $request->user_id,'status'=>true])->orderBy('created_at', 'DESC')->get();
+        $data = Notification::where(['user_id' => $request->user_id, 'status' => true])->orderBy('created_at', 'DESC')->get();
         return $data;
     }
     public function delete(Request $request)
@@ -84,19 +82,19 @@ class NotificationController extends Controller
             'user_id' => 'required'
         ]);
 
-        $data = Notification::where(['user_id' => $request->user_id])->update(['status' =>false]);
-       // $data->delete();
+        $data = Notification::where(['user_id' => $request->user_id])->update(['status' => false]);
+        // $data->delete();
     }
 
     public function getData(Request $request, $time)
     {
         $time_duration = $time;
         if ($time_duration == "1") {
-            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(1))->get();
+            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(1))->orderBy('sell_amount')->get();
         } else if ($time_duration == "7") {
-            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(7))->get();
+            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(7))->orderBy('sell_amount')->get();
         } else if ($time_duration == "30") {
-            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(30))->get();
+            return  Notification::whereDate('created_at', '>', Carbon::now()->subDays(30))->orderBy('sell_amount')->get();
         } else {
             return  Notification::all();
         }
