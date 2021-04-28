@@ -414,7 +414,7 @@ export default {
       $(".default-nav").fadeIn();
     });
     try{
-       getNotifications();
+       await this.getNotifications();
     }catch(err){
       console.log("error");
     }
