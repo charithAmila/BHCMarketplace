@@ -613,6 +613,9 @@ async function getTokenData(contract, owner, id) {
         nft.db_id = salesData.id;
         nft.signature = salesData.signature;
         nft.salt = salesData.salt;
+        nft.created_at = moment(salesData.created_at).format(
+            "MM/DD/YYYY hh:mm"
+        );
     }
     // nft.file = nft.image || nft.file
     //nft.creator = owner;
@@ -648,30 +651,29 @@ async function getAllSales(current_user) {
     for (var i = 0; i < tokens.length; i++) {
         if (tokens[i].current_owner != current_user) {
             try {
-                var nft = await getTokenData(
+                getTokenData(
                     tokens[i].collection,
                     tokens[i].current_owner,
                     tokens[i].token_id
-                );
-                nft.copies = nft.count;
-                nft.collection = tokens[i].collection;
+                ).then(nft=>{
+                    console.log(nft)
+                    nft.copies = nft.count;
+                //nft.collection = tokens[i].collection;
 
-                nft.signed_to = tokens[i].signed_to;
-                nft.db_id = tokens[i].id;
-                nft.price = tokens[i].price;
-                nft.created_at = moment(tokens[i].created_at).format(
-                    "MM/DD/YYYY hh:mm"
-                );
+                //nft.signed_to = tokens[i].signed_to;
+                //nft.db_id = tokens[i].id;
+                //nft.price = tokens[i].price;
+
                 //nft.ownedCopies = tokens[i].signed_to - tokens[i].sold;
                 nft.isp = 1;
                 nft.is_selling = 1;
-                nft.signature = tokens[i].signature;
-                nft.salt = tokens[i].salt;
-                nft.currency = tokens[i].currency;
+                //nft.signature = tokens[i].signature;
+                //nft.salt = tokens[i].salt;
+                nft.currency = nft.currency;
                 nft.currencyName =
-                    tokens[i].currency == hpsAddress
+                    nft.currency == hpsAddress
                         ? "HPS"
-                        : tokens[i].currency == bhcAddress
+                        : nft.currency == bhcAddress
                         ? "BHC"
                         : "BNB";
                 /*nft.file = nft.file.replace(
@@ -680,12 +682,18 @@ async function getAllSales(current_user) {
                 );*/
                 //nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
                 data.push(nft);
+                //if (data.length % 4 == 0) {
+                //for (var x = data.length - 1; x > data.length - 5; x++) {
                 window.sales.push(nft);
+                //}
+                //}
+                })
+                
             } catch (e) {}
         }
     }
 
-    return data;
+    //return data;
 }
 
 async function getAllSalesSearch(current_user, parameter) {
@@ -747,7 +755,11 @@ async function getAllSalesSearch(current_user, parameter) {
                     );
                     nft.ownedCopies = nft.on_sale;
                     data.push(nft);
-                    window.searches.push(nft);
+                    //if (data.length % 4 == 0) {
+                    //for (var x = data.length - 1; x > data.lenth - 5; x++) {
+                    window.sales.push(data[x]);
+                    // }
+                    //}
                     console.log("jgvhvjhvhvh");
                 } catch (e) {}
             }

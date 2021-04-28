@@ -280,13 +280,14 @@ async function getCreated(owner, _startingBlock) {
             );
             //for (var n = 0; n < owners.length; n++) {
             try {
-                var token = await getTokenData(
+                getTokenData(
                     event.collection,
                     owners[0].owner,
                     event.token_id
-                );
+                ).then(token => {
+                    window.myTokens.created.push(token);
+                });
                 //data.push(token);
-                window.myTokens.created.push(token);
             } catch (e) {
                 console.log(e);
             }
