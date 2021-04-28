@@ -115,7 +115,7 @@ export default {
   },
   computed: {
     orderedUsers: function () {
-      return _.orderBy(this.userList, "sell_amount", "desc");
+      return _.orderBy(this.userList, "sell_amount", "asc");
     },
   },
 };
