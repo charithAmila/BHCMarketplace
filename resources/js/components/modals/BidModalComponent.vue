@@ -355,9 +355,7 @@ export default {
    // this.collection_data= await collectionURI(this.singleNft.contract);
   //  console.log("DATA");
    // console.log(this.collection_data);
-    let details = await getUserDetails(user);
-    console.log("details");
-    console.log(details);
+   
       let pay_token;
       this.signBidText = this.signText;
       this.currency = $("#selectedCurrency").text();
@@ -376,8 +374,11 @@ export default {
           this.payment
         );
         if (res) {
-          let address = await checkConnection();
 
+          let address = await checkConnection();
+          let details = await getUserDetails(address);
+          console.log("details");
+          console.log(details);
           let message_bidder =
             "You have place a bid of " +
             this.payment +
