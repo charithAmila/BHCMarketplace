@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 .fade-in-top {
   -webkit-animation: fade-in-top 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
   animation: fade-in-top 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
@@ -346,6 +348,23 @@
 
 #web-content {
   margin-top: 71px;
+}
+
+.notif-btn {
+  position: relative;
+}
+
+.notif-btn .count {
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  top: -13px;
+  right: -5px;
 }
 
 .custom-navbar {
@@ -703,6 +722,31 @@
   background: #ececec;
   -o-object-fit: cover;
      object-fit: cover;
+  position: relative;
+}
+
+.custom-modal .modal-content .modal-body .col-img img::before {
+  content: "";
+  width: 100%;
+  height: calc(100% + 10px);
+  background-color: #e8e8e8;
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  transform: translateY(-50%);
+}
+
+.custom-modal .modal-content .modal-body .col-img img::after {
+  content: "☹" " " attr(alt);
+  font-size: 18px;
+  color: #646464;
+  display: block;
+  position: absolute;
+  z-index: 2;
+  top: 35px;
+  left: 10px;
+  width: 100%;
+  height: 100%;
 }
 
 .custom-modal .modal-content .modal-body .col-label label {

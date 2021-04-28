@@ -17,7 +17,7 @@
                 :href="asset_url + 'profile/' + follower.wallet"
                 target="_blank"
               >
-                <img :src="follower.cover_photo" alt="" />
+                <img :src="follower.display_photo" alt="" />
               </a>
             </div>
             <div class="col-9 col-sm9 col-md-9 col-lg-9">

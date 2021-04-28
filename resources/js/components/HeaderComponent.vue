@@ -76,6 +76,7 @@
           class="nav-item notif-btn"
           @click="toggleNotification"
         >
+          <span class="count">{{this.notifications.length}}</span>
           <img
             :src="asset_url + 'images/logo2.png'"
             width="35"
@@ -278,9 +279,22 @@ export default {
       current_user: tempUserData(""),
       user_link: "",
       mouse_leave: false,
+      notifications: []
     };
   },
   methods: {
+   async  getNotifications() {
+      let data = {};
+      data.user_id = await checkConnection();
+      axios
+        .post("/notifications", data)
+        .then((res) => {
+          this.notifications = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     checkConnection: async function () {
       const _this = this;
       //var interval = setInterval(async function() {
@@ -399,6 +413,12 @@ export default {
       $(".main-content").fadeIn();
       $(".default-nav").fadeIn();
     });
+    try{
+       await this.getNotifications();
+    }catch(err){
+      console.log("error");
+    }
+    
   },
 };
 </script>
