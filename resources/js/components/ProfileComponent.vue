@@ -183,6 +183,7 @@ export default {
             _this.filter = selectedFilter;
 
             if (selectedFilter == "on-sale") {
+                window.loaded["on-sale"] = false;
                 getOnSaleTokens(_this.user_id, _this.base_url);
             }
             if (selectedFilter == "created") {
@@ -198,7 +199,7 @@ export default {
                     _this.loading = false;
                     _this.showing = [];
                     clearInterval(interval);
-                } else if (window.myTokens[_this.filter].length > 0) {
+                } else if (window.loaded[_this.filter]) {
                     _this.loading = false;
                     clearInterval(interval);
                 }

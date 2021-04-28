@@ -50,15 +50,11 @@ export default {
             this.current_user = acc;
             var q = this.query;
             var _this = this;
-            getAllSalesSearch(acc, q).then(data => {
-                var collectibles_searched = data;
-                _this.collectibles_searched = collectibles_searched;
-                _this.isLoading = false;
-            });
+            getAllSalesSearch(acc, q).then(data => {});
             var interval = setInterval(function() {
-                if (window.searches.length > 0) {
+                _this.collectibles_searched = window.searches;
+                if (window.loaded["searches"]) {
                     _this.isLoading = false;
-                    _this.collectibles_searched = window.searches;
                     clearInterval(interval);
                 }
             }, 10);

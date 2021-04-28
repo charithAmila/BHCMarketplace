@@ -31,6 +31,14 @@ window.myTokens = {
     liked: [],
     created: []
 };
+window.loaded = {
+    "on-sale": false,
+    created: false,
+    collectibles: false,
+    liked: false,
+    sales: false,
+    searches: false
+};
 window.proPageLoading = true;
 window.sales = [];
 window.searches = [];
@@ -48,11 +56,16 @@ async function getMaxBuyers(time_filter) {
         output[user].buy_amount = 0;
         output[user].propic = details.display_photo;
         output[user].username = details.name;
-        output[user].currency = res[i].currency;
+        output[user].currency = "BNB";
     }
     for (let i = 0; i < res.length; i++) {
         let user = res[i].user_id;
-        output[user].buy_amount += res[i].buy_amount;
+
+        if ((res[i].currency = "BNB")) {
+            output[user].buy_amount += res[i].buy_amount;
+        } else {
+            output[user].buy_amount += res[i].buy_amount * 3.615528545705218;
+        }
     }
     return output;
 }
@@ -80,7 +93,7 @@ async function getMaxSellers(time_filter) {
         if (res[i].type != "follow" && res[i].type != "create") {
             let user = res[i].user_id;
 
-            if ((output[i].currency = "BNB")) {
+            if ((res[i].currency = "BNB")) {
                 output[user].sell_amount += res[i].sell_amount;
             } else {
                 output[user].sell_amount +=
@@ -381,7 +394,7 @@ async function getOwnedTokensData(owner, base_url) {
     if (window.myTokens.collectibles.length == 0) {
         window.myTokens.collectibles = null;
     }
-
+    window.loaded["collectibles"] = true;
     return data;
 }
 
@@ -414,7 +427,7 @@ async function getLikedTokens(owner, base_url) {
     if (window.myTokens.liked.length == 0) {
         window.myTokens.liked = null;
     }
-
+    window.loaded["liked"] = true;
     return data;
 }
 
@@ -475,7 +488,7 @@ async function getOnSaleTokens(owner, base_url) {
     if (window.myTokens["on-sale"].length == 0) {
         window.myTokens["on-sale"] = null;
     }
-
+    window.loaded["on-sale"] = true;
     return data;
 }
 
@@ -536,12 +549,8 @@ async function getTokenData(contract, owner, id) {
         //selectedToken.URI = selectedToken.URI.replace( "ipfs.io","gateway.pinata.cloud");
         uri = selectedToken.URI.replace("https://ipfs.io/ipfs/", "/data/");
         colData = await axios.get(uri);
-    } catch (e) {
-        uri = selectedToken.URI.replace("ipfs.io", "gateway.pinata.cloud");
-
-        colData = await axios.get(uri);
-    }
-
+    } catch (e) {}
+    colData = await axios.get(uri);
     //colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
     /*data.current_owner = collectible.tokenOwner;
@@ -619,6 +628,9 @@ async function getTokenData(contract, owner, id) {
         nft.db_id = salesData.id;
         nft.signature = salesData.signature;
         nft.salt = salesData.salt;
+        nft.created_at = moment(salesData.created_at).format(
+            "MM/DD/YYYY hh:mm"
+        );
     }
     // nft.file = nft.image || nft.file
     //nft.creator = owner;
@@ -654,44 +666,59 @@ async function getAllSales(current_user) {
     for (var i = 0; i < tokens.length; i++) {
         if (tokens[i].current_owner != current_user) {
             try {
-                var nft = await getTokenData(
+                getTokenData(
                     tokens[i].collection,
                     tokens[i].current_owner,
                     tokens[i].token_id
-                );
-                nft.copies = nft.count;
-                nft.collection = tokens[i].collection;
+                )
+                    .then(nft => {
+                        console.log(nft);
+                        nft.copies = nft.count;
+                        //nft.collection = tokens[i].collection;
 
-                nft.signed_to = tokens[i].signed_to;
-                nft.db_id = tokens[i].id;
-                nft.price = tokens[i].price;
-                nft.created_at = moment(tokens[i].created_at).format(
-                    "MM/DD/YYYY hh:mm"
-                );
-                //nft.ownedCopies = tokens[i].signed_to - tokens[i].sold;
-                nft.isp = 1;
-                nft.is_selling = 1;
-                nft.signature = tokens[i].signature;
-                nft.salt = tokens[i].salt;
-                nft.currency = tokens[i].currency;
-                nft.currencyName =
-                    tokens[i].currency == hpsAddress
-                        ? "HPS"
-                        : tokens[i].currency == bhcAddress
-                        ? "BHC"
-                        : "BNB";
-                /*nft.file = nft.file.replace(
+                        //nft.signed_to = tokens[i].signed_to;
+                        //nft.db_id = tokens[i].id;
+                        //nft.price = tokens[i].price;
+
+                        //nft.ownedCopies = tokens[i].signed_to - tokens[i].sold;
+                        nft.isp = 1;
+                        nft.is_selling = 1;
+                        //nft.signature = tokens[i].signature;
+                        //nft.salt = tokens[i].salt;
+                        nft.currency = nft.currency;
+                        nft.currencyName =
+                            nft.currency == hpsAddress
+                                ? "HPS"
+                                : nft.currency == bhcAddress
+                                ? "BHC"
+                                : "BNB";
+                        /*nft.file = nft.file.replace(
                     "ipfs.io",
                     "gateway.pinata.cloud"
                 );*/
-                //nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
-                data.push(nft);
-                window.sales.push(nft);
+                        //nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
+                        data.push(nft);
+                        //if (data.length % 4 == 0) {
+                        //for (var x = data.length - 1; x > data.length - 5; x++) {
+                        window.sales.push(nft);
+                        //}
+                        //}
+                    })
+                    .catch(err => {
+                        if (i == tokens.length) {
+                            window.loaded["sales"] = true;
+                        }
+                    })
+                    .finally(data => {
+                        if (i == tokens.length) {
+                            window.loaded["sales"] = true;
+                        }
+                    });
             } catch (e) {}
         }
     }
 
-    return data;
+    //return data;
 }
 
 async function getAllSalesSearch(current_user, parameter) {
@@ -716,45 +743,59 @@ async function getAllSalesSearch(current_user, parameter) {
                     .includes(parameter.toLowerCase())
             ) {
                 try {
-                    var nft = await getTokenData(
+                    window.loaded[""];
+                    getTokenData(
                         tokens[i].collection,
                         tokens[i].current_owner,
                         tokens[i].token_id
-                    );
+                    )
+                        .then(async function(nft) {
+                            nft.copies = nft.count;
+                            //nft.collection = tokens[i].collection;
 
-                    nft.copies = nft.count;
-                    nft.collection = tokens[i].collection;
+                            //nft.signed_to = tokens[i].signed_to;
+                            //nft.db_id = tokens[i].id;
+                            //nft.price = tokens[i].price;
 
-                    nft.signed_to = tokens[i].signed_to;
-                    nft.db_id = tokens[i].id;
-                    nft.price = tokens[i].price;
-                    nft.created_at = moment(tokens[i].created_at).format(
-                        "MM/DD/YYYY hh:mm"
-                    );
-                    nft.isp = 1;
-                    nft.is_selling = 1;
-                    nft.signature = tokens[i].signature;
-                    nft.salt = tokens[i].salt;
-                    nft.currency = tokens[i].currency;
-                    nft.currencyName =
-                        tokens[i].currency == hpsAddress
-                            ? "HPS"
-                            : tokens[i].currency == bhcAddress
-                            ? "BHC"
-                            : "BNB";
-                    nft.creatorData = await getUserDetails(nft.creator);
-                    /*nft.file = nft.file.replace(
+                            nft.isp = 1;
+                            nft.is_selling = 1;
+                            //nft.signature = tokens[i].signature;
+                            //nft.salt = tokens[i].salt;
+                            //nft.currency = tokens[i].currency;
+                            nft.currencyName =
+                                nft.currency == hpsAddress
+                                    ? "HPS"
+                                    : nft.currency == bhcAddress
+                                    ? "BHC"
+                                    : "BNB";
+                            //nft.creatorData = await getUserDetails(nft.creator);
+                            /*nft.file = nft.file.replace(
                         "ipfs.io",
                         "gateway.pinata.cloud"
                     );*/
-                    nft.file = nft.file.replace(
-                        "ipfs.io",
-                        "gateway.pinata.cloud"
-                    );
-                    nft.ownedCopies = nft.on_sale;
-                    data.push(nft);
-                    window.searches.push(nft);
-                    console.log("jgvhvjhvhvh");
+                            nft.file = nft.file.replace(
+                                "ipfs.io",
+                                "gateway.pinata.cloud"
+                            );
+                            nft.ownedCopies = nft.on_sale;
+                            data.push(nft);
+                            //if (data.length % 4 == 0) {
+                            //for (var x = data.length - 1; x > data.lenth - 5; x++) {
+                            window.searches.push(nft);
+                            // }
+                            //}
+                            console.log("jgvhvjhvhvh");
+                        })
+                        .catch(e => {
+                            if (i == tokens.length) {
+                                window.loaded["searches"] = true;
+                            }
+                        })
+                        .finally(data => {
+                            if (i == tokens.length) {
+                                window.loaded["searches"] = true;
+                            }
+                        });
                 } catch (e) {}
             }
         }

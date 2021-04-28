@@ -90,6 +90,7 @@ export default {
       userList: [],
       userType: "sell",
       filterTime: "all",
+      userListOld: [],
     };
   },
   methods: {
@@ -98,10 +99,18 @@ export default {
     },
     async fetchFilteredUser() {
       if (this.userType == "sell") {
-        this.userList = await getMaxSellers(this.filterTime);
+        this.userListOld = await getMaxSellers(this.filterTime);
+        var userlistold = this.userListOld;
+        this.userList = userlistold.sort(function (a, b) {
+          return new Date(b.sell_amount) - new Date(a.sell_amount);
+        });
         $("#preloader-top-user").addClass("d-done");
       } else {
-        this.userList = await getMaxBuyers(this.filterTime);
+        this.userListOld = await getMaxBuyers(this.filterTime);
+        var userlistold1 = this.userListOld;
+        this.userList = userlistold1.sort(function (a, b) {
+          return new Date(b.sell_amount) - new Date(a.sell_amount);
+        });
         $("#preloader-top-user").addClass("d-done");
       }
     },
