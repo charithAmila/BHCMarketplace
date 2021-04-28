@@ -25,6 +25,8 @@ const bep20ABI = require("./abis/bep20.json");
 const minterABI = require("./abis/minter.json");
 const factoryABI = require("./abis/factory.json");
 
+window.loadedCreated = false;
+
 if (typeof window.ethereum == "undefined") {
     window.provider = new ethers.providers.JsonRpcProvider(
         "https://bsc-dataseed.binance.org/"
@@ -378,7 +380,7 @@ async function getCreated(owner, _startingBlock) {
     if (window.myTokens.created.length == 0) {
         window.myTokens.created = null;
     }
-    window.proPageLoading = false;
+    window.loaded["created"] = true;
     return tokens;
 }
 
