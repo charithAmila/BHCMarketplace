@@ -190,12 +190,12 @@ export default {
                 getCreatedTokens(_this.user_id, _this.base_url);
             }
 
-            window.myTokens[selectedFilter] != null
-                ? (_this.showing = window.myTokens[selectedFilter])
-                : (_this.showing = []);
-
             var interval = setInterval(function() {
-                if (window.myTokens[_this.filter] == null) {
+                _this.showing = window.myTokens[_this.filter];
+                if (
+                    window.myTokens[_this.filter].length == 0 &&
+                    window.loaded[_this.filter]
+                ) {
                     _this.loading = false;
                     _this.showing = [];
                     clearInterval(interval);
@@ -203,7 +203,7 @@ export default {
                     _this.loading = false;
                     clearInterval(interval);
                 }
-            }, 1);
+            }, 10);
 
             /*const _this = this;
             _this.filter = selectedFilter;
