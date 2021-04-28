@@ -98,10 +98,16 @@ export default {
     },
     async fetchFilteredUser() {
       if (this.userType == "sell") {
-        this.userList = await getMaxSellers(this.filterTime);
+        var userList = await getMaxSellers(this.filterTime);
+        this.userList = userList.sort(function (a, b) {
+          return new Date(b.sell_amount) - new Date(a.sell_amount);
+        });
         $("#preloader-top-user").addClass("d-done");
       } else {
-        this.userList = await getMaxBuyers(this.filterTime);
+        var userList1 = await getMaxBuyers(this.filterTime);
+        this.userList = userList1.sort(function (a, b) {
+          return new Date(b.sell_amount) - new Date(a.sell_amount);
+        });
         $("#preloader-top-user").addClass("d-done");
       }
     },
