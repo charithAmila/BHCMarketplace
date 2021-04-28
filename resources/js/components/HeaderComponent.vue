@@ -283,7 +283,7 @@ export default {
     };
   },
   methods: {
-     getNotifications() {
+   async  getNotifications() {
       let data = {};
       data.user_id = await checkConnection();
       axios
