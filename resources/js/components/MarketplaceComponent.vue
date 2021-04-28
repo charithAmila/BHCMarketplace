@@ -234,11 +234,14 @@ export default {
                 if (!_this.loading_collectibles) {
                     clearInterval(itemInterval);
                 }
+                if (window.loaded["sales"]) {
+                    _this.loading_collectibles = false;
+                }
             }, 1);
             getAllSales(_this.current_user)
                 .then(data => {
                     //_this.collectibles = data;
-                    this.loading_collectibles = false;
+                    //this.loading_collectibles = false;
                 })
                 .catch(error => {
                     console.log(error);
