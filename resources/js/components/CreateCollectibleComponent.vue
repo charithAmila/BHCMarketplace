@@ -672,7 +672,7 @@ import {
   getMinted,
   getFees,
   signMessage,
-  generateOrderIdMessage,
+  generateOrderIdMessage,getBalanceInUSDT
 } from "./../etherFunc.js";
 import { hpsAddress, bhcAddress } from "./../addresses/constants";
 import { addSale, getUserDetails } from "./../data.js";
@@ -761,6 +761,12 @@ export default {
       selectedCollection: "",
     };
   },
+  computed: {
+    enoughBalance(){
+      //let res = await getBalanceInUSDT()
+    }
+  },
+
   methods: {
     popupModal() {
       Toast.fire({
@@ -1300,6 +1306,7 @@ export default {
   },
   async mounted() {
     await this.checkConnection();
+    let res = await getBalanceInUSDT();
   },
 };
 </script>

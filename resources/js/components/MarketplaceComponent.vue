@@ -44,7 +44,7 @@
           <label class="sortLabel">Sort by</label>
           <ul>
             <li>
-              <a href="javascript:void(0)" class="sortItem">
+              <a class="sortItem">
                 <div class="row">
                   <div class="col-md-9" @click="sortedItems('recent')">
                     Recently added
@@ -56,7 +56,7 @@
               </a>
             </li>
             <li>
-              <a href="javascript:void(0)" class="sortItem">
+              <a class="sortItem">
                 <div class="row">
                   <div class="col-md-9" @click="sortedItems('cheap')">
                     Cheapest
@@ -68,7 +68,7 @@
               </a>
             </li>
             <li>
-              <a href="javascript:void(0)" class="sortItem">
+              <a class="sortItem">
                 <div class="row">
                   <div class="col-md-9" @click="sortedItems('hprice')">
                     Highest price
@@ -119,6 +119,10 @@
         :collectibles="
           isSortedRecent
             ? new_array_collectibles
+            : isCheapest
+            ? new_array_collectibles
+            : isHigh
+            ? new_array_collectibles
             : isAll
             ? collectibles
             : collectible
@@ -152,6 +156,8 @@ export default {
       isAll: true,
       new_array_collectibles: [],
       isSortedRecent: false,
+      isCheapest: false,
+      isHigh: false,
       loading_collectibles: true,
     };
   },
@@ -244,18 +250,21 @@ export default {
         } else {
           var collectible_array = this.collectibles;
         }
+        this.isCheapest = false;
+        this.isHigh = false;
         this.isSortedRecent = true;
         this.new_array_collectibles = collectible_array.sort(function (a, b) {
           return new Date(b.created_at) - new Date(a.created_at);
         });
       } else if (sort_status == "cheap") {
+        console.log(this.new_array_collectibles.length);
         if (
           this.new_array_collectibles === undefined ||
           this.new_array_collectibles.length == 0
         ) {
           //
         } else {
-          this.isSortedRecent = false;
+          this.isCheapest = false;
           this.collectibles = [...this.new_array_collectibles];
         }
         if (!this.isAll) {
@@ -263,7 +272,9 @@ export default {
         } else {
           var collectible_array = this.collectibles;
         }
-        this.isSortedRecent = true;
+        this.isSortedRecent = false;
+        this.isHigh = false;
+        this.isCheapest = true;
         this.new_array_collectibles = collectible_array.sort(function (a, b) {
           return new Date(a.price) - new Date(b.price);
         });
@@ -274,7 +285,7 @@ export default {
         ) {
           //
         } else {
-          this.isSortedRecent = false;
+          this.isHigh = false;
           this.collectibles = [...this.new_array_collectibles];
         }
         if (!this.isAll) {
@@ -282,7 +293,9 @@ export default {
         } else {
           var collectible_array = this.collectibles;
         }
-        this.isSortedRecent = true;
+        this.isCheapest = false;
+        this.isSortedRecent = false;
+        this.isHigh = true;
         this.new_array_collectibles = collectible_array.sort(function (a, b) {
           return new Date(b.price) - new Date(a.price);
         });

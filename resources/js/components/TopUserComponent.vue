@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="filterListMobile d-sm-block d-md-none">
+    <!--div class="filterListMobile d-sm-block d-md-none">
       <div
         v-for="(item, index) in userList"
         :key="index"
@@ -79,7 +79,7 @@
           {{ item.sell_amount }} {{ item.buy_amount }} {{ item.currency }}
         </label>
       </div>
-    </div>
+    </div-->
   </div>
 </template>
 
@@ -91,7 +91,8 @@ export default {
   props: ["asset_url"],
   data() {
     return {
-      userList: [],
+      userListSellers: [],
+      userListBuyers:[],
       userType: "sell",
       filterTime: "all",
     };
@@ -101,19 +102,10 @@ export default {
       this.fetchFilteredUser();
     },
     async fetchFilteredUser() {
-      if (this.userType == "sell") {
+      this.userListSellers = await getMaxSellers(this.filterTime);
+       this.userListBuyers = await getMaxBuyers(this.filterTime);
         $("#preloader-top-user").removeClass("d-done");
-        this.userList = await getMaxSellers(this.filterTime);
-        $("#preloader-top-user").addClass("d-done");
-      } else {
-        $("#preloader-top-user").removeClass("d-done");
-        this.userList = await getMaxBuyers(this.filterTime);
-        this.orderedUsers();
-        $("#preloader-top-user").addClass("d-done");
-      }
-    },
-    orderedUsers: function () {
-      return _.orderBy(this.userList, "sell_amount", "desc");
+        $("#preloader-top-user").addClass("d-done");   
     },
   },
   mounted() {
@@ -121,7 +113,11 @@ export default {
   },
   computed: {
     orderedUsers: function () {
-      return _.orderBy(this.userList, "sell_amount", "desc");
+      if (this.userType == "sell") {
+        return _.orderBy(this.userListSellers, "sell_amount", "desc");
+      } else {
+        return _.orderBy(this.userListBuyers, "buy_amount", "desc");
+      }
     },
   },
 };

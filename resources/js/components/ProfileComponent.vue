@@ -201,7 +201,7 @@ export default {
                     window.loaded[_this.filter]
                 ) {
                     _this.loading = false;
-                    _this.showing = [];
+                    _this.showing = window.myTokens[_this.filter];
                     clearInterval(_this.interval);
                 } else if (window.loaded[_this.filter]) {
                     _this.loading = false;

@@ -70,8 +70,8 @@ function getTokenContract(bidding_token) {
 async function getBHCBalance() {
     //const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
-    const hpsContract = new ethers.Contract(bhcAddress, token_ABI, provider);
-    const balance = await hpsContract.balanceOf(address);
+    const bhcContract = new ethers.Contract(bhcAddress, token_ABI, provider);
+    const balance = await bhcContract.balanceOf(address);
     console.log("BhC balance");
     console.log(address);
     console.log(balance.toString());
@@ -541,15 +541,11 @@ async function getHighestBid(owner, contract_address, token_id) {
 
     if (output.length != 0) {
         for (var i = 0; i < output.length; i++) {
-            var bhcprice2 = await getTokenPrice("BHC");
-            var bhcprice = 3.615528545705218;
-            console.log("BHC price");
-            console.log(bhcprice2);
+            var bhcprice = await getTokenPrice("BHC");
+            //var bhcprice = 3.615528545705218;
+            // console.log("BHC price");
+            // console.log(bhcprice2);
             //console.log(hpsprice);
-            var hpsprice = 1;
-            console.log("OUTPUT");
-            console.log(output[i]);
-
             if (
                 output[i].bidding_token ==
                 "0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4"
@@ -573,7 +569,8 @@ async function getHighestBid(owner, contract_address, token_id) {
                 ) {
                     // console.log(output[i].bidding_amount * 10 ** 18);
                     if (
-                        bhcprice * parseFloat(output[i].bidding_amount) >
+                        (parseInt(bhcprice) / 10 ** 18) *
+                            parseFloat(output[i].bidding_amount) >
                         maxAmount
                     ) {
                         maxAmount = output[i].bidding_amount;
@@ -597,8 +594,7 @@ async function getHighestBid(owner, contract_address, token_id) {
                 const WBNB_balance = await WBNB_Write_Test.balanceOf(
                     output[i].bidding_address
                 );
-                console.log("WBNB balance");
-                console.log(WBNB_balance);
+
                 //const WBNB_balance = 100000000000000000000;
                 if (
                     parseFloat(WBNB_balance) >
@@ -632,8 +628,7 @@ async function getHighestBid(owner, contract_address, token_id) {
         res.maxAmount = "1";
         res.maxBidder = output[0].user_id;
         res.maxBidSig = output[0].signature;*/
-        console.log("Results");
-        console.log(res);
+
         return res;
     } else {
         return false;
@@ -686,6 +681,7 @@ export {
     getBHCBalance,
     getBNBBalance,
     getWBNBBalance,
+    getTokenPrice,
     getConnectedAddress,
     acceptBid,
     approveBHC,
