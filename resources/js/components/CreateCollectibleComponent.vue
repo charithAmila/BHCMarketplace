@@ -1305,7 +1305,6 @@ export default {
     },
   },
   async mounted() {
-   
     await this.checkConnection();
     let res = await getBalanceInUSDT();
   },

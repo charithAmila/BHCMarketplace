@@ -114,7 +114,9 @@ async function getBalanceInUSDT() {
         ethers.BigNumber.from("1000000000000000000"),
         ["0x55d398326f99059ff775485246999027b3197955", WBNB_tokenAddress]
     );
+    console.log("Price of BHC");
     console.log(priceBHC);
+    console.log("Price of BNB");
     console.log(priceBNB);
     //return parseFloat(price[0].toString());
 }
