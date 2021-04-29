@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="filterListMobile d-sm-block d-md-none">
+    <!--div class="filterListMobile d-sm-block d-md-none">
       <div
         v-for="(item, index) in userList"
         :key="index"
@@ -79,7 +79,7 @@
           {{ item.sell_amount }} {{ item.buy_amount }} {{ item.currency }}
         </label>
       </div>
-    </div>
+    </div-->
   </div>
 </template>
 
