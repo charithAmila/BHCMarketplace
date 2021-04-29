@@ -149,9 +149,9 @@ import {
   approveWBNB,
   convertBNBtoWBNB,
 } from ".././../bidFunc";
-import {bhcAddress,WBNB_tokenAddress} from ".././../addresses/constants";
-import{collectionURI,checkConnection} from ".././../etherFunc";
-import{getUserDetails} from ".././../data";
+import { bhcAddress, WBNB_tokenAddress } from ".././../addresses/constants";
+import { collectionURI, checkConnection } from ".././../etherFunc";
+import { getUserDetails } from ".././../data";
 
 export default {
   props: ["singleNft", "page"],
@@ -159,7 +159,7 @@ export default {
     return {
       showApproveBHC: true,
       rate: 2.5,
-      collection_data:{},
+      collection_data: {},
       bid_input: 0,
       selectedBalance: 0,
       BHC_Balance: 0,
@@ -169,8 +169,8 @@ export default {
       total_payment: 0,
       payment: 0,
       currency: "",
-      message_bidder:"",
-      message_owner:"",
+      message_bidder: "",
+      message_owner: "",
       error: "",
       approved: false,
       signed: false,
@@ -202,7 +202,6 @@ export default {
     };
   },
   async mounted() {
-   
     this.BHC_Balance = await getBHCBalance();
     this.BNB_Balance = await getBNBBalance();
     this.WBNB_Balance = await getWBNBBalance();
@@ -272,14 +271,12 @@ export default {
           this.approving = false;
         }
       } catch (error) {
-        if (error.code == 4001) {
-          this.approving = false;
-          this.approveWBNBText = "Approve WBNB";
-          Toast.fire({
-            icon: "error",
-            title: "User rejected transaction!",
-          });
-        }
+        this.approving = false;
+        this.approveWBNBText = "Approve WBNB";
+        Toast.fire({
+          icon: "error",
+          title: "User rejected transaction!",
+        });
       }
     },
     //////////////////!Convert BNB////////////////////
@@ -295,34 +292,32 @@ export default {
             //this.convertBNBText = "Converted BNB to WBNB";
           }
         } catch (error) {
-          if (error.code == 4001) {
-            this.converting = false;
-             this.convertBNBText = "Convert BNB to WBNB";
-            Toast.fire({
-              icon: "error",
-              title: "User rejected transaction!",
-            });
-          }
+          this.converting = false;
+          this.convertBNBText = "Convert BNB to WBNB";
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
       } else {
         Toast.fire({
-              icon: "error",
-              title: "User rejected transaction!",
-            });
+          icon: "error",
+          title: "User rejected transaction!",
+        });
         this.error = "Not enough Balance";
       }
     },
     //////////////////!Approve BHC////////////////////
     async approveBHCFunc() {
-      //////////////////////////////////////////////////////////////// 
-       //console.log("Contract");
+      ////////////////////////////////////////////////////////////////
+      //console.log("Contract");
       //  console.log(singleNft.contract);
-     //  this.collection_data = await collectionURI(singleNft.contract);
+      //  this.collection_data = await collectionURI(singleNft.contract);
       ////////////////////////////////////////////////////////////////
       console.log(this.enoughBHC);
       if (this.enoughBHC) {
-          this.approving = true;
-      this.approveBHCText = this.approvingText;
+        this.approving = true;
+        this.approveBHCText = this.approvingText;
         try {
           var res = await approveBHC(this.total_payment);
           if (res == 1) {
@@ -331,31 +326,29 @@ export default {
             this.approved = true;
           }
         } catch (error) {
-          if (error.code == 4001) {
-            this.approving = false;
-           this.approveBHCText = "Approve BHC";
-            Toast.fire({
-              icon: "error",
-              title: "User rejected transaction!",
-            });
-          }
+          this.approving = false;
+          this.approveBHCText = "Approve BHC";
+          Toast.fire({
+            icon: "error",
+            title: "User rejected transaction!",
+          });
         }
       } else {
         Toast.fire({
-              icon: "error",
-              title: "Not enough balance!",
-            });
+          icon: "error",
+          title: "Not enough balance!",
+        });
         this.error = "Not enough Balance";
       }
     },
     //////////////////!Sign Bid////////////////////
 
     async signBidFunc() {
-  //  console.log( singleNft);
-   // this.collection_data= await collectionURI(this.singleNft.contract);
-  //  console.log("DATA");
-   // console.log(this.collection_data);
-   
+      //  console.log( singleNft);
+      // this.collection_data= await collectionURI(this.singleNft.contract);
+      //  console.log("DATA");
+      // console.log(this.collection_data);
+
       let pay_token;
       this.signBidText = this.signText;
       this.currency = $("#selectedCurrency").text();
@@ -374,7 +367,6 @@ export default {
           this.payment
         );
         if (res) {
-
           let address = await checkConnection();
           let details = await getUserDetails(address);
           console.log("details");
@@ -385,15 +377,18 @@ export default {
             " " +
             this.currency +
             " to token " +
-            this.singleNft.name; 
+            this.singleNft.name;
 
-          let message_owner =  address + ' placed a bid of '+this.payment +
+          let message_owner =
+            address +
+            " placed a bid of " +
+            this.payment +
             " " +
             this.currency +
             " to token " +
-            this.singleNft.name; 
-           // +" in the collection " +
-           // this.singleNft.collection.name;
+            this.singleNft.name;
+          // +" in the collection " +
+          // this.singleNft.collection.name;
           let data = {};
           data.message_owner = message_owner;
           data.message_bidder = message_bidder;
@@ -411,19 +406,16 @@ export default {
           this.signed = true;
           this.signBidText = "Signed and Placed Order";
           Toast.fire({
-                            icon: "success",
-                            title: "Successfully placed a bid!"
-                        });
+            icon: "success",
+            title: "Successfully placed a bid!",
+          });
           $("#bidModal").removeClass("d-block");
-           
         }
       } catch (error) {
-        if (error.code == 4001) {
-          Toast.fire({
-            icon: "error",
-            title: "User rejected transaction!",
-          });
-        }
+        Toast.fire({
+          icon: "error",
+          title: "User rejected transaction!",
+        });
       }
     },
 
@@ -439,7 +431,6 @@ export default {
     },
     //////////////////!Place Bid////////////////////
     async placeBid() {
-    
       this.currency = $("#selectedCurrency").text();
 
       try {
@@ -451,7 +442,7 @@ export default {
           this.payment
         );
 
-     /* if(this.page=="showCollectible"){
+        /* if(this.page=="showCollectible"){
         this.message_bidder =
           "You have place a bid of " +
           this.payment +
@@ -491,11 +482,11 @@ export default {
           " " +
           this.currency;
       }*/
-       
+
         let success = true;
 
         if (success) {
-         /* let data = {};
+          /* let data = {};
           data.currency = this.currency;
           data.message = message;
           data.user_id = await checkConnection();
@@ -508,21 +499,17 @@ export default {
           //window.location.reload();
         }
       } catch (error) {
-        if (error.code == 4001) {
-          Toast.fire({
-            icon: "error",
-            title: "User rejected transaction!",
-          });
-        }
-      }
-    },
-    catch(error) {
-      if (error.code == 4001) {
         Toast.fire({
           icon: "error",
           title: "User rejected transaction!",
         });
       }
+    },
+    catch(error) {
+      Toast.fire({
+        icon: "error",
+        title: "User rejected transaction!",
+      });
     },
   },
 };
