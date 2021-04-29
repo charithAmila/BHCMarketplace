@@ -76,7 +76,7 @@
           class="nav-item notif-btn"
           @click="toggleNotification"
         >
-          <span v-if="this.notifications.length>0" class="count">{{this.notifications.length}}</span>
+          <span v-if="this.notifications!=[]" class="count">{{this.notifications.length}}</span>
           <img
             :src="asset_url + 'images/logo2.png'"
             width="35"
