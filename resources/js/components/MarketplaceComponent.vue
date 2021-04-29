@@ -126,38 +126,6 @@
         :page="'marketplace'"
         :isLoading="loading_collectibles"
       ></collectible-component>
-      <div id="preloader" class="row d-block" v-if="loading_collectibles">
-        <div
-          v-for="index in 24"
-          :key="index"
-          class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
-        >
-          <div class="outside-nft border-on-profile">
-            <div class="inside-nft">
-              <div class="inner-outside-nft">
-                <div class="inner-nft">
-                  <div class="item-main">
-                    <div class="item-head">
-                      <div class="preloader-img"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="item-img"></div>
-
-        <div class="display-flex -mt-15">
-          <div class="preloader-content"></div>
-        </div>
-        <div class="text-center currency-label">
-          <div class="preloader-content"></div>
-        </div>
-        <div class="preloader-half">
-          <div class="preloader-content"></div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
