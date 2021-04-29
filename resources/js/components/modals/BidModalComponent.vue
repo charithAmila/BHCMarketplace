@@ -314,7 +314,6 @@ export default {
       //  console.log(singleNft.contract);
       //  this.collection_data = await collectionURI(singleNft.contract);
       ////////////////////////////////////////////////////////////////
-      console.log(this.enoughBHC);
       if (this.enoughBHC) {
         this.approving = true;
         this.approveBHCText = this.approvingText;
