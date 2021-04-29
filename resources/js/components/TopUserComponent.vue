@@ -108,12 +108,8 @@ export default {
       } else {
         $("#preloader-top-user").removeClass("d-done");
         this.userList = await getMaxBuyers(this.filterTime);
-
         $("#preloader-top-user").addClass("d-done");
       }
-    },
-    orderedUsers: function () {
-      return _.orderBy(this.userList, "sell_amount", "desc");
     },
   },
   mounted() {
@@ -121,7 +117,11 @@ export default {
   },
   computed: {
     orderedUsers: function () {
-      return _.orderBy(this.userList, "sell_amount", "desc");
+      if (this.userType == "sell") {
+        return _.orderBy(this.userList, "sell_amount", "desc");
+      } else {
+        return _.orderBy(this.userList, "sell_amount", "desc");
+      }
     },
   },
 };
