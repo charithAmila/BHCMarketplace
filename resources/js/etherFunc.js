@@ -12,7 +12,9 @@ import {
     bhcAddress,
     minterAddress,
     contractFactoryAddress,
-    NFTStorageAddress
+    NFTStorageAddress,
+    WBNB_tokenAddress,
+    julswap_routerAddress
 } from "./addresses/constants";
 import { getTokenData } from "./data";
 //console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
@@ -91,7 +93,31 @@ async function redirectToConnect() {
         window.location.href = "/connect";
     }
 }
+async function getBalanceInUSDT() {
+    var address = await checkConnection();
+    const bhcContract = new ethers.Contract(bhcAddress, token_ABI, provider);
+    const BHC_balance = await bhcContract.balanceOf(address);
+    const BNB_balance = await provider.getBalance(address);
+    //return parseFloat(balance.toString()) / 10 ** 18;
+    const julswap_router = ethers.utils.getAddress(julswap_routerAddress);
+    const julswap_Read = new ethers.Contract(
+        julswap_router,
+        julswap_ABI,
+        provider
+    );
 
+    const priceBHC = await julswap_Read.getAmountsIn(
+        ethers.BigNumber.from("1000000000000000000"),
+        ["0x55d398326f99059ff775485246999027b3197955", bhcAddress]
+    );
+    const priceBNB = await julswap_Read.getAmountsIn(
+        ethers.BigNumber.from("1000000000000000000"),
+        ["0x55d398326f99059ff775485246999027b3197955", WBNB_tokenAddress]
+    );
+    console.log(priceBHC);
+    console.log(priceBNB);
+    //return parseFloat(price[0].toString());
+}
 async function getBNBBalance(address) {
     try {
         var balance = await rpcprovider.getBalance(toAddress(address));
@@ -1264,5 +1290,6 @@ export {
     getFees,
     serviceFee,
     checkOrder,
-    availableToBuy
+    availableToBuy,
+    getBalanceInUSDT
 };

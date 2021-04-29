@@ -70,8 +70,8 @@ function getTokenContract(bidding_token) {
 async function getBHCBalance() {
     //const provider = new ethers.providers.Web3Provider(window.ethereum);
     var address = await checkConnection();
-    const hpsContract = new ethers.Contract(bhcAddress, token_ABI, provider);
-    const balance = await hpsContract.balanceOf(address);
+    const bhcContract = new ethers.Contract(bhcAddress, token_ABI, provider);
+    const balance = await bhcContract.balanceOf(address);
     console.log("BhC balance");
     console.log(address);
     console.log(balance.toString());
@@ -569,7 +569,8 @@ async function getHighestBid(owner, contract_address, token_id) {
                 ) {
                     // console.log(output[i].bidding_amount * 10 ** 18);
                     if (
-                        bhcprice * parseFloat(output[i].bidding_amount) >
+                        (parseInt(bhcprice) / 10 ** 18) *
+                            parseFloat(output[i].bidding_amount) >
                         maxAmount
                     ) {
                         maxAmount = output[i].bidding_amount;
