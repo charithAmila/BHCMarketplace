@@ -102,7 +102,7 @@
 
   .filterListMobile {
     display: flex;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .filterListMobile .filterItemMobile {

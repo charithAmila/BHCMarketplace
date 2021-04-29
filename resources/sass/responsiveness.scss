@@ -90,7 +90,7 @@
     }
     .filterListMobile {
         display: flex;
-        overflow-y: scroll;
+        overflow-y: auto;
         .filterItemMobile {
             padding: 15px;
             display: flex;
