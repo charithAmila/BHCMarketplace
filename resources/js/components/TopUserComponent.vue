@@ -120,7 +120,7 @@ export default {
       if (this.userType == "sell") {
         return _.orderBy(this.userList, "sell_amount", "desc");
       } else {
-        return _.orderBy(this.userList, "sell_amount", "desc");
+        return _.orderBy(this.userList, "buy_amount", "desc");
       }
     },
   },
