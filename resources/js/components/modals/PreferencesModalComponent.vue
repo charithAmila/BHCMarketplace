@@ -87,13 +87,12 @@
                             </div>
                             <div class="form-divide">
                                 <label class="input-label">Short url</label>
-                                <span style="font-size:9px" class="link-url">billionhappiness.finance/profile/</span>
                                 <input
                                     id="short_url-profile"
-                                    class="modal-input preferences-check with-link"
+                                    class="modal-input preferences-check"
                                     type="text"
                                     name="short_url"
-                                    placeholder="Enter short url"
+                                    placeholder="billionhappines.finance/profile"
                                     v-model="user_data.short_url"
                                     @input="nameCheck"
                                 />
