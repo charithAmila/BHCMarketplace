@@ -91,7 +91,8 @@ export default {
   props: ["asset_url"],
   data() {
     return {
-      userList: [],
+      userListSellers: [],
+      userListBuyers:[],
       userType: "sell",
       filterTime: "all",
     };
@@ -101,15 +102,10 @@ export default {
       this.fetchFilteredUser();
     },
     async fetchFilteredUser() {
-      if (this.userType == "sell") {
+      this.userListSellers = await getMaxSellers(this.filterTime);
+       this.userListBuyers = await getMaxBuyers(this.filterTime);
         $("#preloader-top-user").removeClass("d-done");
-        this.userList = await getMaxSellers(this.filterTime);
-        $("#preloader-top-user").addClass("d-done");
-      } else {
-        $("#preloader-top-user").removeClass("d-done");
-        this.userList = await getMaxBuyers(this.filterTime);
-        $("#preloader-top-user").addClass("d-done");
-      }
+        $("#preloader-top-user").addClass("d-done");   
     },
   },
   mounted() {
@@ -118,9 +114,9 @@ export default {
   computed: {
     orderedUsers: function () {
       if (this.userType == "sell") {
-        return _.orderBy(this.userList, "sell_amount", "desc");
+        return _.orderBy(this.userListSellers, "sell_amount", "desc");
       } else {
-        return _.orderBy(this.userList, "buy_amount", "desc");
+        return _.orderBy(this.userListBuyers, "buy_amount", "desc");
       }
     },
   },
