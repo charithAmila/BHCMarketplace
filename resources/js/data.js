@@ -16,6 +16,7 @@ import {
     generateOrderId,
     availableToBuy
 } from "./etherFunc";
+import { getTokenPrice } from "./bidFunc";
 import {
     hps721Address,
     hps1155Address,
@@ -47,7 +48,8 @@ async function getMaxBuyers(time_filter) {
     await axios.get("/getData/" + time_filter).then(function(response) {
         res = response.data;
     });
-    console.log(res);
+    let bhcprice = await getTokenPrice("BHC");
+    bhcprice = parseFloat(bhcprice) / 10 ** 18;
     let output = {};
     for (let i = 0; i < res.length; i++) {
         let user = res[i].user_id;
@@ -64,7 +66,7 @@ async function getMaxBuyers(time_filter) {
         if ((res[i].currency = "BNB")) {
             output[user].buy_amount += res[i].buy_amount;
         } else {
-            output[user].buy_amount += res[i].buy_amount * 3.615528545705218;
+            output[user].buy_amount += res[i].buy_amount * bhcprice;
         }
     }
     return output;
@@ -76,6 +78,8 @@ async function getMaxSellers(time_filter) {
     await axios.get("/getData/" + time_filter).then(function(response) {
         res = response.data;
     });
+    let bhcprice = await getTokenPrice("BHC");
+    bhcprice = parseFloat(bhcprice) / 10 ** 18;
     let output = {};
     for (let i = 0; i < res.length; i++) {
         if (res[i].type != "follow" && res[i].type != "create") {
@@ -96,8 +100,7 @@ async function getMaxSellers(time_filter) {
             if ((res[i].currency = "BNB")) {
                 output[user].sell_amount += res[i].sell_amount;
             } else {
-                output[user].sell_amount +=
-                    res[i].sell_amount * 3.615528545705218;
+                output[user].sell_amount += res[i].sell_amount * bhcprice;
             }
         }
     }

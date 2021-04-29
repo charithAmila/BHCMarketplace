@@ -681,6 +681,7 @@ export {
     getBHCBalance,
     getBNBBalance,
     getWBNBBalance,
+    getTokenPrice,
     getConnectedAddress,
     acceptBid,
     approveBHC,
