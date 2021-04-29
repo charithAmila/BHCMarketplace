@@ -122,9 +122,10 @@
           ><i class="fa fa-search"></i
         ></a>
         <a class="nav-item notif-btn notif-mobile" href="javascript:void(0)">
+          <span v-if="this.notifications.length>0" class="count">{{this.notifications.length}}</span>
           <img
             :src="asset_url + 'images/logo2.png'"
-            width="25"
+            width="30"
             class="d-inline-block align-top"
             alt=""
             loading="lazy"
