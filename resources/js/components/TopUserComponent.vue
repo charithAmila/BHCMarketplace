@@ -108,7 +108,7 @@ export default {
       } else {
         $("#preloader-top-user").removeClass("d-done");
         this.userList = await getMaxBuyers(this.filterTime);
-        this.orderedUsers();
+
         $("#preloader-top-user").addClass("d-done");
       }
     },
