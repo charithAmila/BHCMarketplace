@@ -464,7 +464,7 @@
                   again.
                 </p>
               </div>
-              <div v-if="royalties <= 100 && enoughBalance" class="col-6 col-md-6">
+              <div v-if="royalties <= 100" class="col-6 col-md-6">
                 <input
                   id="createCollectiblea"
                   class="submitBtn"
