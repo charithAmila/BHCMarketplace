@@ -102,12 +102,18 @@ export default {
     },
     async fetchFilteredUser() {
       if (this.userType == "sell") {
+        $("#preloader-top-user").removeClass("d-done");
         this.userList = await getMaxSellers(this.filterTime);
         $("#preloader-top-user").addClass("d-done");
       } else {
+        $("#preloader-top-user").removeClass("d-done");
         this.userList = await getMaxBuyers(this.filterTime);
+        this.orderedUsers();
         $("#preloader-top-user").addClass("d-done");
       }
+    },
+    orderedUsers: function () {
+      return _.orderBy(this.userList, "sell_amount", "desc");
     },
   },
   mounted() {
