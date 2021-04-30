@@ -221,6 +221,7 @@ export default {
             }
         },
         purchase() {
+            const _this = this;
             this.proceedToPaymentText = this.processPaymentText;
             this.purchasing = true;
             var collectible = this.singleNft;
@@ -241,8 +242,6 @@ export default {
                 " has been bought for " +
                 `${this.price} ` +
                 currency;
-
-            const _this = this;
 
             buy(
                 collectible.contract,
@@ -299,8 +298,8 @@ export default {
                         _this.payment = 0;
                         _this.bid_input = "";
                         _this.quantity = 1;
-                        this.purchasing = false;
-                        this.proceedToPaymentText = "Proceed to payment";
+                        _this.purchasing = false;
+                        _this.proceedToPaymentText = "Proceed to payment";
                         if (
                             _this.page == "marketplace" ||
                             _this.page == "profile"
@@ -336,12 +335,13 @@ export default {
                             window.location.reload();
                         }
                         if (_this.page == "showcollectible") {
-                            window.location.href = "/nft";
-                            _this.$parent.updateData();
+                            window.location.href = `/nft/${_this.singleNft.contract}:${_this.singleNft.id}:${_this.current_user}`;
+                            //_this.$parent.updateData();
                         }
                     }
                 })
                 .catch(error => {
+                    console.log(error);
                     _this.proceedToPaymentText = "Proceed to payment";
                     _this.purchasing = false;
                     Toast.fire({
