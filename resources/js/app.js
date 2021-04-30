@@ -206,6 +206,20 @@ Vue.component(
     "report-modal-component",
     require("./components/modals/ReportModalComponent.vue").default
 );
+
+Vue.component(
+    "transfer-modal-component",
+    require("./components/modals/TransferModalComponent.vue").default
+);
+Vue.component(
+    "change-price-modal-component",
+    require("./components/modals/ChangePriceModalComponent.vue").default
+);
+Vue.component(
+    "burn-modal-component",
+    require("./components/modals/BurnModalComponent.vue").default
+);
+
 Vue.component(
     "following-modal-component",
     require("./components/modals/FollowingModalComponent.vue").default

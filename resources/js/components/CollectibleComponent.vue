@@ -95,6 +95,10 @@
                                             "
                                             >Report</a
                                         >
+
+                                        <a href="javascript:void(0)" class="changePrice" @click="toggleModal('changePrice')">Change Price</a>
+                                        <a href="javascript:void(0)" class="burn" @click="toggleModal('burn')">Burn</a>
+                                        
                                     </div>
 
                                     <div
@@ -131,8 +135,10 @@
                                             class="sale"
                                             @click="putOnSale(collectible)"
                                             v-if="collectible.is_selling != 1"
-                                            >Put On Sale</a
                                         >
+                                            Put On Sale
+                                        </a>
+                                        <a href="javascript:void(0)" class="transfer" @click="toggleModal('transfer')">Transfer Token</a>
                                         <div
                                             class="input-group-prepend"
                                             v-if="collectible.is_selling"
@@ -159,6 +165,7 @@
                                                 >Remove From Marketplace</a
                                             >
                                         </div>
+                                        
                                     </div>
                                 </div>
                                 <div></div>
@@ -294,6 +301,21 @@
             :collectible="bidListNFT"
             :page="current_page"
         ></bid-list-modal-component>
+        <transfer-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></transfer-modal-component>
+        <change-price-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></change-price-modal-component>
+        <burn-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></burn-modal-component>
         <!-- <div id="preloader" class="row grid-container">
             <div
                 v-if="isLoading"
@@ -451,6 +473,7 @@ export default {
                 });
         },
         toggleModal(clicked) {
+            console.log("#" + clicked + "Modal")
             modalOpen(
                 $("#" + clicked + "Modal"),
                 $("." + clicked + "-content")

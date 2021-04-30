@@ -1446,6 +1446,49 @@ body {
     }
 }
 
+#transferModal {
+    .transfer-content{
+        left: 42%;
+        top: 26%;
+    }
+    .form-section {
+        padding-top: 0 !important;
+    }
+    .close-transfer-modal {
+        @include closeButton();
+        padding: 5px 12px;
+    }
+}
+
+#changePriceModal{
+    .changePrice-content{
+        left: 42%;
+        top: 26%;
+    }
+    .form-section {
+        padding-top: 0 !important;
+    }
+    .close-changePrice-modal {
+        @include closeButton();
+        padding: 5px 12px;
+    }
+}
+
+
+#burnModal{
+    .burn-content{
+        left: 42%;
+        top: 26%;
+    }
+    .form-section {
+        padding-top: 0 !important;
+    }
+    .close-burn-modal {
+        @include closeButton();
+        padding: 5px 12px;
+    }
+}
+
 #loginModal {
     .login-content {
         overflow: hidden;
