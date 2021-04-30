@@ -9,7 +9,7 @@
                 <label class="item-description"
                     >You are about to purchase
                     <span class="item-name">{{ singleNft.name }}</span> from
-                    billion. Check information then proceed to payment</label
+                    <span class="item-name">{{ nftOwner }}</span>. Check information then proceed to payment</label
                 >
 
                 <div class="form-section">
@@ -143,7 +143,8 @@ export default {
             purchasing: false,
             nft_id: 0,
             record_id: 0,
-            approved: false
+            approved: false,
+            nftOwner: 'John Doe'
         };
     },
     async mounted() {
@@ -152,6 +153,7 @@ export default {
     watch: {
         singleNft: async function() {
             this.checkEligibility();
+            this.nftOwner = this.truncate(this.singleNft.owner_id)
         },
         quantity: async function() {
             this.checkEligibility();
@@ -349,6 +351,12 @@ export default {
                         title: "User rejected transaction!"
                     });
                 });
+        },
+        truncate(string) {
+            if (string.length <= 18) {
+                return string;
+            }
+            return string.slice(0, 18) + "...";
         }
     }
 };

@@ -96,8 +96,7 @@
                                             >Report</a
                                         >
 
-                                        <a href="javascript:void(0)" class="changePrice" @click="toggleModal('changePrice')">Change Price</a>
-                                        <a href="javascript:void(0)" class="burn" @click="toggleModal('burn')">Burn</a>
+                                        
                                         
                                     </div>
 
@@ -138,6 +137,8 @@
                                         >
                                             Put On Sale
                                         </a>
+                                        <a href="javascript:void(0)" class="changePrice" @click="toggleModal('changePrice')">Change Price</a>
+                                        <a href="javascript:void(0)" class="burn" @click="toggleModal('burn')">Burn</a>
                                         <a href="javascript:void(0)" class="transfer" @click="toggleModal('transfer')">Transfer Token</a>
                                         <div
                                             class="input-group-prepend"
