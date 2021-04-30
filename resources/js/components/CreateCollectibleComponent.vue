@@ -696,7 +696,7 @@
                         <div class="col-md-12 create-cmodel-elements">
                             <label>Pay With</label>
                             <select
-                                class="form-controll"
+                                class="form-control"
                                 v-model="pay_with"
                                 @change="setPaywith()"
                             >
@@ -707,17 +707,20 @@
                         <div v-if="lowBalance">
                             Not enough {{ pay_with }} balance!
                         </div>
-                        <input
-                            v-if="putOnSale && isNftApproved && type != 'solo'"
-                            v-model.number="quantity"
-                            class="modal-input"
-                            type="number"
-                            id="checkout-quantity"
-                            name="quantity"
-                            placeholder="Enter quantity"
-                            min="1"
-                            :max="copies"
-                        />
+                        <div class="col-md-12 qos-modal">
+                            <label>Quantity to put on sale</label>
+                            <input
+                                v-if="putOnSale && isNftApproved && type != 'solo'"
+                                v-model.number="quantity"
+                                class="modal-input form-control"
+                                type="number"
+                                id="checkout-quantity"
+                                name="quantity"
+                                placeholder="Enter quantity"
+                                min="1"
+                                :max="copies"
+                            />
+                        </div>
 
                         <div
                             class="col-md-12 create-cmodel-elements"
