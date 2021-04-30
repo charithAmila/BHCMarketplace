@@ -445,6 +445,7 @@
                                             name="copies"
                                             placeholder="E.g '10'"
                                             v-model="copies"
+                                            @change="updateQuantity"
                                         />
                                     </div>
                                     <p
@@ -716,7 +717,7 @@
                                 id="checkout-quantity"
                                 name="quantity"
                                 placeholder="Enter quantity"
-                                min="1"
+                                :min="copies"
                                 :max="copies"
                             />
                         </div>
@@ -948,6 +949,9 @@ export default {
     },
 
     methods: {
+        updateQuantity(){
+            this.quantity = this.copies
+        },
         popupModal() {
             Toast.fire({
                 icon: "error",
