@@ -367,6 +367,10 @@
   right: -5px;
 }
 
+.notif-mobile {
+  margin-top: -5px;
+}
+
 .custom-navbar {
   position: fixed;
   width: 100%;
