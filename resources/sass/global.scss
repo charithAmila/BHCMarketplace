@@ -1371,6 +1371,14 @@ body {
     border-radius: 25px;
 }
 
+#create-collectible-modal{
+    .close-collectible-modal {
+        @include closeButton();
+        padding: 0px 13px;
+        margin-top: -7px;
+    }
+}
+
 #bidModal {
     .close-bid-modal {
         @include closeButton();
@@ -2350,6 +2358,10 @@ body {
     &:hover {
         color: $primaryColor;
     }
+}
+
+.qos-modal{
+    margin: 15px 0; 
 }
 
 .show-opt-menu {
