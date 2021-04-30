@@ -1474,6 +1474,21 @@ body {
     }
 }
 
+
+#burnModal{
+    .burn-content{
+        left: 42%;
+        top: 26%;
+    }
+    .form-section {
+        padding-top: 0 !important;
+    }
+    .close-burn-modal {
+        @include closeButton();
+        padding: 5px 12px;
+    }
+}
+
 #loginModal {
     .login-content {
         overflow: hidden;

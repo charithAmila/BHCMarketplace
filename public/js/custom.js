@@ -28,6 +28,10 @@ $(document).on('click', '.close-changePrice-modal', function () {
     modalClose($('#changePriceModal'), $(".changePrice-content"));
 });
 
+$(document).on('click', '.close-burn-modal', function () {
+    modalClose($('#burnModal'), $(".burn-content"));
+});
+
 
 
 $(document).on('click', '.report-page', function () {

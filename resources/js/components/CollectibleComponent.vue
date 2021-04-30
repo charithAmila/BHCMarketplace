@@ -97,6 +97,7 @@
                                         >
 
                                         <a href="javascript:void(0)" class="changePrice" @click="toggleModal('changePrice')">Change Price</a>
+                                        <a href="javascript:void(0)" class="burn" @click="toggleModal('burn')">Burn</a>
                                         
                                     </div>
 
@@ -310,6 +311,11 @@
             :current_user="current_user"
             :page="current_page"
         ></change-price-modal-component>
+        <burn-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></burn-modal-component>
         <!-- <div id="preloader" class="row grid-container">
             <div
                 v-if="isLoading"
@@ -467,6 +473,7 @@ export default {
                 });
         },
         toggleModal(clicked) {
+            console.log("#" + clicked + "Modal")
             modalOpen(
                 $("#" + clicked + "Modal"),
                 $("." + clicked + "-content")

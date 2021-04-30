@@ -2050,6 +2050,26 @@ body {
   padding: 5px 12px;
 }
 
+#burnModal .burn-content {
+  left: 42%;
+  top: 26%;
+}
+
+#burnModal .form-section {
+  padding-top: 0 !important;
+}
+
+#burnModal .close-burn-modal {
+  color: black;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 50%;
+  border: 1px solid #ececec;
+  padding: 0 15px;
+  padding: 5px 12px;
+}
+
 #loginModal .login-content {
   overflow: hidden;
 }

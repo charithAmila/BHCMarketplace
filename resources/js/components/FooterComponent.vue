@@ -70,7 +70,7 @@
         </a>
       </div>
       <div class="copyright-section">
-        <p>&#169; 2021 Billion, Inc.</p>
+        <p>&#169; 2021 Billion Happiness</p>
       </div>
     </section>
   </div>

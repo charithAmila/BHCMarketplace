@@ -215,6 +215,10 @@ Vue.component(
     "change-price-modal-component",
     require("./components/modals/ChangePriceModalComponent.vue").default
 );
+Vue.component(
+    "burn-modal-component",
+    require("./components/modals/BurnModalComponent.vue").default
+);
 
 Vue.component(
     "following-modal-component",
