@@ -1908,6 +1908,18 @@ body {
   border-radius: 25px;
 }
 
+#create-collectible-modal .close-collectible-modal {
+  color: black;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 50%;
+  border: 1px solid #ececec;
+  padding: 0 15px;
+  padding: 0px 13px;
+  margin-top: -7px;
+}
+
 #bidModal .close-bid-modal {
   color: black;
   font-size: 28px;
@@ -3060,6 +3072,10 @@ body {
 
 .show-drop:hover {
   color: #F88130;
+}
+
+.qos-modal {
+  margin: 15px 0;
 }
 
 .show-opt-menu {
