@@ -261,9 +261,9 @@ export default {
                     });
                 } catch (error) {
                     this.isApproving = false;
-                    if (error.code == 4001) {
-                        alert("user rejected approving");
-                    }
+                    // if (error.code == 4001) {
+                    alert("Rejected approving HPS");
+                    //}
                     this.isApproving = false;
                 }
             }
@@ -387,9 +387,9 @@ export default {
                         });
                     })
                     .catch(function(error) {
-                        if (error.code == 4001) {
-                            alert("User rejected!");
-                        }
+                        //if (error.code == 4001) {
+                        alert("User rejected!");
+                        //}
                         _this.isGenerating = false;
                     });
 

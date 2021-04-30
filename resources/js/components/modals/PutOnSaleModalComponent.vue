@@ -250,10 +250,10 @@ export default {
                 _this.progress = "Put Order";
                 _this.orderId = orderId;
             } catch (error) {
-                if (error.code == 4001) {
-                    alert("User rejected minting token");
-                    this.signing = false;
-                }
+                //if (error.code == 4001) {
+                alert("User rejected minting token");
+                //this.signing = false;
+                //}
                 this.signing = false;
                 this.signText = "Sign";
             }
@@ -272,11 +272,11 @@ export default {
                     }
                 });
             } catch (error) {
-                if (error.code == 4001) {
-                    alert("User rejected minting token");
-                    this.approving = false;
-                    this.approveText = "Approve";
-                }
+                //if (error.code == 4001) {
+                alert("User rejected minting token");
+                this.approving = false;
+                this.approveText = "Approve";
+                // }
             }
         },
 
