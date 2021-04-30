@@ -1,4 +1,8 @@
 @media only screen and (max-width: 450px) {
+  .show-opt-menu {
+    right: 30px !important;
+  }
+
   .grid-container {
     display: flex !important;
   }
@@ -424,6 +428,7 @@
 
   .show-collectible .second-mobile .collectibleTitle h3 {
     margin-bottom: 0;
+    width: 310px;
   }
 
   .show-collectible .second-mobile .collectibleTitle h3 .inline-title {
@@ -759,6 +764,7 @@
     flex: 0 0 100% !important;
     max-width: 100% !important;
     max-height: 100%;
+    overflow-x: hidden;
   }
 
   .show-collectible .custom-lg-8 {
@@ -771,7 +777,8 @@
   }
 
   .nft-fullscreen .nft-item {
-    height: 40vh;
+    max-height: 60vh;
+    max-width: 90vw;
   }
 
   .row-0 .nav-tabs {
