@@ -235,12 +235,11 @@
             </div>
 
             <div
-                v-if="isLoading"
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
-                v-for="i in 10"
-                v-bind:key="i"
+                v-for="i in 'abcdefghijkl'"
+                :key="i"
             >
-                <div class="outside-nft border-on-profile">
+                <div class="outside-nft border-on-profile" v-if="isLoading">
                     <div class="inside-nft">
                         <div class="inner-outside-nft">
                             <div class="inner-nft">
@@ -329,7 +328,6 @@
                 </div>
             </div>
         </div> -->
-
     </div>
 </template>
 
@@ -458,7 +456,7 @@ export default {
                 $("." + clicked + "-content")
             );
         },
-        truncate(string){
+        truncate(string) {
             if (string.length <= 18) {
                 return string;
             }
