@@ -803,7 +803,7 @@ async function getAllSales(current_user) {
         }
     }
 
-    //return data;
+    return data;
 }
 
 async function getAllSalesSearch(current_user, parameter) {
