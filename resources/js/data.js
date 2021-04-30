@@ -771,6 +771,7 @@ async function getAllSales(current_user) {
                 );*/
                         //nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
                         data.push(nft);
+                        nft.ownedCopies = nft.on_sale;
                         //if (data.length % 4 == 0) {
                         //for (var x = data.length - 1; x > data.length - 5; x++) {
                         window.sales.push(nft);
