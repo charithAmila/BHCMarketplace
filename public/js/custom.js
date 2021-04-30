@@ -20,6 +20,16 @@ $(document).on('click', '.close-bid-list-modal', function () {
     modalClose($('#bidListModal'), $(".bidList-content"));
 });
 
+$(document).on('click', '.close-transfer-modal', function () {
+    modalClose($('#transferModal'), $(".transfer-content"));
+});
+
+$(document).on('click', '.close-changePrice-modal', function () {
+    modalClose($('#changePriceModal'), $(".changePrice-content"));
+});
+
+
+
 $(document).on('click', '.report-page', function () {
     $('#reportModal').attr('data-report-type', 'user');
     var output = getPath();
