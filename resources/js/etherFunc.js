@@ -1066,8 +1066,8 @@ async function getFees() {
             rpcprovider
         );
         const feeInHps = await minter.requiredFee(
-            ethers.utils.parseEther("3.5"),
-            ethers.utils.parseEther("5.5")
+            ethers.utils.parseEther("3"),
+            ethers.utils.parseEther("5")
         );
         return feeInHps[0] / 10 ** 18;
     } catch (e) {
@@ -1081,14 +1081,21 @@ async function serviceFee(currencyName) {
         exchangeABI,
         rpcprovider
     );
+    const minter = new ethers.Contract(minterAddress, minterABI, rpcprovider);
     try {
-        const fees = await exchange.requiredFee(
+        var fees = await exchange.requiredFee(
             ethers.utils.parseEther("5"),
             ethers.utils.parseEther("5")
         );
         if (currencyName == "BNB") {
             return Number(fees[1] / 10 ** 18); //.toFixed(3)
-        } else {
+        } else if ("BHC") {
+            return Number(fees[0] / 10 ** 18);
+        } else if ("HPS") {
+            fees = await minter.requiredFee(
+                ethers.utils.parseEther("3"),
+                ethers.utils.parseEther("5")
+            );
             return Number(fees[0] / 10 ** 18);
         }
     } catch (e) {
