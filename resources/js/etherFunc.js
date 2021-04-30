@@ -58,6 +58,46 @@ window.rpcprovider = new ethers.providers.JsonRpcProvider(
 
 ///////Get function//////////
 
+async function syncCollections(collectionAddess){
+            var latest = await axios.get(
+                "/transfers?collection=" + collectionAddess
+            );
+            startBlock =
+                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+            var endBlock = await rpcprovider.getBlockNumber();
+            var evts = [];
+            for (var i = startBlock; i <= endBlock; i = i + 4000) {
+                var transfers = [];
+                startBlock = i;
+                var evtsCr = await contract.queryFilter(
+                    "TransferSingle",
+                    i,
+                    i + 4000 <= endBlock ? i + 4000 : endBlock
+                );
+
+                for (var x = 0; x < evtsCr.length; x++) {
+                    var event = evtsCr[x];
+                    transfers.push([
+                        event.blockNumber,
+                        collectionAddess,
+                        event.args.to,
+                        Number(event.args.id)
+                    ]);
+                }
+                if (transfers.length > 0) {
+                    await axios.post("/transfers", { transfers: transfers });
+                }
+                startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
+                evts = evtsCr;
+  
+            }
+            if (startBlock != 0) {
+                await axios.patch("/transfers/" + collectionAddess, {
+                    block: startBlock - 1
+                });
+            }
+}
+
 function toAddress(addressString) {
     return ethers.utils.isAddress(addressString)
         ? ethers.utils.getAddress(addressString)
@@ -658,7 +698,7 @@ async function getOwnedCollections(me, type, forDetails) {
                     collection.address = col;
                     collections.push(collection);
                 } else if (forDetails) {
-                    var res = await axios.get("/transfers/" + toAddress(col));
+                    if(type==1155){var res = await axios.get("/transfers/" + toAddress(col));
                     var transfers = res.data;
                     var filtered = transfers.filter(function(element) {
                         if (element.owner == toAddress(owner)) return true;
@@ -682,6 +722,25 @@ async function getOwnedCollections(me, type, forDetails) {
                         console.log(collection);
                         collection.address = col;
                         collections.push(collection);
+                    }}else{
+                        var uri = await colCon.contract_URI();
+
+                    var res = null;
+                    try {
+                        res = await axios.get(
+                            //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                            uri.replace("https://ipfs.io/ipfs/", "/data/")
+                        );
+                    } catch (e) {
+                        res = await axios.get(
+                            uri.replace("ipfs.io", "gateway.pinata.io")
+                            //uri.replace("https://ipfs.io", "/ipfs")
+                        );
+                    }
+                    var collection = res.data;
+                    console.log(collection);
+                    collection.address = col;
+                    collections.push(collection);
                     }
                 }
             } catch (e) {}
