@@ -125,11 +125,34 @@ class SalesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'amount' => 'required'
-        ]);
-        $sales = Sales::where("id",$id);
-        $sales->increment('sold',$request->amount);
+        if($request->amount>0){
+            $sales = Sales::where("id",$id);
+            $sales->increment('sold',$request->amount);
+        }
+        else{
+            $sale = Sales::where("id",$id)->firstOrFail();
+            $request->validate([
+            "signed_to" => "required",
+            "price" => "required",
+            "signature" => "required",
+            "order_id" => "required",
+            "salt" => "required",
+            ]);
+            $checker = new CheckSign;
+            $message = $request->order_id;
+            $granted = $checker->checkSign($message, $request->signature, $sale->current_owner);
+            if($granted){
+                Sales::where("id",$id)->update([
+                "signed_to" => $request->signed_to,
+                "price" => $request->price,
+                "signature" => $request->signature,
+                "salt" => $request->salt,
+            ]);
+            }
+
+        }
+
+
     }
 
     /**

@@ -9,7 +9,8 @@
                 <label class="item-description"
                     >You are about to purchase
                     <span class="item-name">{{ singleNft.name }}</span> from
-                    <span class="item-name">{{ nftOwner }}</span>. Check information then proceed to payment</label
+                    <span class="item-name">{{ nftOwner }}</span
+                    >. Check information then proceed to payment</label
                 >
 
                 <div class="form-section">
@@ -144,7 +145,7 @@ export default {
             nft_id: 0,
             record_id: 0,
             approved: false,
-            nftOwner: 'John Doe'
+            nftOwner: "John Doe"
         };
     },
     async mounted() {
@@ -153,7 +154,7 @@ export default {
     watch: {
         singleNft: async function() {
             this.checkEligibility();
-            this.nftOwner = this.truncate(this.singleNft.owner_id)
+            this.nftOwner = this.truncate(this.singleNft.owner_id);
         },
         quantity: async function() {
             this.checkEligibility();
@@ -204,6 +205,7 @@ export default {
         },
         async approve() {
             try {
+                const _this = this;
                 this.approveText = this.approvingText;
                 var hash = await approveTokens(
                     this.currency,
@@ -211,7 +213,8 @@ export default {
                 );
                 waitForTransaction(hash).then(data => {
                     if (data.status) {
-                        this.approved = true;
+                        _this.approved = true;
+                        _this.allowance = _this.total_payment;
                     }
                 });
             } catch (error) {
@@ -306,7 +309,9 @@ export default {
                             _this.page == "marketplace" ||
                             _this.page == "profile"
                         ) {
-                            _this.$parent.$parent.getCollectible();
+                            try {
+                                _this.$parent.$parent.getCollectible();
+                            } catch (e) {}
                             data = {};
                             data.message_seller = message_seller;
                             data.message_buyer = message_buyer;
@@ -321,7 +326,9 @@ export default {
                                 });
                         }
                         if (_this.page == "marketplace") {
-                            _this.$parent.$parent.$parent.updateTopUser();
+                            try {
+                                _this.$parent.$parent.$parent.updateTopUser();
+                            } catch (e) {}
                             data = {};
                             data.message_seller = message_seller;
                             data.message_buyer = message_buyer;
