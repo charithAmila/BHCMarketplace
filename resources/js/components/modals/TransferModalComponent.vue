@@ -39,7 +39,7 @@
                                     v-model="receiver_address"
                                 />
                             </div>
-                            <button @click="transfer_token()" class="form-submit">
+                            <button @click.prevent="transfer_token()" class="form-submit">
                                 Transfer
                             </button>
                         </form>
