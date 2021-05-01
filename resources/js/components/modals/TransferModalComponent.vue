@@ -64,8 +64,9 @@ export default {
     },
     methods: {
        async transfer_token(){
+           const _this = this;
            console.log("Transfer token");
-            let res = await transfer(this.singleNft.contract, this.singleNft.owner_id, this.receiver_address, this.singleNft.type, this.singleNft.id, this.quantity)
+            let res = await transfer(_this.singleNft.contract, _this.singleNft.owner_id, _this.receiver_address, _this.singleNft.type, _this.singleNft.id, _this.quantity)
             if(res){
                  Toast.fire({
                         icon: "success",
