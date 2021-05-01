@@ -64,6 +64,7 @@ export default {
     },
     methods: {
        async transfer_token(){
+           console.log(this.singleNft);
            const _this = this;
            console.log("Transfer token");
             let res = await transfer(_this.singleNft.contract, _this.singleNft.owner_id, _this.receiver_address, _this.singleNft.type, _this.singleNft.id, _this.quantity)
