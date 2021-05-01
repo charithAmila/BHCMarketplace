@@ -25,12 +25,12 @@
                                     class="modal-input"
                                     type="number"
                                     name="quantity"
-                                    placeholder="New Price"
+                                    placeholder="Enter Quantity"
                                     v-model="quantity"
                                     @click.prevent="burn_token()"
                                 />
                             </div>
-                            <button class="form-submit" type="submit">
+                            <button class="form-submit" @click.prevent="burn_token()">
                                 Burn
                             </button>
                         </form>
