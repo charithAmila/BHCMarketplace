@@ -165,7 +165,7 @@
                                             @click="toggleModal('burn')"
                                             >Burn</a
                                         >
-                                        <a
+                                        <a  v-if="current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="transfer"
                                             @click="toggleModal('transfer')"
