@@ -64,8 +64,8 @@ class ProfileController extends Controller
      */
     public function show($address)
     {
-        $profile = Profile::where('address', $address)->firstOrFail();
-        if ($profile) {
+        $profile = Profile::where('address', $address)->first();
+        if ($profile!=null) {
             return $profile;
         } else {
             return false;
