@@ -137,6 +137,7 @@
                                         <a
                                             href="javascript:void(0)"
                                             class="changePrice"
+                                            v-if="collectible.is_selling"
                                             @click="changePrice(collectible)"
                                             >Change Price</a
                                         >
