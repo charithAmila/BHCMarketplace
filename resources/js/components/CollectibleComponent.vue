@@ -223,13 +223,16 @@
                                     </div>
 
                                     <span
-                                        v-if="filter == 'on-sale'"
+                                        v-if="
+                                            filter == 'on-sale' ||
+                                                page == 'marketplace'
+                                        "
                                         class="copies"
                                         >{{ collectible.on_sale }} of
                                         {{ collectible.copies }}</span
                                     >
                                     <span v-else class="copies"
-                                        >{{ collectible.on_sale }} of
+                                        >{{ collectible.ownedCopies }} of
                                         {{ collectible.copies }}</span
                                     >
                                 </div>

@@ -248,18 +248,29 @@ export default {
                 .get("/api/profile/" + _this.user.wallet)
                 .then(function(response) {
                     axios
-                        .get("/data/" + response.data.ipfs_hash)
+                        .get(
+                            "/data/" + response.data.ipfs_hash == undefined
+                                ? "Qmc5m94Gu7z62RC8waSKkZUrCCBJPyHbkpmGzEePxy2oXJ"
+                                : response.data.ipfs_hash
+                        )
                         .then(function(response) {
+                            console.log(response);
+                            console.log(
+                                "Qmc5m94Gu7z62RC8waSKkZUrCCBJPyHbkpmGzEePxy2oXJ"
+                            );
                             _this.user.name = response.data.name;
                             _this.user.bio = response.data.description;
                             _this.user.display_photo =
-                                //response.data.dp ||
+                                response.data.dp ||
                                 "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
                             _this.user.cover_photo =
                                 response.data.cover ||
                                 "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg";
-                            _this.userPhoto = response.data.dp;
-                            _this.user.short_url = response.data.short_url;
+                            _this.userPhoto =
+                                response.data.dp ||
+                                "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
+                            _this.user.short_url =
+                                response.data.short_url || "#";
                         })
                         .then(function(error) {});
                 })

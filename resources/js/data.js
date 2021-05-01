@@ -140,53 +140,57 @@ async function getUserDetails(addressString) {
     var user = tempUserData(address);
     try {
         var res = await axios.get("/api/profile/" + address);
-        var response;
-        try {
-            response = await axios.get(
-                //"https://gateway.pinata.cloud/ipfs/" + res.data.ipfs_hash
-                "/data/" + res.data.ipfs_hash
-            );
-        } catch (e) {
-            response = await axios.get(
-                "https://gateway.pinata.cloud/ipfs/" + res.data.ipfs_hash
-                //"/ipfs/ipfs/" + res.data.ipfs_hash
-            );
-        }
-        //console.log(response)
+        if (res.data.ipfs_hash != undefined) {
+            var response;
+            try {
+                response = await axios.get(
+                    //"https://gateway.pinata.cloud/ipfs/" + res.data.ipfs_hash
+                    "/data/" + res.data.ipfs_hash
+                );
+            } catch (e) {
+                response = await axios.get(
+                    "https://gateway.pinata.cloud/ipfs/" + res.data.ipfs_hash
+                    //"/ipfs/ipfs/" + res.data.ipfs_hash
+                );
+            }
+            //console.log(response)
 
-        try {
-            user.cover_photo =
-                /*response.data.cover.replace(
+            try {
+                user.cover_photo =
+                    /*response.data.cover.replace(
                 "ipfs.io",
                 "gateway.pinata.cloud"
             ) */ response.data.cover.replace(
-                    "https://ipfs.io",
-                    "/ipfs"
-                ) || user.cover_photo;
-        } catch (e) {
-            user.cover_photo =
-                response.data.cover.replace(
-                    "ipfs.io",
-                    "gateway.pinata.cloud"
-                ) || user.cover_photo;
-        }
-        try {
-            user.display_photo =
-                /*response.data.dp.replace(
+                        "https://ipfs.io",
+                        "/ipfs"
+                    ) || user.cover_photo;
+            } catch (e) {
+                user.cover_photo =
+                    response.data.cover.replace(
+                        "ipfs.io",
+                        "gateway.pinata.cloud"
+                    ) || user.cover_photo;
+            }
+            try {
+                user.display_photo =
+                    /*response.data.dp.replace(
                 "ipfs.io",
                 "gateway.pinata.cloud"
             )*/ response.data.dp.replace(
-                    "https://ipfs.io",
-                    "/ipfs"
-                ) || user.display_photo;
-        } catch (e) {
-            user.display_photo =
-                response.data.dp.replace("ipfs.io", "gateway.pinata.cloud") ||
-                user.display_photo;
+                        "https://ipfs.io",
+                        "/ipfs"
+                    ) || user.display_photo;
+            } catch (e) {
+                user.display_photo =
+                    response.data.dp.replace(
+                        "ipfs.io",
+                        "gateway.pinata.cloud"
+                    ) || user.display_photo;
+            }
+            user.name = response.data.name;
+            user.bio = response.data.description;
+            user.short_url = response.data.short_url;
         }
-        user.name = response.data.name;
-        user.bio = response.data.description;
-        user.short_url = response.data.short_url;
     } catch (e) {}
     return user;
 }
