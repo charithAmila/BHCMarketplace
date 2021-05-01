@@ -95,9 +95,6 @@
                                             "
                                             >Report</a
                                         >
-
-                                        
-                                        
                                     </div>
 
                                     <div
@@ -137,9 +134,25 @@
                                         >
                                             Put On Sale
                                         </a>
-                                        <a href="javascript:void(0)" class="changePrice" @click="toggleModal('changePrice')">Change Price</a>
-                                        <a href="javascript:void(0)" class="burn" @click="toggleModal('burn')">Burn</a>
-                                        <a href="javascript:void(0)" class="transfer" @click="toggleModal('transfer')">Transfer Token</a>
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="changePrice"
+                                            v-if="collectible.is_selling"
+                                            @click="changePrice(collectible)"
+                                            >Change Price</a
+                                        >
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="burn"
+                                            @click="toggleModal('burn')"
+                                            >Burn</a
+                                        >
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="transfer"
+                                            @click="toggleModal('transfer')"
+                                            >Transfer Token</a
+                                        >
                                         <div
                                             class="input-group-prepend"
                                             v-if="collectible.is_selling"
@@ -166,7 +179,6 @@
                                                 >Remove From Marketplace</a
                                             >
                                         </div>
-                                        
                                     </div>
                                 </div>
                                 <div></div>
@@ -217,7 +229,7 @@
                                         {{ collectible.copies }}</span
                                     >
                                     <span v-else class="copies"
-                                        >{{ collectible.ownedCopies }} of
+                                        >{{ collectible.on_sale }} of
                                         {{ collectible.copies }}</span
                                     >
                                 </div>
@@ -404,6 +416,12 @@ export default {
 
             _this.toggleModal("putOnSale");
         },
+        async changePrice(collectible) {
+            const _this = this;
+            _this.singleNft = collectible;
+            _this.loaded = true;
+            _this.toggleModal("changePrice");
+        },
         async remove(collectible) {
             const _this = this;
             const res = await forceRemoveSale(collectible.db_id);
@@ -474,7 +492,7 @@ export default {
                 });
         },
         toggleModal(clicked) {
-            console.log("#" + clicked + "Modal")
+            console.log("#" + clicked + "Modal");
             modalOpen(
                 $("#" + clicked + "Modal"),
                 $("." + clicked + "-content")

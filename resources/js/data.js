@@ -636,7 +636,7 @@ async function getTokenData(contract, owner, id) {
     nft.biddingStatus = biddingStatus;
     nft.count = nft.count || 1;
     nft.copies = nft.count || 1;
-    nft.ownedCopies = selectedToken.ownedCopies;
+    nft.ownedCopies = Number(selectedToken.ownedCopies);
     nft.id = selectedToken.id;
     nft.contract = selectedToken.contract;
     nft.owner_id = selectedToken.tokenOwner;
@@ -771,7 +771,7 @@ async function getAllSales(current_user) {
                 );*/
                         //nft.file = nft.file.replace("https://ipfs.io", "/ipfs");
                         data.push(nft);
-                        nft.ownedCopies = nft.on_sale;
+                        //nft.ownedCopies = nft.on_sale;
                         //if (data.length % 4 == 0) {
                         //for (var x = data.length - 1; x > data.length - 5; x++) {
                         window.sales.push(nft);
@@ -936,6 +936,9 @@ async function forceRemoveSale(id) {
 async function bought(id, amount) {
     await axios.patch(`/sales/${id}`, { amount: amount });
 }
+async function updateSale(id, data) {
+    await axios.patch(`/sales/${id}`, data);
+}
 
 export {
     getUserDetails,
@@ -958,5 +961,6 @@ export {
     getMaxBuyers,
     getMaxSellers,
     getAllSalesSearch,
-    bought
+    bought,
+    updateSale
 };
