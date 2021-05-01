@@ -58,44 +58,40 @@ window.rpcprovider = new ethers.providers.JsonRpcProvider(
 
 ///////Get function//////////
 
-async function syncCollections(collectionAddess){
-            var latest = await axios.get(
-                "/transfers?collection=" + collectionAddess
-            );
-            startBlock =
-                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
-            var endBlock = await rpcprovider.getBlockNumber();
-            var evts = [];
-            for (var i = startBlock; i <= endBlock; i = i + 4000) {
-                var transfers = [];
-                startBlock = i;
-                var evtsCr = await contract.queryFilter(
-                    "TransferSingle",
-                    i,
-                    i + 4000 <= endBlock ? i + 4000 : endBlock
-                );
+async function syncCollections(collectionAddess) {
+    var latest = await axios.get("/transfers?collection=" + collectionAddess);
+    startBlock = latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+    var endBlock = await rpcprovider.getBlockNumber();
+    var evts = [];
+    for (var i = startBlock; i <= endBlock; i = i + 4000) {
+        var transfers = [];
+        startBlock = i;
+        var evtsCr = await contract.queryFilter(
+            "TransferSingle",
+            i,
+            i + 4000 <= endBlock ? i + 4000 : endBlock
+        );
 
-                for (var x = 0; x < evtsCr.length; x++) {
-                    var event = evtsCr[x];
-                    transfers.push([
-                        event.blockNumber,
-                        collectionAddess,
-                        event.args.to,
-                        Number(event.args.id)
-                    ]);
-                }
-                if (transfers.length > 0) {
-                    await axios.post("/transfers", { transfers: transfers });
-                }
-                startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
-                evts = evtsCr;
-  
-            }
-            if (startBlock != 0) {
-                await axios.patch("/transfers/" + collectionAddess, {
-                    block: startBlock - 1
-                });
-            }
+        for (var x = 0; x < evtsCr.length; x++) {
+            var event = evtsCr[x];
+            transfers.push([
+                event.blockNumber,
+                collectionAddess,
+                event.args.to,
+                Number(event.args.id)
+            ]);
+        }
+        if (transfers.length > 0) {
+            await axios.post("/transfers", { transfers: transfers });
+        }
+        startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
+        evts = evtsCr;
+    }
+    if (startBlock != 0) {
+        await axios.patch("/transfers/" + collectionAddess, {
+            block: startBlock - 1
+        });
+    }
 }
 
 function toAddress(addressString) {
@@ -698,12 +694,38 @@ async function getOwnedCollections(me, type, forDetails) {
                     collection.address = col;
                     collections.push(collection);
                 } else if (forDetails) {
-                    if(type==1155){var res = await axios.get("/transfers/" + toAddress(col));
-                    var transfers = res.data;
-                    var filtered = transfers.filter(function(element) {
-                        if (element.owner == toAddress(owner)) return true;
-                    });
-                    if (filtered.length > 0) {
+                    if (type == 1155) {
+                        var res = await axios.get(
+                            "/transfers/" + toAddress(col)
+                        );
+                        var transfers = res.data;
+                        var filtered = transfers.filter(function(element) {
+                            if (element.owner == toAddress(owner)) return true;
+                        });
+                        if (filtered.length > 0) {
+                            var uri = await colCon.contract_URI();
+
+                            var res = null;
+                            try {
+                                res = await axios.get(
+                                    //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                                    uri.replace(
+                                        "https://ipfs.io/ipfs/",
+                                        "/data/"
+                                    )
+                                );
+                            } catch (e) {
+                                res = await axios.get(
+                                    uri.replace("ipfs.io", "gateway.pinata.io")
+                                    //uri.replace("https://ipfs.io", "/ipfs")
+                                );
+                            }
+                            var collection = res.data;
+                            console.log(collection);
+                            collection.address = col;
+                            collections.push(collection);
+                        }
+                    } else {
                         var uri = await colCon.contract_URI();
 
                         var res = null;
@@ -722,25 +744,6 @@ async function getOwnedCollections(me, type, forDetails) {
                         console.log(collection);
                         collection.address = col;
                         collections.push(collection);
-                    }}else{
-                        var uri = await colCon.contract_URI();
-
-                    var res = null;
-                    try {
-                        res = await axios.get(
-                            //uri.replace("https://ipfs.io", "gateway.pinata.io")
-                            uri.replace("https://ipfs.io/ipfs/", "/data/")
-                        );
-                    } catch (e) {
-                        res = await axios.get(
-                            uri.replace("ipfs.io", "gateway.pinata.io")
-                            //uri.replace("https://ipfs.io", "/ipfs")
-                        );
-                    }
-                    var collection = res.data;
-                    console.log(collection);
-                    collection.address = col;
-                    collections.push(collection);
                     }
                 }
             } catch (e) {}
@@ -1269,6 +1272,33 @@ async function approveTokens(contractAddress, price) {
     );
     return tx.hash;
 }
+async function transfer(contractAddress, owner, receiver, type, id, quantity) {
+    const signer = provider.getSigner();
+    let ABI;
+    if (type == 721) {
+        ABI = bhc721;
+    } else {
+        ABI = bhc1155;
+    }
+    const token_contract = new ethers.Contract(
+        toAddress(contractAddress),
+        ABI,
+        signer
+    );
+    const tx = await contract.safeTransferFrom(
+        owner,
+        receiver,
+        id,
+        quantity,
+        ""
+    );
+    const res = tx.wait();
+    if (res.status == 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 async function buy(
     collection,
@@ -1326,6 +1356,7 @@ async function buy(
 }
 
 export {
+    transfer,
     checkConnection,
     getOwner,
     signMessage,

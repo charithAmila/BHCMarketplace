@@ -107,7 +107,7 @@
                                             @click="toggleModal('burn')"
                                             >Burn</a
                                         >
-                                        <a
+                                        <a  v-if="current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="transfer"
                                             @click="toggleModal('transfer')"
@@ -386,7 +386,7 @@
 </template>
 
 <script>
-import { checkNFTApproved } from "./../etherFunc";
+import { checkNFTApproved,checkConnection } from "./../etherFunc";
 import { forceRemoveSale } from "./../data";
 import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
@@ -524,7 +524,8 @@ export default {
             return string.slice(0, 18) + "...";
         }
     },
-    mounted() {
+  async  mounted() {
+        let address = await checkConnection();
         this.current_page = this.page;
     }
 };

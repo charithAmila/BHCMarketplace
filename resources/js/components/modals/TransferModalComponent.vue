@@ -26,7 +26,7 @@
                                     type="number"
                                     name="quantity"
                                     placeholder="quantity"
-                                    value="1"
+                                    v-model="quantity"
                                 />
                             </div>
                             <div class="form-divide">
@@ -36,6 +36,7 @@
                                     type="text"
                                     name="receiver_address"
                                     placeholder="Paste address"
+                                    v-model="receiver_address"
                                 />
                             </div>
                             <button class="form-submit" type="submit">
@@ -51,15 +52,35 @@
 
 <script>
 import $ from "jquery";
-import { checkConnection } from ".././../etherFunc";
+import { checkConnection,transfer } from ".././../etherFunc";
 export default {
     props: ["singleNft","current_user","page"],
     data() {
         return {
+            address:""
         };
     },
     methods: {
+       async transfer_token(){
+            let res = await transfer(this.singleNft.contract, this.singleNft.owner_id, receiver_address, this.singleNft.type, this.singleNft.id, quantity)
+            if(res){
+                 Toast.fire({
+                        icon: "success",
+                        title: "Successfully transfered token..!"
+                    });
+            }  
+            else{ 
+                 Toast.fire({
+                        icon: "error",
+                        title: "User rejected transaction!"
+                    });
+            }     
+       }
         
+    },
+   async mounted() {
+       this.quantity =1;
+       
     }
 };
 </script>
