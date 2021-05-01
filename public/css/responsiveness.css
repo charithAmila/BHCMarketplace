@@ -3,6 +3,21 @@
     width: 100vw;
   }
 
+  #changePriceModal .changePrice-content {
+    left: 0 !important;
+    top: 53% !important;
+  }
+
+  #burnModal .burn-content {
+    left: 0 !important;
+    top: 63% !important;
+  }
+
+  #transferModal .transfer-content {
+    left: 0 !important;
+    top: 49% !important;
+  }
+
   .show-opt-menu {
     right: 30px !important;
   }
