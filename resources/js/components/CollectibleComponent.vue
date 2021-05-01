@@ -152,23 +152,23 @@
                                         >
                                             Put On Sale
                                         </a>
-                                        <a
+                                        <a  
                                             href="javascript:void(0)"
                                             class="changePrice"
-                                            v-if="collectible.is_selling"
+                                            v-if="collectible.is_selling && current_user ==collectible.owner_id"
                                             @click="changePrice(collectible)"
                                             >Change Price</a
                                         >
                                         <a v-if="current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="burn"
-                                            @click="toggleModal('burn')"
+                                            @click="burnToken(collectible)"
                                             >Burn</a
                                         >
                                         <a  v-if="current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="transfer"
-                                            @click="toggleModal('transfer')"
+                                            @click="transferToken(collectible)"
                                             >Transfer Token</a
                                         >
                                         <div
@@ -443,6 +443,18 @@ export default {
             _this.singleNft = collectible;
             _this.loaded = true;
             _this.toggleModal("changePrice");
+        },
+          async transferToken(collectible) {
+            const _this = this;
+            _this.singleNft = collectible;
+            _this.loaded = true;
+            _this.toggleModal("transfer");
+        },
+          async burnToken(collectible) {
+            const _this = this;
+            _this.singleNft = collectible;
+            _this.loaded = true;
+            _this.toggleModal("burn");
         },
         async remove(collectible) {
             const _this = this;
