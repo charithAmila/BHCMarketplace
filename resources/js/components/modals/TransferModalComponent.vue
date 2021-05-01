@@ -57,7 +57,9 @@ export default {
     props: ["singleNft","current_user","page"],
     data() {
         return {
-            address:"",receiver_address:"",quantity:1
+            address:"",
+            receiver_address:"",
+            quantity:1
         };
     },
     methods: {

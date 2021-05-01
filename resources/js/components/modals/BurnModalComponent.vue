@@ -26,6 +26,8 @@
                                     type="number"
                                     name="quantity"
                                     placeholder="New Price"
+                                    v-model="quantity"
+                                    @click.prevent="burn_token()"
                                 />
                             </div>
                             <button class="form-submit" type="submit">
@@ -41,14 +43,32 @@
 
 <script>
 import $ from "jquery";
-import { checkConnection } from ".././../etherFunc";
+import { checkConnection,burn} from ".././../etherFunc";
 export default {
     props: ["singleNft","current_user","page"],
     data() {
         return {
+                 address:"",
+            quantity:1
         };
     },
     methods: {
+               async burn_token(){
+           console.log("Burn token");
+            let res = await burn(this.singleNft.contract, this.singleNft.owner_id,this.singleNft.type, this.singleNft.id, this.quantity)
+            if(res){
+                 Toast.fire({
+                        icon: "success",
+                        title: "Successfully transfered token..!"
+                    });
+            }  
+            else{ 
+                 Toast.fire({
+                        icon: "error",
+                        title: "User rejected transaction!"
+                    });
+            }     
+       }
         
     }
 };

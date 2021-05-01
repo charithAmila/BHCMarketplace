@@ -1299,6 +1299,27 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         return false;
     }
 }
+async function burn(contractAddress, owner, type, id, quantity) {
+    const signer = provider.getSigner();
+    let ABI;
+    if (type == 721) {
+        ABI = bhc721;
+    } else {
+        ABI = bhc1155;
+    }
+    const token_contract = new ethers.Contract(
+        toAddress(contractAddress),
+        ABI,
+        signer
+    );
+    const tx = await contract.burnToken(id, quantity);
+    const res = tx.wait();
+    if (res.status == 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 async function buy(
     collection,
@@ -1357,6 +1378,7 @@ async function buy(
 
 export {
     transfer,
+    burn,
     checkConnection,
     getOwner,
     signMessage,

@@ -159,7 +159,7 @@
                                             @click="changePrice(collectible)"
                                             >Change Price</a
                                         >
-                                        <a
+                                        <a v-if="current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="burn"
                                             @click="toggleModal('burn')"
