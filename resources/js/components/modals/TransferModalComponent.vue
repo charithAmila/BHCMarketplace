@@ -80,8 +80,7 @@ export default {
         
     },
    async mounted() {
-       this.quantity =1;
-       
+   
     }
 };
 </script>
