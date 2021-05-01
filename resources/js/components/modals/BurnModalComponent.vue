@@ -23,7 +23,7 @@
                                 <label class="input-label">Quantity to burn</label>
                                 <input
                                     class="modal-input"
-                                    type="text"
+                                    type="number"
                                     name="quantity"
                                     placeholder="New Price"
                                 />

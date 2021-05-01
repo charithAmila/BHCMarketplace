@@ -95,6 +95,24 @@
                                             "
                                             >Report</a
                                         >
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="changePrice"
+                                            @click="toggleModal('changePrice')"
+                                            >Change Price</a
+                                        >
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="burn"
+                                            @click="toggleModal('burn')"
+                                            >Burn</a
+                                        >
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="transfer"
+                                            @click="toggleModal('transfer')"
+                                            >Transfer Token</a
+                                        >
                                     </div>
 
                                     <div
@@ -258,8 +276,9 @@
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
                 v-for="i in 'abcdefghijkl'"
                 :key="i"
+                v-if="isLoading"
             >
-                <div class="outside-nft border-on-profile" v-if="isLoading">
+                <div class="outside-nft border-on-profile">
                     <div class="inside-nft">
                         <div class="inner-outside-nft">
                             <div class="inner-nft">

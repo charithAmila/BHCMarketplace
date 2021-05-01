@@ -7,7 +7,8 @@ mix.js("resources/js/app.js", "public/js")
     .sass("resources/sass/global.scss", "public/css")
     .sass("resources/sass/main.scss", "public/css")
     .sass("resources/sass/navbar.scss", "public/css")
-    .sass("resources/sass/responsiveness.scss", "public/css");
+    .sass("resources/sass/responsiveness.scss", "public/css")
+    .version();
 
 mix.webpackConfig({
     resolve: {
