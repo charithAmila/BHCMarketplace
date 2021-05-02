@@ -1349,6 +1349,7 @@ async function burn(contractAddress, type, id, quantity) {
     }
 
     const res = tx.wait();
+    console.log(res);
     if (res.status == 1) {
         return true;
     } else {
