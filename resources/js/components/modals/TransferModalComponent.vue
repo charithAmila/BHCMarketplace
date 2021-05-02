@@ -40,7 +40,7 @@
                                 />
                             </div>
                             <button @click.prevent="transfer_token()" class="form-submit">
-                                Transfer
+                               <span v-html="transfer_text"></span>
                             </button>
                         </form>
                     </div>
@@ -59,34 +59,41 @@ export default {
         return {
             address:"",
             receiver_address:"",
-            quantity:1
+            quantity:1,
+            transfer_text:"Transfer"
         };
     },
     methods: {
        async transfer_token(){
            try{
-            console.log(this.singleNft);
+               this.transfer_text = "Transferring Token...  <img src='/images/loading.gif' alt='' width='7%' />";
             const _this = this;
-            console.log("Transfer token");
             let res = await transfer(_this.singleNft.contract, _this.singleNft.owner_id, _this.receiver_address, _this.singleNft.copies==1?721:1155, _this.singleNft.id, _this.quantity)
             if(res){
                  Toast.fire({
                         icon: "success",
                         title: "Successfully transfered token..!"
                     });
+                        modalClose($('#transferModal'), $(".transfer-content"));
+                 modalClose($('#transferModal'), $(".transfer-content"));
+
             }  
             else{ 
+                   this.transfer_text = "Transfer"
                  Toast.fire({
                         icon: "error",
                         title: "Transaction failed!"
                     });
             }     
            }catch (error) {
+               this.transfer_text = "Transfer"
                console.log(error);
                 Toast.fire({
                         icon: "error",
                         title: "User rejected transaction!"
                     });
+                modalClose($('#transferModal'), $(".transfer-content"));
+
            }
           
        }
