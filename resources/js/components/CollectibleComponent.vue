@@ -44,7 +44,6 @@
                                             v-if="
                                                 current_user ==
                                                     collectible.owner_id &&
-                                                    current_page == 'profile' &&
                                                     filter != 'created'
                                             "
                                             class="action-menu"
