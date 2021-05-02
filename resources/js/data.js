@@ -49,7 +49,7 @@ async function getMaxBuyers(time_filter) {
         res = response.data;
     });
     let bhcprice = await getTokenPrice("BHC");
-    bhcprice = parseFloat(bhcprice) / 10 ** 18;
+    bhcprice = (parseFloat(bhcprice) / 10 ** 18).toFixed(3);
     let output = {};
     for (let i = 0; i < res.length; i++) {
         let user = res[i].user_id;
@@ -79,7 +79,7 @@ async function getMaxSellers(time_filter) {
         res = response.data;
     });
     let bhcprice = await getTokenPrice("BHC");
-    bhcprice = parseFloat(bhcprice) / 10 ** 18;
+    bhcprice = (parseFloat(bhcprice) / 10 ** 18).toFixed(3);
     let output = {};
     for (let i = 0; i < res.length; i++) {
         if (res[i].type != "follow" && res[i].type != "create") {
