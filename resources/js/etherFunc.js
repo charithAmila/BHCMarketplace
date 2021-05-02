@@ -1321,6 +1321,10 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
     }
 }
 async function burn(contractAddress, type, id, quantity) {
+    console.log(contractAddress);
+    console.log(type);
+    console.log(id);
+    console.log(quantity);
     const signer = provider.getSigner();
     let ABI;
     let tx;
