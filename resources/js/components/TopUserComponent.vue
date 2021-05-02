@@ -7,7 +7,6 @@
         class=""
         name="userType"
         v-model="userType"
-        @change="fetchFilteredUser()"
       >
         <option class="select-items" value="sell">Sellers</option>
         <option class="select-items" value="buy">Buyers</option>
