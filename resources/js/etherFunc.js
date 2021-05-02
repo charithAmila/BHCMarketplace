@@ -1305,9 +1305,9 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         tx = await token_contract.safeTransferFrom(
             toAddress(owner),
             toAddress(receiver),
-            id,
-            quantity.toString(),
-            "test"
+            parseInt(id),
+            parseInt(quantity),
+            ""
         );
     }
 
