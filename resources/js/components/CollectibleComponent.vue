@@ -95,13 +95,13 @@
                                             "
                                             >Report</a
                                         >
-                                        <a
+                                        <a v-if="collectible.is_selling && current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="changePrice"
                                             @click="toggleModal('changePrice')"
                                             >Change Price</a
                                         >
-                                        <a
+                                        <a v-if="current_user ==collectible.owner_id"
                                             href="javascript:void(0)"
                                             class="burn"
                                             @click="toggleModal('burn')"
