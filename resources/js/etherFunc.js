@@ -1294,8 +1294,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         tx = await token_contract.safeTransferFrom(
             toAddress(owner),
             toAddress(receiver),
-            parseInt(id),
-            "test"
+            parseInt(id)
         );
     } else {
         ABI = bhc1155;
