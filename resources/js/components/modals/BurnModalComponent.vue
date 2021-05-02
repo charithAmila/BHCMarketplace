@@ -59,14 +59,16 @@ export default {
             let res = await burn(_this.singleNft.contract,_this.singleNft.copies==1?721: 1155, _this.singleNft.id, _this.quantity)
            
            if(res){
+               this.burn_text = "Burn Token"
                  Toast.fire({
                         icon: "success",
-                        title: "Successfully burned token..!"
+                        title: "Successfully burnt token..!"
                     });
                     modalClose($('#burnModal'), $(".burn-content"));
 
             }  
             else{ 
+                 this.burn_text = "Burn Token"
                  Toast.fire({
                         icon: "error",
                         title: "User rejected transaction!"
@@ -75,6 +77,7 @@ export default {
             } 
                    }
                    catch (error) {
+                        this.burn_text = "Burn Token"
                         Toast.fire({
                         icon: "error",
                         title: "User rejected transaction!"

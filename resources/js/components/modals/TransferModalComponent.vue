@@ -70,6 +70,7 @@ export default {
             const _this = this;
             let res = await transfer(_this.singleNft.contract, _this.singleNft.owner_id, _this.receiver_address, _this.singleNft.copies==1?721:1155, _this.singleNft.id, _this.quantity)
             if(res){
+                 this.transfer_text = "Transfer"
                  Toast.fire({
                         icon: "success",
                         title: "Successfully transfered token..!"
