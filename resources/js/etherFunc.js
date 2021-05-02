@@ -1309,7 +1309,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             toAddress(receiver),
             parseInt(id),
             parseInt(quantity),
-            ethers.utils.keccak256(bytes)
+            ethers.utils.toUtf8Bytes("test")
         );
     }
 
