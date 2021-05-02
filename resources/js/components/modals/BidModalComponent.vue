@@ -302,7 +302,7 @@ export default {
       } else {
         Toast.fire({
           icon: "error",
-          title: "User rejected transaction!",
+          title: "Not enough balance!",
         });
         this.error = "Not enough Balance";
       }
