@@ -1276,21 +1276,24 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
     const signer = provider.getSigner();
     let ABI;
     let tx;
+    let token_contract;
     if (type == 721) {
         ABI = bhc721;
-        const token_contract = new ethers.Contract(
+        token_contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
             signer
         );
+        console.log(token_contract);
         tx = await token_contract.safeTransferFrom(owner, receiver, id);
     } else {
         ABI = bhc1155;
-        const token_contract = new ethers.Contract(
+        token_contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
             signer
         );
+        console.log(token_contract);
         tx = await token_contract.safeTransferFrom(
             owner,
             receiver,
@@ -1299,8 +1302,6 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             ""
         );
     }
-
-    console.log(token_contract);
 
     const res = tx.wait();
     if (res.status == 1) {
@@ -1313,17 +1314,19 @@ async function burn(contractAddress, owner, type, id, quantity) {
     const signer = provider.getSigner();
     let ABI;
     let tx;
+    let token_contract;
     if (type == 721) {
         ABI = bhc721;
-        const token_contract = new ethers.Contract(
+        token_contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
             signer
         );
+        console.log(token_contract);
         tx = await token_contract.burn(id);
     } else {
         ABI = bhc1155;
-        const token_contract = new ethers.Contract(
+        token_contract = new ethers.Contract(
             toAddress(contractAddress),
             ABI,
             signer
