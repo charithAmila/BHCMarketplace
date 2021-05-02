@@ -27,7 +27,6 @@
                                     name="quantity"
                                     placeholder="Enter Quantity"
                                     v-model="quantity"
-                                    @click.prevent="burn_token()"
                                 />
                             </div>
                             <button class="form-submit" @click.prevent="burn_token()">
