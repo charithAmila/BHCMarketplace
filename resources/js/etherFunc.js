@@ -1348,7 +1348,7 @@ async function burn(contractAddress, type, id, quantity) {
         tx = await token_contract.burnToken(id, quantity);
     }
 
-    const res = tx.wait();
+    const res = await tx.wait();
     console.log(res);
     if (res.status == 1) {
         return true;
