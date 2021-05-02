@@ -1273,6 +1273,12 @@ async function approveTokens(contractAddress, price) {
     return tx.hash;
 }
 async function transfer(contractAddress, owner, receiver, type, id, quantity) {
+    console.log(contractAddress);
+    console.log(owner);
+    console.log(receiver);
+    console.log(type);
+    console.log(id);
+    console.log(quantity);
     const signer = provider.getSigner();
     let ABI;
     let tx;
@@ -1285,7 +1291,11 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             signer
         );
         console.log(token_contract);
-        tx = await token_contract.safeTransferFrom(owner, receiver, id);
+        tx = await token_contract.safeTransferFrom(
+            toAddress(owner),
+            toAddress(receiver),
+            parseInt(id)
+        );
     } else {
         ABI = bhc1155;
         token_contract = new ethers.Contract(
@@ -1295,10 +1305,10 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         );
         console.log(token_contract);
         tx = await token_contract.safeTransferFrom(
-            owner,
-            receiver,
-            id,
-            quantity,
+            toAddress(owner),
+            toAddress(receiver),
+            parseInt(id),
+            parseInt(quantity),
             ""
         );
     }
@@ -1310,7 +1320,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         return false;
     }
 }
-async function burn(contractAddress, owner, type, id, quantity) {
+async function burn(contractAddress, type, id, quantity) {
     const signer = provider.getSigner();
     let ABI;
     let tx;

@@ -56,7 +56,7 @@ export default {
                async burn_token(){
                    const _this = this;
            console.log("Burn token");
-            let res = await burn(_this.singleNft.contract, _this.singleNft.owner_id,_this.singleNft.type, _this.singleNft.id, _this.quantity)
+            let res = await burn(_this.singleNft.contract,_this.singleNft.type, _this.singleNft.id, _this.quantity)
             if(res){
                  Toast.fire({
                         icon: "success",
