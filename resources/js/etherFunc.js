@@ -1285,7 +1285,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         ABI,
         signer
     );
-    const tx = await contract.safeTransferFrom(
+    const tx = await token_contract.safeTransferFrom(
         owner,
         receiver,
         id,
@@ -1312,7 +1312,7 @@ async function burn(contractAddress, owner, type, id, quantity) {
         ABI,
         signer
     );
-    const tx = await contract.burnToken(id, quantity);
+    const tx = await token_contract.burnToken(id, quantity);
     const res = tx.wait();
     if (res.status == 1) {
         return true;
