@@ -1284,6 +1284,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
     let tx;
     let token_contract;
     if (type == 721) {
+        console.log("721");
         ABI = bhc721;
         token_contract = new ethers.Contract(
             toAddress(contractAddress),
@@ -1296,6 +1297,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             parseInt(id)
         );
     } else {
+        console.log("1155");
         ABI = bhc1155;
         token_contract = new ethers.Contract(
             toAddress(contractAddress),
