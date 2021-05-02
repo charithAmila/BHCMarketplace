@@ -1290,7 +1290,6 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             ABI,
             signer
         );
-        console.log(token_contract);
         tx = await token_contract.safeTransferFrom(
             toAddress(owner),
             toAddress(receiver),
@@ -1303,7 +1302,6 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             ABI,
             signer
         );
-        console.log(token_contract);
         tx = await token_contract.safeTransferFrom(
             toAddress(owner),
             toAddress(receiver),
@@ -1313,7 +1311,8 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
         );
     }
 
-    const res = tx.wait();
+    const res = await tx.wait();
+    lof;
     if (res.status == 1) {
         return true;
     } else {
