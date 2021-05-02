@@ -31,7 +31,7 @@
                                 />
                             </div>
                             <button class="form-submit" @click.prevent="burn_token()">
-                                Burn
+                               {{burn_text}}
                             </button>
                         </form>
                     </div>
@@ -49,25 +49,30 @@ export default {
     data() {
         return {
                  address:"",
-            quantity:1
+            quantity:1,burn_text:"Burn Token"
         };
     },
     methods: {
                async burn_token(){
                    const _this = this;
            console.log("Burn token");
+           this.burn_text =  "Burning Token...  <img src='/images/loading.gif' alt='' width='7%' />";
             let res = await burn(_this.singleNft.contract,_this.singleNft.type, _this.singleNft.id, _this.quantity)
-            if(res){
+           
+           if(res){
                  Toast.fire({
                         icon: "success",
                         title: "Successfully burned token..!"
                     });
+                    modalClose($('#burnModal'), $(".burn-content"));
+
             }  
             else{ 
                  Toast.fire({
                         icon: "error",
                         title: "User rejected transaction!"
                     });
+                     modalClose($('#burnModal'), $(".burn-content"));
             }     
        }
         
