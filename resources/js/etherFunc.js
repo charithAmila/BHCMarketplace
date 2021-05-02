@@ -1295,7 +1295,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             toAddress(owner),
             toAddress(receiver),
             parseInt(id),
-            ""
+            "test"
         );
     } else {
         ABI = bhc1155;
@@ -1310,7 +1310,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             toAddress(receiver),
             parseInt(id),
             parseInt(quantity),
-            ""
+            "test"
         );
     }
 
