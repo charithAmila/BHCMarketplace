@@ -82,6 +82,7 @@ export default {
                     });
             }     
            }catch (error) {
+               console.log(error);
                 Toast.fire({
                         icon: "error",
                         title: "User rejected transaction!"
