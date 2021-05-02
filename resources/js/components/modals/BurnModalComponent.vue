@@ -58,7 +58,7 @@ export default {
            const _this = this;
            console.log("Burn token");
            this.burn_text =  "Burning Token...  <img src='/images/loading.gif' alt='' width='7%' />";
-            let res = await burn(_this.singleNft.contract,_this.singleNft.type, _this.singleNft.id, _this.quantity)
+            let res = await burn(_this.singleNft.contract,_this.singleNft.copies==1?721: 1155, _this.singleNft.id, _this.quantity)
            
            if(res){
                  Toast.fire({
