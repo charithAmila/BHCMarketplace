@@ -1312,7 +1312,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
     }
 
     const res = await tx.wait();
-    lof;
+    console.log(res);
     if (res.status == 1) {
         return true;
     } else {
