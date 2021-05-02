@@ -1306,7 +1306,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             toAddress(owner),
             toAddress(receiver),
             parseInt(id),
-            parseInt(quantity),
+            quantity,
             "test"
         );
     }
