@@ -2321,6 +2321,20 @@ body {
      object-fit: cover;
 }
 
+.profile-section .profile-info .actual-img-container .verified {
+  position: absolute;
+  border-radius: 50%;
+  background: #F88130;
+  bottom: 5px;
+  right: 5px;
+}
+
+.profile-section .profile-info .actual-img-container .verified .fa-check {
+  padding: 7px;
+  font-size: 20px;
+  color: white;
+}
+
 .profile-section .profile-info .actual-img-container .custom {
   display: inline-block;
   position: absolute;
@@ -2440,6 +2454,12 @@ body {
   border: 1.5px solid #ececec;
 }
 
+.profile-section .profile-info .details-container .profile-button .btn-verify {
+  border-radius: 20px;
+  font-weight: 600;
+  border: 1.5px solid #ececec;
+}
+
 .profile-section .profile-info .details-container .profile-button .share-drop {
   position: absolute;
   width: 280px;
@@ -2518,7 +2538,7 @@ body {
   position: absolute;
   width: 200px;
   top: 70px;
-  right: 20px;
+  right: 75px;
   border-radius: 15px;
   background: #fff;
   box-shadow: -1px 3px 14px 0px rgba(0, 0, 0, 0.39);

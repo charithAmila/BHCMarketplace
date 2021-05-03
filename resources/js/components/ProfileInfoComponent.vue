@@ -34,6 +34,9 @@
                     >
                         <i class="fa fa-cog"></i>
                     </div>
+                    <div class="verified">
+                        <i class="fas fa-check"></i>
+                    </div>
                 </div>
                 <div class="details-container">
                     <label id="profile-name">{{ user.name }}</label>
@@ -73,6 +76,12 @@
                             href="javascript:void(0)"
                         >
                             <i class="fas fa-ellipsis-h"></i>
+                        </a>
+                        <a
+                            class="btn btn-verify"
+                            href="javascript:void(0)"
+                        >
+                            Get Verified
                         </a>
 
                         <div class="share-drop d-none">
