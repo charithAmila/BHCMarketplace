@@ -532,7 +532,6 @@ export default {
                 });
         },
         toggleModal(clicked) {
-            console.log("#" + clicked + "Modal");
             modalOpen(
                 $("#" + clicked + "Modal"),
                 $("." + clicked + "-content")

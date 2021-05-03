@@ -74,6 +74,29 @@
                                     @click="putOnSale(collectible)"
                                     >Put on sale</a
                                 >
+
+                                <a  
+                                    v-if="current_user == current_owner.wallet"
+                                    href="javascript:void(0)"
+                                    class="changePrice"
+                                    @click="toggleModal('changePrice')"
+                                    >Change Price</a
+                                >
+
+                                <a
+                                    v-if="current_user == current_owner.wallet"
+                                    href="javascript:void(0)"
+                                    class="burn"
+                                    @click="toggleModal('burn')"
+                                    >Burn</a
+                                >
+                                <a
+                                    v-if="current_user == current_owner.wallet"
+                                    href="javascript:void(0)"
+                                    class="transfer"
+                                    @click="toggleModal('transfer')"
+                                    >Transfer Token</a
+                                >
                             </div>
 
                             <div class="show-share-drop d-none">
@@ -500,6 +523,22 @@
             :page="current_page"
         >
         </put-on-sale-modal-component>
+
+        <transfer-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></transfer-modal-component>
+        <change-price-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></change-price-modal-component>
+        <burn-modal-component
+            :singleNft="singleNft"
+            :current_user="current_user"
+            :page="current_page"
+        ></burn-modal-component>
     </div>
 </template>
 
