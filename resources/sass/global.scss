@@ -1692,6 +1692,18 @@ body {
                 height: 92%;
                 object-fit: cover;
             }
+            .verified{
+                position: absolute;
+                border-radius: 50%;
+                background: $primaryColor;
+                bottom: 5px;
+                right: 5px;
+                .fa-check{
+                    padding: 7px;
+                    font-size: 20px;
+                    color: white;
+                }
+            }
             .custom {
                 display: inline-block;
                 position: absolute;
@@ -1733,6 +1745,7 @@ body {
                 opacity: 0.8;
             }
         }
+
         .details-container {
             padding-top: 30px;
             display: block;
@@ -1791,6 +1804,11 @@ body {
                 .btn-social {
                     padding: 8px 13px;
                     border-radius: 50%;
+                    border: 1.5px solid $lightGray;
+                }
+                .btn-verify{
+                    border-radius: 20px;
+                    font-weight: 600;
                     border: 1.5px solid $lightGray;
                 }
                 .share-drop {
@@ -1858,7 +1876,7 @@ body {
                     position: absolute;
                     width: 200px;
                     top: 70px;
-                    right: 20px;
+                    right: 75px;
                     border-radius: 15px;
                     background: #fff;
                     box-shadow: -1px 3px 14px 0px rgba(0, 0, 0, 0.39);
