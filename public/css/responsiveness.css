@@ -150,6 +150,35 @@
     text-align: center;
   }
 
+  #actual-top-user {
+    display: flex;
+    overflow-y: auto;
+  }
+
+  #actual-top-user .topUserList {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #actual-top-user .topUserList img {
+    width: 80px;
+    height: 80px !important;
+    margin-right: 0 !important;
+  }
+
+  #actual-top-user .topUserList .profName {
+    font-weight: 700;
+  }
+
+  #actual-top-user .topUserList .prof {
+    color: #545454;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+  }
+
   .main-content .items {
     padding: 10px 20px 0 20px !important;
   }

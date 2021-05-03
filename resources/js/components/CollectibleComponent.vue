@@ -276,8 +276,8 @@
 
             <div
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
-                v-for="i in 'abcdefghijkl'"
-                :key="i"
+                v-for="i in customPreloaderCount"
+                :key="Math.random"
                 v-if="isLoading"
             >
                 <div class="outside-nft border-on-profile">
@@ -413,7 +413,8 @@ export default {
             checked: false,
 
             loaded: false,
-            open: false
+            open: false,
+            customPreloaderCount: 0,
 
             //collectible: this.collectibles[0],
         };
@@ -423,6 +424,12 @@ export default {
             this.price = +parseFloat(this.singleNft.total).toFixed(2);
             this.nft_id = this.singleNft.id;
             this.record_id = this.singleNft.record_id;
+        },
+        collectibles: function() {
+            var totalNft = this.collectibles.length
+            var offsetItem = totalNft % 5;
+            var totalPreloader = 10 - offsetItem
+            this.customPreloaderCount = totalPreloader
         }
     },
     methods: {
@@ -525,7 +532,6 @@ export default {
                 });
         },
         toggleModal(clicked) {
-            console.log("#" + clicked + "Modal");
             modalOpen(
                 $("#" + clicked + "Modal"),
                 $("." + clicked + "-content")
