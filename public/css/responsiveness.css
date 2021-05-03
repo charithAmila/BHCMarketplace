@@ -179,6 +179,11 @@
     text-align: center;
   }
 
+  #actual-top-user .topUserList .top-user-container .fa-check {
+    left: 57px;
+    bottom: -1px;
+  }
+
   .main-content .items {
     padding: 10px 20px 0 20px !important;
   }

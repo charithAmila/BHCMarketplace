@@ -108,10 +108,6 @@
                                         width="50"
                                     />
                                 </a>
-                                <i
-                                    class="fa fa-check-circle imgCheck"
-                                    aria-hidden="true"
-                                ></i>
                             </div>
                         </div>
                         <div class="col-9 col-md-10">

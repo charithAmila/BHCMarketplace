@@ -44,8 +44,9 @@
           :key="index"
           class="topUserList"
         >
-          <a class="black-link" :href="'/profile/' + item.user_id">
+          <a class="black-link top-user-container" :href="'/profile/' + item.user_id">
             <img class="filterImg" :src="item.propic" alt="" />
+            <i class="fa fa-check"></i>
           </a>
           <div class="user-info">
             <h6>
