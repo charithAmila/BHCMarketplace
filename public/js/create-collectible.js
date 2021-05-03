@@ -158,11 +158,14 @@ $(document).ready(function() {
         }, 80);
     });
 
+    $(document).on('click', '.sale-price-btn', function(){
+        toggleCurrencyDrop();
+    })
     $(".sale-price-btn").click(function() {
         toggleCurrencyDrop();
     });
 
-    $(".currency-item").click(function() {
+    $(document).on('click', '.currency-item', function(){
         $(".currency-check").addClass("opacity-0");
         $(this)
             .siblings()

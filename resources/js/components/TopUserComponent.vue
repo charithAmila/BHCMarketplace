@@ -25,8 +25,8 @@
         <option class="select-items" value="30">30 days</option>
       </select>
     </div>
-    <div class="filterList d-none d-md-block">
-      <div id="preloader-top-user" class="">
+    <div class="filterList">
+      <div id="preloader-top-user" class="d-none d-md-block">
         <div v-for="item in 8" :key="item" class="row placeholder-div">
           <div class="col-3 col-sm-3 col-md-3 col-lg-3">
             <div class="userCircle"></div>
