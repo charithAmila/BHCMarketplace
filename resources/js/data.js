@@ -106,7 +106,7 @@ async function getMaxSellers(time_filter) {
             output[user].user_id = res[i].user_id;
         }
     }
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < res.length; i++) {
         if (res[i].type != "follow" && res[i].type != "create") {
             let user = res[i].user_id;
             if ((res[i].currency = "BNB")) {
