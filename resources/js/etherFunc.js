@@ -48,7 +48,7 @@ if (typeof window.ethereum == "undefined") {
     //"https://data-seed-prebsc-1-s1.binance.org:8545"
     "http://162.0.210.42/rpc"
 );
-window.rpcprovider = new ethers.providers.JsonRpcProvider(
+window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
     //"https://apis.ankr.com/90ca2e28d7af47eea5a0d41b1236d19d/10acafa95fd982713d5972bad68960fc/binance/full/main"
     //"https://data-seed-prebsc-1-s1.binance.org:8545"
     "http://162.0.210.42/rpc"
@@ -345,18 +345,18 @@ async function getCreated(owner, _startingBlock) {
                 owner
             );
             //for (var n = 0; n < owners.length; n++) {
-            try {
-                getTokenData(
-                    event.collection,
-                    owners[0].owner,
-                    event.token_id
-                ).then(token => {
-                    window.myTokens.created.push(token);
-                });
+            if (owners.length > 0) {
+                try {
+                    getTokenData(
+                        event.collection,
+                        owners[0].owner,
+                        event.token_id
+                    ).then(token => {
+                        window.myTokens.created.push(token);
+                    });
 
-                //data.push(token);
-            } catch (e) {
-                console.log(e);
+                    //data.push(token);
+                } catch (e) {}
             }
             //}
 
@@ -412,29 +412,32 @@ async function getCreated(owner, _startingBlock) {
                         6494200,
                         owner
                     );
+                    console.log(owners);
                     //for (var n = 0; n < owners.length; n++) {
-                    try {
-                        getTokenData(
-                            event.args._collection,
-                            owners[0].owner,
-                            event.args._id
-                        )
-                            .then(token => {
-                                window.myTokens.created.push(token);
-                            })
-                            .catch(err => {
-                                if (i + 4000 >= endBlock) {
-                                    window.loaded["created"] = true;
-                                }
-                            })
-                            .finally(data => {
-                                if (i + 4000 >= endBlock) {
-                                    window.loaded["created"] = true;
-                                }
-                            });
-                        //data.push(token);
-                    } catch (e) {
-                        console.log(e);
+                    if (owners.length > 0) {
+                        try {
+                            getTokenData(
+                                event.args._collection,
+                                owners[0].owner,
+                                event.args._id
+                            )
+                                .then(token => {
+                                    window.myTokens.created.push(token);
+                                })
+                                .catch(err => {
+                                    if (i + 4000 >= endBlock) {
+                                        window.loaded["created"] = true;
+                                    }
+                                })
+                                .finally(data => {
+                                    if (i + 4000 >= endBlock) {
+                                        window.loaded["created"] = true;
+                                    }
+                                });
+                            //data.push(token);
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
                     //}
 
@@ -492,7 +495,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
         var contract = new ethers.Contract(
             toAddress(collectionAddess),
             bhc721,
-            rpcprovider
+            rpcprovider1
         );
         var is721 = await contract.supportsInterface(ERC721Interface);
         var is1155 = await contract.supportsInterface(ERC1155Interface);
@@ -510,16 +513,20 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             for (var j = 0; j < evtsCr.length; j++) {
                 if (Number(evtsCr[j].token_id) == tokenId) {
                     var owner = evtsCr[j].owner;
-                    var copies = await contract.balanceOf(
-                        owner,
-                        evtsCr[j].token_id
-                    );
-                    var tk = { owner: owner, ownedCopies: copies };
-                    var obj = owners.filter(function(element) {
-                        if (element.owner == owner) return true;
-                    });
-                    if (obj.length == 0) {
-                        owner != toAddress("") ? owners.push(tk) : null;
+                    if (owner != toAddress("")) {
+                        try {
+                            var copies = await contract.balanceOf(
+                                owner,
+                                evtsCr[j].token_id
+                            );
+                            var tk = { owner: owner, ownedCopies: copies };
+                            var obj = owners.filter(function(element) {
+                                if (element.owner == owner) return true;
+                            });
+                            if (obj.length == 0) {
+                                owners.push(tk);
+                            }
+                        } catch (e) {}
                     }
                 }
             }
@@ -566,16 +573,24 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                 for (var j = 0; j < evtsCr.length; j++) {
                     if (Number(evtsCr[j].args.id) == tokenId) {
                         var owner = evtsCr[j].args.to;
-                        var copies = await contract.balanceOf(
-                            owner,
-                            evtsCr[j].args.id
-                        );
-                        var tk = { owner: owner, ownedCopies: copies };
-                        var obj = owners.filter(function(element) {
-                            if (element.owner == owner) return true;
-                        });
-                        if (obj.length == 0) {
-                            owner != toAddress("") ? owners.push(tk) : null;
+                        if (owner != toAddress("")) {
+                            try {
+                                var copies = await contract.balanceOf(
+                                    owner,
+                                    evtsCr[j].args.id
+                                );
+                                var tk = { owner: owner, ownedCopies: copies };
+                                var obj = owners.filter(function(element) {
+                                    if (element.owner == owner) return true;
+                                });
+                                if (obj.length == 0) {
+                                    owner != toAddress("")
+                                        ? owners.push(tk)
+                                        : null;
+                                }
+                            } catch (e) {
+                                console.log(e);
+                            }
                         }
                     }
                 }
@@ -644,7 +659,9 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                         owners.push(syncedOwners[ow]);
                         return owners;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.log(e);
+                }
             }
         }
     } catch (e) {
