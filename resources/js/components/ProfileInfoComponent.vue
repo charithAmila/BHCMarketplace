@@ -79,7 +79,7 @@
                         </a>
                         <a
                             class="btn btn-verify"
-                            href="javascript:void(0)"
+                            href="https://rbjrcxhzb4w.typeform.com/to/sKvJ0THW"
                         >
                             Get Verified
                         </a>
