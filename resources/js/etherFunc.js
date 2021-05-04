@@ -519,7 +519,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                         if (element.owner == owner) return true;
                     });
                     if (obj.length == 0) {
-                        owners.push(tk);
+                        owner != toAddress("") ? owners.push(tk) : null;
                     }
                 }
             }
@@ -575,7 +575,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                             if (element.owner == owner) return true;
                         });
                         if (obj.length == 0) {
-                            owners.push(tk);
+                            owner != toAddress("") ? owners.push(tk) : null;
                         }
                     }
                 }
@@ -635,14 +635,16 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
             );
             console.log(syncedOwners);
             for (var ow = syncedOwners.length - 1; ow > -1; ow--) {
-                var copies = await contract.balanceOf(
-                    syncedOwners[ow].owner,
-                    tokenId
-                );
-                if (Number(copies) > 0) {
-                    owners.push(syncedOwners[ow]);
-                    return owners;
-                }
+                try {
+                    var copies = await contract.balanceOf(
+                        syncedOwners[ow].owner,
+                        tokenId
+                    );
+                    if (Number(copies) > 0) {
+                        owners.push(syncedOwners[ow]);
+                        return owners;
+                    }
+                } catch (e) {}
             }
         }
     } catch (e) {
