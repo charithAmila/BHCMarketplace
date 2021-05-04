@@ -58,12 +58,8 @@ async function getMaxBuyers(time_filter) {
             if (!users.includes(user)) {
                 users.push(user);
             }
-            let details = await getUserDetails(user);
-            console.log(details);
             output[user] = {};
             output[user].buy_amount = 0;
-            output[user].propic = details.display_photo;
-            output[user].username = details.name;
             output[user].currency = "BNB";
         }
     }
