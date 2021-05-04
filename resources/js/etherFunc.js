@@ -60,34 +60,44 @@ window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
 
 async function syncCollections(collectionAddess) {
     var latest = await axios.get("/transfers?collection=" + collectionAddess);
-    startBlock = latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+    var startBlock = latest.data.length == 0 ? 6494200 : latest.data.block + 1;
     var endBlock = await rpcprovider.getBlockNumber();
     var evts = [];
+    var contract = new ethers.Contract(
+        toAddress(collectionAddess),
+        bhc1155,
+        rpcprovider
+    );
+
     for (var i = startBlock; i <= endBlock; i = i + 4000) {
         var transfers = [];
         startBlock = i;
-        var evtsCr = await contract.queryFilter(
-            "TransferSingle",
-            i,
-            i + 4000 <= endBlock ? i + 4000 : endBlock
-        );
+        try {
+            var evtsCr = await contract.queryFilter(
+                "TransferSingle",
+                i,
+                i + 4000 <= endBlock ? i + 4000 : endBlock
+            );
 
-        for (var x = 0; x < evtsCr.length; x++) {
-            var event = evtsCr[x];
-            transfers.push([
-                event.blockNumber,
-                collectionAddess,
-                event.args.to,
-                Number(event.args.id)
-            ]);
+            for (var x = 0; x < evtsCr.length; x++) {
+                var event = evtsCr[x];
+                transfers.push([
+                    event.blockNumber,
+                    collectionAddess,
+                    event.args.to,
+                    Number(event.args.id)
+                ]);
+            }
+            if (transfers.length > 0) {
+                await axios.post("/transfers", { transfers: transfers });
+            }
+            startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
+        } catch (e) {
+            console.log(e);
         }
-        if (transfers.length > 0) {
-            await axios.post("/transfers", { transfers: transfers });
-        }
-        startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
-        evts = evtsCr;
     }
-    if (startBlock != 0) {
+
+    if (startBlock != 6494200) {
         await axios.patch("/transfers/" + collectionAddess, {
             block: startBlock - 1
         });
@@ -865,6 +875,12 @@ async function getSingles(contractAddress, owner, collection) {
 }
 
 async function getMultiples(contractAddress, owner, collection) {
+    try {
+        console.log("Syncing....");
+        await syncCollections(contractAddress);
+    } catch (e) {
+        console.log(e);
+    }
     var tokens = [];
     var transfers = [];
     var lastSyncedId = 1;
@@ -912,7 +928,7 @@ async function getMultiples(contractAddress, owner, collection) {
                 console.log(e);
             }
         }
-        for (var i = Number(lastSyncedId) + 1; i < currentId + 1; i++) {
+        /*for (var i = Number(lastSyncedId) + 1; i < currentId + 1; i++) {
             try {
                 var ownedCount = await contract.balanceOf(owner, i);
                 if (ownedCount > 0) {
@@ -925,7 +941,7 @@ async function getMultiples(contractAddress, owner, collection) {
                     tokens.push(nft);
                 }
             } catch (e) {}
-        }
+        }*/
     } catch (e) {}
     return tokens;
 }
