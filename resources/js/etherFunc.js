@@ -127,6 +127,7 @@ async function checkConnection() {
             acc = toAddress(accs[0]);
         } else {
             acc = toAddress("");
+            window.wrongNetwork = true;
         }
     } catch (e) {
         acc = "";

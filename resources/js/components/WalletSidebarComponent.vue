@@ -32,18 +32,28 @@
             We do not own your private keys and cannot access your funds without
             your confirmation.
         </p>
+        <WrongNetworkModalComponent
+            v-if="wrongNet"
+        ></WrongNetworkModalComponent>
     </div>
 </template>
 
 <script>
+import { toAddress, checkConnection } from "./../etherFunc";
+import WrongNetworkModalComponent from "./../components/modals/WrongNetworkModalComponent";
 export default {
+    components: { WrongNetworkModalComponent },
     data() {
         return {
-            selectedAccount: ""
+            selectedAccount: "",
+            wrongNet: false
         };
     },
     props: ["url_previous", "asset_url"],
-    mounted() {},
+    async mounted() {
+        await checkConnection();
+        this.wrongNet = window.wrongNetwork;
+    },
     methods: {
         connectMetamsk: async function() {
             const _this = this;
