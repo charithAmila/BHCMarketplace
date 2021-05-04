@@ -256,6 +256,11 @@ Vue.component(
 
 Vue.component("search-page", require("./components/SearchPage.vue").default);
 
+Vue.component(
+    "wrong-network-modal",
+    require("./components/modals/WrongNetworkModalComponent.vue").default
+);
+
 try {
     window.ethereum.on("accountsChanged", function() {
         window.location.reload();
