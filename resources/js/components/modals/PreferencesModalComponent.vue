@@ -92,7 +92,7 @@
                                     class="modal-input preferences-check"
                                     type="text"
                                     name="short_url"
-                                    placeholder="billionhappines.finance/profile"
+                                    placeholder="billionhappiness.finance/profile/"
                                     v-model="user_data.short_url"
                                     @input="nameCheck"
                                 />

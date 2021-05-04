@@ -30,6 +30,25 @@
         top: 49% !important;
     }
 
+    .filterList{
+        #preloader-top-user{
+            display: flex;
+            .placeholder-div{
+                margin-right: 10px;
+                border: none !important;
+                .userCircle{
+                    width: 80px !important;
+                    height: 80px !important;
+                    margin-bottom: 5px;
+                }
+                .userPrice{
+                    width: 80% !important;
+                    margin: 0 auto;
+                }
+            }
+        }
+    }
+
 
 
     .show-opt-menu {
