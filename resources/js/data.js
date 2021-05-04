@@ -69,7 +69,9 @@ async function getMaxBuyers(time_filter) {
             if ((res[i].currency = "BNB")) {
                 output[user].buy_amount += res[i].buy_amount;
             } else {
-                output[user].buy_amount += res[i].buy_amount * bhcprice;
+                output[user].buy_amount += (
+                    res[i].buy_amount * bhcprice
+                ).toFixed(3);
             }
         }
     }
@@ -112,7 +114,9 @@ async function getMaxSellers(time_filter) {
             if ((res[i].currency = "BNB")) {
                 output[user].sell_amount += res[i].sell_amount;
             } else {
-                output[user].sell_amount += res[i].sell_amount * bhcprice;
+                output[user].sell_amount += (
+                    res[i].sell_amount * bhcprice
+                ).toFixed(3);
             }
         }
     }
