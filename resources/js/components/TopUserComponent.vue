@@ -55,7 +55,7 @@
               }}</a>
             </h6>
             <label
-              >{{ item.sell_amount }} {{ item.buy_amount }}
+              >{{ item.sell_amount.toFixed(3) }} {{ item.buy_amount.toFixed(3)}}
               {{ item.currency }}</label
             >
           </div>
