@@ -227,14 +227,18 @@
                     <a :href="disconnect_route">Disconnect</a-->
                 </div>
             </div>
+       
         </nav>
-    <div class="mobile-menu onclick-menu">
+    
+   
+        <div class="mobile-menu onclick-menu">
       <div class="menu-links">
         <a :href="marketplace_route">Marketplace</a>
         <a :href="profile_route + '/' + user_link">My NFT's</a>
         <a :href="faq_route">FAQ</a>
         <a :href="about_route">BHC</a>
       </div>
+        </div>
       <div class="menu-footer">
         <div class="footer-social">
           <a
@@ -262,8 +266,7 @@
           <a v-if="!auth_check" :href="connect_route" class="btnSecondary">{{
             account
           }}</a>
-        </div>
-
+      </div>
         <preferences-modal-component
             :asset_url="asset_url"
             :csrf_token="csrf_token"
@@ -277,6 +280,7 @@
 
         <toast-component :asset_url="asset_url"></toast-component>
     </div>
+     </div>  
 </template>
 
 <script>
