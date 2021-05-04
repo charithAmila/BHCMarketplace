@@ -221,10 +221,20 @@
       </div>
       <div class="menu-footer">
         <div class="footer-social">
-          <a href="javascript:void(0)">
+          <a
+            href="javascript:void(0)"
+            data-sharer="twitter"
+            data-title="Billion Happiness"
+            :data-url="asset_url"
+          >
             <img :src="asset_url + 'images/twitter.png'" />
           </a>
-          <a href="javascript:void(0)">
+          <a
+            href="javascript:void(0)"
+            data-sharer="telegram"
+            data-title="Billion Happiness"
+            :data-url="asset_url"
+          >
             <img :src="asset_url + 'images/telegram.png'" />
           </a>
           <a href="javascript:void(0)">

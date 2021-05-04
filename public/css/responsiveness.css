@@ -18,6 +18,26 @@
     top: 49% !important;
   }
 
+  .filterList #preloader-top-user {
+    display: flex;
+  }
+
+  .filterList #preloader-top-user .placeholder-div {
+    margin-right: 10px;
+    border: none !important;
+  }
+
+  .filterList #preloader-top-user .placeholder-div .userCircle {
+    width: 80px !important;
+    height: 80px !important;
+    margin-bottom: 5px;
+  }
+
+  .filterList #preloader-top-user .placeholder-div .userPrice {
+    width: 80% !important;
+    margin: 0 auto;
+  }
+
   .show-opt-menu {
     right: 30px !important;
   }

@@ -607,7 +607,7 @@
 
                             <div class="col-2 col-md-2"></div>
                             <div class="col-4 col-md-4 p-0">
-                                <label class="boldFade">disregard update</label>
+                                <!-- <label class="boldFade">disregard update</label> -->
                             </div>
                         </div>
                     </form>
