@@ -1,32 +1,32 @@
 // Variables
-@import 'variables';
-@import 'animation';
+@import "variables";
+@import "animation";
 html,
 body {
-    font-family: 'Blinker', sans-serif;
+    font-family: "Blinker", sans-serif;
     font-weight: 300;
 }
 
 #main-app {
     /* Let's get this party started */
-     ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
     }
     /* Track */
-     ::-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         -webkit-border-radius: 10px;
         border-radius: 10px;
     }
     /* Handle */
-     ::-webkit-scrollbar-thumb {
+    ::-webkit-scrollbar-thumb {
         -webkit-border-radius: 10px;
         border-radius: 10px;
         background: rgb(125 125 125 / 80%);
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
     }
-     ::-webkit-scrollbar-thumb:window-inactive {
+    ::-webkit-scrollbar-thumb:window-inactive {
         background: rgb(125 125 125 / 80%);
     }
 }
@@ -38,7 +38,12 @@ body {
     // position: fixed;
     left: 0;
     bottom: 0;
-    background: linear-gradient( 90deg, rgba(255, 253, 252, 1) 0%, rgba(255, 193, 112, 1) 76%, rgba(255, 193, 112, 1) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(255, 253, 252, 1) 0%,
+        rgba(255, 193, 112, 1) 76%,
+        rgba(255, 193, 112, 1) 100%
+    );
     .row {
         margin-right: 0px !important;
     }
@@ -97,7 +102,12 @@ body {
     padding-top: 20px 0;
     text-align: center;
     width: 100%;
-    background: linear-gradient( 90deg, rgba(255, 253, 252, 1) 0%, rgba(255, 193, 112, 1) 76%, rgba(255, 193, 112, 1) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(255, 253, 252, 1) 0%,
+        rgba(255, 193, 112, 1) 76%,
+        rgba(255, 193, 112, 1) 100%
+    );
     .newsletter {
         padding-top: 30px;
         h3 {
@@ -225,7 +235,6 @@ body {
         }
     }
     .create-section {
-        
         .inner-section {
             height: 100%;
         }
@@ -425,7 +434,7 @@ body {
     }
     .slider:before {
         position: absolute;
-        content: '';
+        content: "";
         height: 12px;
         width: 12px;
         left: 0px;
@@ -434,13 +443,13 @@ body {
         -webkit-transition: 0.4s;
         transition: 0.4s;
     }
-    input:checked+.slider {
+    input:checked + .slider {
         background-color: #f5c516;
     }
-    input:focus+.slider {
+    input:focus + .slider {
         box-shadow: 0 0 1px #f5c516;
     }
-    input:checked+.slider:before {
+    input:checked + .slider:before {
         -webkit-transform: translateX(26px);
         -ms-transform: translateX(26px);
         transform: translateX(26px);
@@ -456,8 +465,26 @@ body {
 
 @mixin clipPath() {
     --notchSize: 10px;
-    clip-path: polygon( 0% var(--notchSize), var(--notchSize) 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0% calc(100% - var(--notchSize)));
-    -webkit-clip-path: polygon( 0% var(--notchSize), var(--notchSize) 0%, calc(100% - var(--notchSize)) 0%, 100% var(--notchSize), 100% calc(100% - var(--notchSize)), calc(100% - var(--notchSize)) 100%, var(--notchSize) 100%, 0% calc(100% - var(--notchSize)));
+    clip-path: polygon(
+        0% var(--notchSize),
+        var(--notchSize) 0%,
+        calc(100% - var(--notchSize)) 0%,
+        100% var(--notchSize),
+        100% calc(100% - var(--notchSize)),
+        calc(100% - var(--notchSize)) 100%,
+        var(--notchSize) 100%,
+        0% calc(100% - var(--notchSize))
+    );
+    -webkit-clip-path: polygon(
+        0% var(--notchSize),
+        var(--notchSize) 0%,
+        calc(100% - var(--notchSize)) 0%,
+        100% var(--notchSize),
+        100% calc(100% - var(--notchSize)),
+        calc(100% - var(--notchSize)) 100%,
+        var(--notchSize) 100%,
+        0% calc(100% - var(--notchSize))
+    );
 }
 
 .outside {
@@ -1011,14 +1038,14 @@ body {
 }
 
 .walletSection:after {
-    content: '';
+    content: "";
     display: block;
     width: 100%;
     height: 100%;
     position: absolute;
     top: -12%;
     left: -9%;
-    background-image: url('/images/BHC.png');
+    background-image: url("/images/BHC.png");
     background-size: 400px 400px;
     background-position: 30px 30px;
     background-repeat: no-repeat;
@@ -1175,6 +1202,10 @@ body {
 }
 
 .z-2 {
+    z-index: 99998;
+}
+
+.z-3 {
     z-index: 99999;
 }
 
@@ -1316,8 +1347,7 @@ body {
             display: flex;
             justify-content: space-between;
             padding: 20px 5px;
-            @mixin buttons($bg,
-            $color) {
+            @mixin buttons($bg, $color) {
                 padding: 8px 40px;
                 background: $bg;
                 color: $color;
@@ -1331,13 +1361,11 @@ body {
                 }
             }
             .btnPrimary {
-                @include buttons($primaryColor,
-                white);
+                @include buttons($primaryColor, white);
             }
             .btnSecondary {
                 margin-left: 0 !important;
-                @include buttons($darkGray,
-                black);
+                @include buttons($darkGray, black);
             }
         }
     }
@@ -1371,7 +1399,7 @@ body {
     border-radius: 25px;
 }
 
-#create-collectible-modal{
+#create-collectible-modal {
     .close-collectible-modal {
         @include closeButton();
         padding: 0px 13px;
@@ -1447,7 +1475,7 @@ body {
 }
 
 #transferModal {
-    .transfer-content{
+    .transfer-content {
         left: 42%;
         top: 26%;
     }
@@ -1460,8 +1488,8 @@ body {
     }
 }
 
-#changePriceModal{
-    .changePrice-content{
+#changePriceModal {
+    .changePrice-content {
         left: 42%;
         top: 26%;
     }
@@ -1474,9 +1502,8 @@ body {
     }
 }
 
-
-#burnModal{
-    .burn-content{
+#burnModal {
+    .burn-content {
         left: 42%;
         top: 26%;
     }
@@ -1692,13 +1719,13 @@ body {
                 height: 92%;
                 object-fit: cover;
             }
-            .verified{
+            .verified {
                 position: absolute;
                 border-radius: 50%;
                 background: $primaryColor;
                 bottom: 5px;
                 right: 5px;
-                .fa-check{
+                .fa-check {
                     padding: 7px;
                     font-size: 20px;
                     color: white;
@@ -1734,7 +1761,7 @@ body {
                 width: 70% !important;
             }
             .custom::before {
-                content: '';
+                content: "";
                 display: block;
                 position: absolute;
                 z-index: -1;
@@ -1806,7 +1833,7 @@ body {
                     border-radius: 50%;
                     border: 1.5px solid $lightGray;
                 }
-                .btn-verify{
+                .btn-verify {
                     border-radius: 20px;
                     font-weight: 600;
                     border: 1.5px solid $lightGray;
@@ -2311,8 +2338,10 @@ body {
 
 #toast.show {
     visibility: visible;
-    -webkit-animation: fadein-toast 0.5s, expand 0.5s 0.5s, stay 3s 1s, shrink 0.5s 2s, fadeout-toast 0.5s 2.5s;
-    animation: fadein-toast 0.5s, expand 0.5s 0.5s, stay 3s 1s, shrink 0.5s 4s, fadeout-toast 0.5s 4.5s;
+    -webkit-animation: fadein-toast 0.5s, expand 0.5s 0.5s, stay 3s 1s,
+        shrink 0.5s 2s, fadeout-toast 0.5s 2.5s;
+    animation: fadein-toast 0.5s, expand 0.5s 0.5s, stay 3s 1s, shrink 0.5s 4s,
+        fadeout-toast 0.5s 4.5s;
 }
 
 @-webkit-keyframes fadein-toast {
@@ -2421,8 +2450,8 @@ body {
     }
 }
 
-.qos-modal{
-    margin: 15px 0; 
+.qos-modal {
+    margin: 15px 0;
 }
 
 .show-opt-menu {
@@ -2604,7 +2633,8 @@ body {
     }
     .item-img {
         img,
-        video {}
+        video {
+        }
     }
 }
 
@@ -3155,22 +3185,19 @@ body {
                 cursor: pointer;
             }
 
-            .notif-container{
-                a{
+            .notif-container {
+                a {
                     text-decoration: none;
                     color: black;
-                    &:hover{
+                    &:hover {
                         color: $primaryColor;
                     }
 
-                    p{
+                    p {
                         margin-bottom: 0;
                     }
                 }
             }
-
-
-
 
             .notif-img {
                 margin-right: 10px;
