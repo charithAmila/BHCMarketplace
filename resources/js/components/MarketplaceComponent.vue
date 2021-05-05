@@ -245,6 +245,8 @@ export default {
             this.isAll = true;
         },
         sortedItems: function(sort_status) {
+             console.log("Recent");
+                console.log(this.new_array_collectibles.length);
             if (sort_status == "recent") {
                 if (
                     this.new_array_collectibles === undefined ||
