@@ -81,8 +81,8 @@ async function getMaxBuyers(time_filter) {
         output[user].propic = details.display_photo;
         output[user].username = details.name;
     }
-    console.log("Buyers");
-    console.log(users);
+    //removed//console.log("Buyers");
+    //removed//console.log(users);
     return output;
 }
 /////////////////getMaxSellers//////
@@ -126,8 +126,8 @@ async function getMaxSellers(time_filter) {
         output[user].propic = details.display_photo;
         output[user].username = details.name;
     }
-    console.log("Sellers");
-    console.log(users);
+    //removed//console.log("Sellers");
+    //removed//console.log(users);
     return output;
 }
 ////////get///////////////////
@@ -177,7 +177,7 @@ async function getUserDetails(addressString) {
                     //"/ipfs/ipfs/" + res.data.ipfs_hash
                 );
             }
-            //console.log(response)
+            ////removed//console.log(response)
 
             try {
                 user.cover_photo =
@@ -254,7 +254,7 @@ async function getCollections(type, me, forDetails) {
 
     type == 1155 ? collections.push(t) : null;
     var myCols = await getOwnedCollections(me, type, forDetails);
-    console.log(myCols);
+    //removed//console.log(myCols);
     collections = [...collections, ...myCols];
     return collections;
 }
@@ -292,7 +292,7 @@ async function getOwnedTokensData(owner, base_url) {
     //var tokens = await getTokens(owner);
     //var tokens721 = []; //tokens[0];
     //var tokens1155 = []; //tokens[1];
-    //console.log([tokens721, tokens1155]);
+    ////removed//console.log([tokens721, tokens1155]);
     try {
         var cl721 = await getCollections(721, owner, true);
         for (var n = 0; n < cl721.length; n++) {
@@ -465,7 +465,7 @@ async function getLikedTokens(owner, base_url) {
     if (likes.length == 0) {
         window.loaded["liked"] = true;
     }
-    console.log(likes);
+    //removed//console.log(likes);
     for (var i = 0; i < likes.length; i++) {
         window.proPageLoading = true;
         var owners = await getAnOwner(
@@ -580,7 +580,7 @@ async function getOnSaleTokens(owner, base_url) {
                     }
                 });
         } catch (e) {
-            console.log(e);
+            //removed//console.log(e);
         }
     }
     window.proPageLoading = false;
@@ -602,7 +602,7 @@ async function getTokensData(owner, base_url) {
         created: [], //createdTokens,
         collectibles: ownedTokens
     };*/
-    //console.log(data)
+    ////removed//console.log(data)
     //return data;
 }
 
@@ -661,7 +661,7 @@ async function getTokenData(contract, owner, id) {
     data.file = data.image || data.file
     data.creator = owner;
     data.count = collectible.availableCopies*/
-    //console.log(selectedToken)
+    ////removed//console.log(selectedToken)
     nft.biddingStatus = biddingStatus;
     nft.count = nft.count || 1;
     nft.copies = nft.count || 1;
@@ -744,10 +744,10 @@ async function collectiblesOfCollection(collection) {
             var nft = await getTokenData(collection, owner, id);
             collectibles.push(nft);
         } catch (e) {
-            //console.log(e);
+            ////removed//console.log(e);
         }
     }
-    //console.log(collectibles);
+    ////removed//console.log(collectibles);
     return collectibles;
 }
 
@@ -898,7 +898,7 @@ async function getAllSalesSearch(current_user, parameter) {
                             window.searches.push(nft);
                             // }
                             //}
-                            console.log("jgvhvjhvhvh");
+                            //removed//console.log("jgvhvjhvhvh");
                         })
                         .catch(e => {
                             if (i == tokens.length) {
@@ -951,7 +951,7 @@ async function removeSale(
         price,
         salt
     );
-    console.log(orderData);
+    //removed//console.log(orderData);
     if (Number(orderData.total) == Number(orderData.sold)) {
         await axios.delete(`/sales/${id}`);
     }

@@ -17,7 +17,7 @@ import {
     julswap_routerAddress
 } from "./addresses/constants";
 import { getTokenData } from "./data";
-//console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
+////removed//console.log(ethers.utils.splitSignature("0x32d9e9324ca4d87e0aa56837cf0929bc49f7cf8db3f2ca734e1e50a6b982aadc403dfa3f3d79edfddd68814efca3168cf63f0d3a4c25511b23d0782c824927571b"))
 /////////abis///////////////////
 const bhc721 = require("../js/abis/bhc_721.json");
 const bhc1155 = require("../js/abis/bhc_1155.json");
@@ -93,7 +93,7 @@ async function syncCollections(collectionAddess) {
             }
             startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
         } catch (e) {
-            console.log(e);
+            //removed//console.log(e);
         }
     }
 
@@ -121,7 +121,7 @@ async function checkConnection() {
     var acc = "";
     try {
         var network = await provider.getNetwork();
-        console.log(network);
+        //removed//console.log(network);
         if (network.chainId == 56) {
             const accs = await provider.listAccounts();
             acc = toAddress(accs[0]);
@@ -163,10 +163,10 @@ async function getBalanceInUSDT() {
         ethers.BigNumber.from("1000000000000000000"),
         ["0x55d398326f99059ff775485246999027b3197955", WBNB_tokenAddress]
     );
-    console.log("Price of BHC");
-    console.log(priceBHC);
-    console.log("Price of BNB");
-    console.log(priceBNB);
+    //removed//console.log("Price of BHC");
+    //removed//console.log(priceBHC);
+    //removed//console.log("Price of BNB");
+    //removed//console.log(priceBNB);
     //return parseFloat(price[0].toString());
 }
 async function getBNBBalance(address) {
@@ -260,7 +260,7 @@ async function getCollection(collectionAddess) {
                 if (obj.length == 0) {
                     owners.push(tk);
                 }
-                //console.log(owners);
+                ////removed//console.log(owners);
             }
 
             var latest = await axios.get(
@@ -320,9 +320,9 @@ async function getCollection(collectionAddess) {
                 block: startBlock - 1
             });
         }
-        console.log(e);
+        //removed//console.log(e);
     }
-    console.log(owners);
+    //removed//console.log(owners);
     return owners;
 }
 
@@ -339,7 +339,7 @@ async function getCreated(owner, _startingBlock) {
         );
         var res = await axios.get("/minted/" + owner);
         var savedEvents = res.data;
-        console.log(savedEvents);
+        //removed//console.log(savedEvents);
         for (var j = 0; j < savedEvents.length; j++) {
             var event = savedEvents[j];
             var type = getCollectionType(event.collection);
@@ -347,7 +347,7 @@ async function getCreated(owner, _startingBlock) {
                 contract: event.collection,
                 token_id: Number(event.token_id)
             });
-            console.log({ tok: tokens });
+            //removed//console.log({ tok: tokens });
 
             //for (var i = 0; i < tokens.length; i++) {
             window.proPageLoading = true;
@@ -380,7 +380,7 @@ async function getCreated(owner, _startingBlock) {
         startBlock = latest.data.length == 0 ? 7160330 : latest.data.block + 1;
         var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
-        console.log(startBlock);
+        //removed//console.log(startBlock);
 
         for (var i = startBlock; i <= endBlock; i = i + 4000) {
             var st = i;
@@ -390,7 +390,7 @@ async function getCreated(owner, _startingBlock) {
                 i,
                 i + 4000 <= endBlock ? i + 4000 : endBlock
             );
-            console.log(evtsCr);
+            //removed//console.log(evtsCr);
             var mints = [];
             for (var x = 0; x < evtsCr.length; x++) {
                 var event = evtsCr[x];
@@ -415,7 +415,7 @@ async function getCreated(owner, _startingBlock) {
                         contract: event.args._collection,
                         token_id: Number(event.args._id)
                     });
-                    console.log({ tok: tokens });
+                    //removed//console.log({ tok: tokens });
 
                     //for (var i = 0; i < tokens.length; i++) {
                     window.proPageLoading = true;
@@ -425,7 +425,7 @@ async function getCreated(owner, _startingBlock) {
                         7090600,
                         owner
                     );
-                    console.log(owners);
+                    //removed//console.log(owners);
                     //for (var n = 0; n < owners.length; n++) {
                     if (owners.length > 0) {
                         try {
@@ -449,7 +449,7 @@ async function getCreated(owner, _startingBlock) {
                                 });
                             //data.push(token);
                         } catch (e) {
-                            console.log(e);
+                            //removed//console.log(e);
                         }
                     }
                     //}
@@ -470,7 +470,7 @@ async function getCreated(owner, _startingBlock) {
             await axios.patch("/minted/" + owner, { block: startBlock - 1 });
         }
         window.loaded["created"] = true;
-        console.log(e);
+        //removed//console.log(e);
     }
 
     return tokens;
@@ -548,7 +548,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
             );
             startBlock =
                 latest.data.length == 0 ? 7090600 : latest.data.block + 1;
-            console.log(startBlock);
+            //removed//console.log(startBlock);
             var endBlock = await rpcprovider1.getBlockNumber();
             var evts = [];
             var filter = contract.filters.TransferSingle(
@@ -580,7 +580,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                     await axios.post("/transfers", { transfers: transfers });
                 }
                 startBlock = i + 4000 <= endBlock ? i + 4000 : endBlock;
-                console.log(evtsCr);
+                //removed//console.log(evtsCr);
 
                 var ownerById = {};
                 for (var j = 0; j < evtsCr.length; j++) {
@@ -602,7 +602,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                                         : null;
                                 }
                             } catch (e) {
-                                console.log(e);
+                                //removed//console.log(e);
                             }
                         }
                     }
@@ -620,7 +620,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                 block: startBlock - 1
             });
         }
-        console.log(e);
+        //removed//console.log(e);
     }
     return owners;
 }
@@ -661,7 +661,7 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                 tokenId,
                 _startBlock
             );
-            console.log(syncedOwners);
+            //removed//console.log(syncedOwners);
             for (var ow = syncedOwners.length - 1; ow > -1; ow--) {
                 try {
                     var copies = await contract.balanceOf(
@@ -673,12 +673,12 @@ async function getAnOwner(collectionAddess, tokenId, _startBlock, _owner) {
                         return owners;
                     }
                 } catch (e) {
-                    console.log(e);
+                    //removed//console.log(e);
                 }
             }
         }
     } catch (e) {
-        //console.log(e);
+        ////removed//console.log(e);
     }
     return owners;
 }
@@ -704,7 +704,7 @@ async function getOwnedCollections(me, type, forDetails) {
             var colCon = new ethers.Contract(col, ABI, rpcprovider);
             var owner = await colCon.owner();
 
-            console.log(col);
+            //removed//console.log(col);
             try {
                 if (toAddress(owner) == toAddress(me)) {
                     var uri = await colCon.contract_URI();
@@ -722,7 +722,7 @@ async function getOwnedCollections(me, type, forDetails) {
                         );
                     }
                     var collection = res.data;
-                    console.log(collection);
+                    //removed//console.log(collection);
                     collection.address = col;
                     collections.push(collection);
                 } else if (forDetails) {
@@ -753,7 +753,7 @@ async function getOwnedCollections(me, type, forDetails) {
                                 );
                             }
                             var collection = res.data;
-                            console.log(collection);
+                            //removed//console.log(collection);
                             collection.address = col;
                             collections.push(collection);
                         }
@@ -773,7 +773,7 @@ async function getOwnedCollections(me, type, forDetails) {
                             );
                         }
                         var collection = res.data;
-                        console.log(collection);
+                        //removed//console.log(collection);
                         collection.address = col;
                         collections.push(collection);
                     }
@@ -782,9 +782,9 @@ async function getOwnedCollections(me, type, forDetails) {
             num = num + 1;
         }
     } catch (e) {
-        //console.log(e)
+        ////removed//console.log(e)
     }
-    console.log({ COLS: collections });
+    //removed//console.log({ COLS: collections });
     return collections;
 }
 
@@ -879,10 +879,10 @@ async function getSingles(contractAddress, owner, collection) {
 
 async function getMultiples(contractAddress, owner, collection) {
     try {
-        console.log("Syncing....");
+        //removed//console.log("Syncing....");
         await syncCollections(contractAddress);
     } catch (e) {
-        console.log(e);
+        //removed//console.log(e);
     }
     var tokens = [];
     var transfers = [];
@@ -928,7 +928,7 @@ async function getMultiples(contractAddress, owner, collection) {
                     tokens.push(nft);
                 }
             } catch (e) {
-                console.log(e);
+                //removed//console.log(e);
             }
         }
         /*for (var i = Number(lastSyncedId) + 1; i < currentId + 1; i++) {
@@ -1096,7 +1096,7 @@ async function availableToBuy(
             available = value;
         }
     } catch (e) {
-        console.log(e);
+        //removed//console.log(e);
     }
     return available;
 }
@@ -1124,7 +1124,7 @@ async function checkTokensApproved(contractAddress, from) {
             rpcprovider
         );
         const res = await contract.allowance(from, erc20TransferProxyAddress);
-        //console.log(Number(res) / 10 ** 18);
+        ////removed//console.log(Number(res) / 10 ** 18);
         return Number(res) / 10 ** 18;
     } catch (e) {
         return 0;
@@ -1208,9 +1208,9 @@ async function serviceFee(currencyName) {
 async function createASingle(url, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
-    console.log(contract);
+    //removed//console.log(contract);
     var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
-    console.log(serviceFee);
+    //removed//console.log(serviceFee);
     var tx = await contract.mint721(
         collection,
         url,
@@ -1229,7 +1229,7 @@ async function createASingle(url, royalty, collection, isBNB) {
 async function createABatch(url, count, royalty, collection, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
-    console.log(contract);
+    //removed//console.log(contract);
     var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
     var tx = await contract.mint1155(
         collection,
@@ -1312,18 +1312,18 @@ async function approveTokens(contractAddress, price) {
     return tx.hash;
 }
 async function transfer(contractAddress, owner, receiver, type, id, quantity) {
-    console.log(contractAddress);
-    console.log(owner);
-    console.log(receiver);
-    console.log(type);
-    console.log(id);
-    console.log(quantity);
+    //removed//console.log(contractAddress);
+    //removed//console.log(owner);
+    //removed//console.log(receiver);
+    //removed//console.log(type);
+    //removed//console.log(id);
+    //removed//console.log(quantity);
     const signer = provider.getSigner();
     let ABI;
     let tx;
     let token_contract;
     if (type == 721) {
-        console.log("721");
+        //removed//console.log("721");
         ABI = bhc721;
         token_contract = new ethers.Contract(
             toAddress(contractAddress),
@@ -1336,7 +1336,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
             parseInt(id)
         );
     } else {
-        console.log("1155");
+        //removed//console.log("1155");
         ABI = bhc1155;
         token_contract = new ethers.Contract(
             toAddress(contractAddress),
@@ -1353,7 +1353,7 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
     }
 
     const res = await tx.wait();
-    console.log(res);
+    //removed//console.log(res);
     if (res.status == 1) {
         return true;
     } else {
@@ -1361,10 +1361,10 @@ async function transfer(contractAddress, owner, receiver, type, id, quantity) {
     }
 }
 async function burn(contractAddress, type, id, quantity) {
-    console.log(contractAddress);
-    console.log(type);
-    console.log(id);
-    console.log(quantity);
+    //removed//console.log(contractAddress);
+    //removed//console.log(type);
+    //removed//console.log(id);
+    //removed//console.log(quantity);
     const signer = provider.getSigner();
     let ABI;
     let tx;
@@ -1376,7 +1376,7 @@ async function burn(contractAddress, type, id, quantity) {
             ABI,
             signer
         );
-        console.log(token_contract);
+        //removed//console.log(token_contract);
         tx = await token_contract.burn(id);
     } else {
         ABI = bhc1155;
@@ -1389,7 +1389,7 @@ async function burn(contractAddress, type, id, quantity) {
     }
 
     const res = await tx.wait();
-    console.log(res);
+    //removed//console.log(res);
     if (res.status == 1) {
         return true;
     } else {
@@ -1413,7 +1413,7 @@ async function buy(
     const signer = provider.getSigner();
     const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
     const sig = ethers.utils.splitSignature(signature);
-    console.log([
+    //removed//console.log([
         is721,
         collection,
         tokenId,

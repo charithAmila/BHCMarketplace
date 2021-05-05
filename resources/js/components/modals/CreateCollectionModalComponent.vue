@@ -405,7 +405,7 @@ export default {
                 notif.user_id = user;
                 notif.type = "create";
                 await axios.post("/addNotification", notif, {}).then(res => {
-                    console.log(res.data);
+                    //removed//console.log(res.data);
                 });
             }
         },
@@ -452,7 +452,7 @@ export default {
                     this.$parent.updateCollection(res.data.collections);
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         }
     }

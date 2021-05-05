@@ -156,7 +156,7 @@ export default {
                                     sign: _this.s,
                                     short_url: _this.user_data.short_url
                                 };
-                                console.log(response);
+                                //removed//console.log(response);
                                 axios
                                     .patch(`/api/profile/${ad}`, proData)
                                     .then(function(response) {
@@ -179,11 +179,11 @@ export default {
                                         }
                                     })
                                     .catch(function(error) {
-                                        console.log(error);
+                                        //removed//console.log(error);
                                     });
                             })
                             .catch(function(error) {
-                                console.log(error);
+                                //removed//console.log(error);
                             });
                     })
                     .catch(function(error) {
@@ -208,7 +208,7 @@ export default {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             signer.signMessage(`I agree to update my profile.`).then(data => {
-                console.log(data);
+                //removed//console.log(data);
                 _this.s = data;
                 _this.signed = true;
             });

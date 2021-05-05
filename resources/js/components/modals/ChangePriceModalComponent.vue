@@ -97,7 +97,7 @@ export default {
                 this.signText = "Sign";
                 _this.orderId = orderId;
             } catch (error) {
-                console.log(error);
+                //removed//console.log(error);
                 //if (error.code == 4001) {
                 alert("User rejected minting token");
                 //this.signing = false;
