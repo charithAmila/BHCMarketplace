@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="loaded">
+        <div v-if="loaded && !notFound">
             <show-collectible-component
                 :collectible="collectible"
                 :onWishList="onWishList"
@@ -19,8 +19,16 @@
         </div>
 
         <div v-else>
-            <cube></cube>
-            <h2 class="text-center">NFT is loading....</h2>
+            <div v-if="!notFound">
+                <cube></cube>
+                <h2 class="text-center">NFT is loading....</h2>
+            </div>
+            <div v-else>
+                <h2 class="text-center">NFT is not found under this owner!</h2>
+                <h3 class="text-center">
+                    May be bought by someone else or burned!
+                </h3>
+            </div>
         </div>
     </div>
 </template>
@@ -39,7 +47,8 @@ export default {
             loaded: false,
             fullyLoaded: false,
             current_user: "",
-            owners: []
+            owners: [],
+            notFound: false
         };
     },
     methods: {
@@ -62,7 +71,11 @@ export default {
         }
     },
     async mounted() {
-        this.collectible = await this.getCollectible();
+        try {
+            this.collectible = await this.getCollectible();
+        } catch (e) {
+            this.notFound = true;
+        }
         this.loaded = true;
 
         await this.authCheck();
