@@ -260,7 +260,7 @@ export default {
 
             details.name = $("#name-profile").val();
             details.description = $("#description-profile").val();
-            details.short_url = $("#short_url-profile").val()||;
+            details.short_url = $("#short_url-profile").val();
             details.dp = _this.uploadedImage;
             details.cover = _this.user_data.cover_photo;
             url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
