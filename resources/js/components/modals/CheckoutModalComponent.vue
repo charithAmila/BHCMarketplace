@@ -9,7 +9,7 @@
                 <label class="item-description"
                     >You are about to purchase
                     <span class="item-name">{{ singleNft.name }}</span> from
-                    <span class="item-name">{{ nftOwner }}</span
+                    <span class="item-name">{{ creator }}</span
                     >. Check information then proceed to payment</label
                 >
 
@@ -118,7 +118,7 @@ import {
     getBNBBalance,
     serviceFee
 } from "./../../etherFunc";
-import { removeSale, bought } from "../../data";
+import { removeSale, bought, userDetails } from "../../data";
 import { bhcAddress } from "./../../addresses/constants";
 export default {
     props: ["singleNft", "page", "current_user"],
@@ -145,7 +145,7 @@ export default {
             nft_id: 0,
             record_id: 0,
             approved: false,
-            nftOwner: "John Doe"
+            creator: "John Doe"
         };
     },
     async mounted() {
@@ -154,7 +154,8 @@ export default {
     watch: {
         singleNft: async function() {
             this.checkEligibility();
-            this.nftOwner = this.truncate(this.singleNft.owner_id);
+            var res = await getUserDetails(singleNft.creator);
+            this.creator = res.name;
         },
         quantity: async function() {
             this.checkEligibility();
