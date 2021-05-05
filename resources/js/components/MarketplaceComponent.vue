@@ -244,6 +244,8 @@ export default {
             this.isAll = true;
         },
         sortedItems: function(sort_status) {
+             console.log("Recent");
+                console.log(this.new_array_collectibles.length);
             if (sort_status == "recent") {
                 if (
                     this.new_array_collectibles === undefined ||
@@ -269,7 +271,10 @@ export default {
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
             } else if (sort_status == "cheap") {
-                //removed//console.log(this.new_array_collectibles.length);
+
+                console.log("Cheap");
+                console.log(this.new_array_collectibles.length);
+
                 if (
                     this.new_array_collectibles === undefined ||
                     this.new_array_collectibles.length == 0
