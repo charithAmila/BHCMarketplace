@@ -109,11 +109,7 @@
         "inputs": [],
         "name": "benPercentage",
         "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
+            { "internalType": "uint256", "name": "", "type": "uint256" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -122,11 +118,7 @@
         "inputs": [],
         "name": "benefeciary",
         "outputs": [
-            {
-                "internalType": "address payable",
-                "name": "",
-                "type": "address"
-            }
+            { "internalType": "address payable", "name": "", "type": "address" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -135,11 +127,7 @@
         "inputs": [],
         "name": "bnbFee",
         "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
+            { "internalType": "uint256", "name": "", "type": "uint256" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -148,11 +136,7 @@
         "inputs": [],
         "name": "com",
         "outputs": [
-            {
-                "internalType": "address payable",
-                "name": "",
-                "type": "address"
-            }
+            { "internalType": "address payable", "name": "", "type": "address" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -161,11 +145,7 @@
         "inputs": [],
         "name": "comPercentage",
         "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
+            { "internalType": "uint256", "name": "", "type": "uint256" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -190,21 +170,13 @@
                 "name": "_factory",
                 "type": "address"
             },
-            {
-                "internalType": "string",
-                "name": "uri",
-                "type": "string"
-            },
+            { "internalType": "string", "name": "uri", "type": "string" },
             {
                 "internalType": "string",
                 "name": "contract_uri",
                 "type": "string"
             },
-            {
-                "internalType": "bool",
-                "name": "isBNB",
-                "type": "bool"
-            }
+            { "internalType": "bool", "name": "isBNB", "type": "bool" }
         ],
         "name": "generate1155",
         "outputs": [],
@@ -223,11 +195,9 @@
                 "name": "contract_uri",
                 "type": "string"
             },
-            {
-                "internalType": "bool",
-                "name": "isBNB",
-                "type": "bool"
-            }
+            { "internalType": "string", "name": "name", "type": "string" },
+            { "internalType": "string", "name": "symbol", "type": "string" },
+            { "internalType": "bool", "name": "isBNB", "type": "bool" }
         ],
         "name": "generate721",
         "outputs": [],
@@ -238,11 +208,7 @@
         "inputs": [],
         "name": "hps",
         "outputs": [
-            {
-                "internalType": "contract IERC20",
-                "name": "",
-                "type": "address"
-            }
+            { "internalType": "contract IERC20", "name": "", "type": "address" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -251,11 +217,7 @@
         "inputs": [],
         "name": "hpsFee",
         "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
+            { "internalType": "uint256", "name": "", "type": "uint256" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -267,26 +229,14 @@
                 "name": "_collection",
                 "type": "address"
             },
-            {
-                "internalType": "string",
-                "name": "token_uri",
-                "type": "string"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_supply",
-                "type": "uint256"
-            },
+            { "internalType": "string", "name": "token_uri", "type": "string" },
+            { "internalType": "uint256", "name": "_supply", "type": "uint256" },
             {
                 "internalType": "uint256",
                 "name": "_royalty",
                 "type": "uint256"
             },
-            {
-                "internalType": "bool",
-                "name": "isBNB",
-                "type": "bool"
-            }
+            { "internalType": "bool", "name": "isBNB", "type": "bool" }
         ],
         "name": "mint1155",
         "outputs": [],
@@ -300,21 +250,13 @@
                 "name": "_collection",
                 "type": "address"
             },
-            {
-                "internalType": "string",
-                "name": "token_uri",
-                "type": "string"
-            },
+            { "internalType": "string", "name": "token_uri", "type": "string" },
             {
                 "internalType": "uint256",
                 "name": "_royalty",
                 "type": "uint256"
             },
-            {
-                "internalType": "bool",
-                "name": "isBNB",
-                "type": "bool"
-            }
+            { "internalType": "bool", "name": "isBNB", "type": "bool" }
         ],
         "name": "mint721",
         "outputs": [],
@@ -338,11 +280,7 @@
         "inputs": [],
         "name": "owner",
         "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
+            { "internalType": "address", "name": "", "type": "address" }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -356,16 +294,8 @@
     },
     {
         "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_hpsFee",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_bnbFee",
-                "type": "uint256"
-            }
+            { "internalType": "uint256", "name": "_hpsFee", "type": "uint256" },
+            { "internalType": "uint256", "name": "_bnbFee", "type": "uint256" }
         ],
         "name": "requiredFee",
         "outputs": [
@@ -406,16 +336,8 @@
     },
     {
         "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_hpsFee",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_bnbFee",
-                "type": "uint256"
-            },
+            { "internalType": "uint256", "name": "_hpsFee", "type": "uint256" },
+            { "internalType": "uint256", "name": "_bnbFee", "type": "uint256" },
             {
                 "internalType": "uint256",
                 "name": "_benPercentage",
@@ -491,19 +413,12 @@
     },
     {
         "inputs": [
-            {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
+            { "internalType": "address", "name": "newOwner", "type": "address" }
         ],
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     },
-    {
-        "stateMutability": "payable",
-        "type": "receive"
-    }
+    { "stateMutability": "payable", "type": "receive" }
 ]
