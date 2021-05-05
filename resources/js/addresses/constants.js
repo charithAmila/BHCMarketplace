@@ -30,9 +30,9 @@ const WBNB_tokenAddress = "0xae13d989dac2f0debff460ac112a837c89baa7cd"; //testne
 const pancake_routerAddress = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F";
 const julswap_routerAddress = "0xbd67d157502A23309Db761c41965600c2Ec788b2";*/
 
-const hps721Address = "0xDE10d96076F21dda25d3b56D49F56084f9b2D647";
+const hps721Address = "0x9AB56134F1e84FD13cf969dF4F2a8694381544a1";
 //const hps721Address = "0x99c67837E2695E2707fc3ed5cF630fcad111a1D7"
-const hps1155Address = "0xC3db58eac6d44f6e91335B618B462A2515744FAb";
+const hps1155Address = "0x33c2C043529D1AAdd883076Ecef2f163a2A9007b";
 
 //////////////////////////////////////////Utility Contracts///////////////////////////////////////
 const transferProxyAddress = "0xeDd0FFE20702F53EA49429ff23f2ED153e7f481b";
