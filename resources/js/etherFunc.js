@@ -1249,7 +1249,7 @@ async function createABatch(url, count, royalty, collection, isBNB) {
     return tx;
 }
 
-async function createCollection(type, uri, isBNB) {
+async function createCollection(type, uri, name, symbol, isBNB) {
     const signer = provider.getSigner();
     var contract = new ethers.Contract(minterAddress, minterABI, signer);
     var sFee = await serviceFee(isBNB ? "BNB" : "HPS");
@@ -1257,13 +1257,14 @@ async function createCollection(type, uri, isBNB) {
         var tx = await contract.generate721(
             contractFactoryAddress,
             uri,
-
+            name,
+            symbol,
             isBNB,
             {
                 value: isBNB
                     ? ethers.utils.parseEther(`${sFee * 1.03}`)
-                    : ethers.utils.parseEther("0")
-                //gasLimit: BigNumber.from(3000000)
+                    : ethers.utils.parseEther("0"),
+                //gasLimit: BigNumber.from(30000000)
             }
         );
     } else {
