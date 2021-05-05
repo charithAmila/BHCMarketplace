@@ -122,7 +122,6 @@
                             </a>
                         </li>
                     </ul-->
-
                 </div>
             </div>
         </div>
@@ -270,7 +269,7 @@ export default {
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
             } else if (sort_status == "cheap") {
-                console.log(this.new_array_collectibles.length);
+                //removed//console.log(this.new_array_collectibles.length);
                 if (
                     this.new_array_collectibles === undefined ||
                     this.new_array_collectibles.length == 0
@@ -343,7 +342,7 @@ export default {
                     this.collectibles = res.data.collectibles;
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         }
     },

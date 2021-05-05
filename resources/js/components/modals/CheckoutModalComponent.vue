@@ -185,7 +185,7 @@ export default {
                 this.allowance = allowance;
             }
             this.allowance = allowance;
-            console.log(allowance);
+            //removed//console.log(allowance);
             if (this.total_payment * 1.03 <= allowance) {
                 this.approved = true;
             } else {
@@ -266,7 +266,7 @@ export default {
                     if (data.status) {
                         var req = {};
                         req.message_seller = message_seller;
-                        console.log(req);
+                        //removed//console.log(req);
                         req.message_buyer = message_buyer;
                         req.buyer_id = toAddress(_this.current_user);
                         req.amount = _this.total_payment;
@@ -277,7 +277,7 @@ export default {
                         req.currency = collectible.currencyName;
                         req.type = "sell";
                         axios.post("/addNotification", req).then(res => {
-                            console.log(res.data);
+                            //removed//console.log(res.data);
                         });
 
                         await removeSale(
@@ -322,7 +322,7 @@ export default {
                             await axios
                                 .post("/addNotification", data, {})
                                 .then(res => {
-                                    console.log(res.data);
+                                    //removed//console.log(res.data);
                                 });
                         }
                         if (_this.page == "marketplace") {
@@ -339,7 +339,7 @@ export default {
                             await axios
                                 .post("/addNotification", data, {})
                                 .then(res => {
-                                    console.log(res.data);
+                                    //removed//console.log(res.data);
                                 });
                             window.location.reload();
                         }
@@ -350,7 +350,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                     _this.proceedToPaymentText = "Proceed to payment";
                     _this.purchasing = false;
                     Toast.fire({

@@ -103,7 +103,8 @@
                                     v-if="
                                         nameerror &&
                                             nameerror != null &&
-                                            fields.short_url != user_data.short_url
+                                            fields.short_url !=
+                                                user_data.short_url
                                     "
                                 >
                                     Already exists
@@ -119,28 +120,30 @@
                                     class="custom-error text-danger"
                                 ></span>
                             </div>
-                            <div v-if="this.nameerror == false || this.nameerror==null">
-
-                            <button
-                                v-if="!signed"
-                                id="sign-data"
-                                class="form-submit"
-                                @click.prevent="sign"
+                            <div
+                                v-if="
+                                    this.nameerror == false ||
+                                        this.nameerror == null
+                                "
                             >
-                                Sign Changes
-                            </button>
-                            <button
-                                v-else
-                                id="preferences-submit"
-                                class="form-submit"
-                                type="submit"
-                                :disabled="processing"
-                            >
-                                {{ process }}
-                            </button>
-
+                                <button
+                                    v-if="!signed"
+                                    id="sign-data"
+                                    class="form-submit"
+                                    @click.prevent="sign"
+                                >
+                                    Sign Changes
+                                </button>
+                                <button
+                                    v-else
+                                    id="preferences-submit"
+                                    class="form-submit"
+                                    type="submit"
+                                    :disabled="processing"
+                                >
+                                    {{ process }}
+                                </button>
                             </div>
-                            
                         </form>
                     </div>
                 </div>
@@ -165,8 +168,8 @@ export default {
     mounted() {
         axios.get("/api/shorturls").then(response => {
             this.shorturls = response.data;
-           // this.url_previous = this.user_data.short_url;
-            console.log(this.shorturls);
+            // this.url_previous = this.user_data.short_url;
+            //removed//console.log(this.shorturls);
         });
     },
 
@@ -276,7 +279,7 @@ export default {
                         sign: _this.s,
                         short_url: details.short_url
                     };
-                    console.log(response);
+                    //removed//console.log(response);
                     axios
                         .patch(`/api/profile/${ad}`, proData)
                         .then(function(response) {
@@ -299,11 +302,11 @@ export default {
                             }
                         })
                         .catch(function(error) {
-                            console.log(error);
+                            //removed//console.log(error);
                         });
                 })
                 .catch(function(error) {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
             _this.process = "Update Preferences";
             _this.processing = false;

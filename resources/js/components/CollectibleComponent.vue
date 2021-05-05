@@ -534,7 +534,7 @@ export default {
                     this.$parent.refreshAfterUpdate();
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         },
         fetchBids(collectible, clicked) {
@@ -546,7 +546,7 @@ export default {
                     this.toggleModal(clicked);
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         },
         updateBidList(collectible) {
@@ -557,7 +557,7 @@ export default {
                     this.bidList = res.data.list;
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         },
         toggleModal(clicked) {

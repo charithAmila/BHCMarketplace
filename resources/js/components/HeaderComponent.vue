@@ -332,7 +332,7 @@ export default {
                     this.notifications = res.data;
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         },
         checkConnection: async function() {
@@ -461,7 +461,7 @@ export default {
         try {
             await this.getNotifications();
         } catch (err) {
-            console.log("error");
+            //removed//console.log("error");
         }
     }
 };

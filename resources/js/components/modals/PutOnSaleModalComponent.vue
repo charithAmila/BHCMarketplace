@@ -352,7 +352,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         }
     }

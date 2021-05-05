@@ -708,7 +708,10 @@
                         <div v-if="lowBalance">
                             Not enough {{ pay_with }} balance!
                         </div>
-                        <div v-if="putOnSale && isNftApproved && type != 'solo'" class="col-md-12 qos-modal">
+                        <div
+                            v-if="putOnSale && isNftApproved && type != 'solo'"
+                            class="col-md-12 qos-modal"
+                        >
                             <label>Quantity to put on sale</label>
                             <input
                                 v-model.number="quantity"
@@ -949,8 +952,8 @@ export default {
     },
 
     methods: {
-        updateQuantity(){
-            this.quantity = this.copies
+        updateQuantity() {
+            this.quantity = this.copies;
         },
         popupModal() {
             Toast.fire({
@@ -1303,11 +1306,11 @@ export default {
                     _this.processing = false;
                 } else {
                     this.isError.invalid_file = true;
-                    console.log(evt.target.files[0]["type"]);
+                    //removed//console.log(evt.target.files[0]["type"]);
                     _this.process = "Upload";
                 }
             } else {
-                console.log(evt.target.files[0]["type"]);
+                //removed//console.log(evt.target.files[0]["type"]);
             }
         },
         async createCollectible() {
@@ -1374,7 +1377,7 @@ export default {
                                     await axios
                                         .post("/addNotification", notif, {})
                                         .then(result => {
-                                            console.log(result.data);
+                                            //removed//console.log(result.data);
                                         });
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
@@ -1426,7 +1429,7 @@ export default {
                                     await axios
                                         .post("/addNotification", notif, {})
                                         .then(result => {
-                                            console.log(result.data);
+                                            //removed//console.log(result.data);
                                         });
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(

@@ -422,7 +422,7 @@ export default {
                 this.haveBids = false;
             }
 
-            console.log(res);
+            //removed//console.log(res);
         },
 
         detailsActive() {
@@ -481,9 +481,9 @@ export default {
                     this.highestBid.maxBidSalt
                 );
 
-                console.log("result");
-                console.log(res);
-                console.log(res == 1);
+                //removed//console.log("result");
+                //removed//console.log(res);
+                //removed//console.log(res == 1);
                 if (res == 1) {
                     this.owner = false;
                     this.haveBids = false;

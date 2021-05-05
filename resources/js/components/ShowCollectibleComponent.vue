@@ -698,7 +698,7 @@ export default {
             }
         },
         toggleDropdown(ct) {
-            console.log(ct);
+            //removed//console.log(ct);
             var container;
             container = $(ct);
             if (!container.hasClass("fade-in-top")) {
@@ -746,7 +746,7 @@ export default {
                     this.set_transactions = res.data.transactions;
                 })
                 .catch(error => {
-                    console.log(error);
+                    //removed//console.log(error);
                 });
         },
 

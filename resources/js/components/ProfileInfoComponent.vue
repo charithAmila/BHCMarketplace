@@ -77,7 +77,8 @@
                         >
                             <i class="fas fa-ellipsis-h"></i>
                         </a>
-                        <a  v-if="auth_id == user_id"
+                        <a
+                            v-if="auth_id == user_id"
                             class="btn btn-verify"
                             href="https://rbjrcxhzb4w.typeform.com/to/sKvJ0THW"
                         >
@@ -263,8 +264,8 @@ export default {
                                 : response.data.ipfs_hash
                         )
                         .then(function(response) {
-                            console.log(response);
-                            console.log(
+                            //removed//console.log(response);
+                            //removed//console.log(
                                 "Qmc5m94Gu7z62RC8waSKkZUrCCBJPyHbkpmGzEePxy2oXJ"
                             );
                             _this.user.name = response.data.name;
@@ -308,7 +309,7 @@ export default {
                 var user_id = this.user_id;
                 var follower_id = await checkConnection();
                 var output = await FollowController(user_id, follower_id);
-                console.log(output);
+                //removed//console.log(output);
                 if (output.success) {
                     this.following = true;
                     let message = follower_id + " has followed you";
@@ -320,7 +321,7 @@ export default {
                     await axios
                         .post("/addNotification", notif, {})
                         .then(result => {
-                            console.log(result.data);
+                            //removed//console.log(result.data);
                         });
                 }
             }
@@ -329,7 +330,7 @@ export default {
             var _this = this;
             var user_id = this.user_id;
             var follower_id = await checkConnection();
-            console.log(follower_id);
+            //removed//console.log(follower_id);
             axios.get("/followers").then(res => {
                 var valObj = res.data.followers.filter(function(elem) {
                     if (
@@ -343,7 +344,7 @@ export default {
                 if (valObj.length > 0) {
                     _this.following = true;
                 }
-                console.log(valObj);
+                //removed//console.log(valObj);
             });
         }
     },
