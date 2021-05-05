@@ -265,9 +265,9 @@ export default {
                         )
                         .then(function(response) {
                             //removed//console.log(response);
-                            //removed//console.log(
+                            /*removed//console.log(
                                 "Qmc5m94Gu7z62RC8waSKkZUrCCBJPyHbkpmGzEePxy2oXJ"
-                            );
+                            );*/
                             _this.user.name = response.data.name;
                             _this.user.bio = response.data.description;
                             _this.user.display_photo =

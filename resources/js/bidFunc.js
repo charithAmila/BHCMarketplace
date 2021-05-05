@@ -447,7 +447,7 @@ async function acceptBid(
     const signer = provider.getSigner();
     const exchange = new ethers.Contract(exchangeAddress, exchange_abi, signer);
     const sig = ethers.utils.splitSignature(signature);
-    //removed//console.log([
+    /*removed//console.log([
         is721,
         token,
         tokenId,
@@ -456,7 +456,7 @@ async function acceptBid(
         winner,
         signature,
         salt
-    ]);
+    ]);*/
     const tx = await exchange.endAuction(
         [
             is721,
@@ -497,7 +497,7 @@ function timeDifference(date1, date2) {
 
     var secondsDifference = Math.floor(difference / 1000);
 
-    //removed//console.log(
+    /*removed//console.log(
         "difference = " +
             daysDifference +
             " day/s " +
@@ -507,7 +507,7 @@ function timeDifference(date1, date2) {
             " minute/s " +
             secondsDifference +
             " second/s "
-    );
+    );*/
 }
 ////////////////////////////////////////////Get All Bids/////////////////////////////////////////////////////////////
 async function getAllBids(owner, contract_address, token_id) {

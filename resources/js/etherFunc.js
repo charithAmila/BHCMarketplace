@@ -1413,7 +1413,7 @@ async function buy(
     const signer = provider.getSigner();
     const exchange = new ethers.Contract(exchangeAddress, exchangeABI, signer);
     const sig = ethers.utils.splitSignature(signature);
-    //removed//console.log([
+    /*removed//console.log([
         is721,
         collection,
         tokenId,
@@ -1424,7 +1424,7 @@ async function buy(
         owner,
         salt,
         sig
-    ]);
+    ]);*/
     const tx = await exchange.exchange(
         [
             is721,
