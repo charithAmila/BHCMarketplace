@@ -60,7 +60,7 @@ window.rpcprovider1 = new ethers.providers.JsonRpcProvider(
 
 async function syncCollections(collectionAddess) {
     var latest = await axios.get("/transfers?collection=" + collectionAddess);
-    var startBlock = latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+    var startBlock = latest.data.length == 0 ? 7090600 : latest.data.block + 1;
     var endBlock = await rpcprovider.getBlockNumber();
     var evts = [];
     var contract = new ethers.Contract(
@@ -97,7 +97,7 @@ async function syncCollections(collectionAddess) {
         }
     }
 
-    if (startBlock != 6494200) {
+    if (startBlock != 7090600) {
         await axios.patch("/transfers/" + collectionAddess, {
             block: startBlock - 1
         });
@@ -265,7 +265,7 @@ async function getCollection(collectionAddess) {
                 "/transfers?collection=" + collectionAddess
             );
             startBlock =
-                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+                latest.data.length == 0 ? 7090600 : latest.data.block + 1;
             var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
@@ -352,7 +352,7 @@ async function getCreated(owner, _startingBlock) {
             var owners = await getAnOwner(
                 event.collection,
                 event.token_id,
-                6494200,
+                7090600,
                 owner
             );
             //for (var n = 0; n < owners.length; n++) {
@@ -373,9 +373,9 @@ async function getCreated(owner, _startingBlock) {
 
             //}
         }
-        //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
+        //var evts = await nftStorage.queryFilter("NFTAdded", 7090600, "latest");
         var latest = await axios.get("/minted");
-        startBlock = latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+        startBlock = latest.data.length == 0 ? 7090600 : latest.data.block + 1;
         var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
         console.log(startBlock);
@@ -420,7 +420,7 @@ async function getCreated(owner, _startingBlock) {
                     var owners = await getAnOwner(
                         event.args._collection,
                         event.args._id,
-                        6494200,
+                        7090600,
                         owner
                     );
                     console.log(owners);
@@ -545,7 +545,7 @@ async function getOwnersOf(collectionAddess, tokenId, _startBlock) {
                 "/transfers?collection=" + collectionAddess
             );
             startBlock =
-                latest.data.length == 0 ? 6494200 : latest.data.block + 1;
+                latest.data.length == 0 ? 7090600 : latest.data.block + 1;
             console.log(startBlock);
             var endBlock = await rpcprovider1.getBlockNumber();
             var evts = [];

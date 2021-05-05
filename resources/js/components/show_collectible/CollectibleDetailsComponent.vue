@@ -376,7 +376,7 @@ export default {
             var _owners = await getOwnersOf(
                 _this.collectible.contract,
                 _this.collectible.id,
-                6494200
+                7090600
             );
             _this.collectible.owners = _owners;
             for (var i = 0; i < _this.collectible.owners.length; i++) {

@@ -99,11 +99,7 @@ async function waitForTransaction(tx) {
 
 async function collectionURI(contractAddress) {
     try {
-        const contract = new ethers.Contract(
-            contractAddress,
-            bhc721,
-            provider
-        );
+        const contract = new ethers.Contract(contractAddress, bhc721, provider);
         const uri = contract.contract_URI();
         return uri;
     } catch (e) {
@@ -151,7 +147,7 @@ async function getCollection(collectionAddess) {
                 bhc1155,
                 rpcprovider
             );
-            var startBlock = 6494200;
+            var startBlock = 7090600;
             var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
@@ -185,24 +181,28 @@ async function getCreated(owner) {
     const tokens = [];
 
     try {
-        console.log("starting")
+        console.log("starting");
         const nftStorage = new ethers.Contract(
             NFTStorageAddress,
             nftStorageABI,
             rpcprovider
         );
-        //var evts = await nftStorage.queryFilter("NFTAdded", 6494200, "latest");
-        var startBlock = 6494200;
+        //var evts = await nftStorage.queryFilter("NFTAdded", 7090600, "latest");
+        var startBlock = 7090600;
         var endBlock = await rpcprovider.getBlockNumber();
-                console.log("catched")
+        console.log("catched");
 
         var evts = [];
 
         //for (var i = startBlock; i <= endBlock; i = i + 4000) {
-            var evtsCr = await nftStorage.queryFilter("NFTAdded", startBlock,6800000);
+        var evtsCr = await nftStorage.queryFilter(
+            "NFTAdded",
+            startBlock,
+            6800000
+        );
 
-            evts = [...evts, ...evtsCr];
-                    console.log(evts)
+        evts = [...evts, ...evtsCr];
+        console.log(evts);
 
         //}
         for (var i = 0; i < evts.length; i++) {
@@ -268,7 +268,7 @@ async function getOwnersOf(collectionAddess, tokenId) {
                 bhc1155,
                 rpcprovider
             );
-            var startBlock = 6494200;
+            var startBlock = 7090600;
             var endBlock = await rpcprovider.getBlockNumber();
             var evts = [];
             for (var i = startBlock; i <= endBlock; i = i + 4000) {
@@ -327,9 +327,11 @@ async function getOwnedCollections(me, type, forDetails) {
                 if (toAddress(owner) == toAddress(me) || forDetails) {
                     var uri = await colCon.contract_URI();
 
-                    if(!forDetails){var res = await axios.get(uri);
-                    var collection = res.data;}
-                    var collection ={}
+                    if (!forDetails) {
+                        var res = await axios.get(uri);
+                        var collection = res.data;
+                    }
+                    var collection = {};
                     console.log(collection);
                     collection.address = col;
                     collections.push(collection);
@@ -386,11 +388,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
 async function getSingles(contractAddress, owner, collection) {
     var tokens = [];
     try {
-        const contract = new ethers.Contract(
-            contractAddress,
-            bhc721,
-            provider
-        );
+        const contract = new ethers.Contract(contractAddress, bhc721, provider);
         const nftCount = await contract.balanceOf(owner);
         for (var i = 0; i < Number(nftCount); i++) {
             var tokenId = await contract.tokenOfOwnerByIndex(owner, i);
@@ -637,11 +635,7 @@ async function getMinted(log) {
 
 async function getFees() {
     try {
-        const minter = new ethers.Contract(
-            minterAddress,
-            minterABI,
-            provider
-        );
+        const minter = new ethers.Contract(minterAddress, minterABI, provider);
         const feeInHps = await minter.requiredFee(
             ethers.utils.parseEther("3.5"),
             ethers.utils.parseEther("5.5")
@@ -832,6 +826,6 @@ async function buy(
     return tx.hash;
 }
 
-getCreated("0x13930acAd085064bF6Fb5c299812228002E3B604").then((data)=>{
-    console.log(data)
-})
+getCreated("0x13930acAd085064bF6Fb5c299812228002E3B604").then(data => {
+    console.log(data);
+});
