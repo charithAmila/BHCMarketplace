@@ -471,7 +471,7 @@ async function getLikedTokens(owner, base_url) {
         var owners = await getAnOwner(
             likes[i].contract,
             likes[i].token_id,
-            6494200,
+            7090600,
             owner
         );
 
@@ -513,7 +513,7 @@ async function getLikedTokens(owner, base_url) {
 async function getCreatedTokens(owner, base_url) {
     if (!window.loaded["created"]) {
         if (window.myTokens.created.length == 0) {
-            getCreated(owner, 6494200);
+            getCreated(owner, 7090600);
         }
     }
 }
