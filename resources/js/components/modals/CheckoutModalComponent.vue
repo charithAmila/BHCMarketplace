@@ -118,7 +118,7 @@ import {
     getBNBBalance,
     serviceFee
 } from "./../../etherFunc";
-import { removeSale, bought, userDetails } from "../../data";
+import { removeSale, bought, getUserDetails } from "../../data";
 import { bhcAddress } from "./../../addresses/constants";
 export default {
     props: ["singleNft", "page", "current_user"],
@@ -154,7 +154,7 @@ export default {
     watch: {
         singleNft: async function() {
             this.checkEligibility();
-            var res = await getUserDetails(singleNft.creator);
+            var res = await getUserDetails(this.singleNft.creator);
             this.creator = res.name;
         },
         quantity: async function() {
