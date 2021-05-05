@@ -371,6 +371,8 @@ export default {
                         var tx = await createCollection(
                             _this.type,
                             "https://ipfs.io/ipfs/" + response.data.IpfsHash,
+                            _this.name,
+                            _this.symbol,
                             !_this.pay_with_hps
                         );
                         _this.processing = true;
