@@ -270,6 +270,7 @@ export default {
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
             } else if (sort_status == "cheap") {
+                console.log("Cheap");
                 console.log(this.new_array_collectibles.length);
                 if (
                     this.new_array_collectibles === undefined ||
