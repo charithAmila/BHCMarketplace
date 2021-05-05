@@ -1263,8 +1263,8 @@ async function createCollection(type, uri, name, symbol, isBNB) {
             {
                 value: isBNB
                     ? ethers.utils.parseEther(`${sFee * 1.03}`)
-                    : ethers.utils.parseEther("0")
-                //gasLimit: BigNumber.from(3000000)
+                    : ethers.utils.parseEther("0"),
+                //gasLimit: BigNumber.from(30000000)
             }
         );
     } else {
