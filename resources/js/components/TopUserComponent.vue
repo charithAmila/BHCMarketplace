@@ -26,12 +26,12 @@
       </select>
     </div>
     <div class="filterList">
-      <div id="preloader-top-user" class="d-none d-md-block">
+      <div id="preloader-top-user" class="">
         <div v-for="item in 8" :key="item" class="row placeholder-div">
-          <div class="col-3 col-sm-3 col-md-3 col-lg-3">
+          <div class="col-12 col-sm-12 col-md-3 col-lg-3">
             <div class="userCircle"></div>
           </div>
-          <div class="col-9 col-sm-9 col-md-9 col-lg-9">
+          <div class="col-12 col-sm-12 col-md-9 col-lg-9">
             <div class="userName"></div>
             <div class="userPrice"></div>
           </div>

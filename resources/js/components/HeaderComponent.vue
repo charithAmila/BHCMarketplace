@@ -228,38 +228,40 @@
                 </div>
             </div>
         </nav>
-
-        <div class="mobile-menu onclick-menu">
-            <div class="menu-links">
-                <a :href="marketplace_route">Marketplace</a>
-                <a :href="profile_route + '/' + user_link">My NFT's</a>
-                <a :href="faq_route">FAQ</a>
-                <a :href="about_route">BHC</a>
-            </div>
-            <div class="menu-footer">
-                <div class="footer-social">
-                    <a href="javascript:void(0)">
-                        <img :src="asset_url + 'images/twitter.png'" />
-                    </a>
-                    <a href="javascript:void(0)">
-                        <img :src="asset_url + 'images/telegram.png'" />
-                    </a>
-                    <a href="javascript:void(0)">
-                        <img :src="asset_url + 'images/message.png'" />
-                    </a>
-                </div>
-                <div class="footer-btn">
-                    <a :href="create_collectible_route" class="btnPrimary"
-                        >Create</a
-                    >
-                    <a
-                        v-if="!auth_check"
-                        :href="connect_route"
-                        class="btnSecondary"
-                        >{{ account }}</a
-                    >
-                </div>
-            </div>
+    <div class="mobile-menu onclick-menu">
+      <div class="menu-links">
+        <a :href="marketplace_route">Marketplace</a>
+        <a :href="profile_route + '/' + user_link">My NFT's</a>
+        <a :href="faq_route">FAQ</a>
+        <a :href="about_route">BHC</a>
+      </div>
+      <div class="menu-footer">
+        <div class="footer-social">
+          <a
+            href="javascript:void(0)"
+            data-sharer="twitter"
+            data-title="Billion Happiness"
+            :data-url="asset_url"
+          >
+            <img :src="asset_url + 'images/twitter.png'" />
+          </a>
+          <a
+            href="javascript:void(0)"
+            data-sharer="telegram"
+            data-title="Billion Happiness"
+            :data-url="asset_url"
+          >
+            <img :src="asset_url + 'images/telegram.png'" />
+          </a>
+          <a href="javascript:void(0)">
+            <img :src="asset_url + 'images/message.png'" />
+          </a>
+        </div>
+        <div class="footer-btn">
+          <a :href="create_collectible_route" class="btnPrimary">Create</a>
+          <a v-if="!auth_check" :href="connect_route" class="btnSecondary">{{
+            account
+          }}</a>
         </div>
 
         <preferences-modal-component
