@@ -42,7 +42,7 @@ class ProfileController extends Controller
             'address' => 'required',
             'sign' => 'required',
             'ipfs_hash' => 'required',
-            'short_url' => 'required|max:20'
+            //'short_url' => 'required|max:20'
         ]);
         $checker = new CheckSign;
         $message = "I agree to update my profile.";
