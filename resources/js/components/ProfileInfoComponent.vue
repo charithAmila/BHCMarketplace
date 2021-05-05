@@ -35,7 +35,7 @@
                         <i class="fa fa-cog"></i>
                     </div>
                     <div class="verified">
-                        <i class="fas fa-check"></i>
+                        <i class="fas fa-check" v-if="user.verified"></i>
                     </div>
                 </div>
                 <div class="details-container">

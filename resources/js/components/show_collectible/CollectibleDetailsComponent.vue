@@ -41,6 +41,7 @@
                                 <i
                                     class="fa fa-check-circle imgCheck"
                                     aria-hidden="true"
+                                    v-if="creator.verified"
                                 ></i>
                             </div>
                         </div>
@@ -74,6 +75,7 @@
                                 <i
                                     class="fa fa-check-circle imgCheck"
                                     aria-hidden="true"
+                                    v-if="current_owner.verified"
                                 ></i>
                             </div>
                         </div>
@@ -153,6 +155,7 @@
                                     <i
                                         class="fa fa-check-circle imgCheck"
                                         aria-hidden="true"
+                                        v-if="owner.verified"
                                     ></i>
                                 </div>
                             </div>
@@ -236,9 +239,7 @@
                                 }}</span>
                                 {{ this.highestBid.maxBidToken }} on
 
-                                {{
-                                    this.highestBid.maxBidTime.slice(0, 10) 
-                                }}
+                                {{ this.highestBid.maxBidTime.slice(0, 10) }}
                                 by
 
                                 <a

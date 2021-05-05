@@ -214,7 +214,7 @@ async function getUserDetails(addressString) {
             user.name = response.data.name;
             user.bio = response.data.description;
             user.short_url = response.data.short_url;
-            //user.verified = res.data.verified;
+            user.verified = res.data.verified;
         }
     } catch (e) {}
     return user;
