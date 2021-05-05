@@ -377,7 +377,7 @@ async function getCreated(owner, _startingBlock) {
         }
         //var evts = await nftStorage.queryFilter("NFTAdded", 7090600, "latest");
         var latest = await axios.get("/minted");
-        startBlock = latest.data.length == 0 ? 7090600 : latest.data.block + 1;
+        startBlock = latest.data.length == 0 ? 7160330 : latest.data.block + 1;
         var endBlock = await rpcprovider1.getBlockNumber();
         var evts = [];
         console.log(startBlock);
@@ -1263,7 +1263,7 @@ async function createCollection(type, uri, name, symbol, isBNB) {
             {
                 value: isBNB
                     ? ethers.utils.parseEther(`${sFee * 1.03}`)
-                    : ethers.utils.parseEther("0"),
+                    : ethers.utils.parseEther("0")
                 //gasLimit: BigNumber.from(30000000)
             }
         );
