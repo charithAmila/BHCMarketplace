@@ -19,6 +19,7 @@ class CreateProfilesTable extends Migration
             $table->string('address')->unique();
             $table->string('ipfs_hash');
             $table->string('short_url');
+            $table->boolean('verified')->nullable(true)->default(false);
         });
     }
 
