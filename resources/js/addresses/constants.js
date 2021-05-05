@@ -35,16 +35,16 @@ const hps721Address = "0x9AB56134F1e84FD13cf969dF4F2a8694381544a1";
 const hps1155Address = "0x33c2C043529D1AAdd883076Ecef2f163a2A9007b";
 
 //////////////////////////////////////////Utility Contracts///////////////////////////////////////
-const transferProxyAddress = "0xeDd0FFE20702F53EA49429ff23f2ED153e7f481b";
-const erc20TransferProxyAddress = "0x5ac627B0d9770C2b433298aF1389fc653A55bC64";
-const exchangeAddress = "0x82EBE682BE1ac11f65161FB955B9a571eA27eE48";
+const transferProxyAddress = "0x071bf1d01cacd927d8aef94d7c1d635052eda3e2";
+const erc20TransferProxyAddress = "0xcabab2ccc8e143e6f306902abcaf77e52271bd1e";
+const exchangeAddress = "0x8692f9da123d5b2675d865a3af7bbbf7d9a2db14";
 
-const NFTStorageAddress = "0x5aECe89bF2743bb1e0E33036fF174655AC68252c";
+const NFTStorageAddress = "0x4e63370c341949961e8132fdcc74f7725d622211";
 const contractFactoryAddress = "0x6131414b0fBAb177a7739B71Df29105Bf6208831";
 /////////////////////////////////////////Token address////////////////////////////////////////////
 const hpsAddress = "0xeDa21B525Ac789EaB1a08ef2404dd8505FfB973D";
 const bhcAddress = "0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4";
-const minterAddress = "0x4b8bAFA504cB1F61f33102E6F172178f9D4714eD";
+const minterAddress = "0x2a7975f14abb4d63a7a4c7c7f5a9ed8230b3cbe1";
 
 const WBNB_tokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //mainnet
 
