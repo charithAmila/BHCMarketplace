@@ -55,7 +55,7 @@
               }}</a>
             </h6>
             <label
-              >{{ item.sell_amount }} {{ item.buy_amount }}
+              >{{ userType=="sell"?item.sell_amount:item.buy_amount}}
               {{ item.currency }}</label
             >
           </div>

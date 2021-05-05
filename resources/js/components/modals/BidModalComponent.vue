@@ -368,8 +368,7 @@ export default {
         if (res) {
           let address = await checkConnection();
           let details = await getUserDetails(address);
-          console.log("details");
-          console.log(details);
+          
           let message_bidder =
             "You have place a bid of " +
             this.payment +
@@ -379,7 +378,7 @@ export default {
             this.singleNft.name;
 
           let message_owner =
-            address +
+            details.name +
             " placed a bid of " +
             this.payment +
             " " +
@@ -391,7 +390,7 @@ export default {
           let data = {};
           data.message_owner = message_owner;
           data.message_bidder = message_bidder;
-          data.user_id = await checkConnection();
+          data.user_id = address;
           data.owner = this.singleNft.owner_id;
           data.token_id = this.singleNft.id;
           data.contract = this.singleNft.contract;

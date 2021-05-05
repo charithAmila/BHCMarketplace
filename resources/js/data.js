@@ -51,24 +51,38 @@ async function getMaxBuyers(time_filter) {
     let bhcprice = await getTokenPrice("BHC");
     bhcprice = (parseFloat(bhcprice) / 10 ** 18).toFixed(3);
     let output = {};
-    console.log("Buyers");
+    let users = [];
     for (let i = 0; i < res.length; i++) {
         if (res[i].type != "follow" && res[i].type != "create") {
             let user = res[i].user_id;
-            let details = await getUserDetails(user);
-            console.log(details);
+            if (!users.includes(user)) {
+                users.push(user);
+            }
             output[user] = {};
             output[user].buy_amount = 0;
-            output[user].propic = details.display_photo;
-            output[user].username = details.name;
             output[user].currency = "BNB";
+        }
+    }
+    for (let i = 0; i < res.length; i++) {
+        if (res[i].type != "follow" && res[i].type != "create") {
+            let user = res[i].user_id;
             if ((res[i].currency = "BNB")) {
                 output[user].buy_amount += res[i].buy_amount;
             } else {
-                output[user].buy_amount += res[i].buy_amount * bhcprice;
+                output[user].buy_amount += (
+                    res[i].buy_amount * bhcprice
+                ).toFixed(3);
             }
         }
     }
+    for (let i = 0; i < users.length; i++) {
+        let user = users[i];
+        let details = await getUserDetails(user);
+        output[user].propic = details.display_photo;
+        output[user].username = details.name;
+    }
+    console.log("Buyers");
+    console.log(users);
     return output;
 }
 /////////////////getMaxSellers//////
@@ -81,26 +95,39 @@ async function getMaxSellers(time_filter) {
     let bhcprice = await getTokenPrice("BHC");
     bhcprice = (parseFloat(bhcprice) / 10 ** 18).toFixed(3);
     let output = {};
-    console.log("Sellers");
+    let users = [];
     for (let i = 0; i < res.length; i++) {
         if (res[i].type != "follow" && res[i].type != "create") {
             let user = res[i].user_id;
-            let details = await getUserDetails(user);
-            console.log(details);
+            if (!users.includes(user)) {
+                users.push(user);
+            }
             output[user] = {};
             output[user].sell_amount = 0;
-            output[user].propic = details.display_photo;
-            output[user].username = details.name;
             output[user].currency = "BNB";
             output[user].user_id = res[i].user_id;
+        }
+    }
+    for (let i = 0; i < res.length; i++) {
+        if (res[i].type != "follow" && res[i].type != "create") {
+            let user = res[i].user_id;
             if ((res[i].currency = "BNB")) {
                 output[user].sell_amount += res[i].sell_amount;
             } else {
-                output[user].sell_amount += res[i].sell_amount * bhcprice;
+                output[user].sell_amount += (
+                    res[i].sell_amount * bhcprice
+                ).toFixed(3);
             }
         }
     }
-
+    for (let i = 0; i < users.length; i++) {
+        let user = users[i];
+        let details = await getUserDetails(user);
+        output[user].propic = details.display_photo;
+        output[user].username = details.name;
+    }
+    console.log("Sellers");
+    console.log(users);
     return output;
 }
 ////////get///////////////////
