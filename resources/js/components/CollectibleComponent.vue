@@ -94,19 +94,32 @@
                                             "
                                             >Report</a
                                         >
-                                        <a v-if="collectible.is_selling && current_user ==collectible.owner_id"
+                                        <a
+                                            v-if="
+                                                collectible.is_selling &&
+                                                    current_user ==
+                                                        collectible.owner_id
+                                            "
                                             href="javascript:void(0)"
                                             class="changePrice"
                                             @click="toggleModal('changePrice')"
                                             >Change Price</a
                                         >
-                                        <a v-if="current_user ==collectible.owner_id"
+                                        <a
+                                            v-if="
+                                                current_user ==
+                                                    collectible.owner_id
+                                            "
                                             href="javascript:void(0)"
                                             class="burn"
                                             @click="toggleModal('burn')"
                                             >Burn</a
                                         >
-                                        <a  v-if="current_user ==collectible.owner_id"
+                                        <a
+                                            v-if="
+                                                current_user ==
+                                                    collectible.owner_id
+                                            "
                                             href="javascript:void(0)"
                                             class="transfer"
                                             @click="toggleModal('transfer')"
@@ -151,20 +164,32 @@
                                         >
                                             Put On Sale
                                         </a>
-                                        <a  
+                                        <a
                                             href="javascript:void(0)"
                                             class="changePrice"
-                                            v-if="collectible.is_selling && current_user ==collectible.owner_id"
+                                            v-if="
+                                                collectible.is_selling &&
+                                                    current_user ==
+                                                        collectible.owner_id
+                                            "
                                             @click="changePrice(collectible)"
                                             >Change Price</a
                                         >
-                                        <a v-if="current_user ==collectible.owner_id"
+                                        <a
+                                            v-if="
+                                                current_user ==
+                                                    collectible.owner_id
+                                            "
                                             href="javascript:void(0)"
                                             class="burn"
                                             @click="burnToken(collectible)"
                                             >Burn</a
                                         >
-                                        <a  v-if="current_user ==collectible.owner_id"
+                                        <a
+                                            v-if="
+                                                current_user ==
+                                                    collectible.owner_id
+                                            "
                                             href="javascript:void(0)"
                                             class="transfer"
                                             @click="transferToken(collectible)"
@@ -277,7 +302,11 @@
             <div
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
                 v-for="i in customPreloaderCount"
-                :key="Math.random"
+                :key="
+                    Math.random()
+                        .toString(36)
+                        .substring(i)
+                "
                 v-if="isLoading"
             >
                 <div class="outside-nft border-on-profile">
@@ -388,7 +417,7 @@
 </template>
 
 <script>
-import { checkNFTApproved,checkConnection } from "./../etherFunc";
+import { checkNFTApproved, checkConnection } from "./../etherFunc";
 import { forceRemoveSale } from "./../data";
 import PutOnSaleModalComponent from "./modals/PutOnSaleModalComponent.vue";
 export default {
@@ -414,7 +443,7 @@ export default {
 
             loaded: false,
             open: false,
-            customPreloaderCount: 0,
+            customPreloaderCount: 0
 
             //collectible: this.collectibles[0],
         };
@@ -426,10 +455,10 @@ export default {
             this.record_id = this.singleNft.record_id;
         },
         collectibles: function() {
-            var totalNft = this.collectibles.length
+            var totalNft = this.collectibles.length;
             var offsetItem = totalNft % 5;
-            var totalPreloader = 10 - offsetItem
-            this.customPreloaderCount = totalPreloader
+            var totalPreloader = 10 - offsetItem;
+            this.customPreloaderCount = totalPreloader;
         }
     },
     methods: {
@@ -450,13 +479,13 @@ export default {
             _this.loaded = true;
             _this.toggleModal("changePrice");
         },
-          async transferToken(collectible) {
+        async transferToken(collectible) {
             const _this = this;
             _this.singleNft = collectible;
             _this.loaded = true;
             _this.toggleModal("transfer");
         },
-          async burnToken(collectible) {
+        async burnToken(collectible) {
             const _this = this;
             _this.singleNft = collectible;
             _this.loaded = true;
@@ -544,7 +573,7 @@ export default {
             return string.slice(0, 18) + "...";
         }
     },
-  async  mounted() {
+    async mounted() {
         let address = await checkConnection();
         this.current_page = this.page;
     }
