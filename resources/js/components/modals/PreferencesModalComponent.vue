@@ -340,7 +340,7 @@ export default {
             //console.log(this.shorturls);
             this.nameerror = false;
             this.shorturls.forEach(i => {
-                if (i == shorturl && shorturl != this.url_previous) {
+                if (i == shorturl.toLowerCase() && shorturl.toLowerCase() != this.url_previous) {
                     this.nameerror = true;
                 }
             });
