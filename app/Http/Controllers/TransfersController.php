@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\transfers;
+use App\Models\minted;
 use Illuminate\Http\Request;
 
 class TransfersController extends Controller
-{
+{ §
     /**
      * Display a listing of the resource.
      *
@@ -86,8 +87,20 @@ class TransfersController extends Controller
     {
         $last = transfers::where("collection",$collection)->latest("id")->first();
         if($last!=null){
-        $last->block=$request->block;
-        $last->update();}
+            $last->block=$request->block;
+            $last->update();
+        }
+        else{
+            $mint = minted::where("collection",$collection)->where("token_id",1)->first();
+            if($mint!=null){
+                transfers::create([
+                    "block"=>$mint->block,
+                    "collection" => $mint->collection,
+                    "owner" => $mint->minter,
+                    "token_id" => $mint->token_id,
+                ]);
+            }
+        }
 
     }
 
