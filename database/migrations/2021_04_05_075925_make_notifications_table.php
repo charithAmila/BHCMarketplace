@@ -26,6 +26,7 @@ class MakeNotificationsTable extends Migration
             $table->integer('token_id')->default(0);
             $table->boolean('status')->default(1);
             $table->string('type')->default('');
+            $table->boolean('viewed')->default(false);
             $table->timestamps();
         });
     }
