@@ -133,8 +133,9 @@
                 <a
                     class="nav-item notif-btn notif-mobile"
                     href="javascript:void(0)"
+                    @click="setViewed()"
                 >
-                    <span v-if="this.notifications.length > 0 && this.viewed==0" class="count" @click="setViewed()">{{
+                    <span v-if="this.notifications.length > 0 && this.viewed==false" class="count" @click="setViewed()">{{
                         this.notifications.length
                     }}</span>
                     <img
