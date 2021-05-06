@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 class ShortUrlController extends Controller
 {
-    public function index(){
-        return Profile::pluck('short_url');
+    public function index(Request $request){
+        return Profile::where("short_url","!=",$request->short_url)->pluck('short_url');
     }
 
 }

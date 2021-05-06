@@ -138,10 +138,11 @@ function tempUserData(addressString) {
             "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg",
         display_photo:
             "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-        name: "Empty User",
-        bio: "Empty Bio",
+        name: "",
+        bio: "",
         wallet: address,
-        short_url: ""
+        short_url: "",
+        default: true
     };
 }
 
@@ -214,7 +215,9 @@ async function getUserDetails(addressString) {
             user.name = response.data.name;
             user.bio = response.data.description;
             user.short_url = response.data.short_url;
+            user.prev_short_url = response.data.short_url;
             user.verified = res.data.verified;
+            user.default = false;
         }
     } catch (e) {}
     return user;
