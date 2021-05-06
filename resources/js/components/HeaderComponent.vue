@@ -342,6 +342,7 @@ export default {
                 });
         },
         async setViewed() {
+            console.log("Clicked");
             this.viewed = true;
             let data = {};
             data.user_id = await checkConnection();
