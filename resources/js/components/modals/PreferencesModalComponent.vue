@@ -165,13 +165,7 @@ export default {
         "page",
         "user_address"
     ],
-    mounted() {
-        axios.get("/api/shorturls").then(response => {
-            this.shorturls = response.data;
-            // this.url_previous = this.user_data.short_url;
-            //removed//console.log(this.shorturls);
-        });
-    },
+    mounted() {},
 
     data() {
         return {
@@ -330,12 +324,20 @@ export default {
             }
         },
 
-        nameCheck() {
+        async nameCheck() {
+            const _this = this;
+            if (this.shorturls == null) {
+                var res = await axios.get(
+                    "/api/shorturls?short_url=" + _this.user_data.prev_short_url
+                );
+                _this.shorturls = res.data;
+            }
             let shorturl = $("#short_url-profile").val();
             if (shorturl.length == 0) {
                 this.nameerror = null;
             }
 
+            //console.log(this.shorturls);
             this.nameerror = false;
             this.shorturls.forEach(i => {
                 if (i == shorturl && shorturl != this.url_previous) {
