@@ -37,7 +37,7 @@
                 <div class="notif-container">
                     <a
                         :href="
-                            notif.type == 'sell' || notif.type == 'bid'
+                            notif.type == 'sell' || notif.type == 'bid' || notif.type == 'transfer' || notif.type == 'create'
                                 ? '/nft/' +
                                   notif.contract +
                                   ':' +

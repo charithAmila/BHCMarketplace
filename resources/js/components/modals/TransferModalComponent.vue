@@ -87,6 +87,23 @@ export default {
                     });
                     modalClose($("#transferModal"), $(".transfer-content"));
                     modalClose($("#transferModal"), $(".transfer-content"));
+
+                    let message =
+                        address + 
+                        " sent you the collectible " +
+                      _this.singleNft.name;
+                    // +" in the collection " +
+                    // this.singleNft.collection.name;
+                    let data = {};
+                    data.message = message;
+                    data.user_id = _this.receiver_address;
+                    data.owner = _this.receiver_address;
+                    data.token_id = _this.singleNft.id;
+                    data.contract = _this.singleNft.contract;
+                    data.type = "transfer";
+                    await axios.post("/addNotification", data, {}).then(res => {
+                        //removed//console.log(res.data);
+                    });
                 } else {
                     this.transfer_text = "Transfer";
                     Toast.fire({
@@ -105,6 +122,8 @@ export default {
             }
         }
     },
-    async mounted() {}
+    async mounted() {
+        this.address = await checkConnection();
+    }
 };
 </script>

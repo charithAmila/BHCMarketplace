@@ -1332,7 +1332,7 @@ export default {
                 instant_sale_token: _this.token,
                 count: 1,
                 sale_currency: _this.sale_currency,
-                icon: _this.legend.icon
+                icon: _this.legend.icon,notif:{}
             };
             const message =
                 "New collectible " + _this.name + " was minted successfully";
@@ -1362,23 +1362,16 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
-                                    let notif = {};
-                                    notif.message = message;
-                                    notif.user_id = toAddress(
+                                    
+                                    this.notif.message = message;
+                                    this.notif.user_id = toAddress(
                                         _this.current_user
                                     );
-                                    notif.amount = 0;
-                                    notif.currency = "";
-                                    notif.owner = "";
-                                    notif.contract = "";
-                                    notif.token_id = 0;
-                                    notif.type = "create";
-
-                                    await axios
-                                        .post("/addNotification", notif, {})
-                                        .then(result => {
-                                            //removed//console.log(result.data);
-                                        });
+                                   
+                                    this.notif.owner = toAddress(
+                                        _this.current_user
+                                    );
+                                  
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
@@ -1415,22 +1408,16 @@ export default {
                                 data
                             ) {
                                 if (data.status) {
-                                    let notif = {};
-                                    notif.message = message;
-                                    notif.user_id = toAddress(
+                                    
+                                    this.notif.message = message;
+                                    this.notif.user_id = toAddress(
                                         _this.current_user
                                     );
-                                    notif.amount = 0;
-                                    notif.currency = "";
-                                    notif.owner = "";
-                                    notif.contract = "";
-                                    notif.token_id = 0;
-                                    notif.type = "create";
-                                    await axios
-                                        .post("/addNotification", notif, {})
-                                        .then(result => {
-                                            //removed//console.log(result.data);
-                                        });
+                                 
+                                    this.notif.owner = toAddress(
+                                        _this.current_user
+                                    );
+                                    
                                     _this.isMinted = true;
                                     _this.tokenData = await getMinted(
                                         data.logs[_this.pay_with_hps ? 5 : 1]
@@ -1494,6 +1481,15 @@ export default {
                     this.orderId = orderId;
                     this.isSigned = true;
                     this.isSigning = false;
+
+                    this.notif.contract = _this.tokenData.collection;
+                                    this.notif.token_id = _this.tokenData.tokenId;
+                                    this.notif.type = "create";
+                                    await axios
+                                        .post("/addNotification", this.notif, {})
+                                        .then(result => {
+                                            //removed//console.log(result.data);
+                                        });
                 }
             } catch (error) {
                 Toast.fire({

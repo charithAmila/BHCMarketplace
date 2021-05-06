@@ -52,10 +52,13 @@ class NotificationController extends Controller
             $notification2->token_id = $request->token_id;
             $notification2->type = 'sell';
             $notification2->save();
-        } elseif ($request->type == 'create') {
+        } else if ($request->type == 'create') {
             $notification = new Notification;
             $notification->user_id = $request->user_id;
             $notification->message = $request->message;
+            $notification->owner = $request->owner;
+            $notification->contract = $request->contract;
+            $notification->token_id = $request->token_id;
             $notification->type = 'create';
             $notification->save();
         } else if ($request->type == 'follow') {
@@ -64,6 +67,16 @@ class NotificationController extends Controller
             $notification->message = $request->message;
             $notification->owner = $request->owner;
             $notification->type = 'follow';
+            $notification->save();
+        }
+        else if($request->type == 'transfer'){
+            $notification = new Notification;
+            $notification->user_id = $request->user_id;
+            $notification->message = $request->message;
+            $notification->owner = $request->owner;
+            $notification->contract = $request->contract;
+            $notification->token_id = $request->token_id;
+            $notification->type = 'transfer';
             $notification->save();
         }
     }
