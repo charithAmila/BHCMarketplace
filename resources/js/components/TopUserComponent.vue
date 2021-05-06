@@ -51,7 +51,7 @@
                             <a
                                 class="black-link"
                                 :href="'/profile/' + item.user_id"
-                                >{{ item.username }}</a
+                                >{{ item.username==''?'User':item.username }}</a
                             >
                         </h6>
                         <label
