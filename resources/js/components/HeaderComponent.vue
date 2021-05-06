@@ -134,7 +134,7 @@
                     class="nav-item notif-btn notif-mobile"
                     href="javascript:void(0)"
                 >
-                    <span v-if="this.notifications.length > 0 && !this.viewed" class="count">{{
+                    <span v-if="this.notifications.length > 0 && !this.viewed" class="count" @click="setViewed()">{{
                         this.notifications.length
                     }}</span>
                     <img
@@ -143,6 +143,7 @@
                         class="d-inline-block align-top"
                         alt=""
                         loading="lazy"
+                        @click="setViewed()"
                     />
                 </a>
                 <a class="nav-item hamburger-menu" href="javascript:void(0)"
