@@ -7,7 +7,8 @@ use App\Models\minted;
 use Illuminate\Http\Request;
 
 class TransfersController extends Controller
-{
+
+{ 
     /**
      * Display a listing of the resource.
      *
