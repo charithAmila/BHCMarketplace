@@ -127,7 +127,7 @@
                             </div>
                         </div>
 
-                        <h6 class="content-title text-content">
+                        <!--h6 class="content-title text-content">
                             Access once purchased
                         </h6>
                         <div class="row">
@@ -167,7 +167,7 @@
                             <small class="faded-text"
                                 >Tip: Markdown syntax is supported</small
                             >
-                        </div>
+                        </div-->
 
                         <h6 class="content-title text-content">
                             Select Collection
