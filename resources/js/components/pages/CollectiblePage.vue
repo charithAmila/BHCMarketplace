@@ -1,5 +1,6 @@
 <template>
     <div>
+        
         <div v-if="loaded && !notFound">
             <show-collectible-component
                 :collectible="collectible"
@@ -18,10 +19,18 @@
             ></show-fullscreen-component>
         </div>
 
+        
+
         <div v-else>
             <div v-if="!notFound">
-                <cube></cube>
-                <h2 class="text-center">NFT is loading....</h2>
+                <div class="loader-container">
+                    <div class="actual-loader">
+                        <img :src="asset_url + 'images/logo.png'" alt="">
+                        <div class="loader2"></div>
+                        <div class="loader"></div>
+                    </div>
+                </div>
+
             </div>
             <div v-else>
                 <h2 class="text-center">NFT is not found under this owner!</h2>

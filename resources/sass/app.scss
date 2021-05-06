@@ -6,3 +6,52 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+
+.loader-container{
+	height: calc(100vh - 71px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	.actual-loader{
+		position: relative;
+		img{
+			position: absolute;
+		    height: 90px;
+		    top: 54px;
+		    left: 54px;
+		}
+		.loader {
+			border: 16px solid transparent;
+			border-radius: 50%;
+			border-top: 16px solid gray;
+			width: 140px;
+			height: 140px;
+			-webkit-animation: spin 1s linear infinite; /* Safari */
+			animation: spin 1s linear infinite;
+			margin-top: -171px;
+			margin-left: 29px;
+		}
+
+		.loader2 {
+			border: 12px solid transparent;
+			border-radius: 50%;
+			border-top: 12px solid gray;
+			width: 200px;
+			height: 200px;
+			-webkit-animation: spin 2s linear infinite; /* Safari */
+			animation: spin 2s linear infinite;
+		}
+
+		/* Safari */
+		@-webkit-keyframes spin {
+			0% { -webkit-transform: rotate(0deg); }
+			100% { -webkit-transform: rotate(360deg); }
+		}
+
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+	}
+}
