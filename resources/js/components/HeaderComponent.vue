@@ -134,7 +134,7 @@
                     class="nav-item notif-btn notif-mobile"
                     href="javascript:void(0)"
                 >
-                    <span v-if="this.notifications.length > 0" class="count">{{
+                    <span v-if="this.notifications.length > 0 && !this.viewed" class="count">{{
                         this.notifications.length
                     }}</span>
                     <img
@@ -306,7 +306,7 @@ export default {
         "str_random",
         "csrf_token",
         "base_url",
-        "search_url"
+        "search_url",
     ],
     data() {
         return {
@@ -319,9 +319,13 @@ export default {
             user_link: "",
             mouse_leave: false,
             notifications: [],
-            wrongNet: false
+            wrongNet: false,viewed :true
         };
     },
+   
+   
+    
+
     methods: {
         async getNotifications() {
             let data = {};
@@ -330,6 +334,19 @@ export default {
                 .post("/notifications", data)
                 .then(res => {
                     this.notifications = res.data;
+                    this.viewed = this.notifications[0].viewed;
+                })
+                .catch(error => {
+                    //removed//console.log(error);
+                });
+        },
+        async setViewed() {
+            this.viewed = true;
+            let data = {};
+            data.user_id = await checkConnection();
+             axios
+                .post("/setviewed", data)
+                .then(res => {
                 })
                 .catch(error => {
                     //removed//console.log(error);

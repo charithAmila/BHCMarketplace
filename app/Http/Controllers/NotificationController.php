@@ -86,6 +86,16 @@ class NotificationController extends Controller
         // $data->delete();
     }
 
+        public function setviewed(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required'
+        ]);
+
+        $data = Notification::where(['user_id' => $request->user_id])->update(['viewed' => true]);
+        // $data->delete();
+    }
+
     public function getData(Request $request, $time)
     {
         $time_duration = $time;

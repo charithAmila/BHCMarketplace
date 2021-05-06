@@ -121,7 +121,7 @@ Route::post('unfollow', [FollowController::class, 'unfollow']);
 Route::post('addNotification', [NotificationController::class, 'addNotification']);
 
 Route::post('deleteNotification', [NotificationController::class, 'delete']);
-
+Route::post('setviewed', [NotificationController::class, 'setviewed']);
 Route::get('followers', [FollowController::class, 'index'])->name('followers');
 
 Route::resource('sales', SalesController::class);
@@ -132,5 +132,5 @@ Route::resource('nftdata', NftDataController::class);
 Route::get('sales_search', [SearchSales::class, 'search']);
 
 Route::get('/getData/{time}', [NotificationController::class, 'getData']);
-
+Route::get('/getStatus/{user}', [NotificationController::class, 'getStatus']);
 Route::post('/subscribe', [SubscribeController::class, 'subscribe']);
