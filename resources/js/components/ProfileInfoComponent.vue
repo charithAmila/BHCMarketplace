@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="details-container">
-                    <label id="profile-name">{{ user.name==''?'User':user.name }}</label>
+                    <label id="profile-name">{{ user.name==null?'User':user.name }}</label>
                     <label id="profile-bio">{{ user.bio }}</label>
                     <label id="profile-wallet">{{ user.wallet }}</label>
                     <div class="profile-button">
