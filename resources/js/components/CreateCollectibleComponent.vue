@@ -1363,12 +1363,12 @@ export default {
                             ) {
                                 if (data.status) {
                                     
-                                    this.notif.message = message;
-                                    this.notif.user_id = toAddress(
+                                    _this.notif.message = message;
+                                    _this.notif.user_id = toAddress(
                                         _this.current_user
                                     );
                                    
-                                    this.notif.owner = toAddress(
+                                    _this.notif.owner = toAddress(
                                         _this.current_user
                                     );
                                   
@@ -1409,12 +1409,12 @@ export default {
                             ) {
                                 if (data.status) {
                                     
-                                    this.notif.message = message;
-                                    this.notif.user_id = toAddress(
+                                    _this.notif.message = message;
+                                    _this.notif.user_id = toAddress(
                                         _this.current_user
                                     );
                                  
-                                    this.notif.owner = toAddress(
+                                    _this.notif.owner = toAddress(
                                         _this.current_user
                                     );
                                     
@@ -1482,9 +1482,9 @@ export default {
                     this.isSigned = true;
                     this.isSigning = false;
 
-                    this.notif.contract = _this.tokenData.collection;
-                                    this.notif.token_id = _this.tokenData.tokenId;
-                                    this.notif.type = "create";
+                    _this.notif.contract = _this.tokenData.collection;
+                                    _this.notif.token_id = _this.tokenData.tokenId;
+                                    _this.notif.type = "create";
                                     await axios
                                         .post("/addNotification", this.notif, {})
                                         .then(result => {
