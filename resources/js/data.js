@@ -105,7 +105,7 @@ async function getMaxSellers(time_filter) {
             output[user] = {};
             output[user].sell_amount = 0;
             output[user].currency = "BNB";
-            output[user].verified = re[i].verified;
+            //output[user].verified = re[i].verified;
             output[user].user_id = res[i].user_id;
         }
     }
