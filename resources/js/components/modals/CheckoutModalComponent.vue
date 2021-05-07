@@ -356,7 +356,7 @@ export default {
                     _this.purchasing = false;
                     Toast.fire({
                         icon: "error",
-                        title: "User rejected transaction!"
+                        title: "Something went wrong!"
                     });
                 });
         },
