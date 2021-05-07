@@ -83,7 +83,8 @@ class SalesController extends Controller
                 "signature" => $request->signature,
                 "salt" => $request->salt,
                 "col_name" =>$request->col_name,
-            "nft_name" =>$request->nft_name
+            "nft_name" =>$request->nft_name,
+            "owner_name"=>$request->owner_name
             ]);
             return response()->json(["success" => true]);
         } else {

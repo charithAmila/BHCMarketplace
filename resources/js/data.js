@@ -765,13 +765,18 @@ async function getAllSales(current_user) {
     var res = await axios.get("/sales");
     var tokens = res.data;
     var res = await axios.get("/reports");
-    var reports = res.data;
-    /*tokens = tokens.filter(function(token) {
-        var repFiltered = tokens.filter(function(report) {
-            if(report.collection==token.collection && report.token_id==token.token_id)return true;
-        })
-        if (repFiltered==0) return true;
-    });*/
+    window.reports = res.data;
+    tokens = tokens.filter(function(token) {
+        var repFiltered = window.reports.filter(function(report) {
+            if (
+                report.contract == token.collection &&
+                report.token_id == token.token_id &&
+                report.reported
+            )
+                return true;
+        });
+        if (repFiltered == 0) return true;
+    });
     /*tokens = tokens.filter(function(element) {
         if (element.current_owner != current_user) return true;
     });*/
@@ -856,12 +861,19 @@ async function getAllSalesSearch(current_user, parameter) {
     var tokens1155 = [];
     var res = await axios.get("/sales_search");
     var tokens = res.data;
-    /*tokens = tokens.filter(function(token) {
-        var repFiltered = tokens.filter(function(report) {
-            if(report.collection==token.collection && report.token_id==token.token_id)return true;
-        })
-        if (repFiltered==0) return true;
-    });*/
+    var res = await axios.get("/reports");
+    window.reports = res.data;
+    tokens = tokens.filter(function(token) {
+        var repFiltered = window.reports.filter(function(report) {
+            if (
+                report.contract == token.collection &&
+                report.token_id == token.token_id &&
+                report.reported
+            )
+                return true;
+        });
+        if (repFiltered == 0) return true;
+    });
     for (var i = 0; i < tokens.length; i++) {
         //if (tokens[i].current_owner != current_user) {
         if (
@@ -948,17 +960,16 @@ async function updateUserDetails(addressString, data) {
     await axios.patch(`/api/profile/${address}`, data);
 }
 async function addSale(data) {
-    /*var res = await axios(`/reported/${data.collection}/${data.token_id}`)
-    var reported = res.data.reported;
-    if(reported){
+    var res = await axios(`/reported/${data.collection}/${data.token_id}`);
+    var reported = res.data;
+    if (reported) {
         Toast.fire({
-                icon: "error",
-                title: "Token is reported!"
-            });
+            icon: "error",
+            title: "Token is reported!"
+        });
+    } else {
+        await axios.post(`/sales`, data);
     }
-    else{*/
-    await axios.post(`/sales`, data);
-    //}
 }
 
 async function removeSale(
