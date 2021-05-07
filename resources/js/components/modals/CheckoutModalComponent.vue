@@ -325,7 +325,7 @@ export default {
                             req.seller_id = collectible.owner_id;
                             req.type = "sell";
                             await axios
-                                .post("/addNotification", req, {})
+                                .post("/addNotification", req)
                                 .then(res => {
                                     //removed//console.log(res.data);
                                 });
@@ -342,7 +342,7 @@ export default {
                             req.seller_id = collectible.owner_id;
                             req.type = "sell";
                             await axios
-                                .post("/addNotification", req, {})
+                                .post("/addNotification", req)
                                 .then(res => {
                                     //removed//console.log(res.data);
                                 });

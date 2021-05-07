@@ -413,7 +413,7 @@ export default {
                     data.amount = this.payment;
                     data.type = "bid";
                     data.currency = this.currency;
-                    await axios.post("/addNotification", data, {}).then(res => {
+                    await axios.post("/addNotification", data).then(res => {
                         //removed//console.log(res.data);
                     });
 
