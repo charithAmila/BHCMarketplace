@@ -218,6 +218,16 @@ export default {
         };
     },
     async mounted() {
+
+        await axios.get("/reports").then(function(response) {
+        let res = response.data;
+        console.log(res);
+    });
+
+         await axios.get("/reported/0x0b837aE5Ba2FB835eb6F064EE566b71A1A120641/1").then(function(response) {
+        let res = response.data;
+        console.log(res);
+    });
         this.BHC_Balance = await getBHCBalance();
         this.BNB_Balance = await getBNBBalance();
         this.WBNB_Balance = await getWBNBBalance();
