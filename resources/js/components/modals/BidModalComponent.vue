@@ -224,6 +224,8 @@ export default {
         this.selected_token = 0;
         this.selectedBalance = this.BHC_Balance;
          var res = await getUserDetails(this.singleNft.creator);
+         console.log("creator");
+         console.log(this.singleNft.creator);
          console.log(res);
             this.creator = res.name;
     },
