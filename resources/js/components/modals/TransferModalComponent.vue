@@ -89,7 +89,7 @@ export default {
                     modalClose($("#transferModal"), $(".transfer-content"));
 
                     let message =
-                        address + 
+                        this.address + 
                         " sent you the collectible " +
                       _this.singleNft.name;
                     // +" in the collection " +
