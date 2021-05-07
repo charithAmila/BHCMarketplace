@@ -113,7 +113,7 @@ export default {
                 }
             } catch (error) {
                 this.transfer_text = "Transfer";
-                //removed//console.log(error);
+                console.log(error);
                 Toast.fire({
                     icon: "error",
                     title: "User rejected transaction!"
