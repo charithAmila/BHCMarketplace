@@ -404,7 +404,7 @@ export default {
                 notif.message = message;
                 notif.user_id = user;
                 notif.type = "create";
-                await axios.post("/addNotification", notif, {}).then(res => {
+                await axios.post("/addNotification", notif).then(res => {
                     //removed//console.log(res.data);
                 });
             }

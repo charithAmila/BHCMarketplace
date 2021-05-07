@@ -8,8 +8,8 @@
             <div class="modal-body">
                 <label class="item-description"
                     >You are about to purchase
-                    <span class="item-name">{{ singleNft.name }}</span> from
-                    billion. Check information then proceed to payment</label
+                    <span class="item-name">{{ singleNft.name }}</span> from 
+                    {{this.creator}}. Check information then proceed to payment</label
                 >
 
                 <div class="form-section">
@@ -193,7 +193,7 @@ export default {
             converting: false,
             approving: false,
             signing: false,
-
+            creator:'User',
             nft_id: 0,
             record_id: 0,
             selected_token: 0,
@@ -223,6 +223,11 @@ export default {
         this.WBNB_Balance = await getWBNBBalance();
         this.selected_token = 0;
         this.selectedBalance = this.BHC_Balance;
+         var res = await getUserDetails(this.singleNft.creator);
+         console.log("creator");
+         console.log(this.singleNft.creator);
+         console.log(res);
+            this.creator = res.name;
     },
 
     computed: {
@@ -264,9 +269,12 @@ export default {
     },
 
     watch: {
-        singleNft: function() {
+        singleNft: async function() {
+            let details = await getUserDetails(this.singleNft.creator);
+            this.creator = details.name;
             this.nft_id = this.singleNft.id;
             this.record_id = this.singleNft.record_id;
+            
         },
         bid_input: function() {
             this.payment = this.bid_input;
@@ -413,7 +421,7 @@ export default {
                     data.amount = this.payment;
                     data.type = "bid";
                     data.currency = this.currency;
-                    await axios.post("/addNotification", data, {}).then(res => {
+                    await axios.post("/addNotification", data).then(res => {
                         //removed//console.log(res.data);
                     });
 

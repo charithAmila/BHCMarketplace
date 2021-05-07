@@ -550,6 +550,7 @@ async function getHighestBid(owner, contract_address, token_id) {
                 output[i].bidding_token ==
                 "0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4"
             ) {
+                console.log("BHC");
                 //removed//console.log("Token is BHC");
                 const signer = provider.getSigner();
                 const bhcContract = new ethers.Contract(
@@ -583,7 +584,7 @@ async function getHighestBid(owner, contract_address, token_id) {
                     }
                 }
             } else {
-                //removed//console.log("Token is BNB");
+                console.log("Token is BNB");
                 const signer = provider.getSigner();
                 //const WBNB_Write = new ethers.Contract(WBNB_tokenAddress, WBNB_ABI, signer);
                 const WBNB_Write_Test = new ethers.Contract(
@@ -594,12 +595,15 @@ async function getHighestBid(owner, contract_address, token_id) {
                 const WBNB_balance = await WBNB_Write_Test.balanceOf(
                     output[i].bidding_address
                 );
-
+                console.log("WBNB_Balance");
+                console.log(parseFloat(WBNB_balance));
+                console.log(parseFloat(output[i].bidding_amount) * 10 ** 18);
                 //const WBNB_balance = 100000000000000000000;
                 if (
-                    parseFloat(WBNB_balance) >
+                    parseFloat(WBNB_balance) >=
                     parseFloat(output[i].bidding_amount) * 10 ** 18
                 ) {
+                    console.log("Greater");
                     if (1 * output[i].bidding_amount > maxAmount) {
                         maxAmount = output[i].bidding_amount;
                         maxBidder = output[i].bidding_address;

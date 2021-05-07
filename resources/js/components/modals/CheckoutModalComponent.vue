@@ -281,9 +281,16 @@ export default {
                         req.contract = collectible.contract;
                         req.currency = collectible.currencyName;
                         req.type = "sell";
-                        axios.post("/addNotification", req).then(res => {
+                        try{
+
+                        
+                        axios.post("/addNotification", req,{headers:{"Content-Type" : "application/json"}}).then(res => {
                             //removed//console.log(res.data);
-                        });
+                        });}catch(err){
+                            console.log(
+                                err.response.data
+                            );
+                        }
 
                         await removeSale(
                             collectible.contract,
@@ -317,35 +324,41 @@ export default {
                             try {
                                 _this.$parent.$parent.getCollectible();
                             } catch (e) {}
-                            data = {};
-                            data.message_seller = message_seller;
-                            data.message_buyer = message_buyer;
-                            data.buyer_id = toAddress(_this.current_user);
-                            data.buy_amount = _this.price;
-                            data.seller_id = collectible.owner_id;
-                            data.type = "sell";
+                           let req = {};
+                            req.message_seller = message_seller;
+                            req.message_buyer = message_buyer;
+                            req.buyer_id = toAddress(_this.current_user);
+                            req.buy_amount = _this.price;
+                            req.seller_id = collectible.owner_id;
+                            req.type = "sell";
+                            try{
                             await axios
-                                .post("/addNotification", data, {})
+                                .post("/addNotification", req,{headers:{"Content-Type" : "application/json"}})
                                 .then(res => {
-                                    //removed//console.log(res.data);
-                                });
+                                    console.log(res.data);
+                                });}catch(e){
+                                    console.log(e.response.data);
+                                }
                         }
                         if (_this.page == "marketplace") {
                             try {
                                 _this.$parent.$parent.$parent.updateTopUser();
                             } catch (e) {}
-                            data = {};
-                            data.message_seller = message_seller;
-                            data.message_buyer = message_buyer;
-                            data.buyer_id = toAddress(_this.current_user);
-                            data.buy_amount = _this.total_payment;
-                            data.seller_id = collectible.owner_id;
-                            data.type = "sell";
+                           let req = {};
+                            req.message_seller = message_seller;
+                            req.message_buyer = message_buyer;
+                            req.buyer_id = toAddress(_this.current_user);
+                            req.buy_amount = _this.total_payment;
+                            req.seller_id = collectible.owner_id;
+                            req.type = "sell";
+                            try{
                             await axios
-                                .post("/addNotification", data, {})
+                                .post("/addNotification", req,{headers:{"Content-Type" : "application/json"}})
                                 .then(res => {
-                                    //removed//console.log(res.data);
-                                });
+                                    console.log(res.data);
+                                });}catch(e){
+                                    console.log(e.response.data);
+                                }
                             window.location.reload();
                         }
                         if (_this.page == "showcollectible") {

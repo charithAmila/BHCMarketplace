@@ -21,6 +21,7 @@ use App\Http\Controllers\CollectibleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscribeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -134,3 +135,5 @@ Route::get('sales_search', [SearchSales::class, 'search']);
 Route::get('/getData/{time}', [NotificationController::class, 'getData']);
 Route::get('/getStatus/{user}', [NotificationController::class, 'getStatus']);
 Route::post('/subscribe', [SubscribeController::class, 'subscribe']);
+Route::get('/reports',[ReportController::class, 'index']);
+Route::get('/reported/{contract}/{token_id}',[ReportController::class, 'show']);

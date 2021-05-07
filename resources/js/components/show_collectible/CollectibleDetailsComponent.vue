@@ -209,6 +209,8 @@
                     </button>
 
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
+                    <h5 v-if="biddingStatus && !haveBids">Currently No Bids</h5>
+                     <h5 v-if="!biddingStatus">Not Open for Bidding</h5>
                     <div class="row" v-if="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
                             <div class="inlineDiv">
@@ -298,7 +300,7 @@
                                 }}
 
                                 on
-                                {{ transac.created_at /*.slice(0, 10) */ }} by
+                                {{ transac.created_at.slice(0, 10)}} by
 
                                 <a
                                     :href="
