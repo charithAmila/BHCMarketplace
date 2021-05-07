@@ -95,7 +95,7 @@ class ProfileController extends Controller
         $request->validate([
             'sign' => 'required',
             'ipfs_hash' => 'required',
-            'short_url' => 'required'
+            //'short_url' => 'required'
         ]);
         $checker = new CheckSign;
         $message = "I agree to update my profile.";
