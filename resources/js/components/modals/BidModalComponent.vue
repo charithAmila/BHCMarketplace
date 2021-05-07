@@ -229,6 +229,7 @@ export default {
          console.log(this.singleNft.creator);
          console.log(res);
             this.creator = res.name;
+            let data = {};
              data.contract_address = '0x33c2C043529D1AAdd883076Ecef2f163a2A9007b';
                     data.token_id = 6;
                      await axios
