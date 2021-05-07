@@ -150,6 +150,10 @@ export default {
     },
     async mounted() {
         this.checkEligibility();
+        try {
+            var res = await getUserDetails(this.singleNft.creator);
+            this.creator = res.name;
+        } catch (e) {}
     },
     watch: {
         singleNft: async function() {
