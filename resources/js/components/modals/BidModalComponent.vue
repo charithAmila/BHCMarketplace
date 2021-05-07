@@ -269,7 +269,8 @@ export default {
     },
 
     watch: {
-        singleNft: function() {
+        singleNft: async function() {
+            this.creator = this.singleNft.creator;
             this.nft_id = this.singleNft.id;
             this.record_id = this.singleNft.record_id;
         },
