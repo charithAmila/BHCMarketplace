@@ -597,9 +597,10 @@ async function getHighestBid(owner, contract_address, token_id) {
                 );
                 console.log("WBNB_Balance");
                 console.log(parseFloat(WBNB_balance));
+
                 //const WBNB_balance = 100000000000000000000;
                 if (
-                    parseFloat(WBNB_balance) >
+                    parseFloat(WBNB_balance) >=
                     parseFloat(output[i].bidding_amount) * 10 ** 18
                 ) {
                     console.log("Greater");
