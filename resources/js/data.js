@@ -594,7 +594,7 @@ async function getOnSaleTokens(owner, base_url) {
 async function getTokensData(owner, base_url) {
     //getOnSaleTokens(owner, base_url);
     getOwnedTokensData(owner, base_url);
-    //getCreatedTokens(owner, base_url);
+    getCreatedTokens(owner, base_url);
     getLikedTokens(owner, base_url);
     //var likedTokens = await getLikedTokens(owner, base_url);
     //var createdTokens = await getCreatedTokens(owner, base_url);
