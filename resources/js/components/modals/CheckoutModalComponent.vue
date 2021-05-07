@@ -281,7 +281,7 @@ export default {
                         req.contract = collectible.contract;
                         req.currency = collectible.currencyName;
                         req.type = "sell";
-                        axios.post("/addNotification", req).then(res => {
+                        axios.post("/addNotification", req,{headers:{"Content-Type" : "application/json"}}).then(res => {
                             //removed//console.log(res.data);
                         });
 
@@ -325,7 +325,7 @@ export default {
                             req.seller_id = collectible.owner_id;
                             req.type = "sell";
                             await axios
-                                .post("/addNotification", req)
+                                .post("/addNotification", req,{headers:{"Content-Type" : "application/json"}})
                                 .then(res => {
                                     //removed//console.log(res.data);
                                 });
@@ -342,9 +342,9 @@ export default {
                             req.seller_id = collectible.owner_id;
                             req.type = "sell";
                             await axios
-                                .post("/addNotification", req)
+                                .post("/addNotification", req,{headers:{"Content-Type" : "application/json"}})
                                 .then(res => {
-                                    //removed//console.log(res.data);
+                                    console.log(res.data);
                                 });
                             window.location.reload();
                         }
