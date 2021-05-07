@@ -55,7 +55,8 @@ export default {
             connected: false,
             profile_route: "/profile/",
             account_check: null,
-            wrongNet: false
+            wrongNet: false,
+            net: 0
         };
     },
     props: ["wallet_route", "marketplace_route", "asset_url"],
@@ -79,6 +80,7 @@ export default {
                 _this.profile_route = _this.profile_route + acc;
             }
             _this.wrongNet = window.wrongNetwork;
+            _this.net = window.networkId;
         }
     }
 };
