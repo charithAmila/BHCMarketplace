@@ -883,7 +883,7 @@ export default {
                 sale_price: false,
                 invalid_file: false,
                 imgselectok: false,
-                copies: false,notif:{}
+                copies: false,
             },
             name: "",
             description: "",
@@ -929,6 +929,7 @@ export default {
             isNftApproved: false,
             isSelling: false,
             lowBalance: false,
+               notif:{},
             text: {
                 approveText:
                     "Approving HPS... <img src='/images/loading.gif' alt='' width='7%' />",
