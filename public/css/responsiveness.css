@@ -546,7 +546,7 @@
     left: 0;
     background: white;
     width: 100%;
-    z-index: 99999;
+    z-index: 998;
   }
 
   .show-collectible .second-mobile .show-footer-btn .buyBtn {

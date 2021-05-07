@@ -3430,14 +3430,20 @@ body {
 }
 
 .item-main .item-head .item-menu {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: transparent;
-  padding: 5px 8px;
+}
+
+.item-main .item-head .item-menu .fa-ellipsis-h {
+  padding: 5px;
   transition-timing-function: ease-in;
   transition: 0.5s;
 }
 
-.item-main .item-head .item-menu:hover {
+.item-main .item-head .item-menu .fa-ellipsis-h:hover {
+  border-radius: 50%;
   cursor: pointer;
   background: #dedede;
 }
