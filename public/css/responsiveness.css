@@ -18,22 +18,18 @@
     top: 49% !important;
   }
 
-  .filterList #preloader-top-user {
-    display: flex;
-  }
-
-  .filterList #preloader-top-user .placeholder-div {
+  .filterList .placeholder-div {
     margin-right: 10px;
     border: none !important;
   }
 
-  .filterList #preloader-top-user .placeholder-div .userCircle {
+  .filterList .placeholder-div .userCircle {
     width: 80px !important;
     height: 80px !important;
     margin-bottom: 5px;
   }
 
-  .filterList #preloader-top-user .placeholder-div .userPrice {
+  .filterList .placeholder-div .userPrice {
     width: 80% !important;
     margin: 0 auto;
   }
@@ -546,7 +542,7 @@
     left: 0;
     background: white;
     width: 100%;
-    z-index: 99999;
+    z-index: 998;
   }
 
   .show-collectible .second-mobile .show-footer-btn .buyBtn {

@@ -2684,13 +2684,18 @@ body {
             }
         }
         .item-menu {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: transparent;
-            padding: 5px 8px;
-            @include hover-btn-animate();
-            &:hover {
-                cursor: pointer;
-                background: #dedede;
+            .fa-ellipsis-h{
+                padding: 5px;
+                @include hover-btn-animate();
+                &:hover {
+                    border-radius: 50%;
+                    cursor: pointer;
+                    background: #dedede;
+                }
             }
         }
     }

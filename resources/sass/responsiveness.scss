@@ -31,8 +31,6 @@
     }
 
     .filterList{
-        #preloader-top-user{
-            display: flex;
             .placeholder-div{
                 margin-right: 10px;
                 border: none !important;
@@ -46,7 +44,6 @@
                     margin: 0 auto;
                 }
             }
-        }
     }
 
 
@@ -478,7 +475,7 @@
                 left: 0;
                 background: white;
                 width: 100%;
-                z-index: 99999;
+                z-index: 998;
                 .buyBtn {
                     margin: 0 auto;
                     border-radius: 40px;
