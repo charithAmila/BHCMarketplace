@@ -210,7 +210,7 @@
 
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
                     <h5 v-if="biddingStatus && !haveBids">Currently No Bids</h5>
-                     <h5 v-if="!biddingStatus">Not Open for Bidding</h5>
+                     <h5 v-if="!biddingStatus && !owner">Not Open for Bidding</h5>
                     <div class="row" v-if="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
                             <div class="inlineDiv">
@@ -499,7 +499,7 @@ export default {
                      await axios
             .post("/deletebid", data, {})
             .then(function(response) {
-                res = response.data;
+               console.log(respone.data);
             })
             .catch(function(error) {
                 console.log(error);
