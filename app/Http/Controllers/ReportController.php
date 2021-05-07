@@ -28,9 +28,15 @@ class ReportController extends Controller
         return $data;
     }
 
-    public function show(Request $request)
+    public function show(Request $request,$contract,$token_id)
     {
-    $data = Report::where('contract',$request->contract)->where('token_id',$request->token_id)->pluck('reported');
-    return $data;
+    $data = Report::where('contract',$contract)->where('token_id',$token_id)->where('reported',true)->first();
+    if($data!= null){
+        return true;
+    }
+    else{
+        return false;
+    }
+    
 }
 }
