@@ -22,7 +22,7 @@ class ReportController extends Controller
         $data->save();
         return true;
     }
-    public function index()
+    public function index(Request $request)
     {
         $data = Report::all();
         return $data;
