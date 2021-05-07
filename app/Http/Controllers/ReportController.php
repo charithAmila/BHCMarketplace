@@ -22,4 +22,15 @@ class ReportController extends Controller
         $data->save();
         return true;
     }
+    public function index()
+    {
+        $data = Report::all();
+        return $data;
+    }
+
+    public function show(Request $request)
+    {
+    $data = Report::where('contract',$request->contract)->where('token_id',$request->token_id)->pluck('reported');
+    return $data;
+}
 }
