@@ -351,7 +351,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    //removed//console.log(error);
+                    console.log(error);
                     _this.proceedToPaymentText = "Proceed to payment";
                     _this.purchasing = false;
                     Toast.fire({
