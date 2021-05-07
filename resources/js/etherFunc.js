@@ -121,8 +121,9 @@ async function checkConnection() {
     var acc = "";
     try {
         var network = await provider.getNetwork();
+        window.networkId = network.chainId;
         //removed//console.log(network);
-        if (network.chainId == 56) {
+        if (network.chainId == 56 || network.chainId == 86) {
             const accs = await provider.listAccounts();
             acc = toAddress(accs[0]);
         } else {
