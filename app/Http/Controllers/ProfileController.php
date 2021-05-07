@@ -41,7 +41,7 @@ class ProfileController extends Controller
         $request->validate([
             'address' => 'required',
             'sign' => 'required',
-            'ipfs_hash' => 'required',
+            'ipfs_hash' => 'required'
             //'short_url' => 'required|max:20'
         ]);
         $checker = new CheckSign;
