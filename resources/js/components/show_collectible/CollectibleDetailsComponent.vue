@@ -298,7 +298,7 @@
                                 }}
 
                                 on
-                                {{ transac.created_at /*.slice(0, 10) */ }} by
+                                {{ transac.created_at.slice(0, 10)}} by
 
                                 <a
                                     :href="
