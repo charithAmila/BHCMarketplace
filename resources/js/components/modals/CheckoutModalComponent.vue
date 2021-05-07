@@ -281,9 +281,16 @@ export default {
                         req.contract = collectible.contract;
                         req.currency = collectible.currencyName;
                         req.type = "sell";
+                        try{
+
+                        
                         axios.post("/addNotification", req,{headers:{"Content-Type" : "application/json"}}).then(res => {
                             //removed//console.log(res.data);
-                        });
+                        });}catch(err){
+                            console.log(
+                                err.response.data
+                            );
+                        }
 
                         await removeSale(
                             collectible.contract,
@@ -324,11 +331,14 @@ export default {
                             req.buy_amount = _this.price;
                             req.seller_id = collectible.owner_id;
                             req.type = "sell";
+                            try{
                             await axios
                                 .post("/addNotification", req,{headers:{"Content-Type" : "application/json"}})
                                 .then(res => {
-                                    //removed//console.log(res.data);
-                                });
+                                    console.log(res.data);
+                                });}catch(e){
+                                    console.log(e.response.data);
+                                }
                         }
                         if (_this.page == "marketplace") {
                             try {
@@ -341,11 +351,14 @@ export default {
                             req.buy_amount = _this.total_payment;
                             req.seller_id = collectible.owner_id;
                             req.type = "sell";
+                            try{
                             await axios
                                 .post("/addNotification", req,{headers:{"Content-Type" : "application/json"}})
                                 .then(res => {
                                     console.log(res.data);
-                                });
+                                });}catch(e){
+                                    console.log(e.response.data);
+                                }
                             window.location.reload();
                         }
                         if (_this.page == "showcollectible") {
