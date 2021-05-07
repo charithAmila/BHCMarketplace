@@ -313,15 +313,15 @@ export default {
                             try {
                                 _this.$parent.$parent.getCollectible();
                             } catch (e) {}
-                            data = {};
-                            data.message_seller = message_seller;
-                            data.message_buyer = message_buyer;
-                            data.buyer_id = toAddress(_this.current_user);
-                            data.buy_amount = _this.price;
-                            data.seller_id = collectible.owner_id;
-                            data.type = "sell";
+                           let req = {};
+                            req.message_seller = message_seller;
+                            req.message_buyer = message_buyer;
+                            req.buyer_id = toAddress(_this.current_user);
+                            req.buy_amount = _this.price;
+                            req.seller_id = collectible.owner_id;
+                            req.type = "sell";
                             await axios
-                                .post("/addNotification", data, {})
+                                .post("/addNotification", req, {})
                                 .then(res => {
                                     //removed//console.log(res.data);
                                 });
@@ -330,15 +330,15 @@ export default {
                             try {
                                 _this.$parent.$parent.$parent.updateTopUser();
                             } catch (e) {}
-                            data = {};
-                            data.message_seller = message_seller;
-                            data.message_buyer = message_buyer;
-                            data.buyer_id = toAddress(_this.current_user);
-                            data.buy_amount = _this.total_payment;
-                            data.seller_id = collectible.owner_id;
-                            data.type = "sell";
+                           let req = {};
+                            req.message_seller = message_seller;
+                            req.message_buyer = message_buyer;
+                            req.buyer_id = toAddress(_this.current_user);
+                            req.buy_amount = _this.total_payment;
+                            req.seller_id = collectible.owner_id;
+                            req.type = "sell";
                             await axios
-                                .post("/addNotification", data, {})
+                                .post("/addNotification", req, {})
                                 .then(res => {
                                     //removed//console.log(res.data);
                                 });
