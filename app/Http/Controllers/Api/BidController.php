@@ -136,6 +136,15 @@ class BidController extends Controller
    return false; 
         }
 
+        public function delete(Request $request)
+        {
+            $item = Bidding_Tokens::where(['contract_address' => $request->contract_address,'token_id' => $request->token_id])->update(['status'=>false]);
+            $bids = Bid::where(['contract_address' => $request->contract_address,'token_id'=>$request->token_id])->delete();
+
+            return true;
+
+        }
+
 
     /**
      * Update the specified resource in storage.

@@ -493,6 +493,17 @@ export default {
                         icon: "success",
                         title: "Successfully accepted Highest Bid!"
                     });
+                    let data = {};
+                    data.contract_address = this.collectible.contract;
+                    data.token_id = this.collectible.id;
+                     await axios
+            .post("/deletebid", data, {})
+            .then(function(response) {
+                res = response.data;
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
                 }
             } catch (e) {
                 Toast.fire({
