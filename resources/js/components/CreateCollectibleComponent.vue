@@ -883,7 +883,7 @@ export default {
                 sale_price: false,
                 invalid_file: false,
                 imgselectok: false,
-                copies: false
+                copies: false,notif:{}
             },
             name: "",
             description: "",
