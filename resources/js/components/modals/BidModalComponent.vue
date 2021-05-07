@@ -270,9 +270,11 @@ export default {
 
     watch: {
         singleNft: async function() {
-            this.creator = this.singleNft.creator;
+            let details = await getUserDetails(this.singleNft.creator);
+            this.creator = details.name;
             this.nft_id = this.singleNft.id;
             this.record_id = this.singleNft.record_id;
+            
         },
         bid_input: function() {
             this.payment = this.bid_input;
