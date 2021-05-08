@@ -45,28 +45,37 @@ export default {
     ],
     data() {
         return {
-            user: tempUserData(toAddress(this.user_id)),
+            user: {
+                name: "",
+                bio: "",
+                display_photo:
+                    "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fshiling7821%2Fanimation-loading%2F&psig=AOvVaw3UWpxv3TcXs34HgfQcltDF&ust=1620537767952000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPjRj-KrufACFQAAAAAdAAAAABAD",
+                cover_photo:
+                    "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fshiling7821%2Fanimation-loading%2F&psig=AOvVaw3UWpxv3TcXs34HgfQcltDF&ust=1620537767952000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPjRj-KrufACFQAAAAAdAAAAABAD"
+            },
             auth_id: "",
             following: true
         };
     },
     methods: {
-        checkConnection: function() {
+        checkConnection: async function() {
             const _this = this;
-            var connectionInterval = setInterval(async function() {
-                var acc = await checkConnection();
-                if (acc) {
-                    _this.auth_id = toAddress(acc);
-                    clearInterval(connectionInterval);
-                } else {
-                    _this.auth_id = toAddress("");
-                }
-            }, 300);
+            //var connectionInterval = setInterval(async function() {
+            var acc = await checkConnection();
+            if (acc) {
+                _this.auth_id = toAddress(acc);
+                //clearInterval(connectionInterval);
+            } else {
+                _this.auth_id = toAddress("");
+            }
+            //}, 300);
         }
     },
     async mounted() {
-        this.checkConnection();
+        await this.checkConnection();
         this.user = await getUserDetails(this.user_id);
+
+        console.log(this.user);
         this.following = await checkFollowing(this.auth_id, this.user_id);
     }
 };
