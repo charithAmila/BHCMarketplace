@@ -207,7 +207,9 @@ async function getUserDetails(addressString) {
             user.default = false;
         }
     } catch (e) {}
+
     //console.log(user);
+
     return user;
 }
 
@@ -692,6 +694,8 @@ async function getTokenData(contract, owner, id) {
     } catch (e) {}
     ////remove/////
     nft.isp = 1;
+    var biddingStatus = await getBiddingStatus(owner, contract, id);
+    nft.biddingStatus = biddingStatus;
     var salesData = await checkSelling(
         selectedToken.contract,
         selectedToken.tokenOwner,

@@ -91,14 +91,6 @@
 </template>
 
 <script>
-import {
-    bid,
-    startBidding,
-    getHighestBid,
-    getBiddingStatus,
-    getAllBids,
-    endBidding
-} from "././../bidFunc";
 export default {
     props: ["base_url"],
 
