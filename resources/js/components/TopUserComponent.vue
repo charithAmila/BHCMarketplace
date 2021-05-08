@@ -21,7 +21,7 @@
             </select>
         </div>
         <div class="filterList">
-            <div id="preloader-top-user" class="">
+            <!-- <div id="preloader-top-user" class="">
                 <div v-for="item in 8" :key="item" class="row placeholder-div">
                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                         <div class="userCircle"></div>
@@ -31,7 +31,7 @@
                         <div class="userPrice"></div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div id="actual-top-user">
                 <div
@@ -62,6 +62,16 @@
                             }}
                             {{ item.currency }}</label
                         >
+                    </div>
+                </div>
+
+                <div v-for="item in 8" :key="item" class="row placeholder-div preloader-user">
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="userCircle"></div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-9 col-lg-9">
+                        <div class="userName"></div>
+                        <div class="userPrice"></div>
                     </div>
                 </div>
             </div>
@@ -107,8 +117,8 @@ export default {
         async fetchFilteredUser() {
             this.userListSellers = await getMaxSellers(this.filterTime);
             this.userListBuyers = await getMaxBuyers(this.filterTime);
-            $("#preloader-top-user").removeClass("d-done");
-            $("#preloader-top-user").addClass("d-done");
+            $(".preloader-user").removeClass("d-done");
+            $(".preloader-user").addClass("d-done");
         }
     },
     mounted() {

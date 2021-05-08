@@ -136,6 +136,15 @@ class BidController extends Controller
    return false; 
         }
 
+        public function delete(Request $request)
+        {
+            $item = Bidding_Tokens::where(['contract_address' => $request->contract_address,'token_id' => $request->token_id])->update(['status'=>false]);
+            $bids = Bid::where(['contract_address' => $request->contract_address,'token_id'=>$request->token_id])->delete();
+
+            return true;
+
+        }
+
 
     /**
      * Update the specified resource in storage.
@@ -144,14 +153,9 @@ class BidController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function getBiddingStatus(Request $request)
+    public function getBiddingStatus(Request $request,$contract_address,$token_id)
     {
-        $request->validate([
-            'contract_address' => 'required',
-            'token_id' => 'required',
-        ]);
-       
-        $data = Bidding_Tokens::where(['contract_address'=>$request->contract_address,'token_id'=>$request->token_id])->first();
+        $data = Bidding_Tokens::where(['contract_address'=>$contract_address,'token_id'=>$token_id])->first();
         if($data==null){
             return 0;
         }

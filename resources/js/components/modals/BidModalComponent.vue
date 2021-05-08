@@ -152,11 +152,6 @@
 <script>
 import {
     bid,
-    startBidding,
-    getHighestBid,
-    getBiddingStatus,
-    getAllBids,
-    endBidding,
     getBHCBalance,
     getBNBBalance,
     getWBNBBalance,
@@ -166,7 +161,7 @@ import {
     convertBNBtoWBNB
 } from ".././../bidFunc";
 import { bhcAddress, WBNB_tokenAddress } from ".././../addresses/constants";
-import { collectionURI, checkConnection } from ".././../etherFunc";
+import { checkConnection } from ".././../etherFunc";
 import { getUserDetails } from ".././../data";
 
 export default {
@@ -218,6 +213,7 @@ export default {
         };
     },
     async mounted() {
+
         this.BHC_Balance = await getBHCBalance();
         this.BNB_Balance = await getBNBBalance();
         this.WBNB_Balance = await getWBNBBalance();

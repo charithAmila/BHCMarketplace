@@ -646,11 +646,10 @@ async function getBiddingStatus(owner, contract_address, token_id) {
     data.owner = owner;
     data.token_id = token_id;
     var output = {};
-
-    await axios.post("/getBiddingStatus", data, {}).then(function(response) {
-        output = response.data;
-    });
-    return output;
+    output = await axios.get(
+        "/getBiddingStatus/" + contract_address + "/" + token_id
+    );
+    return output.data;
 }
 
 ///////////////////////////////////////////Get Bidding Status All ////////////////////////////////////////////////

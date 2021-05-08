@@ -44,7 +44,7 @@
                                             item.user.link_profile
                                     "
                                 >
-                                    {{ item.user.name }}
+                                    {{ item.user.name==''?'User':item.user.name}}
                                 </a>
                                 offered
                                 <span class="bid-offer"

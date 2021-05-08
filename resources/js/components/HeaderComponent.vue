@@ -195,7 +195,7 @@
                 <div class="name-section">
                     <h6>
                         {{
-                            current_user.name != null
+                            current_user.name != ''
                                 ? current_user.name
                                 : current_user.wallet
                         }}
