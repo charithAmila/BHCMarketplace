@@ -61,6 +61,7 @@ async function getMaxBuyers(time_filter) {
             }
             output[user] = {};
             output[user].buy_amount = 0;
+            output[user].user_id = res[i].user_id;
             output[user].currency = "BNB";
         }
     }
