@@ -192,11 +192,7 @@ async function getUserDetails(addressString) {
                         "/ipfs"
                     ) || user.cover_photo;
             } catch (e) {
-                user.cover_photo =
-                    response.data.cover.replace(
-                        "ipfs.io",
-                        "gateway.pinata.cloud"
-                    ) || user.cover_photo;
+                user.cover_photo = response.data.dp;
             }
             try {
                 user.display_photo =
@@ -208,11 +204,7 @@ async function getUserDetails(addressString) {
                         "/ipfs"
                     ) || user.display_photo;
             } catch (e) {
-                user.display_photo =
-                    response.data.dp.replace(
-                        "ipfs.io",
-                        "gateway.pinata.cloud"
-                    ) || user.display_photo;
+                user.display_photo = response.data.dp;
             }
             user.name = response.data.name;
             user.bio = response.data.description;
