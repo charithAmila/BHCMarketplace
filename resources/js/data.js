@@ -303,8 +303,8 @@ async function getOwnedTokensData(owner, base_url) {
                         var res = await axios.get(
                             //selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud")
                             selectedToken.URI.replace(
-                                "ipfs.io",
-                                "gateway.billionhappiness.finance"
+                                "https://ipfs.io/ipfs/",
+                                "/data/"
                             )
                         );
                         var nft = res.data;
