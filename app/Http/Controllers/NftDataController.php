@@ -14,7 +14,7 @@ class NftDataController extends Controller
      */
     public function index()
     {
-        //
+        return NftData::all();
     }
 
     /**

@@ -207,7 +207,7 @@ async function getUserDetails(addressString) {
             user.default = false;
         }
     } catch (e) {}
-    console.log(user);
+    //console.log(user);
     return user;
 }
 
