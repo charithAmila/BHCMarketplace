@@ -78,7 +78,7 @@
                             <i class="fas fa-ellipsis-h"></i>
                         </a>
                         <a
-                            v-if="auth_id == user_id"
+                            v-if="auth_id == user_id && !user.verified"
                             class="btn btn-verify"
                             href="https://rbjrcxhzb4w.typeform.com/to/sKvJ0THW"
                         >
