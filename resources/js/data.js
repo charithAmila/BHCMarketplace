@@ -167,7 +167,6 @@ async function getUserDetails(addressString) {
     var user = tempUserData(address);
     try {
         var res = await axios.get("/api/profile/" + address);
-        console.log(res.data.ipfs_hash);
         if (res.data.ipfs_hash != undefined) {
             var response;
             try {
@@ -188,11 +187,10 @@ async function getUserDetails(addressString) {
                     /*response.data.cover.replace(
                 "ipfs.io",
                 "gateway.pinata.cloud"
-            ) */ response.data.cover;
-                /*.replace(
+            ) */ response.data.cover.replace(
                         "https://ipfs.io",
                         "/ipfs"
-                    ) || */ user.cover_photo;
+                    ) || user.cover_photo;
             } catch (e) {
                 user.cover_photo =
                     response.data.cover.replace(
@@ -205,14 +203,10 @@ async function getUserDetails(addressString) {
                     /*response.data.dp.replace(
                 "ipfs.io",
                 "gateway.pinata.cloud"
-            )*/ "https://gateway.pinata.cloud/ipfs/" +
-                    response.data.dp.split("/")[
-                        response.data.dp.split("/").length - 1
-                    ];
-                /*.replace(
+            )*/ response.data.dp.replace(
                         "https://ipfs.io",
                         "/ipfs"
-                    ) || */ user.display_photo;
+                    ) || user.display_photo;
             } catch (e) {
                 user.display_photo =
                     response.data.dp.replace(

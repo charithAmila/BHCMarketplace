@@ -75,7 +75,7 @@ export default {
         await this.checkConnection();
         this.user = await getUserDetails(this.user_id);
 
-        console.log(this.user);
+        //console.log(this.user);
         this.following = await checkFollowing(this.auth_id, this.user_id);
     }
 };
