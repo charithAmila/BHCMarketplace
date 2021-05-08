@@ -187,7 +187,7 @@ async function getUserDetails(addressString) {
                 var hash = response.data.cover.split("/")[
                     response.data.cover.split("/").length - 1
                 ];
-                user.cover_photo = `https://bhc.mypinata.cloud/ipfs/${hash}`;
+                user.cover_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`;
             } catch (e) {
                 user.cover_photo = user.cover_photo;
             }
@@ -195,7 +195,7 @@ async function getUserDetails(addressString) {
                 var hash = response.data.dp.split("/")[
                     response.data.dp.split("/").length - 1
                 ];
-                user.display_photo = `https://bhc.mypinata.cloud/ipfs/${hash}`;
+                user.display_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`;
             } catch (e) {
                 user.display_photo = user.display_photo;
             }
@@ -301,7 +301,7 @@ async function getOwnedTokensData(owner, base_url) {
                             //selectedToken.URI.replace("ipfs.io","gateway.pinata.cloud")
                             selectedToken.URI.replace(
                                 "ipfs.io",
-                                "bhc.mypinata.cloud"
+                                "gateway.billionhappiness.finance"
                             )
                         );
                         var nft = res.data;
@@ -399,7 +399,7 @@ async function getOwnedTokensData(owner, base_url) {
                         //nft.file = nft.file.replace("ipfs.io","gateway.pinata.cloud");
                         nft.file = nft.file.replace(
                             "ipfs.io",
-                            "bhc.mypinata.cloud"
+                            "gateway.billionhappiness.finance"
                         );
 
                         if (salesData.on_sale) {
@@ -546,7 +546,7 @@ async function getOnSaleTokens(owner, base_url) {
                 );*/
                         nft.file = nft.file.replace(
                             "ipfs.io",
-                            "bhc.mypinata.cloud"
+                            "gateway.billionhappiness.finance"
                         );
                     } catch (e) {}
 
@@ -688,7 +688,10 @@ async function getTokenData(contract, owner, id) {
 
     nft.type = type;
     try {
-        nft.file = nft.file.replace("ipfs.io", "bhc.mypinata.cloud");
+        nft.file = nft.file.replace(
+            "ipfs.io",
+            "gateway.billionhappiness.finance"
+        );
     } catch (e) {}
     ////remove/////
     nft.isp = 1;
@@ -912,7 +915,7 @@ async function getAllSalesSearch(current_user, parameter) {
                     );*/
                         nft.file = nft.file.replace(
                             "ipfs.io",
-                            "bhc.mypinata.cloud"
+                            "gateway.billionhappiness.finance"
                         );
                         nft.ownedCopies = nft.on_sale;
                         data.push(nft);
