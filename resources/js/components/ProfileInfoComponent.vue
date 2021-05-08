@@ -272,7 +272,7 @@ export default {
                             _this.user.name = response.data.name;
                             _this.user.bio = response.data.description;
                             _this.user.display_photo = response.data.dp;
-                            console.log(response.data.dp);
+                            //console.log(response.data.dp);
                             //||"https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
                             _this.user.cover_photo =
                                 response.data.cover ||
