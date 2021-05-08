@@ -307,7 +307,7 @@
                         .toString(36)
                         .substring(i)
                 "
-                v-if="isLoading"
+                v-if="isLoading || isLoadMore"
             >
                 <div class="outside-nft border-on-profile">
                     <div class="inside-nft">
@@ -336,6 +336,8 @@
                 </div>
             </div>
         </div>
+
+        <button v-if="!isLoading" class="load-more" @click="loadMore">Load more</button>
 
         <checkout-modal-component
             :singleNft="singleNft"
@@ -443,7 +445,8 @@ export default {
 
             loaded: false,
             open: false,
-            customPreloaderCount: 0
+            customPreloaderCount: 0,
+            isLoadMore: false,
 
             //collectible: this.collectibles[0],
         };
@@ -571,6 +574,9 @@ export default {
                 return string;
             }
             return string.slice(0, 18) + "...";
+        },
+        loadMore(){
+            this.isLoadMore = true;
         }
     },
     async mounted() {

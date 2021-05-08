@@ -162,6 +162,17 @@ body {
     }
 }
 
+.load-more{
+    border-radius: 50px;
+    width: 90%;
+    display: block;
+    margin: 40px auto;
+    font-size: 25px;
+    border: 2px solid $primaryColor;
+    color: white;
+    background: $primaryColor;
+}
+
 .create-tab {
     .create-content {
         padding-top: 10px;
