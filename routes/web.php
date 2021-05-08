@@ -109,7 +109,7 @@ Route::post('endBid', [BidController::class, 'endBid']);
 
 Route::post('deletebid', [BidController::class, 'delete']);
 
-Route::post('getBiddingStatus', [BidController::class, 'getBiddingStatus']);
+Route::get('/getBiddingStatus/{contract_address}/{token_id}', [BidController::class, 'getBiddingStatus']);
 
 Route::post('like', [LikesController::class, 'store']);
 

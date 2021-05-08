@@ -206,7 +206,6 @@ async function getUserDetails(addressString) {
             user.default = false;
         }
     } catch (e) {}
-    console.log(user);
     return user;
 }
 
@@ -600,7 +599,7 @@ async function getTokensData(owner, base_url) {
 async function getTokenData(contract, owner, id) {
     var listed = false;
     //var res = await axios.get("/api/collections/" + contract);
-    var biddingStatus = await getBiddingStatus(owner, contract, id);
+
     var isPrivate =
         contract != hps721Address
             ? true
@@ -653,7 +652,7 @@ async function getTokenData(contract, owner, id) {
     data.creator = owner;
     data.count = collectible.availableCopies*/
     ////removed//console.log(selectedToken)
-    nft.biddingStatus = biddingStatus;
+
     nft.count = nft.count || 1;
     nft.copies = nft.count || 1;
     nft.ownedCopies = Number(selectedToken.ownedCopies);
@@ -685,6 +684,8 @@ async function getTokenData(contract, owner, id) {
     } catch (e) {}
     ////remove/////
     nft.isp = 1;
+    var biddingStatus = await getBiddingStatus(owner, contract, id);
+    nft.biddingStatus = biddingStatus;
     var salesData = await checkSelling(
         selectedToken.contract,
         selectedToken.tokenOwner,
