@@ -28,6 +28,7 @@ const minterABI = require("./abis/minter.json");
 const factoryABI = require("./abis/factory.json");
 
 window.loadedCreated = false;
+window.nftData = [];
 
 if (typeof window.ethereum == "undefined") {
     window.provider = new ethers.providers.JsonRpcProvider(
@@ -790,12 +791,23 @@ async function getOwnedCollections(me, type, forDetails) {
 }
 
 async function get721Token(contract, collection, tokenId, owner) {
+    if (window.nftData.length == 0) {
+        window.nftData = await axios.get("/nftdata");
+        window.nftData=window.nftData.data
+        
+    }
+    var nftFetched = window.nftData.filter(function(element) {
+        if (element.collection == contract.address && element.token_id == tokenId) {
+            
+            return true;
+        }
+    });
     try {
-        const res = await axios.get(
+        /*const res = await axios.get(
             `/nftdata/${contract.address}?token_id=${tokenId}`
-        );
+        );*/
         var tokenURI = null;
-        if (res.data.length == 0) {
+        if (nftFetched.length == 0) {
             tokenURI = await contract.tokenURI(tokenId);
             const res = await axios.post("/nftdata", {
                 collection: contract.address,
@@ -803,7 +815,7 @@ async function get721Token(contract, collection, tokenId, owner) {
                 uri: tokenURI
             });
         } else {
-            tokenURI = res.data.uri;
+            tokenURI = nftFetched[0].uri;
         }
 
         const tokenData = {
@@ -823,12 +835,17 @@ async function get721Token(contract, collection, tokenId, owner) {
 
 async function get1155Token(contract, collection, tokenId, owner) {
     //const tokenCount = await contract.tokenCount(tokenId);
+    if (window.nftData.length == 0) {
+        window.nftData = await axios.get("/nftdata");
+        window.nftData=window.nftData.data
+    }
+    var nftFetched = window.nftData.filter(function(element) {
+        if (element.collection == contract.address && element.token_id == tokenId)
+            return true;
+    });
     try {
-        const res = await axios.get(
-            `/nftdata/${contract.address}?token_id=${tokenId}`
-        );
         var tokenURI = null;
-        if (res.data.length == 0) {
+        if (nftFetched.length == 0) {
             tokenURI = await contract.tokenURI(tokenId);
             const res = await axios.post("/nftdata", {
                 collection: contract.address,
@@ -836,7 +853,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
                 uri: tokenURI
             });
         } else {
-            tokenURI = res.data.uri;
+            tokenURI = nftFetched[0].uri;
         }
         const ownedCount = await contract.balanceOf(owner, tokenId);
 
