@@ -958,11 +958,11 @@ async function checkSelling(collection, owner, id) {
     );*/
     if (inSale.length > 0) {
         var dat = inSale[inSale.length - 1];
-        dat["on-sale"] = true;
+        dat["on_sale"] = true;
     } else {
-        var dat = { "on-sale": false };
+        var dat = { on_sale: false };
     }
-    console.log(dat);
+
     return dat;
 }
 
