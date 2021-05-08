@@ -183,28 +183,20 @@ async function getUserDetails(addressString) {
             ////removed//console.log(response)
 
             try {
-                user.cover_photo =
-                    /*response.data.cover.replace(
-                "ipfs.io",
-                "gateway.pinata.cloud"
-            ) */ response.data.cover.replace(
-                        "https://ipfs.io",
-                        "/ipfs"
-                    ) || user.cover_photo;
+                var hash = response.data.cover.split("/")[
+                    response.data.cover.split("/").length - 1
+                ];
+                user.cover_photo = `/ipfs/ipfs/${hash}`;
             } catch (e) {
-                user.cover_photo = response.data.dp;
+                user.cover_photo = user.cover_photo;
             }
             try {
-                user.display_photo =
-                    /*response.data.dp.replace(
-                "ipfs.io",
-                "gateway.pinata.cloud"
-            )*/ response.data.dp.replace(
-                        "https://ipfs.io",
-                        "/ipfs"
-                    ) || user.display_photo;
+                var hash = response.data.dp.split("/")[
+                    response.data.dp.split("/").length - 1
+                ];
+                user.display_photo = `/ipfs/ipfs/${hash}`;
             } catch (e) {
-                user.display_photo = response.data.dp;
+                user.display_photo = user.display_photo;
             }
             user.name = response.data.name;
             user.bio = response.data.description;
@@ -214,6 +206,7 @@ async function getUserDetails(addressString) {
             user.default = false;
         }
     } catch (e) {}
+    console.log(user);
     return user;
 }
 
