@@ -187,7 +187,7 @@ async function getUserDetails(addressString) {
                 var hash = response.data.cover.split("/")[
                     response.data.cover.split("/").length - 1
                 ];
-                user.cover_photo = `/ipfs/ipfs/${hash}`;
+                user.cover_photo = `https://bhc.mypinata.cloud/ipfs/${hash}`;
             } catch (e) {
                 user.cover_photo = user.cover_photo;
             }
@@ -195,7 +195,7 @@ async function getUserDetails(addressString) {
                 var hash = response.data.dp.split("/")[
                     response.data.dp.split("/").length - 1
                 ];
-                user.display_photo = `/ipfs/ipfs/${hash}`;
+                user.display_photo = `https://bhc.mypinata.cloud/ipfs/${hash}`;
             } catch (e) {
                 user.display_photo = user.display_photo;
             }
