@@ -207,16 +207,16 @@ export default {
         };
     },
     methods: {
-        checkConnectionInit: function() {
+        checkConnectionInit: async function() {
             const _this = this;
-            var connectionInterval = setInterval(async function() {
-                var acc = await checkConnection();
-                if (acc) {
-                    _this.auth_id = toAddress(acc);
-                    await _this.checkFollow();
-                    clearInterval(connectionInterval);
-                }
-            }, 300);
+            //var connectionInterval = setInterval(async function() {
+            var acc = await checkConnection();
+            if (acc) {
+                _this.auth_id = toAddress(acc);
+                await _this.checkFollow();
+                //clearInterval(connectionInterval);
+            }
+            // }, 300);
         },
 
         getUser() {
@@ -259,7 +259,8 @@ export default {
                 .then(function(response) {
                     axios
                         .get(
-                            "/data/" + response.data.ipfs_hash == undefined
+                            "https://ipfs.io/ipfs/" + response.data.ipfs_hash ==
+                                undefined
                                 ? "Qmc5m94Gu7z62RC8waSKkZUrCCBJPyHbkpmGzEePxy2oXJ"
                                 : response.data.ipfs_hash
                         )
@@ -270,15 +271,14 @@ export default {
                             );*/
                             _this.user.name = response.data.name;
                             _this.user.bio = response.data.description;
-                            _this.user.display_photo =
-                                response.data.dp ||
-                                "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
+                            _this.user.display_photo = response.data.dp;
+                            console.log(response.data.dp);
+                            //||"https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
                             _this.user.cover_photo =
                                 response.data.cover ||
-                                "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg";
-                            _this.userPhoto =
-                                response.data.dp ||
-                                "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
+                                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fshiling7821%2Fanimation-loading%2F&psig=AOvVaw3UWpxv3TcXs34HgfQcltDF&ust=1620537767952000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPjRj-KrufACFQAAAAAdAAAAABAD";
+                            //|| "https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2017/08/nature-design.jpg";
+                            _this.userPhoto = response.data.dp; //||"https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg";
                             _this.user.short_url =
                                 response.data.short_url || "#";
                         })
@@ -348,9 +348,10 @@ export default {
             });
         }
     },
-    mounted() {
-        this.checkConnectionInit();
-        this.getUserData();
+    async mounted() {
+        await this.checkConnectionInit();
+        //this.getUserData();
+        this.userPhoto = this.user.display_photo;
         this.url = window.location.href;
         //  this.checkFollow();
     }
