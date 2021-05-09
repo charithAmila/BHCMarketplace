@@ -337,11 +337,7 @@
             </div>
         </div>
 
-        <button
-            v-if="isLoadMore"
-            class="load-more"
-            @click="loadMoreCols"
-        >
+        <button v-if="isLoadMore" class="load-more" @click="loadMoreCols">
             Load more
         </button>
 
@@ -455,7 +451,7 @@ export default {
             isLoadMore: true,
             listCount: 1,
             perList: 12,
-            insideLoading:false
+            insideLoading: false
 
             //collectible: this.collectibles[0],
         };
@@ -467,11 +463,12 @@ export default {
             this.record_id = this.singleNft.record_id;
         },
         collectibles: function() {
-            this.listCount=1
+            this.listCount = 1;
             this.isLoadMore = true;
             this.collectiblesLoaded = this.collectibles.slice(0, 12);
             if (
-                this.collectibles.length ==this.collectiblesLoaded.length && !this.isLoading
+                this.collectibles.length == this.collectiblesLoaded.length &&
+                !this.isLoading
             ) {
                 this.isLoadMore = false;
             }
@@ -479,28 +476,37 @@ export default {
             var offsetItem = totalNft % 5;
             var totalPreloader = 10 - offsetItem;
             this.customPreloaderCount = totalPreloader;
+        },
+        isLoading() {
+            if (
+                this.collectibles.length == this.collectiblesLoaded.length &&
+                !this.isLoading
+            ) {
+                this.isLoadMore = false;
+            }
         }
     },
     methods: {
         async loadMoreCols() {
-            this.insideLoading=true;
+            this.insideLoading = true;
             this.isLoadMore = true;
             var first = this.listCount * this.perList;
-            var last = (this.listCount+1) * (this.perList);
+            var last = (this.listCount + 1) * this.perList;
             if (
                 this.collectibles.length <=
-                this.listCount * (this.perList + 1) && !this.isLoading
+                    this.listCount * (this.perList + 1) &&
+                !this.isLoading
             ) {
                 last = this.collectibles.length;
                 this.isLoadMore = false;
             }
-            console.log(first)
+            console.log(first);
             console.log(last);
             this.collectibles.slice(first, last).forEach(element => {
                 this.collectiblesLoaded.push(element);
             });
-            this.listCount++
-            this.insideLoading=false;
+            this.listCount++;
+            this.insideLoading = false;
         },
         async putOnSale(collectible) {
             const _this = this;
