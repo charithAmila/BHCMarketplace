@@ -3,7 +3,7 @@
         <div class="items"></div>
         <div :id="div_id" class="row grid-container">
             <div
-                v-for="(collectible, index) in collectibles"
+                v-for="(collectible, index) in collectiblesLoaded"
                 :key="index"
                 class="col-md-3 col-lg-3 custom-column-xl main-dashboard"
             >
@@ -307,7 +307,7 @@
                         .toString(36)
                         .substring(i)
                 "
-                v-if="isLoading || isLoadMore"
+                v-if="isLoading || insideLoading"
             >
                 <div class="outside-nft border-on-profile">
                     <div class="inside-nft">
@@ -337,7 +337,13 @@
             </div>
         </div>
 
-        <!--button v-if="!isLoading" class="load-more" @click="loadMore">Load more</button-->
+        <button
+            v-if="isLoadMore"
+            class="load-more"
+            @click="loadMoreCols"
+        >
+            Load more
+        </button>
 
         <checkout-modal-component
             :singleNft="singleNft"
@@ -442,11 +448,14 @@ export default {
             bidList: [],
             bidListNFT: "",
             checked: false,
-
+            collectiblesLoaded: [],
             loaded: false,
             open: false,
             customPreloaderCount: 0,
-            isLoadMore: false
+            isLoadMore: true,
+            listCount: 1,
+            perList: 12,
+            insideLoading:false
 
             //collectible: this.collectibles[0],
         };
@@ -458,6 +467,14 @@ export default {
             this.record_id = this.singleNft.record_id;
         },
         collectibles: function() {
+            this.listCount=1
+            this.isLoadMore = true;
+            this.collectiblesLoaded = this.collectibles.slice(0, 12);
+            if (
+                this.collectibles.length ==this.collectiblesLoaded.length && !this.isLoading
+            ) {
+                this.isLoadMore = false;
+            }
             var totalNft = this.collectibles.length;
             var offsetItem = totalNft % 5;
             var totalPreloader = 10 - offsetItem;
@@ -465,6 +482,26 @@ export default {
         }
     },
     methods: {
+        async loadMoreCols() {
+            this.insideLoading=true;
+            this.isLoadMore = true;
+            var first = this.listCount * this.perList;
+            var last = (this.listCount+1) * (this.perList);
+            if (
+                this.collectibles.length <=
+                this.listCount * (this.perList + 1) && !this.isLoading
+            ) {
+                last = this.collectibles.length;
+                this.isLoadMore = false;
+            }
+            console.log(first)
+            console.log(last);
+            this.collectibles.slice(first, last).forEach(element => {
+                this.collectiblesLoaded.push(element);
+            });
+            this.listCount++
+            this.insideLoading=false;
+        },
         async putOnSale(collectible) {
             const _this = this;
             _this.singleNft = collectible;

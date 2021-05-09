@@ -55,6 +55,7 @@
                     :page="'profile'"
                     :filter="filter"
                     :user_id="user_id"
+                    :isLoading="loading"
                 ></collectible-component>
 
                 <following-modal-component
@@ -67,7 +68,7 @@
                     :asset_url="asset_url"
                 ></follower-modal-component>
 
-                <div id="preloader" class="row grid-conatainer" v-if="loading">
+                <!--div id="preloader" class="row grid-conatainer" v-if="loading">
                     <div
                         v-for="index in 12"
                         :key="index"
@@ -107,7 +108,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div-->
                 <div
                     v-if="showing.length == 0 && !loading"
                     class="no-item-found w-30"
