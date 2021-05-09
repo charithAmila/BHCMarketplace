@@ -1323,6 +1323,7 @@ export default {
                 creator: toAddress(this.current_user),
                 name: _this.name,
                 file: _this.uploadedImage,
+                image: _this.uploadedImage,
                 fileType: _this.fileType,
                 description: _this.description,
                 category: _this.category,
