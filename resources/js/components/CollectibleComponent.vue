@@ -337,7 +337,7 @@
             </div>
         </div>
 
-        <button v-if="!isLoading" class="load-more" @click="loadMore">Load more</button>
+        <!--button v-if="!isLoading" class="load-more" @click="loadMore">Load more</button-->
 
         <checkout-modal-component
             :singleNft="singleNft"
@@ -446,7 +446,7 @@ export default {
             loaded: false,
             open: false,
             customPreloaderCount: 0,
-            isLoadMore: false,
+            isLoadMore: false
 
             //collectible: this.collectibles[0],
         };
@@ -575,7 +575,7 @@ export default {
             }
             return string.slice(0, 18) + "...";
         },
-        loadMore(){
+        loadMore() {
             this.isLoadMore = true;
         }
     },
