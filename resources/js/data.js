@@ -188,7 +188,8 @@ async function getUserDetails(addressString) {
                 var hash = response.data.cover.split("/")[
                     response.data.cover.split("/").length - 1
                 ];
-                user.cover_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`;
+                (hash!=null || hash!="")?user.cover_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`:null;
+                
             } catch (e) {
                 user.cover_photo = user.cover_photo;
             }
@@ -196,7 +197,7 @@ async function getUserDetails(addressString) {
                 var hash = response.data.dp.split("/")[
                     response.data.dp.split("/").length - 1
                 ];
-                user.display_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`;
+                (hash!=null || hash!="")?user.display_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`:null;
             } catch (e) {
                 user.display_photo = user.display_photo;
             }
