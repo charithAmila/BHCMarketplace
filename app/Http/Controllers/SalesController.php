@@ -27,7 +27,7 @@ class SalesController extends Controller
                 return $sales;
             }
         }
-        $sales = Sales::all();
+        $sales = Sales::latest()->get();
         return $sales;
     }
 
