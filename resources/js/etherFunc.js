@@ -793,12 +793,13 @@ async function getOwnedCollections(me, type, forDetails) {
 async function get721Token(contract, collection, tokenId, owner) {
     if (window.nftData.length == 0) {
         window.nftData = await axios.get("/nftdata");
-        window.nftData=window.nftData.data
-        
+        window.nftData = window.nftData.data;
     }
     var nftFetched = window.nftData.filter(function(element) {
-        if (element.collection == contract.address && element.token_id == tokenId) {
-            
+        if (
+            element.collection == contract.address &&
+            element.token_id == tokenId
+        ) {
             return true;
         }
     });
@@ -837,10 +838,13 @@ async function get1155Token(contract, collection, tokenId, owner) {
     //const tokenCount = await contract.tokenCount(tokenId);
     if (window.nftData.length == 0) {
         window.nftData = await axios.get("/nftdata");
-        window.nftData=window.nftData.data
+        window.nftData = window.nftData.data;
     }
     var nftFetched = window.nftData.filter(function(element) {
-        if (element.collection == contract.address && element.token_id == tokenId)
+        if (
+            element.collection == contract.address &&
+            element.token_id == tokenId
+        )
             return true;
     });
     try {
