@@ -210,7 +210,9 @@
 
                     <h5 v-if="biddingStatus && haveBids">Highest Bid</h5>
                     <h5 v-if="biddingStatus && !haveBids">Currently No Bids</h5>
-                     <h5 v-if="!biddingStatus && !owner">Not Open for Bidding</h5>
+                    <h5 v-if="!biddingStatus && !owner">
+                        Not Open for Bidding
+                    </h5>
                     <div class="row" v-if="biddingStatus && haveBids">
                         <div class="col-3 col-md-2">
                             <div class="inlineDiv">
@@ -300,7 +302,7 @@
                                 }}
 
                                 on
-                                {{ transac.created_at.slice(0, 10)}} by
+                                {{ transac.created_at.slice(0, 10) }} by
 
                                 <a
                                     :href="
@@ -332,7 +334,7 @@ import {
     acceptBid
 } from ".././../bidFunc";
 import { toAddress, checkConnection, getOwnersOf } from ".././../etherFunc";
-import { getUserDetails } from ".././../data";
+import { getUserDetails, tempUserData } from ".././../data";
 export default {
     props: [
         "creator",
@@ -388,6 +390,10 @@ export default {
                 details.ownedCopies = Number(
                     _this.collectible.owners[i].ownedCopies
                 );
+                details.name == "" ? (details.name = "User") : null;
+                details.display_photo == ""
+                    ? (details.name = tempUserData.display_photo)
+                    : null;
                 _this.owners.push(details);
             }
             this.ownersLoaded = true;
@@ -496,14 +502,14 @@ export default {
                     let data = {};
                     data.contract_address = this.collectible.contract;
                     data.token_id = this.collectible.id;
-                     await axios
-            .post("/deletebid", data, {})
-            .then(function(response) {
-               console.log(respone.data);
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
+                    await axios
+                        .post("/deletebid", data, {})
+                        .then(function(response) {
+                            console.log(respone.data);
+                        })
+                        .catch(function(error) {
+                            console.log(error);
+                        });
                 }
             } catch (e) {
                 Toast.fire({
