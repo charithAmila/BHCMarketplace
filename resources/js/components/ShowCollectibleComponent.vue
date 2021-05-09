@@ -605,7 +605,7 @@ import $ from "jquery";
 import CollectibleDetails from "./show_collectible/CollectibleDetailsComponent.vue";
 import BidModal from "./modals/BidModalComponent.vue";
 import CheckoutModal from "./modals/CheckoutModalComponent.vue";
-import { getUserDetails } from "./../data";
+import { getUserDetails, tempUserData } from "./../data";
 
 import {
     checkConnection,
@@ -694,6 +694,7 @@ export default {
                 details.ownedCopies = Number(
                     _this.collectible.owners[i].ownedCopies
                 );
+
                 _this.owners.push(details);
             }
         },
@@ -867,8 +868,17 @@ export default {
         this.singleNft = this.collectible;
         this.set_transactions = this.transactions;
         this.creator = await getUserDetails(this.collectible.creator);
+        this.creator.name == "" ? (this.creator.name = "User") : null;
+        this.creator.display_photo == ""
+            ? (this.creator.name = tempUserData.display_photo)
+            : null;
         this.current_owner = await getUserDetails(this.collectible.owner_id);
-
+        this.current_owner.name == ""
+            ? (this.current_owner.name = "User")
+            : null;
+        this.current_owner.display_photo == ""
+            ? (this.current_owner.name = tempUserData.display_photo)
+            : null;
         this.checkConnection();
 
         this.service_fee = await serviceFee(this.singleNft.currencyName);
