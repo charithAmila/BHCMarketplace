@@ -500,8 +500,8 @@ export default {
                 last = this.collectibles.length;
                 this.isLoadMore = false;
             }
-            console.log(first);
-            console.log(last);
+            //console.log(first);
+            //console.log(last);
             this.collectibles.slice(first, last).forEach(element => {
                 this.collectiblesLoaded.push(element);
             });
