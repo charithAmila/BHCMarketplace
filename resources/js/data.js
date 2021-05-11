@@ -188,8 +188,9 @@ async function getUserDetails(addressString) {
                 var hash = response.data.cover.split("/")[
                     response.data.cover.split("/").length - 1
                 ];
-                (hash!=null || hash!="")?user.cover_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`:null;
-                
+                hash != null || hash != ""
+                    ? (user.cover_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`)
+                    : null;
             } catch (e) {
                 user.cover_photo = user.cover_photo;
             }
@@ -197,7 +198,9 @@ async function getUserDetails(addressString) {
                 var hash = response.data.dp.split("/")[
                     response.data.dp.split("/").length - 1
                 ];
-                (hash!=null || hash!="")?user.display_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`:null;
+                hash != null || hash != ""
+                    ? (user.display_photo = `https://gateway.billionhappiness.finance/ipfs/${hash}`)
+                    : null;
             } catch (e) {
                 user.display_photo = user.display_photo;
             }
@@ -879,6 +882,9 @@ async function getAllSalesSearch(current_user, parameter) {
     });
     for (var i = 0; i < tokens.length; i++) {
         //if (tokens[i].current_owner != current_user) {
+        if (tokens[i].owner_name == null) {
+            tokens[i].owner_name = "User";
+        }
         if (
             tokens[i].col_name
                 .toLowerCase()
