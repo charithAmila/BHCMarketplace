@@ -103,4 +103,22 @@ class MintedController extends Controller
     {
         //
     }
+    public function download(){
+        $table = minted::all();
+        $filename = "mints.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, array('id','minter', 'collection', 'token_id'));
+
+        foreach($table as $row) {
+            fputcsv($handle, array($row['id'],$row['minter'], $row['collection'], $row['token_id']));
+        }
+
+        fclose($handle);
+
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+
+        return response()->download($filename, "mints.csv", $headers);
+    }
 }

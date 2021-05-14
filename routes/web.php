@@ -134,6 +134,8 @@ Route::resource('data', IpfsController::class);
 Route::resource('nftdata', NftDataController::class);
 Route::get('sales_search', [SearchSales::class, 'search']);
 
+Route::get('download/mints', [MintedController::class,'download']);
+
 Route::get('/getData/{time}', [NotificationController::class, 'getData']);
 Route::get('/getStatus/{user}', [NotificationController::class, 'getStatus']);
 Route::post('/subscribe', [SubscribeController::class, 'subscribe']);
