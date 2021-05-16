@@ -98,6 +98,7 @@ async function getMaxBuyers(time_filter) {
         result[i].verified = details.verified;
         out.push(result[i]);
     }
+    console.log(out);
     return out;
 }
 /////////////////getMaxSellers//////
@@ -156,6 +157,7 @@ async function getMaxSellers(time_filter) {
         result[i].verified = details.verified;
         out.push(result[i]);
     }
+    console.log(out);
     return out;
 }
 ////////get///////////////////
