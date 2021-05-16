@@ -39,11 +39,12 @@
                     :key="index"
                     class="topUserList"
                 >
+
                     <a
                         class="black-link top-user-container"
                         :href="'/profile/' + item.user_id"
                     >
-                        <img class="filterImg" :src="item.propic" alt="" />
+                        <img class="filterImg" :src="item.display_photo" alt="" />
                         <i class="fa fa-check" v-if="item.verified"></i>
                     </a>
                     <div class="user-info">
@@ -51,7 +52,7 @@
                             <a
                                 class="black-link"
                                 :href="'/profile/' + item.user_id"
-                                >{{ item.username==''?'User':item.username }}</a
+                                >{{ item.name==''?'User':item.name }}</a
                             >
                         </h6>
                         <label
@@ -98,7 +99,7 @@
 </template>
 
 <script>
-import { getMaxSellers, getMaxBuyers } from "../data";
+import { getMaxSellers, getMaxBuyers,getUserDetails } from "../data";
 
 export default {
     props: ["asset_url"],
@@ -107,7 +108,8 @@ export default {
             userListSellers: [],
             userListBuyers: [],
             userType: "sell",
-            filterTime: "all"
+            filterTime: "all",
+           
         };
     },
     methods: {
@@ -127,9 +129,9 @@ export default {
     computed: {
         orderedUsers: function() {
             if (this.userType == "sell") {
-                return _.orderBy(this.userListSellers, "sell_amount", "desc");
+                return this.userListSellers;
             } else {
-                return _.orderBy(this.userListBuyers, "buy_amount", "desc");
+                return this.userListBuyers;
             }
         }
     }

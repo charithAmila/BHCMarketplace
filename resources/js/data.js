@@ -77,16 +77,29 @@ async function getMaxBuyers(time_filter) {
             }
         }
     }
+    let result = [];
+    let out = [];
     for (let i = 0; i < users.length; i++) {
-        let user = users[i];
-        let details = await getUserDetails(user);
-        output[user].verified = details.verified;
-        output[user].propic = details.display_photo;
-        output[user].username = details.name;
+        result.push(output[users[i]]);
     }
-    //removed//console.log("Buyers");
-    //removed//console.log(users);
-    return output;
+    result.sort(function(a, b) {
+        return b.buy_amount - a.buy_amount;
+    });
+    let k;
+    if (result.length > 10) {
+        k = 10;
+    } else {
+        k = result.length;
+    }
+    for (var i = 0; i < k; i++) {
+        let details = await getUserDetails(result[i].user_id);
+        console.log(details);
+        result[i].display_photo = details.display_photo;
+        result[i].name = details.name;
+        result[i].verified = details.verified;
+        out.push(result[i]);
+    }
+    return out;
 }
 /////////////////getMaxSellers//////
 async function getMaxSellers(time_filter) {
@@ -123,16 +136,29 @@ async function getMaxSellers(time_filter) {
             }
         }
     }
+    let result = [];
+    let out = [];
     for (let i = 0; i < users.length; i++) {
-        let user = users[i];
-        let details = await getUserDetails(user);
-        output[user].verified = details.verified;
-        output[user].propic = details.display_photo;
-        output[user].username = details.name;
+        result.push(output[users[i]]);
     }
-    //removed//console.log("Sellers");
-    //removed//console.log(users);
-    return output;
+    result.sort(function(a, b) {
+        return b.sell_amount - a.sell_amount;
+    });
+    let k;
+    if (result.length > 10) {
+        k = 10;
+    } else {
+        k = result.length;
+    }
+    for (var i = 0; i < k; i++) {
+        let details = await getUserDetails(result[i].user_id);
+        console.log(details);
+        result[i].display_photo = details.display_photo;
+        result[i].name = details.name;
+        result[i].verified = details.verified;
+        out.push(result[i]);
+    }
+    return out;
 }
 ////////get///////////////////
 function tempUserData(addressString) {
