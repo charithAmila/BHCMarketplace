@@ -93,7 +93,6 @@ async function getMaxBuyers(time_filter) {
     }
     for (var i = 0; i < k; i++) {
         let details = await getUserDetails(result[i].user_id);
-        console.log(details);
         result[i].display_photo = details.display_photo;
         result[i].name = details.name;
         result[i].verified = details.verified;
@@ -152,7 +151,6 @@ async function getMaxSellers(time_filter) {
     }
     for (var i = 0; i < k; i++) {
         let details = await getUserDetails(result[i].user_id);
-        console.log(details);
         result[i].display_photo = details.display_photo;
         result[i].name = details.name;
         result[i].verified = details.verified;
