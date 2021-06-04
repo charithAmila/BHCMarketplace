@@ -39,7 +39,7 @@
                                         "
                                         class="video-container d-block d-md-none"
                                     >
-                                        <video controls autoplay loop muted>
+                                        <video id="video_here_2" controls autoplay loop muted>
                                             <source
                                                 v-bind:src="uploadedImage"
                                                 class="category-video-prev"
