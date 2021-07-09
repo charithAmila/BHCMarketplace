@@ -6,6 +6,7 @@ use App\Http\Controllers\PinataController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Api\ShortUrlController;
 use App\Http\Controllers\Api\BidController;
+use App\Http\Controllers\Api\ExposeDataController;
 use App\Http\Controllers\CollectionsController;
 use App\Http\Controllers\SalesController;
 /*
@@ -27,3 +28,4 @@ Route::get('/keygen', [PinataController::class, 'generateJWT']);
 Route::resource('/profile', ProfileController::class);
 Route::apiResource('shorturls', ShortUrlController::class);
 Route::resource('collections', CollectionsController::class);
+Route::get('get-nft-table', [ExposeDataController::class, 'index']);
