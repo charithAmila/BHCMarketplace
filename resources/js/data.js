@@ -676,8 +676,10 @@ async function getTokenData(contract, owner, id) {
         //selectedToken.URI = selectedToken.URI.replace( "ipfs.io","gateway.pinata.cloud");
         uri = selectedToken.URI.replace("https://ipfs.io/ipfs/", "/data/");
         colData = await axios.get(uri);
-    } catch (e) {}
-    colData = await axios.get(uri);
+    } catch (e) {
+        uri = selectedToken.URI;
+        colData = await axios.get(uri);
+    }
     //colData = await axios.get(selectedToken.URI);
     var nft = colData.data;
     /*data.current_owner = collectible.tokenOwner;
