@@ -714,12 +714,15 @@ async function getOwnedCollections(me, type, forDetails) {
                     var res = null;
                     try {
                         res = await axios.get(
-                            //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                            //uri.replace("https://ipfs.io", "gateway.billionhappiness.finance")
                             uri.replace("https://ipfs.io/ipfs/", "/data/")
                         );
                     } catch (e) {
                         res = await axios.get(
-                            uri.replace("ipfs.io", "gateway.pinata.io")
+                            uri.replace(
+                                "ipfs.io",
+                                "gateway.billionhappiness.finance"
+                            )
                             //uri.replace("https://ipfs.io", "/ipfs")
                         );
                     }
@@ -742,7 +745,7 @@ async function getOwnedCollections(me, type, forDetails) {
                             var res = null;
                             try {
                                 res = await axios.get(
-                                    //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                                    //uri.replace("https://ipfs.io", "gateway.billionhappiness.finance")
                                     uri.replace(
                                         "https://ipfs.io/ipfs/",
                                         "/data/"
@@ -750,7 +753,10 @@ async function getOwnedCollections(me, type, forDetails) {
                                 );
                             } catch (e) {
                                 res = await axios.get(
-                                    uri.replace("ipfs.io", "gateway.pinata.io")
+                                    uri.replace(
+                                        "ipfs.io",
+                                        "gateway.billionhappiness.finance"
+                                    )
                                     //uri.replace("https://ipfs.io", "/ipfs")
                                 );
                             }
@@ -765,12 +771,15 @@ async function getOwnedCollections(me, type, forDetails) {
                         var res = null;
                         try {
                             res = await axios.get(
-                                //uri.replace("https://ipfs.io", "gateway.pinata.io")
+                                //uri.replace("https://ipfs.io", "gateway.billionhappiness.finance")
                                 uri.replace("https://ipfs.io/ipfs/", "/data/")
                             );
                         } catch (e) {
                             res = await axios.get(
-                                uri.replace("ipfs.io", "gateway.pinata.io")
+                                uri.replace(
+                                    "ipfs.io",
+                                    "gateway.billionhappiness.finance"
+                                )
                                 //uri.replace("https://ipfs.io", "/ipfs")
                             );
                         }
@@ -826,7 +835,7 @@ async function get721Token(contract, collection, tokenId, owner) {
             tokenType: 721,
             ownedCopies: 1,
             tokenOwner: owner,
-            URI: tokenURI //.replace("ipfs.io", "gateway.pinata.io")
+            URI: tokenURI //.replace("ipfs.io", "gateway.billionhappiness.finance")
         };
         return tokenData;
     } catch (e) {
@@ -868,7 +877,7 @@ async function get1155Token(contract, collection, tokenId, owner) {
             tokenType: 1155,
             ownedCopies: ownedCount,
             tokenOwner: owner,
-            URI: tokenURI //.replace("ipfs.io", "gateway.pinata.io")
+            URI: tokenURI //.replace("ipfs.io", "gateway.billionhappiness.finance")
         };
         return tokenData;
     } catch (e) {
