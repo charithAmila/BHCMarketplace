@@ -51,7 +51,7 @@ class IpfsController extends Controller
         if($data==null){
             $cURLConnection = curl_init();
 
-            curl_setopt($cURLConnection, CURLOPT_URL, 'http://gateway.billionhappiness.finance/ipfs/'.$hash);
+            curl_setopt($cURLConnection, CURLOPT_URL, 'https://gateway.billionhappiness.finance/ipfs/'.$hash);
             curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
 
             $phoneList = curl_exec($cURLConnection);
