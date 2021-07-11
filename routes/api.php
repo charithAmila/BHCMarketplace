@@ -28,4 +28,4 @@ Route::get('/keygen', [PinataController::class, 'generateJWT']);
 Route::resource('/profile', ProfileController::class);
 Route::apiResource('shorturls', ShortUrlController::class);
 Route::resource('collections', CollectionsController::class);
-Route::get('get-nft-table', [ExposeDataController::class, 'index']);
+Route::get('/get-nft-table', [ExposeDataController::class, 'index']);
